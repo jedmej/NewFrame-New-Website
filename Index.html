@@ -6,8 +6,8 @@
     <!-- Fonts - Async loading for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Inter:wght@100..900&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Inter:wght@100..900&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
     
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -115,54 +115,876 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div id="hero" class="fixed top-0 left-0 w-full h-screen flex flex-col justify-center items-center z-0 px-4 pointer-events-none" style="opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0px); will-change: transform, opacity, filter; transition: filter 0.15s ease-out;">
-        <!-- Background Elements -->
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-[100px] pointer-events-none mix-blend-overlay"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none mix-blend-overlay"></div>
+    <!-- Hero Section - Editorial Brutalism -->
+    <div id="hero" class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden" style="opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0px); will-change: transform, opacity, filter; transition: filter 0.15s ease-out; pointer-events: auto; z-index: 15;">
 
-        <div class="flex flex-col w-full max-w-[1800px] gap-y-8 relative">
-            <div class="flex flex-col leading-[0.8] items-start">
-                <h1 class="text-[13vw] md:text-[11vw] uppercase font-semibold text-white tracking-tighter opacity-0 translate-y-10 animate-fade-in-up">NEW</h1>
-                <h1 class="text-[13vw] md:text-[11vw] uppercase font-semibold text-white tracking-tighter opacity-0 translate-y-10 animate-fade-in-up" style="animation-delay: 0.1s">frame</h1>
-            </div>
+        <!-- Industrial Grid Background -->
+        <div class="hero-grid absolute inset-0 opacity-15">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(234, 78, 51, 0.3)" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+        </div>
 
-            <div class="flex flex-col md:flex-row w-full h-32 relative items-end justify-between z-10">
-                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-down" class="lucide lucide-arrow-down w-8 h-8 text-white/80 animate-bounce stroke-[1.5]"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>
+        <!-- Diagonal Accent Bars -->
+        <div class="diagonal-accent absolute w-[200%] h-1 bg-gradient-to-r from-transparent via-[#EA4E33] to-transparent top-[25%] -left-[50%] rotate-[35deg] opacity-40" style="animation: slideAccent1 15s ease-in-out infinite;"></div>
+        <div class="diagonal-accent absolute w-[200%] h-0.5 bg-gradient-to-r from-transparent via-white to-transparent bottom-[30%] -left-[50%] rotate-[-25deg] opacity-20" style="animation: slideAccent2 20s ease-in-out infinite reverse;"></div>
+
+        <!-- Kinetic Noise Overlay -->
+        <div class="noise-overlay absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 400 400%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%223%22 numOctaves=%224%22 /%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); animation: animateNoise 8s steps(10) infinite;"></div>
+
+        <div class="hero-content-container w-full h-full px-6 md:px-12 py-20 flex flex-col justify-center relative max-w-[2000px] mx-auto" style="perspective: 1500px;">
+
+            <!-- Main Typography Stack -->
+            <div id="hero-type-stack" class="hero-type-stack relative" style="will-change: transform; transform-style: preserve-3d;">
+
+                <!-- NEW FRAME -->
+                <div class="hero-title-row mb-2 md:mb-4 flex items-center justify-center gap-3 md:gap-6">
+                    <div class="hero-text-scramble overflow-hidden" data-text="NEW FRAME" data-delay="0">
+                        <h1 class="hero-title-massive" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(7rem, 22vw, 28rem); line-height: 0.82; letter-spacing: -0.04em; color: #fff; text-shadow: 4px 4px 0 rgba(0,0,0,0.3);">NEW FRAME</h1>
+                    </div>
                 </div>
-                <div class="flex items-center gap-4 self-end md:self-auto ml-auto opacity-0 translate-y-10 animate-fade-in-up" style="animation-delay: 0.2s">
-                    <div class="bg-zinc-900/50 border-white/10 border rounded-full px-5 py-2 backdrop-blur-sm">
-                        <span class="text-[10px] md:text-xs uppercase font-medium text-gray-400 tracking-widest">est. 2023</span>
+
+                <!-- CREATIVE STUDIO - Fade in after scramble -->
+                <div class="hero-title-row flex items-center justify-center mb-8 md:mb-12">
+                    <div class="text-center opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards; width: 100%; max-width: 100%;">
+                        <h2 class="hero-title-subtitle whitespace-nowrap" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 6vw, 8rem); line-height: 0.82; letter-spacing: 0.15em; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); -webkit-text-stroke: 1px rgba(234, 78, 51, 0.2);">CREATIVE STUDIO</h2>
+                    </div>
+                </div>
+
+                <!-- Bottom Info Bar -->
+                <div class="hero-info-bar flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8 mt-16 md:mt-24 opacity-0 px-4" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards; border-left: 3px solid #EA4E33; padding-left: 1.5rem;">
+                    <div class="flex items-center gap-6">
+                        <div class="hero-location">
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">LOCATION</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;">WARSAW</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);">52.2297°N / 21.0122°E</div>
+                        </div>
+                        <div class="hidden md:block w-px h-16 bg-white/20"></div>
+                        <div class="hero-year">
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">ESTABLISHED</div>
+                            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.05em; color: #fff;">2023</div>
+                        </div>
+                    </div>
+                    <div class="hero-scroll-indicator flex items-center gap-3 ml-auto">
+                        <div class="w-12 h-px bg-white/30"></div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);">SCROLL TO EXPLORE</div>
+                        <svg class="w-5 h-5 text-white/50 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="animation: bounce 2s infinite;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                     </div>
                 </div>
             </div>
 
-            <div class="flex leading-[0.8] justify-end">
-                <h1 class="text-[13vw] md:text-[11vw] uppercase font-semibold text-white tracking-tighter text-right opacity-0 translate-y-10 animate-fade-in-up" style="animation-delay: 0.3s">studio</h1>
-            </div>
-            
-            <div class="leading-[0.75] md:-mt-6">
-                <h1 class="text-[20vw] md:text-[19vw] uppercase font-semibold text-white tracking-tightest text-right w-full opacity-0 translate-y-10 animate-fade-in-up" style="animation-delay: 0.4s">warsaw</h1>
-                <p class="text-sm md:text-base font-mono tracking-widest text-right w-full opacity-0 translate-y-10 animate-fade-in-up mt-2" style="animation-delay: 0.5s; color: #EA4E33;">52.2297° N, 21.0122° E</p>
-            </div>
+
+            <!-- Interactive Mouse Follower -->
+            <div id="hero-cursor" class="hero-cursor-glow pointer-events-none absolute w-64 h-64 rounded-full bg-[#EA4E33] opacity-0 blur-[120px] transition-opacity duration-1000" style="mix-blend-mode: screen; transform: translate(-50%, -50%);"></div>
         </div>
+
+        <!-- Hero Custom Styles -->
+        <style>
+            @keyframes slideAccent1 {
+                0%, 100% { transform: translateX(0) rotate(35deg); }
+                50% { transform: translateX(15%) rotate(35deg); }
+            }
+            @keyframes slideAccent2 {
+                0%, 100% { transform: translateX(0) rotate(-25deg); }
+                50% { transform: translateX(-10%) rotate(-25deg); }
+            }
+            @keyframes animateNoise {
+                0%, 100% { transform: translate(0, 0); }
+                10% { transform: translate(-5%, -5%); }
+                20% { transform: translate(-10%, 5%); }
+                30% { transform: translate(5%, -10%); }
+                40% { transform: translate(-5%, 15%); }
+                50% { transform: translate(-10%, 5%); }
+                60% { transform: translate(15%, 0); }
+                70% { transform: translate(0, 10%); }
+                80% { transform: translate(-15%, 0); }
+                90% { transform: translate(10%, 5%); }
+            }
+            @keyframes fadeSlideIn {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(8px); }
+            }
+            .hero-text-scramble {
+                will-change: transform;
+                animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+        </style>
+
+        <!-- Hero JavaScript -->
+        <script>
+            (function() {
+                // Text scramble effect on load
+                const scrambleElements = document.querySelectorAll('.hero-text-scramble');
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+
+                scrambleElements.forEach(el => {
+                    const targetText = el.dataset.text;
+                    const delay = parseInt(el.dataset.delay || '0');
+                    const titleEl = el.querySelector('h1');
+
+                    if (!titleEl) return;
+
+                    setTimeout(() => {
+                        let iteration = 0;
+                        const interval = setInterval(() => {
+                            titleEl.textContent = targetText
+                                .split('')
+                                .map((char, index) => {
+                                    if (index < iteration) return targetText[index];
+                                    return chars[Math.floor(Math.random() * chars.length)];
+                                })
+                                .join('');
+
+                            if (iteration >= targetText.length) {
+                                clearInterval(interval);
+                                titleEl.textContent = targetText;
+                            }
+                            iteration += 1 / 3;
+                        }, 30);
+                    }, delay);
+                });
+
+                // Mouse-reactive glow effect and 3D tilt
+                const hero = document.getElementById('hero');
+                const cursorGlow = document.getElementById('hero-cursor');
+                const typeStack = document.getElementById('hero-type-stack');
+                let mouseX = 0, mouseY = 0;
+                let glowX = 0, glowY = 0;
+                let currentRotateX = 0;
+                let currentRotateY = 0;
+                let currentRotateZ = -2;
+                let targetRotateX = 0;
+                let targetRotateY = 0;
+                let targetRotateZ = -2;
+
+                hero.addEventListener('mousemove', (e) => {
+                    const rect = hero.getBoundingClientRect();
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    cursorGlow.style.opacity = '0.15';
+
+                    // Calculate 3D tilt based on mouse position relative to hero center
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    // Normalize to -1 to 1 range
+                    const normalizedX = (e.clientX - centerX) / (rect.width / 2);
+                    const normalizedY = (e.clientY - centerY) / (rect.height / 2);
+
+                    // Map to rotation values
+                    targetRotateY = normalizedX * 12; // Horizontal tilt (rotateY): ±12 degrees
+                    targetRotateX = -normalizedY * 8; // Vertical tilt (rotateX): ±8 degrees (inverted)
+                    targetRotateZ = -normalizedX * 3; // Slight Z rotation for extra dynamism
+                });
+
+                hero.addEventListener('mouseleave', () => {
+                    cursorGlow.style.opacity = '0';
+                    // Return to default position
+                    targetRotateX = 0;
+                    targetRotateY = 0;
+                    targetRotateZ = -2;
+                });
+
+                // Smooth lerp animation for cursor glow and 3D tilt
+                function animateHeroEffects() {
+                    // Glow position
+                    glowX += (mouseX - glowX) * 0.1;
+                    glowY += (mouseY - glowY) * 0.1;
+                    cursorGlow.style.left = glowX + 'px';
+                    cursorGlow.style.top = glowY + 'px';
+
+                    // Smooth 3D rotation with lerp
+                    currentRotateX += (targetRotateX - currentRotateX) * 0.08;
+                    currentRotateY += (targetRotateY - currentRotateY) * 0.08;
+                    currentRotateZ += (targetRotateZ - currentRotateZ) * 0.08;
+
+                    typeStack.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) rotateZ(${currentRotateZ}deg)`;
+
+                    requestAnimationFrame(animateHeroEffects);
+                }
+                animateHeroEffects();
+
+                // Parallax effect on title elements
+                const titleElements = document.querySelectorAll('.hero-title-row');
+                hero.addEventListener('mousemove', (e) => {
+                    const { clientX, clientY } = e;
+                    const xPos = (clientX / window.innerWidth - 0.5) * 20;
+                    const yPos = (clientY / window.innerHeight - 0.5) * 20;
+
+                    titleElements.forEach((el, index) => {
+                        const depth = (index + 1) * 0.3;
+                        el.style.transform = `translate(${xPos * depth}px, ${yPos * depth}px)`;
+                    });
+                });
+
+                // Initialize with default tilt
+                targetRotateZ = -2;
+                currentRotateZ = -2;
+            })();
+        </script>
     </div>
 
-    <!-- Spacer -->
-    <div class="w-full h-[40vh] relative z-[-1] pointer-events-none"></div>
+    <!-- Capabilities Bento Grid Section -->
+    <section class="z-10 relative py-32 bg-transparent" id="scope">
+        <!-- Subtle noise texture overlay -->
+        <div class="bento-noise absolute inset-0 pointer-events-none opacity-[0.025]"></div>
 
-    <!-- Scope Section (Scrollytelling) -->
-    <section class="z-10 min-h-[280vh] relative" id="scope">
-        <div class="sticky flex flex-col overflow-hidden w-full h-screen top-0 items-center justify-center bg-transparent">
-            <div class="z-20 flex flex-col select-none text-center mix-blend-screen relative items-center justify-center" style="gap: 0;">
-                <h2 class="scope-item text-[15vw] md:text-[13vw] uppercase transition-colors duration-500 ease-out font-semibold tracking-tighter text-zinc-800" style="line-height: 0.85;">Web Design</h2>
-                <h2 class="scope-item text-[15vw] md:text-[13vw] uppercase font-semibold tracking-tighter text-zinc-800 transition-colors duration-500 ease-out" style="line-height: 0.85;">UX/UI Design</h2>
-                <h2 class="scope-item text-[15vw] md:text-[13vw] uppercase font-semibold tracking-tighter text-zinc-800 transition-colors duration-500 ease-out" style="line-height: 0.85;">Animation</h2>
-                <h2 class="scope-item text-[15vw] md:text-[13vw] uppercase font-semibold tracking-tighter text-zinc-800 transition-colors duration-500 ease-out" style="line-height: 0.85;">Art Direction</h2>
-                <h2 class="scope-item text-[15vw] md:text-[13vw] uppercase font-semibold tracking-tighter text-zinc-800 transition-colors duration-500 ease-out" style="line-height: 0.85;">Brand Identity</h2>
+        <!-- Subtle grid background -->
+        <div class="absolute inset-0 opacity-[0.04] pointer-events-none">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="bento-grid-pattern" width="80" height="80" patternUnits="userSpaceOnUse">
+                        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255, 255, 255, 0.3)" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#bento-grid-pattern)" />
+            </svg>
+        </div>
+
+        <div class="flex flex-col w-full items-center justify-start bg-transparent px-6 md:px-12">
+            <!-- Section Header -->
+            <div class="relative z-30 mb-16 w-full max-w-[1200px] bento-header">
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);">CAPABILITIES</div>
+                </div>
+                <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.9; letter-spacing: -0.02em; color: #fff;">WHAT WE DO</h2>
+            </div>
+
+            <!-- SVG Blur Filter for glow effect -->
+            <svg class="sr-only" style="position: absolute; width: 0; height: 0; overflow: visible !important;" xmlns="http://www.w3.org/2000/svg">
+                <filter id="bento-blur-filter" width="400%" height="400%" x="-150%" y="-150%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="40" />
+                </filter>
+            </svg>
+
+            <!-- Bento Grid -->
+            <div class="bento-grid w-full max-w-[1200px] relative z-20">
+                <!-- Card 01: Web Design (Large - 2x2) -->
+                <div class="bento-card bento-card-large" data-card="1" style="grid-column: span 2; grid-row: span 2;">
+                    <div class="bento-glow-source"></div>
+                    <div class="bento-card-glow"></div>
+                    <div class="bento-card-content">
+                        <div class="bento-card-number">01</div>
+                        <div class="bento-card-body">
+                            <h3 class="bento-card-title">Web Design</h3>
+                            <p class="bento-card-desc">Crafting digital experiences that captivate and convert</p>
+                        </div>
+                        <!-- Decorative: Browser window -->
+                        <div class="bento-decor bento-decor-browser">
+                            <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="1" y="1" width="118" height="78" rx="8" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                                <line x1="1" y1="16" x2="119" y2="16" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+                                <circle cx="12" cy="9" r="3" fill="#EA4E33" opacity="0.6"/>
+                                <circle cx="22" cy="9" r="3" fill="currentColor" opacity="0.2"/>
+                                <circle cx="32" cy="9" r="3" fill="currentColor" opacity="0.2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 02: UX/UI Design (Tall - 1x2) -->
+                <div class="bento-card bento-card-tall" data-card="2" style="grid-column: span 1; grid-row: span 2;">
+                    <div class="bento-glow-source"></div>
+                    <div class="bento-card-glow"></div>
+                    <div class="bento-card-content">
+                        <div class="bento-card-number">02</div>
+                        <div class="bento-card-body">
+                            <h3 class="bento-card-title">UX/UI Design</h3>
+                            <p class="bento-card-desc">Intuitive interfaces, seamless journeys</p>
+                        </div>
+                        <!-- Decorative: Cursor -->
+                        <div class="bento-decor bento-decor-cursor">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4L10.5 20L13 13L20 10.5L4 4Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" opacity="0.4"/>
+                                <path d="M13 13L19 19" stroke="#EA4E33" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 03: Animation (Compact - 1x1) -->
+                <div class="bento-card bento-card-compact" data-card="3" style="grid-column: span 1; grid-row: span 1;">
+                    <div class="bento-glow-source"></div>
+                    <div class="bento-card-glow"></div>
+                    <div class="bento-card-content">
+                        <div class="bento-card-number">03</div>
+                        <div class="bento-card-body">
+                            <h3 class="bento-card-title">Animation</h3>
+                            <p class="bento-card-desc">Motion that tells stories</p>
+                        </div>
+                        <!-- Decorative: Motion wave -->
+                        <div class="bento-decor bento-decor-motion">
+                            <svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path class="motion-wave" d="M5 20C15 8 25 32 35 20C45 8 55 20 55 20" stroke="#EA4E33" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+                                <path d="M5 28C15 20 25 36 35 28C45 20 55 28 55 28" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 04: Art Direction (Wide - 2x1) -->
+                <div class="bento-card bento-card-wide" data-card="4" style="grid-column: span 2; grid-row: span 1;">
+                    <div class="bento-glow-source"></div>
+                    <div class="bento-card-glow"></div>
+                    <div class="bento-card-content">
+                        <div class="bento-card-number">04</div>
+                        <div class="bento-card-body">
+                            <h3 class="bento-card-title">Art Direction</h3>
+                            <p class="bento-card-desc">Visual storytelling with purpose and precision</p>
+                        </div>
+                        <!-- Decorative: Geometric shapes -->
+                        <div class="bento-decor bento-decor-geo">
+                            <svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="25" cy="30" r="20" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+                                <rect x="45" y="10" width="40" height="40" stroke="#EA4E33" stroke-width="1" opacity="0.4"/>
+                                <polygon points="70,15 90,45 50,45" stroke="currentColor" stroke-width="1" fill="none" opacity="0.15"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 05: Brand Identity (Wide - 2x1) -->
+                <div class="bento-card bento-card-wide" data-card="5" style="grid-column: span 2; grid-row: span 1;">
+                    <div class="bento-glow-source"></div>
+                    <div class="bento-card-glow"></div>
+                    <div class="bento-card-content">
+                        <div class="bento-card-number">05</div>
+                        <div class="bento-card-body">
+                            <h3 class="bento-card-title">Brand Identity</h3>
+                            <p class="bento-card-desc">Building memorable brands from the ground up</p>
+                        </div>
+                        <!-- Decorative: Abstract logo mark -->
+                        <div class="bento-decor bento-decor-brand">
+                            <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="5" y="5" width="25" height="25" fill="#EA4E33" opacity="0.3"/>
+                                <rect x="30" y="30" width="25" height="25" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                                <rect x="20" y="20" width="20" height="20" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accent Element (Decorative - 1x1) -->
+                <div class="bento-card bento-card-accent" data-card="accent" style="grid-column: span 1; grid-row: span 1;">
+                    <div class="bento-glow-source"></div>
+                    <div class="bento-card-glow"></div>
+                    <div class="bento-card-content bento-accent-content">
+                        <div class="bento-accent-symbol">
+                            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 5L20 35M5 20L35 20" stroke="#EA4E33" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="bento-accent-text">More to come</span>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Bento Grid Styles -->
+        <style>
+            /* Utility: Screen reader only */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;
+            }
+
+            /* CSS Custom Properties */
+            :root {
+                --bento-bg: rgba(255, 255, 255, 0.02);
+                --bento-bg-hover: rgba(255, 255, 255, 0.04);
+                --bento-border: rgba(255, 255, 255, 0.08);
+                --bento-border-hover: rgba(234, 78, 51, 0.4);
+                --bento-glow: rgba(234, 78, 51, 0.12);
+                --bento-radius: 20px;
+                --bento-gap: 20px;
+                --glow-scale: 2.5;
+                /* --glow-opacity is set via JS on first pointer move to prevent glow on load */
+            }
+
+            /* Noise texture */
+            .bento-noise {
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            }
+
+            /* Grid Layout */
+            .bento-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-auto-rows: minmax(200px, auto);
+                gap: var(--bento-gap);
+            }
+
+            /* Card Base */
+            .bento-card {
+                position: relative;
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(20px) saturate(1.2);
+                -webkit-backdrop-filter: blur(20px) saturate(1.2);
+                border: 1px solid var(--bento-border);
+                border-radius: var(--bento-radius);
+                overflow: hidden;
+                cursor: pointer;
+                transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                            border-color 0.4s ease,
+                            background 0.4s ease,
+                            box-shadow 0.4s ease,
+                            backdrop-filter 0.4s ease,
+                            filter 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                            opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                            scale 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+                will-change: transform, filter, opacity, scale;
+                transform-style: preserve-3d;
+                perspective: 1000px;
+                /* Container for cqi/cqh units in glow positioning */
+                container-type: size;
+                /* Clip the glow to card bounds */
+                clip-path: inset(0 round var(--bento-radius));
+            }
+
+            .bento-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            }
+
+            /* Context-aware hover effect - when grid has a hovered card, dim/blur siblings */
+            .bento-grid:has(.bento-card:hover) .bento-card:not(:hover) {
+                filter: blur(3px) brightness(0.6) saturate(0.5);
+                opacity: 0.7;
+                scale: 0.98;
+            }
+
+            /* The hovered card pops forward */
+            .bento-card:hover {
+                border-color: var(--bento-border-hover);
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(30px) saturate(1.4);
+                -webkit-backdrop-filter: blur(30px) saturate(1.4);
+                box-shadow: 0 0 80px -15px rgba(234, 78, 51, 0.35),
+                            0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                            inset 0 1px 0 rgba(255,255,255,0.1),
+                            0 0 0 1px rgba(234, 78, 51, 0.2);
+                filter: brightness(1.05);
+                scale: 1.02;
+                z-index: 10;
+            }
+
+            .bento-card:hover::before {
+                opacity: 1;
+            }
+
+            /* Pointer-tracking glow source - the colorful blob that follows cursor */
+            .bento-glow-source {
+                position: absolute;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                pointer-events: none;
+                transform: translateZ(0);
+                /* Follows pointer: translate based on --pointer-x/y (-1 to 1 range) */
+                translate: calc(var(--pointer-x, 0) * 50cqi) calc(var(--pointer-y, 0) * 50cqh);
+                scale: var(--glow-scale, 2.5);
+                opacity: var(--glow-opacity, 0);
+                will-change: transform, opacity;
+                transition: opacity 0.3s ease;
+                z-index: 1;
+            }
+
+            .bento-glow-source::before {
+                content: '';
+                width: 150px;
+                height: 150px;
+                background: radial-gradient(circle, #EA4E33 0%, #ff6b4a 25%, #EA4E33 50%, transparent 70%);
+                border-radius: 50%;
+                filter: url(#bento-blur-filter) saturate(1.8) brightness(1.2);
+            }
+
+            .bento-card:hover .bento-glow-source {
+                opacity: var(--glow-opacity, 0.35);
+            }
+
+            /* Glow effect layer - subtle radial gradient */
+            .bento-card-glow {
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                pointer-events: none;
+                background: radial-gradient(
+                    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    var(--bento-glow),
+                    transparent 40%
+                );
+                z-index: 1;
+            }
+
+            .bento-card:hover .bento-card-glow {
+                opacity: 1;
+            }
+
+            /* Card Content */
+            .bento-card-content {
+                position: relative;
+                z-index: 2;
+                height: 100%;
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+            }
+
+            /* Number Badge */
+            .bento-card-number {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                color: #EA4E33;
+                opacity: 0.7;
+                transition: opacity 0.3s ease;
+                flex-shrink: 0;
+            }
+
+            .bento-card:hover .bento-card-number {
+                opacity: 1;
+            }
+
+            /* Card Body */
+            .bento-card-body {
+                margin-top: auto;
+                flex-shrink: 0;
+            }
+
+            /* Title */
+            .bento-card-title {
+                font-family: 'Bebas Neue', sans-serif;
+                font-size: clamp(2rem, 4vw, 3.5rem);
+                line-height: 0.95;
+                letter-spacing: -0.02em;
+                color: #fff;
+                margin: 0;
+                transform: translateY(0);
+                transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+
+            .bento-card:hover .bento-card-title {
+                transform: translateY(-4px);
+            }
+
+            /* Description */
+            .bento-card-desc {
+                font-family: 'Inter', sans-serif;
+                font-size: 0.85rem;
+                font-weight: 400;
+                color: rgba(255, 255, 255, 0.4);
+                margin: 0.75rem 0 0 0;
+                max-width: 280px;
+                line-height: 1.5;
+                transition: color 0.4s ease;
+            }
+
+            .bento-card:hover .bento-card-desc {
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+            /* Decorative Elements */
+            .bento-decor {
+                position: absolute;
+                color: rgba(255, 255, 255, 0.5);
+                transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+                pointer-events: none;
+            }
+
+            .bento-card:hover .bento-decor {
+                transform: scale(1.05);
+            }
+
+            .bento-decor-browser {
+                bottom: 2rem;
+                right: 2rem;
+                width: 140px;
+                opacity: 0.6;
+            }
+
+            .bento-decor-cursor {
+                bottom: 2rem;
+                right: 2rem;
+                width: 48px;
+            }
+
+            .bento-decor-motion {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 80px;
+            }
+
+            .bento-decor-geo {
+                bottom: 1.5rem;
+                right: 2rem;
+                width: 120px;
+            }
+
+            .bento-decor-brand {
+                bottom: 1.5rem;
+                right: 2rem;
+                width: 70px;
+            }
+
+            /* Motion wave animation */
+            @keyframes waveMotion {
+                0%, 100% { d: path("M5 20C15 8 25 32 35 20C45 8 55 20 55 20"); }
+                50% { d: path("M5 20C15 32 25 8 35 20C45 32 55 20 55 20"); }
+            }
+
+            .motion-wave {
+                animation: waveMotion 3s ease-in-out infinite;
+            }
+
+            /* Accent Card */
+            .bento-card-accent {
+                background: rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-style: dashed;
+            }
+
+            .bento-card-accent:hover {
+                background: rgba(0, 0, 0, 0.3);
+            }
+
+            .bento-accent-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .bento-accent-symbol {
+                width: 40px;
+                height: 40px;
+                opacity: 0.5;
+                transition: transform 0.4s ease, opacity 0.3s ease;
+            }
+
+            .bento-card-accent:hover .bento-accent-symbol {
+                transform: rotate(90deg);
+                opacity: 0.8;
+            }
+
+            .bento-accent-text {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                letter-spacing: 0.1em;
+                color: rgba(255, 255, 255, 0.3);
+                text-transform: uppercase;
+            }
+
+            /* Header animation */
+            .bento-header {
+                opacity: 0;
+                animation: bentoFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            }
+
+            /* Card entrance animations */
+            @keyframes bentoFadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                    filter: blur(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                    filter: blur(0);
+                }
+            }
+
+            .bento-card {
+                opacity: 0;
+            }
+
+            .bento-card.bento-visible {
+                animation: bentoFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+
+            .bento-card[data-card="1"].bento-visible { animation-delay: 0.1s; }
+            .bento-card[data-card="2"].bento-visible { animation-delay: 0.2s; }
+            .bento-card[data-card="3"].bento-visible { animation-delay: 0.3s; }
+            .bento-card[data-card="4"].bento-visible { animation-delay: 0.35s; }
+            .bento-card[data-card="5"].bento-visible { animation-delay: 0.45s; }
+            .bento-card[data-card="accent"].bento-visible { animation-delay: 0.5s; }
+
+            /* Responsive */
+            @media (max-width: 1024px) {
+                .bento-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .bento-card-large {
+                    grid-column: span 2 !important;
+                    grid-row: span 1 !important;
+                }
+
+                .bento-card-tall {
+                    grid-column: span 1 !important;
+                    grid-row: span 1 !important;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .bento-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+
+                .bento-card-large,
+                .bento-card-tall,
+                .bento-card-wide,
+                .bento-card-compact,
+                .bento-card-accent {
+                    grid-column: span 1 !important;
+                    grid-row: span 1 !important;
+                }
+
+                .bento-card-content {
+                    padding: 1.5rem;
+                }
+
+                .bento-card-title {
+                    font-size: 2rem;
+                }
+
+                .bento-decor {
+                    display: none;
+                }
+            }
+        </style>
+
+        <!-- Bento Grid JavaScript -->
+        <script>
+            (function() {
+                const bentoGrid = document.querySelector('.bento-grid');
+                const bentoCards = document.querySelectorAll('.bento-card');
+
+                // Intersection Observer for entrance animations
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const bentoObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('bento-visible');
+                            bentoObserver.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+
+                bentoCards.forEach(card => {
+                    bentoObserver.observe(card);
+
+                    // 3D Tilt and Glow Follow on hover
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+
+                        // Normalize to -1 to 1
+                        const normalizedX = (x - centerX) / centerX;
+                        const normalizedY = (y - centerY) / centerY;
+
+                        // Calculate rotation (max 8 degrees)
+                        const rotateY = normalizedX * 8;
+                        const rotateX = -normalizedY * 8;
+
+                        // Apply 3D transform
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+
+                        // Update glow position (percentage for radial gradient)
+                        const glowX = (x / rect.width) * 100;
+                        const glowY = (y / rect.height) * 100;
+                        card.style.setProperty('--mouse-x', `${glowX}%`);
+                        card.style.setProperty('--mouse-y', `${glowY}%`);
+
+                        // Update pointer position for the colorful glow (-1 to 1 range)
+                        card.style.setProperty('--pointer-x', normalizedX.toFixed(3));
+                        card.style.setProperty('--pointer-y', normalizedY.toFixed(3));
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        // Reset transform with smooth transition
+                        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                        // Reset pointer to center
+                        card.style.setProperty('--pointer-x', '0');
+                        card.style.setProperty('--pointer-y', '0');
+                    });
+
+                    // Touch support - disable tilt on touch devices
+                    card.addEventListener('touchstart', () => {
+                        card.style.transform = 'scale(1.02)';
+                    });
+
+                    card.addEventListener('touchend', () => {
+                        card.style.transform = 'scale(1)';
+                    });
+                });
+
+                // Global pointer tracking for all cards (like jh3y's effect)
+                // This updates the glow position even when not directly hovering
+                let glowActivated = false;
+                document.addEventListener('pointermove', (event) => {
+                    // Activate glow on first pointer move (prevents glow showing on load)
+                    if (!glowActivated) {
+                        document.documentElement.style.setProperty('--glow-opacity', '0.35');
+                        glowActivated = true;
+                    }
+
+                    bentoCards.forEach((card) => {
+                        const rect = card.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+
+                        // Calculate pointer position relative to card center
+                        const relativeX = event.clientX - centerX;
+                        const relativeY = event.clientY - centerY;
+
+                        // Normalize to -1 to 1 range
+                        const x = relativeX / (rect.width / 2);
+                        const y = relativeY / (rect.height / 2);
+
+                        // Update CSS custom properties
+                        card.style.setProperty('--pointer-x', x.toFixed(3));
+                        card.style.setProperty('--pointer-y', y.toFixed(3));
+                    });
+                });
+            })();
+        </script>
     </section>
 
     <!-- SELECTED WORK SECTION -->
@@ -176,6 +998,40 @@
         }
         .animate-on-scroll { opacity: 0; will-change: transform, opacity, filter; }
         .animate-on-scroll.animate { animation: animationIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Portfolio card info with progressive blur - stacked layers approach */
+        .card-info-blurred {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            padding: 1.5rem;
+        }
+
+        .blur-stack {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .blur-stack::before,
+        .blur-stack::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(20px) contrast(1.2) brightness(1.1);
+            -webkit-backdrop-filter: blur(20px) contrast(1.2) brightness(1.1);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+        }
+
+        .blur-stack::after {
+            backdrop-filter: blur(40px) contrast(1.3) brightness(1.15);
+            -webkit-backdrop-filter: blur(40px) contrast(1.3) brightness(1.15);
+            mask-image: linear-gradient(to bottom, transparent 20%, black 60%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 60%, black 100%);
+        }
     </style>
 
     <!-- Progressive Blur Top (Sticky) -->
@@ -333,112 +1189,60 @@
         <!-- Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 w-full pb-64 gap-x-16 gap-y-40">
             <!-- Card 1 -->
-            <div class="flex flex-col gap-5 animate-on-scroll group cursor-pointer md:mt-0 mt-0" onclick="window.location.href='https://esthetic.pl/'" role="button">
-                <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
+            <div class="flex flex-col animate-on-scroll group cursor-pointer md:mt-0 mt-0 portfolio-card" data-card-index="0" onclick="window.location.href='https://esthetic.pl/'" role="button">
+                <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
                     <div class="z-10 group-hover:opacity-0 transition-opacity duration-500 bg-zinc-800/20 absolute top-0 right-0 bottom-0 left-0"></div>
-                    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105" alt="System" loading="lazy" decoding="async" width="1600" height="2000">
+                    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-[1.08] card-image" alt="System" loading="lazy" decoding="async" width="1600" height="2000">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40"></div>
-                    <div class="absolute top-6 left-6 text-white mix-blend-difference z-20">
+                    <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
                         <span class="font-mono text-[10px] tracking-widest text-white/60">01</span>
                     </div>
-                </div>
-                <div class="flex border-white/10 border-t pt-4 items-end justify-between">
-                    <div>
-                        <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Esthetic</h4>
-                        <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">Brand Identity</p>
+                    <div class="card-info-blurred flex items-end justify-between">
+                        <div class="blur-stack"></div>
+                        <div class="relative z-10">
+                            <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Esthetic</h4>
+                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Brand Identity</p>
+                        </div>
+                        <div class="relative z-10 text-[10px] hover:bg-white/10 transition-colors font-medium text-white border-white/20 border rounded-full pt-1 pr-3 pb-1 pl-3">2025</div>
                     </div>
-                    <div class="text-[10px] hover:bg-white/10 transition-colors font-medium text-white border-white/20 border rounded-full pt-1 pr-3 pb-1 pl-3">2025</div>
                 </div>
             </div>
 
             <!-- Card 2 -->
-            <div class="flex flex-col gap-5 animate-on-scroll group cursor-pointer md:mt-40">
-                <div class="w-full aspect-square relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
-                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 scale-100 group-hover:scale-105" alt="Beauty of Joseon" loading="lazy" decoding="async" width="1200" height="1200">
+            <div class="flex flex-col animate-on-scroll group cursor-pointer md:mt-40 portfolio-card" data-card-index="1">
+                <div class="w-full aspect-square relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 scale-100 group-hover:scale-[1.08] card-image" alt="Beauty of Joseon" loading="lazy" decoding="async" width="1200" height="1200">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
-                    <div class="absolute top-6 right-6 text-white mix-blend-difference z-20">
+                    <div class="absolute top-6 right-6 text-white mix-blend-difference z-20 card-number">
                         <span class="font-mono text-[10px] tracking-widest text-white/60">02</span>
                     </div>
-                </div>
-                <div class="flex justify-between items-end border-t border-white/10 pt-4">
-                    <div class="text-right ml-auto order-2">
-                        <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Adfidence</h4>
-                        <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">Art Direction</p>
+                    <div class="card-info-blurred flex justify-between items-end">
+                        <div class="blur-stack"></div>
+                        <div class="relative z-10 px-3 py-1 rounded-full bg-white text-black text-[10px] font-semibold hover:bg-zinc-200 transition-colors">2024</div>
+                        <div class="relative z-10 text-right">
+                            <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Adfidence</h4>
+                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Art Direction</p>
+                        </div>
                     </div>
-                    <div class="px-3 py-1 rounded-full bg-white text-black text-[10px] font-semibold order-1 hover:bg-zinc-200 transition-colors">2024</div>
                 </div>
             </div>
 
             <!-- Card 3 -->
-            <div class="flex flex-col gap-5 animate-on-scroll group cursor-pointer">
-                <div class="w-full aspect-[3/4] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 mix-blend-luminosity group-hover:mix-blend-normal scale-100 group-hover:scale-105" alt="SLL" loading="lazy" decoding="async" width="1200" height="1600">
+            <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="2">
+                <div class="w-full aspect-[3/4] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 mix-blend-luminosity group-hover:mix-blend-normal scale-100 group-hover:scale-[1.08] card-image" alt="SLL" loading="lazy" decoding="async" width="1200" height="1600">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-50"></div>
-                     <div class="absolute top-6 left-6 text-white mix-blend-difference z-20">
+                     <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
                         <span class="font-mono text-[10px] tracking-widest text-white/60">03</span>
                     </div>
-                </div>
-                <div class="flex justify-between items-end border-t border-white/10 pt-4">
-                    <div>
-                        <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">SLL</h4>
-                        <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">Web Design</p>
+                    <div class="card-info-blurred flex justify-between items-end">
+                        <div class="blur-stack"></div>
+                        <div class="relative z-10">
+                            <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">SLL</h4>
+                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Web Design</p>
+                        </div>
+                        <div class="relative z-10 px-3 py-1 rounded-full border border-[#e94e33] text-[#e94e33] text-[10px] font-medium hover:bg-[#e94e33] hover:text-white transition-colors">2023</div>
                     </div>
-                    <div class="px-3 py-1 rounded-full border border-[#e94e33] text-[#e94e33] text-[10px] font-medium hover:bg-[#e94e33] hover:text-white transition-colors">2023</div>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-             <div class="flex flex-col gap-5 animate-on-scroll group cursor-pointer md:mt-40">
-                <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
-                    <img src="https://images.unsplash.com/photo-1640906152676-dace6710d24b?w=1200&amp;q=80&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105" alt="Abstract 3D" loading="lazy" decoding="async" width="1200" height="1500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-50"></div>
-                    <div class="absolute top-6 right-6 text-white mix-blend-difference z-20">
-                        <span class="font-mono text-[10px] tracking-widest text-white/60">04</span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-end border-t border-white/10 pt-4">
-                    <div class="text-right ml-auto order-2">
-                        <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">Lumina</h4>
-                        <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">3D Illustration</p>
-                    </div>
-                    <div class="px-3 py-1 rounded-full border border-white/20 text-[10px] font-medium text-white order-1 hover:bg-white/10 transition-colors">2024</div>
-                </div>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="flex flex-col gap-5 animate-on-scroll group cursor-pointer">
-                <div class="w-full aspect-square relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
-                    <div class="absolute inset-0 bg-zinc-800/30 z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
-                    <img src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-all duration-700 saturate-50 group-hover:saturate-100 scale-100 group-hover:scale-105" alt="Aether" loading="lazy" decoding="async" width="1200" height="1200">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-60"></div>
-                    <div class="absolute top-6 left-6 text-white mix-blend-difference z-20">
-                        <span class="font-mono text-[10px] tracking-widest text-white/60">05</span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-end border-t border-white/10 pt-4">
-                    <div>
-                        <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">Aether</h4>
-                        <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">Motion Design</p>
-                    </div>
-                    <div class="px-3 py-1 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-[10px] font-semibold hover:from-violet-500 hover:to-indigo-500 transition-all">2024</div>
-                </div>
-            </div>
-
-            <!-- Card 6 -->
-            <div class="flex flex-col gap-5 animate-on-scroll group cursor-pointer md:mt-40">
-                <div class="w-full aspect-[3/4] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl transition-transform duration-700 group-hover:scale-[1.01]">
-                    <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale-[0.3] group-hover:grayscale-0 scale-100 group-hover:scale-105" alt="Horizon" loading="lazy" decoding="async" width="1200" height="1600">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-50"></div>
-                    <div class="absolute top-6 right-6 text-white mix-blend-difference z-20">
-                        <span class="font-mono text-[10px] tracking-widest text-white/60">06</span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-end border-t border-white/10 pt-4">
-                    <div class="text-right ml-auto order-2">
-                        <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">Horizon</h4>
-                        <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">App Design</p>
-                    </div>
-                    <div class="px-3 py-1 rounded-full border border-emerald-500 text-emerald-400 text-[10px] font-medium order-1 hover:bg-emerald-500 hover:text-white transition-colors">2025</div>
                 </div>
             </div>
         </div>
@@ -497,155 +1301,6 @@
     </script>
 </section>
 
-<!-- FLUID HEATMAP SECTION -->
-<section id="heatmap-section" class="relative w-full h-screen bg-transparent overflow-hidden flex items-center justify-center z-30 select-none">
-    <style>
-        #heatmap-section { cursor: none; }
-        .heatmap-cell { position: absolute; display: flex; align-items: center; justify-content: center; will-change: transform; pointer-events: none; }
-        .heatmap-letter { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1; will-change: transform, opacity; transition: none; }
-        .heatmap-cursor { position: fixed; width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle, rgba(255,120,50,0.8) 0%, rgba(255,80,30,0) 70%); pointer-events: none; z-index: 100; transform: translate(-50%, -50%); mix-blend-mode: screen; filter: blur(2px); }
-        .heatmap-glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(255,100,50,0.15) 0%, rgba(255,60,20,0.05) 40%, transparent 70%); pointer-events: none; z-index: 50; transform: translate(-50%, -50%); filter: blur(40px); }
-    </style>
-    <div id="heatmap-glow" class="heatmap-glow" style="display: none;"></div>
-    <div id="heatmap-cursor" class="heatmap-cursor" style="display: none;"></div>
-    <div id="grid-container" class="absolute inset-0"></div>
-    <script>
-        (function() {
-            const container = document.getElementById('grid-container');
-            const cursorEl = document.getElementById('heatmap-cursor');
-            const glowEl = document.getElementById('heatmap-glow');
-            const section = document.getElementById('heatmap-section');
-            const CELL_SIZE = 48;
-            const RADIUS = 280;
-            const RADIUS_SQUARED = RADIUS * RADIUS; // For faster distance checks
-            const DECAY = 0.92;
-            const COLORS = [
-                { r: 255, g: 255, b: 255, a: 0.08 },
-                { r: 100, g: 130, b: 180, a: 0.25 },
-                { r: 180, g: 100, b: 160, a: 0.5 },
-                { r: 255, g: 100, b: 80, a: 0.75 },
-                { r: 255, g: 160, b: 60, a: 0.9 },
-                { r: 255, g: 220, b: 180, a: 1.0 }
-            ];
-            let cells = [];
-            let cellGrid = {}; // Spatial partitioning grid
-            let cols = 0, rows = 0;
-            let mouseX = -1000, mouseY = -1000, targetMouseX = -1000, targetMouseY = -1000, isInSection = false;
-
-            function createGrid() {
-                container.innerHTML = '';
-                cells = [];
-                cellGrid = {};
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                cols = Math.ceil(width / CELL_SIZE);
-                rows = Math.ceil(height / CELL_SIZE);
-                const fragment = document.createDocumentFragment();
-                for (let row = 0; row < rows; row++) {
-                    for (let col = 0; col < cols; col++) {
-                        const el = document.createElement('div');
-                        el.className = 'heatmap-cell';
-                        el.style.cssText = `left: ${col * CELL_SIZE}px; top: ${row * CELL_SIZE}px; width: ${CELL_SIZE}px; height: ${CELL_SIZE}px;`;
-                        const span = document.createElement('span');
-                        span.textContent = 'NF';
-                        span.className = 'heatmap-letter';
-                        span.style.color = 'rgba(255, 255, 255, 0.08)';
-                        span.style.fontVariationSettings = '"wght" 200';
-                        el.appendChild(span);
-                        fragment.appendChild(el);
-                        const cell = { el, span, x: col * CELL_SIZE + (CELL_SIZE / 2), y: row * CELL_SIZE + (CELL_SIZE / 2), heat: 0, targetHeat: 0, scale: 1, weight: 200, row, col };
-                        cells.push(cell);
-                        // Add to spatial grid
-                        const key = `${row},${col}`;
-                        cellGrid[key] = cell;
-                    }
-                }
-                container.appendChild(fragment);
-            }
-            function getHeatColor(t) {
-                t = Math.max(0, Math.min(1, t));
-                const numStops = COLORS.length - 1;
-                const scaledT = t * numStops;
-                const index = Math.floor(scaledT);
-                const localT = scaledT - index;
-                const c1 = COLORS[Math.min(index, numStops)];
-                const c2 = COLORS[Math.min(index + 1, numStops)];
-                return { r: c1.r + (c2.r - c1.r) * localT, g: c1.g + (c2.g - c1.g) * localT, b: c1.b + (c2.b - c1.b) * localT, a: c1.a + (c2.a - c1.a) * localT };
-            }
-            function lerp(a, b, t) { return a + (b - a) * t; }
-            function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
-            section.addEventListener('mouseenter', () => { isInSection = true; cursorEl.style.display = 'block'; glowEl.style.display = 'block'; });
-            section.addEventListener('mouseleave', () => { isInSection = false; cursorEl.style.display = 'none'; glowEl.style.display = 'none'; targetMouseX = -1000; targetMouseY = -1000; });
-            section.addEventListener('mousemove', (e) => {
-                if (!isInSection) return;
-                targetMouseX = e.clientX;
-                const rect = container.getBoundingClientRect();
-                targetMouseY = e.clientY - rect.top;
-                cursorEl.style.left = e.clientX + 'px'; cursorEl.style.top = e.clientY + 'px';
-                glowEl.style.left = e.clientX + 'px'; glowEl.style.top = e.clientY + 'px';
-            });
-            let lastTime = 0;
-            function animate(currentTime) {
-                const deltaTime = Math.min((currentTime - lastTime) / 16.67, 2);
-                lastTime = currentTime;
-                const rect = container.getBoundingClientRect();
-                if (rect.top <= window.innerHeight && rect.bottom >= 0) {
-                    mouseX = lerp(mouseX, targetMouseX, 0.15);
-                    mouseY = lerp(mouseY, targetMouseY, 0.15);
-
-                    // Spatial partitioning: calculate which cells to check
-                    const mouseCellCol = Math.floor(mouseX / CELL_SIZE);
-                    const mouseCellRow = Math.floor(mouseY / CELL_SIZE);
-                    const cellRadius = Math.ceil(RADIUS / CELL_SIZE) + 1;
-                    const minRow = Math.max(0, mouseCellRow - cellRadius);
-                    const maxRow = Math.min(rows - 1, mouseCellRow + cellRadius);
-                    const minCol = Math.max(0, mouseCellCol - cellRadius);
-                    const maxCol = Math.min(cols - 1, mouseCellCol + cellRadius);
-
-                    for (let i = 0; i < cells.length; i++) {
-                        const cell = cells[i];
-
-                        // Only calculate distance for cells in the affected area
-                        if (isInSection && cell.row >= minRow && cell.row <= maxRow && cell.col >= minCol && cell.col <= maxCol) {
-                            const dx = mouseX - cell.x, dy = mouseY - cell.y;
-                            const distSquared = dx * dx + dy * dy;
-                            cell.targetHeat = distSquared < RADIUS_SQUARED ? easeOutQuart(1 - (Math.sqrt(distSquared) / RADIUS)) : 0;
-                        } else {
-                            cell.targetHeat = 0;
-                        }
-
-                        cell.heat = (cell.targetHeat > cell.heat) ? lerp(cell.heat, cell.targetHeat, 0.2 * deltaTime) : cell.heat * Math.pow(DECAY, deltaTime);
-                        const heat = cell.heat;
-                        if (heat > 0.01) {
-                            const targetScale = 1 + heat * 1.2;
-                            cell.scale = lerp(cell.scale, targetScale, 0.12 * deltaTime);
-                            const targetWeight = 200 + heat * 600;
-                            cell.weight = lerp(cell.weight, targetWeight, 0.15 * deltaTime);
-                            const color = getHeatColor(heat);
-                            const zIndex = Math.floor(heat * 10);
-                            const textShadow = heat > 0.7 ? `0 0 ${heat * 12}px rgba(255, 150, 80, ${heat * 0.5})` : 'none';
-                            // Batch updates with cssText
-                            cell.el.style.cssText = `left: ${cell.el.style.left}; top: ${cell.el.style.top}; width: ${cell.el.style.width}; height: ${cell.el.style.height}; transform: scale(${cell.scale}); z-index: ${zIndex};`;
-                            cell.span.style.cssText = `font-variation-settings: "wght" ${Math.round(cell.weight)}; color: rgba(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)}, ${color.a.toFixed(2)}); text-shadow: ${textShadow};`;
-                        } else {
-                            cell.scale = lerp(cell.scale, 1, 0.08 * deltaTime);
-                            cell.weight = lerp(cell.weight, 200, 0.08 * deltaTime);
-                            // Batch updates with cssText
-                            cell.el.style.cssText = `left: ${cell.el.style.left}; top: ${cell.el.style.top}; width: ${cell.el.style.width}; height: ${cell.el.style.height}; transform: scale(${cell.scale}); z-index: 0;`;
-                            cell.span.style.cssText = `font-variation-settings: "wght" ${Math.round(cell.weight)}; color: rgba(255, 255, 255, 0.08); text-shadow: none;`;
-                        }
-                    }
-                }
-                requestAnimationFrame(animate);
-            }
-            createGrid();
-            requestAnimationFrame(animate);
-            let resizeTimeout;
-            window.addEventListener('resize', () => { clearTimeout(resizeTimeout); resizeTimeout = setTimeout(createGrid, 150); });
-        })();
-    </script>
-</section>
-
 <!-- LET'S TALK SECTION -->
 <section id="lets-talk-section" class="relative w-full min-h-screen bg-transparent flex flex-col items-center justify-center z-30 overflow-hidden">
     <style>
@@ -654,7 +1309,7 @@
         .frame-square { position: absolute; width: 75%; height: 75%; background: white; }
         .frame-square-back { top: 0; right: 0; }
         .frame-square-front { bottom: 0; left: 0; }
-        .frame-hole { position: absolute; width: 50%; height: 50%; background: black; z-index: 10; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .frame-hole { position: absolute; width: 50%; height: 50%; background: transparent; z-index: 10; display: flex; align-items: center; justify-content: center; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .lets-talk-link { font-family: 'Manrope', sans-serif; font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 500; color: white; text-decoration: none; position: relative; letter-spacing: -0.02em; z-index: 20; }
         .lets-talk-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 1px; background: white; transform: scaleX(1); transform-origin: left; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .lets-talk-link:hover::after { transform: scaleX(0); transform-origin: right; }
@@ -667,8 +1322,12 @@
     <div class="relative w-full h-full flex items-center justify-center py-20">
         <div class="absolute left-6 md:left-12 top-1/2 -translate-y-1/2"><span class="side-text">New Frame Studio</span></div>
         <div class="frame-container">
-            <div class="frame-square frame-square-back"></div>
-            <div class="frame-square frame-square-front"></div>
+            <svg width="100%" height="100%" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0">
+                <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="white"/>
+                <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="white"/>
+                <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="white"/>
+                <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="white"/>
+            </svg>
             <div class="frame-hole"><a href="#" class="lets-talk-link">Let's Talk!</a></div>
         </div>
         <div class="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex items-center"><span class="dot-indicator"></span><span class="side-text">Digital Fun</span></div>
@@ -685,7 +1344,12 @@
     <footer class="relative z-20 bg-transparent py-16 px-6 md:px-12 border-t border-white/10">
         <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
             <div class="flex items-center gap-2 text-white/40">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copyright" class="lucide lucide-copyright w-4 h-4 stroke-[1.5]"><circle cx="12" cy="12" r="10"></circle><path d="M14.83 14.83a4 4 0 1 1 0-5.66"></path></svg>
+                <svg width="24" height="24" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                    <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
+                    <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
+                    <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
+                    <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
+                </svg>
                 <span class="text-[10px] uppercase tracking-wider">All rights reserved</span>
             </div>
             <div class="flex gap-8">
@@ -704,76 +1368,9 @@
 
     <script>
         lucide.createIcons();
-        const hero = document.getElementById('hero');
-        const scopeSection = document.getElementById('scope');
-        const scopeItems = document.querySelectorAll('.scope-item');
-        const TOTAL_ITEMS = scopeItems.length;
-        const windowHeight = window.innerHeight;
 
-        // Cache for trigonometric calculations
-        let cachedScrollY = -1;
-        let cachedSnakeOffsets = [];
-        
         function handleScroll() {
-            const scrollY = window.scrollY;
-            const heroProgress = Math.min(scrollY / windowHeight, 1);
-            if (heroProgress < 1) {
-                const opacity = Math.max(0, 1 - heroProgress * 3);
-                const scale = 1 - (heroProgress * 0.05);
-                const translateY = heroProgress * 20;
-                const blur = Math.min(heroProgress * 25, 12);
-                hero.style.transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
-                hero.style.opacity = opacity;
-                hero.style.filter = `blur(${blur}px)`;
-            } else {
-                hero.style.opacity = 0;
-                hero.style.transform = `translate3d(0, 20px, 0) scale(0.95)`;
-                hero.style.filter = 'blur(12px)';
-            }
-
-            const scopeRect = scopeSection.getBoundingClientRect();
-            const scopeTop = scopeRect.top;
-            const scopeHeight = scopeRect.height;
-            let sectionProgress = ((-scopeTop) / (scopeHeight - windowHeight));
-            sectionProgress = Math.max(0, Math.min(1, sectionProgress));
-            const focusIndexRaw = sectionProgress * (TOTAL_ITEMS + 4) - 2;
-
-            // Cache trigonometric calculations for snake animation
-            if (cachedScrollY !== scrollY) {
-                cachedScrollY = scrollY;
-                cachedSnakeOffsets = [];
-                for (let i = 0; i < TOTAL_ITEMS; i++) {
-                    const snakeOffset = Math.sin((scrollY * 0.002) + (i * 0.8)) * 60;
-                    const snakeOffset2 = Math.cos((scrollY * 0.003) - (i * 0.5)) * 25;
-                    cachedSnakeOffsets[i] = snakeOffset + snakeOffset2;
-                }
-            }
-
-            scopeItems.forEach((item, index) => {
-                const distance = Math.abs(index - focusIndexRaw);
-                let opacity = 0;
-                let blurAmount = 12;
-
-                if (distance < 0.5) {
-                    item.classList.remove('text-zinc-800');
-                    item.classList.add('text-white');
-                    opacity = 1; blurAmount = 0;
-                } else if (distance < 2) {
-                    item.classList.add('text-zinc-800');
-                    item.classList.remove('text-white');
-                    opacity = 1 - ((distance - 0.5) / 1.5);
-                    blurAmount = ((distance - 0.5) / 1.5) * 12;
-                } else {
-                    item.classList.add('text-zinc-800');
-                    item.classList.remove('text-white');
-                    opacity = 0; blurAmount = 12;
-                }
-
-                const totalX = cachedSnakeOffsets[index];
-                item.style.transform = `translate3d(${totalX}px, 0, 0)`;
-                item.style.opacity = opacity;
-                item.style.filter = `blur(${blurAmount}px)`;
-            });
+            // Hero scroll effects removed since hero is no longer fixed
         }
 
         // Unified scroll manager - single RAF loop for all scroll handlers
