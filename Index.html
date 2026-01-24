@@ -118,22 +118,6 @@
     <!-- Hero Section - Editorial Brutalism -->
     <div id="hero" class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden" style="opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0px); will-change: transform, opacity, filter; transition: filter 0.15s ease-out; pointer-events: auto; z-index: 15;">
 
-        <!-- Industrial Grid Background -->
-        <div class="hero-grid absolute inset-0 opacity-15">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-                        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(234, 78, 51, 0.3)" stroke-width="0.5"/>
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-        </div>
-
-        <!-- Diagonal Accent Bars -->
-        <div class="diagonal-accent absolute w-[200%] h-1 bg-gradient-to-r from-transparent via-[#EA4E33] to-transparent top-[25%] -left-[50%] rotate-[35deg] opacity-40" style="animation: slideAccent1 15s ease-in-out infinite;"></div>
-        <div class="diagonal-accent absolute w-[200%] h-0.5 bg-gradient-to-r from-transparent via-white to-transparent bottom-[30%] -left-[50%] rotate-[-25deg] opacity-20" style="animation: slideAccent2 20s ease-in-out infinite reverse;"></div>
-
         <!-- Kinetic Noise Overlay -->
         <div class="noise-overlay absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 400 400%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%223%22 numOctaves=%224%22 /%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); animation: animateNoise 8s steps(10) infinite;"></div>
 
@@ -156,26 +140,27 @@
                     </div>
                 </div>
 
-                <!-- Bottom Info Bar -->
-                <div class="hero-info-bar flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8 mt-16 md:mt-24 opacity-0 px-4" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards; border-left: 3px solid #EA4E33; padding-left: 1.5rem;">
-                    <div class="flex items-center gap-6">
-                        <div class="hero-location">
+                <!-- Info Bar - Centered under title -->
+                <div class="hero-info-bar flex items-center justify-center mt-16 md:mt-24 opacity-0 w-full" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;">
+                    <div class="flex items-center gap-8">
+                        <div class="hero-location text-center">
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">LOCATION</div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;">WARSAW</div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);">52.2297°N / 21.0122°E</div>
                         </div>
-                        <div class="hidden md:block w-px h-16 bg-white/20"></div>
-                        <div class="hero-year">
+                        <div class="w-px h-16 bg-white/20"></div>
+                        <div class="hero-year text-center">
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">ESTABLISHED</div>
-                            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.05em; color: #fff;">2023</div>
+                            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.05em; color: #fff;">20<span style="color: #EA4E33;">23</span></div>
                         </div>
                     </div>
-                    <div class="hero-scroll-indicator flex items-center gap-3 ml-auto">
-                        <div class="w-12 h-px bg-white/30"></div>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);">SCROLL TO EXPLORE</div>
-                        <svg class="w-5 h-5 text-white/50 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="animation: bounce 2s infinite;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                    </div>
                 </div>
+            </div>
+
+            <!-- Scroll to Explore - Absolute bottom -->
+            <div class="hero-scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);">SCROLL TO EXPLORE</div>
+                <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="animation: bounce 2s infinite;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
 
 
@@ -1046,7 +1031,7 @@
         
         <!-- Header Text -->
         <div class="text-center mb-40 pt-32 animate-on-scroll relative z-20">
-            <div id="reveal-paragraph" class="text-xl md:text-2xl lg:text-[1.7rem] font-normal leading-[1.6] md:leading-[1.2] tracking-tight max-w-4xl mx-auto select-none">
+            <div id="reveal-paragraph" class="text-2xl md:text-3xl lg:text-[2.5rem] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-5xl mx-auto select-none">
                 <span class="reveal-section revealed" data-section="0">Hey! We're</span>
                 <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
                 <span class="reveal-section revealed" data-section="0">— a creative studio that doesn't do boring.</span>
@@ -1071,8 +1056,17 @@
                 <button class="reveal-chip dim-chip" data-section="7">EXTRAORDINARY</button>
                 <span class="reveal-section dim-section" data-section="7">together? Let's talk.</span>
             </div>
+
+            <!-- Reveal All Button -->
+            <button id="reveal-all-btn" class="reveal-all-btn mt-8">
+                <span class="reveal-all-text">Reveal All</span>
+                <svg class="reveal-all-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 12L9 16V8L15 12Z" fill="currentColor"/>
+                    <path d="M21 12L15 16V8L21 12Z" fill="currentColor" opacity="0.5"/>
+                </svg>
+            </button>
         </div>
-        
+
         <style class="">
             #reveal-paragraph { position: relative; }
             /* Parent section - always visible container */
@@ -1092,6 +1086,57 @@
             .reveal-chip.dim-chip { border-color: rgba(161, 161, 170, 0.4); color: rgb(161 161 170); background: rgba(161, 161, 170, 0.08); }
             .reveal-chip.dim-chip:not(.revealed):hover { background: rgba(161, 161, 170, 0.15); border-color: rgba(161, 161, 170, 0.6); }
             .reveal-chip.dim-chip.revealed { background: rgba(234, 78, 51, 0.1); border-color: #EA4E33; color: #EA4E33; }
+
+            /* Reveal All Button */
+            .reveal-all-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.6rem 1.2rem;
+                border: 1px solid rgba(234, 78, 51, 0.4);
+                border-radius: 9999px;
+                background: rgba(234, 78, 51, 0.08);
+                color: #EA4E33;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                font-weight: 500;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .reveal-all-btn:hover {
+                background: rgba(234, 78, 51, 0.15);
+                border-color: #EA4E33;
+                transform: scale(1.02);
+            }
+            .reveal-all-btn:active {
+                transform: scale(0.98);
+            }
+            .reveal-all-btn.all-revealed {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(255, 255, 255, 0.2);
+                color: rgba(255, 255, 255, 0.5);
+            }
+            .reveal-all-btn.all-revealed:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.3);
+                color: rgba(255, 255, 255, 0.7);
+            }
+            .reveal-all-icon {
+                width: 14px;
+                height: 14px;
+                transition: transform 0.3s ease;
+            }
+            .reveal-all-btn:hover .reveal-all-icon {
+                transform: translateX(2px);
+            }
+            .reveal-all-btn.all-revealed .reveal-all-icon {
+                transform: rotate(180deg);
+            }
+            .reveal-all-btn.all-revealed:hover .reveal-all-icon {
+                transform: rotate(180deg) translateX(2px);
+            }
         </style>
         
         <script class="">
@@ -1182,6 +1227,100 @@
                             }, index * 50); // 50ms delay between each word
                         });
                     });
+                });
+
+                // Reveal All button functionality
+                const revealAllBtn = document.getElementById('reveal-all-btn');
+                const revealAllText = revealAllBtn.querySelector('.reveal-all-text');
+                let isAnimating = false; // Lock to prevent interruption
+
+                function updateRevealAllState() {
+                    const allChips = document.querySelectorAll('.reveal-chip');
+                    const unrevealedChips = Array.from(allChips).filter(chip => !chip.classList.contains('revealed'));
+                    const allRevealed = unrevealedChips.length === 0;
+
+                    if (allRevealed) {
+                        revealAllBtn.classList.add('all-revealed');
+                        revealAllText.textContent = 'Hide All';
+                    } else {
+                        revealAllBtn.classList.remove('all-revealed');
+                        revealAllText.textContent = 'Reveal All';
+                    }
+                }
+
+                // Update state initially
+                updateRevealAllState();
+
+                // Update state when any chip is clicked (only if not animating from button)
+                chips.forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        if (!isAnimating) {
+                            setTimeout(updateRevealAllState, 50);
+                        }
+                    });
+                });
+
+                revealAllBtn.addEventListener('click', function() {
+                    // Prevent clicks while animation is running
+                    if (isAnimating) return;
+
+                    const allChips = document.querySelectorAll('.reveal-chip');
+                    const unrevealedChips = Array.from(allChips).filter(chip => !chip.classList.contains('revealed'));
+                    const allRevealed = unrevealedChips.length === 0;
+
+                    // Lock the button
+                    isAnimating = true;
+                    revealAllBtn.style.pointerEvents = 'none';
+                    revealAllBtn.style.opacity = '0.6';
+
+                    // Get button position for distance calculations
+                    const btnRect = this.getBoundingClientRect();
+                    const btnCenterX = btnRect.left + btnRect.width / 2;
+                    const btnCenterY = btnRect.top + btnRect.height / 2;
+
+                    // Collect all chips with their distances
+                    const chipsWithDistance = Array.from(allChips).map(chip => {
+                        const chipRect = chip.getBoundingClientRect();
+                        const chipCenterX = chipRect.left + chipRect.width / 2;
+                        const chipCenterY = chipRect.top + chipRect.height / 2;
+                        const distance = Math.sqrt(
+                            Math.pow(chipCenterX - btnCenterX, 2) +
+                            Math.pow(chipCenterY - btnCenterY, 2)
+                        );
+                        return { chip, distance };
+                    });
+
+                    // Sort by distance
+                    if (allRevealed) {
+                        // When hiding, start from furthest
+                        chipsWithDistance.sort((a, b) => b.distance - a.distance);
+                    } else {
+                        // When revealing, start from nearest
+                        chipsWithDistance.sort((a, b) => a.distance - b.distance);
+                    }
+
+                    // Trigger each chip with staggered delay
+                    chipsWithDistance.forEach((item, index) => {
+                        setTimeout(() => {
+                            // Only click if state needs to change
+                            if (allRevealed && item.chip.classList.contains('revealed')) {
+                                item.chip.click();
+                            } else if (!allRevealed && !item.chip.classList.contains('revealed')) {
+                                item.chip.click();
+                            }
+                        }, index * 100); // 100ms delay between each chip
+                    });
+
+                    // Calculate total animation duration
+                    const totalAnimationTime = chipsWithDistance.length * 100 + 600;
+
+                    // Update button state and unlock after all animations complete
+                    setTimeout(() => {
+                        updateRevealAllState();
+                        isAnimating = false;
+                        revealAllBtn.style.pointerEvents = '';
+                        revealAllBtn.style.opacity = '';
+                    }, totalAnimationTime);
                 });
             })();
         </script>
