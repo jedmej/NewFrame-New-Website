@@ -24,23 +24,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .snake-text {
-            will-change: transform, opacity, color;
-        }
-        
-        .scope-item {
-            will-change: transform, opacity, filter;
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            transition: filter 0.25s ease-out, opacity 0.3s ease-out;
-        }
-        
-        /* Smooth lerping for custom cursor effects */
-        .interactive-card {
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
-            will-change: transform;
-        }
-
         @keyframes revealBlur {
             0% { opacity: 0; filter: blur(20px); transform: translateY(40px); }
             100% { opacity: 1; filter: blur(0px); transform: translateY(0); }
@@ -91,6 +74,8 @@
             );
             will-change: opacity;
             transform: translateZ(0);
+            /* Performance: CSS containment */
+            contain: strict;
         }
     </style>
 </head>
@@ -145,7 +130,7 @@
                     <div class="flex items-center gap-8">
                         <div class="hero-location text-center">
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">LOCATION</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;">WARSAW</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;">WARSAW</div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);">52.2297°N / 21.0122°E</div>
                         </div>
                         <div class="w-px h-16 bg-white/20"></div>
@@ -251,6 +236,11 @@
                 let targetRotateY = 0;
                 let targetRotateZ = -2;
 
+                // Animation control (for visibility-based pausing)
+                let heroAnimationId = null;
+                let isHeroVisible = true;
+                let needsAnimation = true;
+
                 hero.addEventListener('mousemove', (e) => {
                     const rect = hero.getBoundingClientRect();
                     mouseX = e.clientX;
@@ -269,6 +259,9 @@
                     targetRotateY = normalizedX * 12; // Horizontal tilt (rotateY): ±12 degrees
                     targetRotateX = -normalizedY * 8; // Vertical tilt (rotateX): ±8 degrees (inverted)
                     targetRotateZ = -normalizedX * 3; // Slight Z rotation for extra dynamism
+
+                    // Restart animation if it was paused due to convergence
+                    needsAnimation = true;
                 });
 
                 hero.addEventListener('mouseleave', () => {
@@ -280,21 +273,48 @@
                 });
 
                 // Smooth lerp animation for cursor glow and 3D tilt
+                // Optimized: Pauses when hero is not visible and when values converge
+                // Intersection Observer to pause animation when hero is not visible
+                const heroObserver = new IntersectionObserver((entries) => {
+                    isHeroVisible = entries[0].isIntersecting;
+                    if (isHeroVisible && !heroAnimationId) {
+                        needsAnimation = true;
+                        animateHeroEffects();
+                    }
+                }, { threshold: 0 });
+                heroObserver.observe(hero);
+
                 function animateHeroEffects() {
-                    // Glow position
-                    glowX += (mouseX - glowX) * 0.1;
-                    glowY += (mouseY - glowY) * 0.1;
-                    cursorGlow.style.left = glowX + 'px';
-                    cursorGlow.style.top = glowY + 'px';
+                    // Don't run if hero is not visible
+                    if (!isHeroVisible) {
+                        heroAnimationId = null;
+                        return;
+                    }
 
-                    // Smooth 3D rotation with lerp
-                    currentRotateX += (targetRotateX - currentRotateX) * 0.08;
-                    currentRotateY += (targetRotateY - currentRotateY) * 0.08;
-                    currentRotateZ += (targetRotateZ - currentRotateZ) * 0.08;
+                    // Check if values have converged (optimization for idle state)
+                    const glowDiff = Math.abs(mouseX - glowX) + Math.abs(mouseY - glowY);
+                    const rotateDiff = Math.abs(targetRotateX - currentRotateX) +
+                                       Math.abs(targetRotateY - currentRotateY) +
+                                       Math.abs(targetRotateZ - currentRotateZ);
 
-                    typeStack.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) rotateZ(${currentRotateZ}deg)`;
+                    needsAnimation = glowDiff > 0.5 || rotateDiff > 0.01;
 
-                    requestAnimationFrame(animateHeroEffects);
+                    if (needsAnimation) {
+                        // Glow position
+                        glowX += (mouseX - glowX) * 0.1;
+                        glowY += (mouseY - glowY) * 0.1;
+                        cursorGlow.style.left = glowX + 'px';
+                        cursorGlow.style.top = glowY + 'px';
+
+                        // Smooth 3D rotation with lerp
+                        currentRotateX += (targetRotateX - currentRotateX) * 0.08;
+                        currentRotateY += (targetRotateY - currentRotateY) * 0.08;
+                        currentRotateZ += (targetRotateZ - currentRotateZ) * 0.08;
+
+                        typeStack.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) rotateZ(${currentRotateZ}deg)`;
+                    }
+
+                    heroAnimationId = requestAnimationFrame(animateHeroEffects);
                 }
                 animateHeroEffects();
 
@@ -529,7 +549,7 @@
                 transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
                             border-color 0.4s ease,
                             background 0.4s ease,
-                            box-shadow 0.4s ease,
+                            box-shadow 0.35s ease-out,
                             backdrop-filter 0.4s ease,
                             filter 0.4s cubic-bezier(0.23, 1, 0.32, 1),
                             opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1),
@@ -566,10 +586,9 @@
                 background: rgba(0, 0, 0, 0.5);
                 backdrop-filter: blur(30px) saturate(1.4);
                 -webkit-backdrop-filter: blur(30px) saturate(1.4);
-                box-shadow: 0 0 80px -15px rgba(234, 78, 51, 0.35),
-                            0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                            inset 0 1px 0 rgba(255,255,255,0.1),
-                            0 0 0 1px rgba(234, 78, 51, 0.2);
+                /* Optimized: Reduced from 4 shadows to 2 for better paint performance */
+                box-shadow: 0 0 60px -10px rgba(234, 78, 51, 0.4),
+                            0 20px 40px -10px rgba(0, 0, 0, 0.5);
                 filter: brightness(1.05);
                 scale: 1.02;
                 z-index: 10;
@@ -941,33 +960,84 @@
                 });
 
                 // Global pointer tracking for all cards (like jh3y's effect)
-                // This updates the glow position even when not directly hovering
+                // Optimized: Uses RAF throttling and cached geometry
                 let glowActivated = false;
+                let pointerRAF = null;
+                let lastPointerX = 0, lastPointerY = 0;
+
+                // Cache card geometry to avoid repeated getBoundingClientRect calls
+                const cardGeometry = new Map();
+
+                function cacheCardGeometry() {
+                    bentoCards.forEach((card) => {
+                        const rect = card.getBoundingClientRect();
+                        cardGeometry.set(card, {
+                            left: rect.left,
+                            top: rect.top,
+                            width: rect.width,
+                            height: rect.height,
+                            centerX: rect.left + rect.width / 2,
+                            centerY: rect.top + rect.height / 2,
+                            halfWidth: rect.width / 2,
+                            halfHeight: rect.height / 2
+                        });
+                    });
+                }
+
+                // Update geometry on scroll/resize
+                let geometryTimeout;
+                const debouncedCacheGeometry = () => {
+                    clearTimeout(geometryTimeout);
+                    geometryTimeout = setTimeout(cacheCardGeometry, 50);
+                };
+                window.addEventListener('scroll', debouncedCacheGeometry, { passive: true });
+                window.addEventListener('resize', debouncedCacheGeometry, { passive: true });
+
                 document.addEventListener('pointermove', (event) => {
                     // Activate glow on first pointer move (prevents glow showing on load)
                     if (!glowActivated) {
                         document.documentElement.style.setProperty('--glow-opacity', '0.35');
                         glowActivated = true;
+                        cacheCardGeometry(); // Initial cache
                     }
 
-                    bentoCards.forEach((card) => {
-                        const rect = card.getBoundingClientRect();
-                        const centerX = rect.left + rect.width / 2;
-                        const centerY = rect.top + rect.height / 2;
+                    lastPointerX = event.clientX;
+                    lastPointerY = event.clientY;
 
-                        // Calculate pointer position relative to card center
-                        const relativeX = event.clientX - centerX;
-                        const relativeY = event.clientY - centerY;
+                    // Throttle updates to RAF (max 60fps)
+                    if (pointerRAF) return;
 
-                        // Normalize to -1 to 1 range
-                        const x = relativeX / (rect.width / 2);
-                        const y = relativeY / (rect.height / 2);
+                    pointerRAF = requestAnimationFrame(() => {
+                        bentoCards.forEach((card) => {
+                            const geo = cardGeometry.get(card);
+                            if (!geo) return;
 
-                        // Update CSS custom properties
-                        card.style.setProperty('--pointer-x', x.toFixed(3));
-                        card.style.setProperty('--pointer-y', y.toFixed(3));
+                            // Calculate pointer position relative to card center
+                            const relativeX = lastPointerX - geo.centerX;
+                            const relativeY = lastPointerY - geo.centerY;
+
+                            // Normalize to -1 to 1 range
+                            const x = relativeX / geo.halfWidth;
+                            const y = relativeY / geo.halfHeight;
+
+                            // Update CSS custom properties
+                            card.style.setProperty('--pointer-x', x.toFixed(3));
+                            card.style.setProperty('--pointer-y', y.toFixed(3));
+                        });
+                        pointerRAF = null;
                     });
                 });
+
+                // Pause wave animation when bento section is not visible
+                const motionWave = document.querySelector('.motion-wave');
+                if (motionWave) {
+                    const waveObserver = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            motionWave.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+                        });
+                    }, { threshold: 0 });
+                    waveObserver.observe(bentoGrid);
+                }
             })();
         </script>
     </section>
@@ -977,6 +1047,16 @@
     
     <!-- Custom Styles for Blur, Animation & Layout -->
     <style class="">
+        /* Performance: content-visibility for off-screen rendering optimization */
+        #selected-work {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 2000px;
+        }
+        .portfolio-card {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 600px;
+        }
+
         @keyframes animationIn {
             0% { opacity: 0; transform: translateY(80px) scale(0.96); filter: blur(12px); }
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
@@ -1052,18 +1132,25 @@
                 <button class="reveal-chip" data-section="4">BRANDING</button>
                 <span class="reveal-section" data-section="4">to web design, we obsess over every pixel.</span>
                 
-                <span class="reveal-section dim-section" data-section="7">Want to make something</span>
-                <button class="reveal-chip dim-chip" data-section="7">EXTRAORDINARY</button>
-                <span class="reveal-section dim-section" data-section="7">together? Let's talk.</span>
+                <span class="reveal-section" data-section="7">Want to make something</span>
+                <button class="reveal-chip" data-section="7">EXTRAORDINARY</button>
+                <span class="reveal-section" data-section="7">together? Let's talk.</span>
             </div>
 
             <!-- Reveal All Button -->
             <button id="reveal-all-btn" class="reveal-all-btn mt-8">
-                <span class="reveal-all-text">Reveal All</span>
-                <svg class="reveal-all-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 12L9 16V8L15 12Z" fill="currentColor"/>
-                    <path d="M21 12L15 16V8L21 12Z" fill="currentColor" opacity="0.5"/>
-                </svg>
+                <span class="reveal-all-text reveal-all-text-show">Reveal All</span>
+                <span class="reveal-all-text reveal-all-text-hide">Hide All</span>
+                <div class="reveal-all-icons">
+                    <svg class="reveal-all-icon reveal-all-icon-eye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <svg class="reveal-all-icon reveal-all-icon-eye-off" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
             </button>
         </div>
 
@@ -1072,7 +1159,8 @@
             /* Parent section - always visible container */
             .reveal-section { display: inline; }
             /* Individual words - start hidden */
-            .reveal-word { display: inline-block; color: rgba(255, 255, 255, 0.4); filter: blur(5px); transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+            /* Performance: Hardware acceleration with translateZ */
+            .reveal-word { display: inline-block; color: rgba(255, 255, 255, 0.4); filter: blur(5px); transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1); transform: translateZ(0); vertical-align: baseline; }
             /* Individual words - revealed state */
             .reveal-word.revealed { color: white; filter: blur(0); }
             /* Dim variant words */
@@ -1089,6 +1177,7 @@
 
             /* Reveal All Button */
             .reveal-all-btn {
+                position: relative;
                 display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
@@ -1103,7 +1192,10 @@
                 letter-spacing: 0.1em;
                 text-transform: uppercase;
                 cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                transition: background 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                            border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                            color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                            transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             }
             .reveal-all-btn:hover {
                 background: rgba(234, 78, 51, 0.15);
@@ -1123,19 +1215,65 @@
                 border-color: rgba(255, 255, 255, 0.3);
                 color: rgba(255, 255, 255, 0.7);
             }
+
+            /* Text crossfade */
+            .reveal-all-text {
+                transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .reveal-all-text-show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .reveal-all-text-hide {
+                position: absolute;
+                left: 1.2rem;
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            .reveal-all-btn.all-revealed .reveal-all-text-show {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            .reveal-all-btn.all-revealed .reveal-all-text-hide {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* Icons container */
+            .reveal-all-icons {
+                position: relative;
+                width: 16px;
+                height: 16px;
+            }
             .reveal-all-icon {
-                width: 14px;
-                height: 14px;
-                transition: transform 0.3s ease;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 16px;
+                height: 16px;
+                transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             }
-            .reveal-all-btn:hover .reveal-all-icon {
-                transform: translateX(2px);
+            .reveal-all-icon-eye {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
             }
-            .reveal-all-btn.all-revealed .reveal-all-icon {
-                transform: rotate(180deg);
+            .reveal-all-icon-eye-off {
+                opacity: 0;
+                transform: scale(0.8) rotate(-10deg);
             }
-            .reveal-all-btn.all-revealed:hover .reveal-all-icon {
-                transform: rotate(180deg) translateX(2px);
+            .reveal-all-btn.all-revealed .reveal-all-icon-eye {
+                opacity: 0;
+                transform: scale(0.8) rotate(10deg);
+            }
+            .reveal-all-btn.all-revealed .reveal-all-icon-eye-off {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+            .reveal-all-btn:hover .reveal-all-icon-eye {
+                transform: scale(1.1);
+            }
+            .reveal-all-btn.all-revealed:hover .reveal-all-icon-eye-off {
+                transform: scale(1.1);
             }
         </style>
         
@@ -1143,6 +1281,10 @@
             (function() {
                 // Wrap each word in the reveal sections with a span for individual animation
                 const revealSections = document.querySelectorAll('.reveal-section');
+
+                // Pre-cache word elements by section ID for efficient lookup
+                const sectionWordCache = new Map();
+
                 revealSections.forEach(section => {
                     const text = section.textContent;
                     const words = text.split(' ').filter(w => w.length > 0);
@@ -1153,6 +1295,17 @@
                     // After wrapping words in spans, apply initial revealed state
                     const isInitiallyRevealed = section.classList.contains('revealed');
                     const wordElements = section.querySelectorAll('.reveal-word');
+
+                    // Cache word elements by section ID
+                    const sectionId = section.dataset.section;
+                    if (sectionId) {
+                        if (!sectionWordCache.has(sectionId)) {
+                            sectionWordCache.set(sectionId, []);
+                        }
+                        wordElements.forEach(word => {
+                            sectionWordCache.get(sectionId).push({ element: word, section: section });
+                        });
+                    }
 
                     if (isInitiallyRevealed) {
                         wordElements.forEach(word => {
@@ -1182,29 +1335,20 @@
                         const chipCenterX = chipRect.left + chipRect.width / 2;
                         const chipCenterY = chipRect.top + chipRect.height / 2;
 
-                        // Get all words in this section
-                        const sectionTexts = document.querySelectorAll(`.reveal-section[data-section="${sectionId}"]`);
-                        const allWords = [];
+                        // Use cached word elements instead of querying DOM
+                        const cachedWords = sectionWordCache.get(sectionId) || [];
+                        const allWords = cachedWords.map(({ element, section }) => {
+                            const wordRect = element.getBoundingClientRect();
+                            const wordCenterX = wordRect.left + wordRect.width / 2;
+                            const wordCenterY = wordRect.top + wordRect.height / 2;
 
-                        sectionTexts.forEach(section => {
-                            const words = section.querySelectorAll('.reveal-word');
-                            words.forEach(word => {
-                                const wordRect = word.getBoundingClientRect();
-                                const wordCenterX = wordRect.left + wordRect.width / 2;
-                                const wordCenterY = wordRect.top + wordRect.height / 2;
+                            // Calculate distance from chip center to word center
+                            const distance = Math.sqrt(
+                                Math.pow(wordCenterX - chipCenterX, 2) +
+                                Math.pow(wordCenterY - chipCenterY, 2)
+                            );
 
-                                // Calculate distance from chip center to word center
-                                const distance = Math.sqrt(
-                                    Math.pow(wordCenterX - chipCenterX, 2) +
-                                    Math.pow(wordCenterY - chipCenterY, 2)
-                                );
-
-                                allWords.push({
-                                    element: word,
-                                    section: section,
-                                    distance: distance
-                                });
-                            });
+                            return { element, section, distance };
                         });
 
                         // Sort by distance for ripple effect
@@ -1231,7 +1375,6 @@
 
                 // Reveal All button functionality
                 const revealAllBtn = document.getElementById('reveal-all-btn');
-                const revealAllText = revealAllBtn.querySelector('.reveal-all-text');
                 let isAnimating = false; // Lock to prevent interruption
 
                 function updateRevealAllState() {
@@ -1241,10 +1384,8 @@
 
                     if (allRevealed) {
                         revealAllBtn.classList.add('all-revealed');
-                        revealAllText.textContent = 'Hide All';
                     } else {
                         revealAllBtn.classList.remove('all-revealed');
-                        revealAllText.textContent = 'Reveal All';
                     }
                 }
 
@@ -1325,67 +1466,74 @@
             })();
         </script>
 
-        <!-- Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 w-full pb-64 gap-x-16 gap-y-40">
-            <!-- Card 1 -->
-            <div class="flex flex-col animate-on-scroll group cursor-pointer md:mt-0 mt-0 portfolio-card" data-card-index="0" onclick="window.location.href='https://esthetic.pl/'" role="button">
-                <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
-                    <div class="z-10 group-hover:opacity-0 transition-opacity duration-500 bg-zinc-800/20 absolute top-0 right-0 bottom-0 left-0"></div>
-                    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-[1.08] card-image" alt="System" loading="lazy" decoding="async" width="1600" height="2000">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40"></div>
-                    <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
-                        <span class="font-mono text-[10px] tracking-widest text-white/60">01</span>
-                    </div>
-                    <div class="card-info-blurred flex items-end justify-between">
-                        <div class="blur-stack"></div>
-                        <div class="relative z-10">
-                            <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Esthetic</h4>
-                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Brand Identity</p>
+        <!-- Cards Grid - Two Column Layout -->
+        <div class="flex flex-col md:flex-row w-full pb-64 gap-x-16">
+            <!-- Column 1: Cards 1 and 3 -->
+            <div class="flex flex-col justify-between flex-1 gap-y-16">
+                <!-- Card 1 -->
+                <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="0" onclick="window.location.href='https://esthetic.pl/'" role="button">
+                    <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
+                        <div class="z-10 group-hover:opacity-0 transition-opacity duration-500 bg-zinc-800/20 absolute top-0 right-0 bottom-0 left-0"></div>
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-[1.08] card-image" alt="System" loading="lazy" decoding="async" width="1600" height="2000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40"></div>
+                        <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
+                            <span class="font-mono text-[10px] tracking-widest text-white/60">01</span>
                         </div>
-                        <div class="relative z-10 text-[10px] hover:bg-white/10 transition-colors font-medium text-white border-white/20 border rounded-full pt-1 pr-3 pb-1 pl-3">2025</div>
+                        <div class="card-info-blurred flex items-end justify-between">
+                            <div class="blur-stack"></div>
+                            <div class="relative z-10">
+                                <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Esthetic</h4>
+                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Brand Identity</p>
+                            </div>
+                            <div class="relative z-10 text-[10px] hover:bg-white/10 transition-colors font-medium text-white border-white/20 border rounded-full pt-1 pr-3 pb-1 pl-3">2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="2">
+                    <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 mix-blend-luminosity group-hover:mix-blend-normal scale-100 group-hover:scale-[1.08] card-image" alt="SLL" loading="lazy" decoding="async" width="1200" height="1600">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-50"></div>
+                        <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
+                            <span class="font-mono text-[10px] tracking-widest text-white/60">03</span>
+                        </div>
+                        <div class="card-info-blurred flex justify-between items-end">
+                            <div class="blur-stack"></div>
+                            <div class="relative z-10">
+                                <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">SLL</h4>
+                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Web Design</p>
+                            </div>
+                            <div class="relative z-10 px-3 py-1 rounded-full border border-[#e94e33] text-[#e94e33] text-[10px] font-medium hover:bg-[#e94e33] hover:text-white transition-colors">2023</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2 -->
-            <div class="flex flex-col animate-on-scroll group cursor-pointer md:mt-40 portfolio-card" data-card-index="1">
-                <div class="w-full aspect-square relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 scale-100 group-hover:scale-[1.08] card-image" alt="Beauty of Joseon" loading="lazy" decoding="async" width="1200" height="1200">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
-                    <div class="absolute top-6 right-6 text-white mix-blend-difference z-20 card-number">
-                        <span class="font-mono text-[10px] tracking-widest text-white/60">02</span>
-                    </div>
-                    <div class="card-info-blurred flex justify-between items-end">
-                        <div class="blur-stack"></div>
-                        <div class="relative z-10 px-3 py-1 rounded-full bg-white text-black text-[10px] font-semibold hover:bg-zinc-200 transition-colors">2024</div>
-                        <div class="relative z-10 text-right">
-                            <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Adfidence</h4>
-                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Art Direction</p>
+            <!-- Column 2: Card 2 centered -->
+            <div class="flex flex-col justify-center flex-1 mt-16 md:mt-0">
+                <!-- Card 2 -->
+                <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="1">
+                    <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 scale-100 group-hover:scale-[1.08] card-image" alt="Beauty of Joseon" loading="lazy" decoding="async" width="1200" height="1200">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
+                        <div class="absolute top-6 right-6 text-white mix-blend-difference z-20 card-number">
+                            <span class="font-mono text-[10px] tracking-widest text-white/60">02</span>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="2">
-                <div class="w-full aspect-[3/4] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 mix-blend-luminosity group-hover:mix-blend-normal scale-100 group-hover:scale-[1.08] card-image" alt="SLL" loading="lazy" decoding="async" width="1200" height="1600">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-50"></div>
-                     <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
-                        <span class="font-mono text-[10px] tracking-widest text-white/60">03</span>
-                    </div>
-                    <div class="card-info-blurred flex justify-between items-end">
-                        <div class="blur-stack"></div>
-                        <div class="relative z-10">
-                            <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">SLL</h4>
-                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Web Design</p>
+                        <div class="card-info-blurred flex justify-between items-end">
+                            <div class="blur-stack"></div>
+                            <div class="relative z-10 px-3 py-1 rounded-full bg-white text-black text-[10px] font-semibold hover:bg-zinc-200 transition-colors">2024</div>
+                            <div class="relative z-10 text-right">
+                                <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Adfidence</h4>
+                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Art Direction</p>
+                            </div>
                         </div>
-                        <div class="relative z-10 px-3 py-1 rounded-full border border-[#e94e33] text-[#e94e33] text-[10px] font-medium hover:bg-[#e94e33] hover:text-white transition-colors">2023</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+            </div>
 
     <!-- Progressive Blur Bottom (Sticky) - Optimized single layer -->
     <div id="progressive-blur-bottom" class="sticky z-40 pointer-events-none w-full h-[40vh] bottom-0 left-0" style="transition: opacity 0.1s linear;">
