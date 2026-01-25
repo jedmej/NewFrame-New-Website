@@ -1,4 +1,4 @@
-<html lang="en" class="scroll-smooth"><head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Frame Studio - Selected Work</title>
@@ -15,7 +15,21 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.21/dist/lenis.min.js"></script>
+
     <style>
+        /* Lenis smooth scroll styles */
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
         /* Hide scrollbar for clean look */
         body::-webkit-scrollbar {
             display: none;
@@ -89,14 +103,19 @@
 
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-6 md:px-12 mix-blend-difference">
-        <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="box" class="lucide lucide-box w-6 h-6 text-white stroke-[1.5]"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+        <a href="#hero" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <svg width="24" height="24" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
+                <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
+                <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
+                <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
+            </svg>
             <span class="text-sm font-semibold tracking-tight uppercase">New Frame Studio</span>
-        </div>
+        </a>
         <div class="hidden md:flex items-center gap-8">
-            <a href="#" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Work</a>
-            <a href="#" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">About</a>
-            <a href="#" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Contact</a>
+            <a href="#scope" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Scope</a>
+            <a href="#selected-work" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Work</a>
+            <a href="#lets-talk-section" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Contact</a>
         </div>
     </nav>
 
@@ -112,13 +131,11 @@
             <div id="hero-type-stack" class="hero-type-stack relative" style="will-change: transform; transform-style: preserve-3d;">
 
                 <!-- NEW FRAME -->
-                <div class="hero-title-row mb-2 md:mb-4 flex items-center justify-center gap-3 md:gap-6">
-                    <div class="hero-text-scramble overflow-hidden" data-text="NEW FRAME" data-delay="0">
-                        <h1 class="hero-title-massive" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(7rem, 22vw, 28rem); line-height: 0.82; letter-spacing: -0.04em; color: #fff; text-shadow: 4px 4px 0 rgba(0,0,0,0.3);">NEW FRAME</h1>
-                    </div>
+                <div class="hero-title-row mb-2 md:mb-4 flex items-center justify-center gap-3 md:gap-6 opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+                    <h1 class="hero-title-massive" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(7rem, 22vw, 28rem); line-height: 0.82; letter-spacing: -0.04em; color: #fff; text-shadow: 4px 4px 0 rgba(0,0,0,0.3);">NEW FRAME</h1>
                 </div>
 
-                <!-- CREATIVE STUDIO - Fade in after scramble -->
+                <!-- CREATIVE STUDIO -->
                 <div class="hero-title-row flex items-center justify-center mb-8 md:mb-12">
                     <div class="text-center opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards; width: 100%; max-width: 100%;">
                         <h2 class="hero-title-subtitle whitespace-nowrap" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 6vw, 8rem); line-height: 0.82; letter-spacing: 0.15em; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); -webkit-text-stroke: 1px rgba(234, 78, 51, 0.2);">CREATIVE STUDIO</h2>
@@ -183,46 +200,11 @@
                 0%, 100% { transform: translateY(0); }
                 50% { transform: translateY(8px); }
             }
-            .hero-text-scramble {
-                will-change: transform;
-                animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            }
         </style>
 
         <!-- Hero JavaScript -->
         <script>
             (function() {
-                // Text scramble effect on load
-                const scrambleElements = document.querySelectorAll('.hero-text-scramble');
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
-
-                scrambleElements.forEach(el => {
-                    const targetText = el.dataset.text;
-                    const delay = parseInt(el.dataset.delay || '0');
-                    const titleEl = el.querySelector('h1');
-
-                    if (!titleEl) return;
-
-                    setTimeout(() => {
-                        let iteration = 0;
-                        const interval = setInterval(() => {
-                            titleEl.textContent = targetText
-                                .split('')
-                                .map((char, index) => {
-                                    if (index < iteration) return targetText[index];
-                                    return chars[Math.floor(Math.random() * chars.length)];
-                                })
-                                .join('');
-
-                            if (iteration >= targetText.length) {
-                                clearInterval(interval);
-                                titleEl.textContent = targetText;
-                            }
-                            iteration += 1 / 3;
-                        }, 30);
-                    }, delay);
-                });
-
                 // Mouse-reactive glow effect and 3D tilt
                 const hero = document.getElementById('hero');
                 const cursorGlow = document.getElementById('hero-cursor');
@@ -1656,33 +1638,34 @@
     <script>
         lucide.createIcons();
 
-        function handleScroll() {
-            // Hero scroll effects removed since hero is no longer fixed
-        }
+        // Initialize Lenis with momentum scrolling
+        const lenis = new Lenis({
+            autoRaf: true,
+        });
 
-        // Unified scroll manager - single RAF loop for all scroll handlers
-        let ticking = false;
-        function unifiedScrollHandler() {
-            handleScroll();
+        window.lenis = lenis;
+
+        // Bridge to existing scroll handlers
+        lenis.on('scroll', () => {
             if (window._updateProgressiveBlurBottom) window._updateProgressiveBlurBottom();
             if (window._updateBlurVisibility) window._updateBlurVisibility();
-            ticking = false;
-        }
+        });
 
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(unifiedScrollHandler);
-                ticking = true;
-            }
-        }, { passive: true });
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (!href || href === '#') return;
 
-        window.addEventListener('resize', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(unifiedScrollHandler);
-                ticking = true;
-            }
-        }, { passive: true });
-
-        handleScroll();
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    lenis.scrollTo(target, {
+                        duration: 1.5,
+                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    });
+                }
+            });
+        });
     </script>
 </body></html>
