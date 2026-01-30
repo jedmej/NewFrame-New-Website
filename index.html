@@ -1,7 +1,8 @@
 <html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Frame Studio - Selected Work</title>
+    <title>New Frame Studio | Web Design for Startups & Small Businesses</title>
+    <meta name="description" content="Custom web design and branding that converts. I help startups and small businesses look as good as they perform. Let's build something extraordinary.">
     
     <!-- Fonts - Async loading for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,6 +92,28 @@
             /* Performance: CSS containment */
             contain: strict;
         }
+
+        /* Language Selector */
+        .lang-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.35rem;
+            border-radius: 3px;
+            transition: color 0.3s ease, background 0.3s ease;
+        }
+        .lang-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .lang-btn.lang-active {
+            color: #EA4E33;
+            background: rgba(234, 78, 51, 0.1);
+        }
     </style>
 </head>
 <body class="bg-black text-white font-sans antialiased selection:bg-white selection:text-black overflow-x-hidden">
@@ -113,9 +136,16 @@
             <span class="text-sm font-semibold tracking-tight uppercase">New Frame Studio</span>
         </a>
         <div class="hidden md:flex items-center gap-8">
-            <a href="#scope" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Scope</a>
-            <a href="#selected-work" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Work</a>
-            <a href="#lets-talk-section" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors">Contact</a>
+            <a href="#scope" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors" data-i18n="nav.scope">Scope</a>
+            <a href="#selected-work" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors" data-i18n="nav.work">Work</a>
+            <a href="#lets-talk-section" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors" data-i18n="nav.contact">Contact</a>
+
+            <!-- Language Selector -->
+            <div class="lang-selector flex items-center gap-1 ml-4 pl-4 border-l border-white/20">
+                <button id="lang-en" class="lang-btn lang-active" data-lang="en" title="English">EN</button>
+                <span class="text-white/30 text-xs">/</span>
+                <button id="lang-pl" class="lang-btn" data-lang="pl" title="Polski">PL</button>
+            </div>
         </div>
     </nav>
 
@@ -131,28 +161,21 @@
             <div id="hero-type-stack" class="hero-type-stack relative" style="will-change: transform; transform-style: preserve-3d;">
 
                 <!-- NEW FRAME -->
-                <div class="hero-title-row mb-2 md:mb-4 flex items-center justify-center gap-3 md:gap-6 opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+                <div class="hero-title-row mb-8 md:mb-12 flex items-center justify-center gap-3 md:gap-6 opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
                     <h1 class="hero-title-massive" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(7rem, 22vw, 28rem); line-height: 0.82; letter-spacing: -0.04em; color: #fff; text-shadow: 4px 4px 0 rgba(0,0,0,0.3);">NEW FRAME</h1>
-                </div>
-
-                <!-- CREATIVE STUDIO -->
-                <div class="hero-title-row flex items-center justify-center mb-8 md:mb-12">
-                    <div class="text-center opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards; width: 100%; max-width: 100%;">
-                        <h2 class="hero-title-subtitle whitespace-nowrap" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 6vw, 8rem); line-height: 0.82; letter-spacing: 0.15em; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); -webkit-text-stroke: 1px rgba(234, 78, 51, 0.2);">CREATIVE STUDIO</h2>
-                    </div>
                 </div>
 
                 <!-- Info Bar - Centered under title -->
                 <div class="hero-info-bar flex items-center justify-center mt-16 md:mt-24 opacity-0 w-full" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;">
                     <div class="flex items-center gap-8">
                         <div class="hero-location text-center">
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">LOCATION</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;">WARSAW</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);">52.2297°N / 21.0122°E</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;" data-i18n="hero.location">LOCATION</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;" data-i18n="hero.remote">REMOTE</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);" data-i18n="hero.worldwide">WORKING WITH CLIENTS WORLDWIDE</div>
                         </div>
                         <div class="w-px h-16 bg-white/20"></div>
                         <div class="hero-year text-center">
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;">ESTABLISHED</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;" data-i18n="hero.established">ESTABLISHED</div>
                             <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.05em; color: #fff;">20<span style="color: #EA4E33;">23</span></div>
                         </div>
                     </div>
@@ -161,7 +184,7 @@
 
             <!-- Scroll to Explore - Absolute bottom -->
             <div class="hero-scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);">SCROLL TO EXPLORE</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);" data-i18n="hero.scroll">SCROLL TO EXPLORE</div>
                 <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="animation: bounce 2s infinite;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
 
@@ -342,9 +365,9 @@
             <div class="relative z-30 mb-16 w-full max-w-[1200px] bento-header">
                 <div class="flex items-center gap-4 mb-3">
                     <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);">CAPABILITIES</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);" data-i18n="services.label">CAPABILITIES</div>
                 </div>
-                <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.9; letter-spacing: -0.02em; color: #fff;">WHAT WE DO</h2>
+                <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.9; letter-spacing: -0.02em; color: #fff;" data-i18n="services.title">WHAT I DO</h2>
             </div>
 
             <!-- SVG Blur Filter for glow effect -->
@@ -363,8 +386,8 @@
                     <div class="bento-card-content">
                         <div class="bento-card-number">01</div>
                         <div class="bento-card-body">
-                            <h3 class="bento-card-title">Web Design</h3>
-                            <p class="bento-card-desc">Crafting digital experiences that captivate and convert</p>
+                            <h3 class="bento-card-title" data-i18n="services.web.title">Web Design</h3>
+                            <p class="bento-card-desc" data-i18n="services.web.desc">Custom websites that look stunning and actually convert visitors into customers</p>
                         </div>
                         <!-- Decorative: Browser window -->
                         <div class="bento-decor bento-decor-browser">
@@ -386,8 +409,8 @@
                     <div class="bento-card-content">
                         <div class="bento-card-number">02</div>
                         <div class="bento-card-body">
-                            <h3 class="bento-card-title">UX/UI Design</h3>
-                            <p class="bento-card-desc">Intuitive interfaces, seamless journeys</p>
+                            <h3 class="bento-card-title" data-i18n="services.ux.title">UX/UI Design</h3>
+                            <p class="bento-card-desc" data-i18n="services.ux.desc">User-first interfaces that make your product a joy to use</p>
                         </div>
                         <!-- Decorative: Cursor -->
                         <div class="bento-decor bento-decor-cursor">
@@ -406,8 +429,8 @@
                     <div class="bento-card-content">
                         <div class="bento-card-number">03</div>
                         <div class="bento-card-body">
-                            <h3 class="bento-card-title">Animation</h3>
-                            <p class="bento-card-desc">Motion that tells stories</p>
+                            <h3 class="bento-card-title" data-i18n="services.animation.title">Animation</h3>
+                            <p class="bento-card-desc" data-i18n="services.animation.desc">Motion that tells stories</p>
                         </div>
                         <!-- Decorative: Motion wave -->
                         <div class="bento-decor bento-decor-motion">
@@ -426,8 +449,8 @@
                     <div class="bento-card-content">
                         <div class="bento-card-number">04</div>
                         <div class="bento-card-body">
-                            <h3 class="bento-card-title">Art Direction</h3>
-                            <p class="bento-card-desc">Visual storytelling with purpose and precision</p>
+                            <h3 class="bento-card-title" data-i18n="services.art.title">Art Direction</h3>
+                            <p class="bento-card-desc" data-i18n="services.art.desc">Cohesive visual strategy that makes your brand instantly recognizable</p>
                         </div>
                         <!-- Decorative: Geometric shapes -->
                         <div class="bento-decor bento-decor-geo">
@@ -447,8 +470,8 @@
                     <div class="bento-card-content">
                         <div class="bento-card-number">05</div>
                         <div class="bento-card-body">
-                            <h3 class="bento-card-title">Brand Identity</h3>
-                            <p class="bento-card-desc">Building memorable brands from the ground up</p>
+                            <h3 class="bento-card-title" data-i18n="services.brand.title">Brand Identity</h3>
+                            <p class="bento-card-desc" data-i18n="services.brand.desc">Logos, colors, and guidelines that help you stand out in a crowded market</p>
                         </div>
                         <!-- Decorative: Abstract logo mark -->
                         <div class="bento-decor bento-decor-brand">
@@ -461,18 +484,18 @@
                     </div>
                 </div>
 
-                <!-- Accent Element (Decorative - 1x1) -->
+                <!-- CTA Card - Let's Work Together -->
                 <div class="bento-card bento-card-accent" data-card="accent" style="grid-column: span 1; grid-row: span 1;">
                     <div class="bento-glow-source"></div>
                     <div class="bento-card-glow"></div>
-                    <div class="bento-card-content bento-accent-content">
+                    <a href="#lets-talk-section" class="bento-card-content bento-accent-content" style="text-decoration: none;">
                         <div class="bento-accent-symbol">
                             <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 5L20 35M5 20L35 20" stroke="#EA4E33" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M8 20h24M24 12l8 8-8 8" stroke="#EA4E33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <span class="bento-accent-text">More to come</span>
-                    </div>
+                        <span class="bento-accent-text" data-i18n="services.cta">Start a project</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1093,36 +1116,43 @@
         
         <!-- Header Text -->
         <div class="text-center mb-40 pt-32 animate-on-scroll relative z-20">
-            <div id="reveal-paragraph" class="text-2xl md:text-3xl lg:text-[2.5rem] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-5xl mx-auto select-none">
-                <span class="reveal-section revealed" data-section="0">Hey! We're</span>
+            <!-- Hover Image Container (positioned behind text) -->
+            <div id="jed-hover-image" class="jed-hover-image">
+                <div class="jed-image-placeholder">
+                    <span class="jed-initials">JM</span>
+                </div>
+            </div>
+
+            <div id="reveal-paragraph" class="text-2xl md:text-3xl lg:text-[2.5rem] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-5xl mx-auto select-none relative z-10">
+                <span class="reveal-section revealed" data-section="0">Hey! I'm Jed, the founder of</span>
                 <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
-                <span class="reveal-section revealed" data-section="0">— a creative studio that doesn't do boring.</span>
-                
-                <span class="reveal-section" data-section="1">We're based in</span>
-                <button class="reveal-chip" data-section="1">WARSAW</button>
-                <span class="reveal-section" data-section="1">but work with brands across the globe.</span>
-                
-                <span class="reveal-section" data-section="2">Our thing? Crafting</span>
-                <button class="reveal-chip" data-section="2">DIGITAL EXPERIENCES</button>
-                <span class="reveal-section" data-section="2">that actually move people.</span>
-                
-                <span class="reveal-section" data-section="3">We believe great</span>
-                <button class="reveal-chip" data-section="3">DESIGN</button>
-                <span class="reveal-section" data-section="3">is invisible — it just works.</span>
-                
+                <span class="reveal-section revealed" data-section="0">— and I help businesses look as good as they perform.</span>
+
+                <span class="reveal-section" data-section="1">By day, I'm</span>
+                <button class="reveal-chip" data-section="1">HEAD OF DESIGN</button>
+                <span class="reveal-section" data-section="1">at a SaaS company. New Frame is where I channel my passion for helping smaller teams level up.</span>
+
+                <span class="reveal-section" data-section="2">I work</span>
+                <button class="reveal-chip" data-section="2">REMOTELY</button>
+                <span class="reveal-section" data-section="2">with startups and small businesses who need serious design without the agency overhead.</span>
+
+                <span class="reveal-section" data-section="3">My focus? Building</span>
+                <button class="reveal-chip" data-section="3">WEBSITES</button>
+                <span class="reveal-section" data-section="3">that convert visitors into customers.</span>
+
                 <span class="reveal-section" data-section="4">From</span>
                 <button class="reveal-chip" data-section="4">BRANDING</button>
-                <span class="reveal-section" data-section="4">to web design, we obsess over every pixel.</span>
-                
-                <span class="reveal-section" data-section="7">Want to make something</span>
+                <span class="reveal-section" data-section="4">to full site builds, I obsess over every detail so you don't have to.</span>
+
+                <span class="reveal-section" data-section="7">Ready to make something</span>
                 <button class="reveal-chip" data-section="7">EXTRAORDINARY</button>
                 <span class="reveal-section" data-section="7">together? Let's talk.</span>
             </div>
 
             <!-- Reveal All Button -->
             <button id="reveal-all-btn" class="reveal-all-btn mt-8">
-                <span class="reveal-all-text reveal-all-text-show">Reveal All</span>
-                <span class="reveal-all-text reveal-all-text-hide">Hide All</span>
+                <span class="reveal-all-text reveal-all-text-show" data-i18n="about.revealAll">Reveal All</span>
+                <span class="reveal-all-text reveal-all-text-hide" data-i18n="about.hideAll">Hide All</span>
                 <div class="reveal-all-icons">
                     <svg class="reveal-all-icon reveal-all-icon-eye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1156,6 +1186,69 @@
             .reveal-chip.dim-chip { border-color: rgba(161, 161, 170, 0.4); color: rgb(161 161 170); background: rgba(161, 161, 170, 0.08); }
             .reveal-chip.dim-chip:not(.revealed):hover { background: rgba(161, 161, 170, 0.15); border-color: rgba(161, 161, 170, 0.6); }
             .reveal-chip.dim-chip.revealed { background: rgba(234, 78, 51, 0.1); border-color: #EA4E33; color: #EA4E33; }
+
+            /* Jed Name Hover Effect */
+            .jed-name-hover {
+                position: relative;
+                cursor: pointer;
+                color: #EA4E33;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                text-decoration: underline;
+                text-decoration-color: rgba(234, 78, 51, 0.3);
+                text-underline-offset: 4px;
+            }
+            .jed-name-hover:hover {
+                text-decoration-color: #EA4E33;
+            }
+
+            /* Hover Image Container */
+            .jed-hover-image {
+                position: absolute;
+                top: 35%;
+                left: 38%;
+                transform: translate(-50%, -50%) rotate(3deg);
+                width: 336px;
+                height: 420px;
+                z-index: 1;
+                pointer-events: none;
+                opacity: 0;
+                filter: blur(8px);
+                transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .jed-hover-image.active {
+                opacity: 1;
+                filter: blur(0);
+                transform: translate(-50%, -50%) rotate(4deg);
+            }
+
+            /* Placeholder Image */
+            .jed-image-placeholder {
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(145deg, rgba(234, 78, 51, 0.15) 0%, rgba(234, 78, 51, 0.05) 100%);
+                border: 1px solid rgba(234, 78, 51, 0.2);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                position: relative;
+            }
+            .jed-image-placeholder::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                opacity: 0.08;
+            }
+            .jed-initials {
+                font-family: 'Bebas Neue', sans-serif;
+                font-size: 6rem;
+                color: rgba(234, 78, 51, 0.25);
+                letter-spacing: 0.05em;
+                position: relative;
+                z-index: 1;
+            }
 
             /* Reveal All Button */
             .reveal-all-btn {
@@ -1448,6 +1541,42 @@
             })();
         </script>
 
+        <!-- Jed Hover Effect Script -->
+        <script>
+            // Run after a short delay to ensure word processing is complete
+            setTimeout(function() {
+                const jedImage = document.getElementById('jed-hover-image');
+
+                // Find the reveal-word span that contains "Jed"
+                const allWords = document.querySelectorAll('#reveal-paragraph .reveal-word');
+                let jedTrigger = null;
+
+                allWords.forEach(word => {
+                    if (word.textContent.trim() === 'Jed,') {
+                        jedTrigger = word;
+                        word.id = 'jed-name-trigger';
+                        word.classList.add('jed-name-hover');
+                    }
+                });
+
+                if (jedTrigger && jedImage) {
+                    jedTrigger.addEventListener('mouseenter', () => {
+                        jedImage.classList.add('active');
+                    });
+
+                    jedTrigger.addEventListener('mouseleave', () => {
+                        jedImage.classList.remove('active');
+                    });
+
+                    // Touch support
+                    jedTrigger.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        jedImage.classList.toggle('active');
+                    });
+                }
+            }, 100);
+        </script>
+
         <!-- Cards Grid - Two Column Layout -->
         <div class="flex flex-col md:flex-row w-full pb-64 gap-x-16">
             <!-- Column 1: Cards 1 and 3 -->
@@ -1570,6 +1699,53 @@
     </script>
 </section>
 
+<!-- TESTIMONIAL SECTION -->
+<section id="testimonials" class="relative w-full py-32 bg-transparent z-20 overflow-hidden">
+    <div class="max-w-4xl mx-auto px-6 md:px-12">
+        <!-- Section Header -->
+        <div class="mb-16 text-center">
+            <div class="flex items-center justify-center gap-4 mb-3">
+                <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);" data-i18n="testimonial.label">WHAT CLIENTS SAY</div>
+                <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
+            </div>
+        </div>
+
+        <!-- Testimonial Card -->
+        <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-8 md:p-12 backdrop-blur-sm">
+            <!-- Quote Icon -->
+            <div class="absolute -top-4 left-8 md:left-12">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
+                </svg>
+            </div>
+
+            <!-- Quote Text -->
+            <blockquote class="relative z-10">
+                <p style="font-family: 'Manrope', sans-serif; font-size: clamp(1.25rem, 2.5vw, 1.75rem); line-height: 1.6; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-8" data-i18n="testimonial.quote">
+                    "Working with Jed was a game-changer for our brand. He understood our vision immediately and delivered a website that exceeded our expectations. The attention to detail and communication throughout the project was exceptional."
+                </p>
+
+                <!-- Attribution -->
+                <footer class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#EA4E33]/30 to-[#EA4E33]/10 flex items-center justify-center">
+                        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: #EA4E33;">SK</span>
+                    </div>
+                    <div>
+                        <cite style="font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 500; color: white; font-style: normal; display: block;">Sarah K.</cite>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role">FOUNDER, STARTUP CO.</span>
+                    </div>
+                </footer>
+            </blockquote>
+        </div>
+
+        <!-- Subtle note for social proof -->
+        <p class="text-center mt-8" style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.3);" data-i18n="testimonial.more">
+            MORE TESTIMONIALS COMING SOON
+        </p>
+    </div>
+</section>
+
 <!-- LET'S TALK SECTION -->
 <section id="lets-talk-section" class="relative w-full min-h-screen bg-transparent flex flex-col items-center justify-center z-30 overflow-hidden">
     <style>
@@ -1597,7 +1773,10 @@
                 <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="white"/>
                 <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="white"/>
             </svg>
-            <div class="frame-hole"><a href="#" class="lets-talk-link">Let's Talk!</a></div>
+            <div class="frame-hole" style="flex-direction: column; gap: 0.75rem;">
+                <a href="mailto:jed.mejzner@gmail.com?subject=Project%20Inquiry%20-%20New%20Frame%20Studio" class="lets-talk-link" data-i18n="contact.cta">Let's Talk!</a>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.5);">jed.mejzner@gmail.com</span>
+            </div>
         </div>
         <div class="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex items-center"><span class="dot-indicator"></span><span class="side-text">Digital Fun</span></div>
     </div>
@@ -1619,7 +1798,7 @@
                     <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
                     <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
                 </svg>
-                <span class="text-[10px] uppercase tracking-wider">All rights reserved</span>
+                <span class="text-[10px] uppercase tracking-wider" data-i18n="footer.rights">All rights reserved</span>
             </div>
             <div class="flex gap-8">
                 <a href="#" class="text-white/40 hover:text-white text-xs uppercase tracking-widest transition-colors">Instagram</a>
@@ -1667,5 +1846,251 @@
                 }
             });
         });
+    </script>
+
+    <!-- Language Switching System -->
+    <script>
+    (function() {
+        const translations = {
+            en: {
+                // Navigation
+                'nav.scope': 'Scope',
+                'nav.work': 'Work',
+                'nav.contact': 'Contact',
+
+                // Hero
+                'hero.location': 'LOCATION',
+                'hero.remote': 'REMOTE',
+                'hero.worldwide': 'WORKING WITH CLIENTS WORLDWIDE',
+                'hero.established': 'ESTABLISHED',
+                'hero.scroll': 'SCROLL TO EXPLORE',
+
+                // Services
+                'services.label': 'CAPABILITIES',
+                'services.title': 'WHAT I DO',
+                'services.web.title': 'Web Design',
+                'services.web.desc': 'Custom websites that look stunning and actually convert visitors into customers',
+                'services.ux.title': 'UX/UI Design',
+                'services.ux.desc': 'User-first interfaces that make your product a joy to use',
+                'services.animation.title': 'Animation',
+                'services.animation.desc': 'Motion that tells stories',
+                'services.art.title': 'Art Direction',
+                'services.art.desc': 'Cohesive visual strategy that makes your brand instantly recognizable',
+                'services.brand.title': 'Brand Identity',
+                'services.brand.desc': 'Logos, colors, and guidelines that help you stand out in a crowded market',
+                'services.cta': 'Start a project',
+
+                // About / Reveal paragraph
+                'about.revealAll': 'Reveal All',
+                'about.hideAll': 'Hide All',
+
+                // Testimonial
+                'testimonial.label': 'WHAT CLIENTS SAY',
+                'testimonial.quote': '"Working with Jed was a game-changer for our brand. He understood our vision immediately and delivered a website that exceeded our expectations. The attention to detail and communication throughout the project was exceptional."',
+                'testimonial.role': 'FOUNDER, STARTUP CO.',
+                'testimonial.more': 'MORE TESTIMONIALS COMING SOON',
+
+                // Contact
+                'contact.cta': "Let's Talk!",
+
+                // Footer
+                'footer.rights': 'All rights reserved'
+            },
+            pl: {
+                // Navigation
+                'nav.scope': 'Zakres',
+                'nav.work': 'Portfolio',
+                'nav.contact': 'Kontakt',
+
+                // Hero
+                'hero.location': 'LOKALIZACJA',
+                'hero.remote': 'ZDALNIE',
+                'hero.worldwide': 'WSPÓŁPRACA Z KLIENTAMI NA CAŁYM ŚWIECIE',
+                'hero.established': 'ZAŁOŻONE',
+                'hero.scroll': 'PRZEWIŃ, ABY ODKRYĆ',
+
+                // Services
+                'services.label': 'USŁUGI',
+                'services.title': 'CO ROBIĘ',
+                'services.web.title': 'Web Design',
+                'services.web.desc': 'Niestandardowe strony, które wyglądają świetnie i faktycznie zamieniają odwiedzających w klientów',
+                'services.ux.title': 'UX/UI Design',
+                'services.ux.desc': 'Interfejsy zorientowane na użytkownika, które sprawiają, że korzystanie z produktu to przyjemność',
+                'services.animation.title': 'Animacja',
+                'services.animation.desc': 'Ruch, który opowiada historie',
+                'services.art.title': 'Kierunek Artystyczny',
+                'services.art.desc': 'Spójna strategia wizualna, która sprawia, że Twoja marka jest natychmiast rozpoznawalna',
+                'services.brand.title': 'Identyfikacja Wizualna',
+                'services.brand.desc': 'Logo, kolory i wytyczne, które pomogą Ci wyróżnić się na zatłoczonym rynku',
+                'services.cta': 'Rozpocznij projekt',
+
+                // About / Reveal paragraph
+                'about.revealAll': 'Pokaż wszystko',
+                'about.hideAll': 'Ukryj wszystko',
+
+                // Testimonial
+                'testimonial.label': 'CO MÓWIĄ KLIENCI',
+                'testimonial.quote': '"Współpraca z Jedem była przełomem dla naszej marki. Od razu zrozumiał naszą wizję i dostarczył stronę, która przekroczyła nasze oczekiwania. Dbałość o szczegóły i komunikacja przez cały projekt były wyjątkowe."',
+                'testimonial.role': 'ZAŁOŻYCIELKA, STARTUP CO.',
+                'testimonial.more': 'WIĘCEJ OPINII WKRÓTCE',
+
+                // Contact
+                'contact.cta': 'Porozmawiajmy!',
+
+                // Footer
+                'footer.rights': 'Wszelkie prawa zastrzeżone'
+            }
+        };
+
+        // About section content (separate because of complex structure)
+        const aboutContent = {
+            en: `
+                <span class="reveal-section revealed" data-section="0">Hey! I'm Jed, the founder of</span>
+                <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
+                <span class="reveal-section revealed" data-section="0">— and I help businesses look as good as they perform.</span>
+
+                <span class="reveal-section" data-section="1">By day, I'm</span>
+                <button class="reveal-chip" data-section="1">HEAD OF DESIGN</button>
+                <span class="reveal-section" data-section="1">at a SaaS company. New Frame is where I channel my passion for helping smaller teams level up.</span>
+
+                <span class="reveal-section" data-section="2">I work</span>
+                <button class="reveal-chip" data-section="2">REMOTELY</button>
+                <span class="reveal-section" data-section="2">with startups and small businesses who need serious design without the agency overhead.</span>
+
+                <span class="reveal-section" data-section="3">My focus? Building</span>
+                <button class="reveal-chip" data-section="3">WEBSITES</button>
+                <span class="reveal-section" data-section="3">that convert visitors into customers.</span>
+
+                <span class="reveal-section" data-section="4">From</span>
+                <button class="reveal-chip" data-section="4">BRANDING</button>
+                <span class="reveal-section" data-section="4">to full site builds, I obsess over every detail so you don't have to.</span>
+
+                <span class="reveal-section" data-section="7">Ready to make something</span>
+                <button class="reveal-chip" data-section="7">EXTRAORDINARY</button>
+                <span class="reveal-section" data-section="7">together? Let's talk.</span>
+            `,
+            pl: `
+                <span class="reveal-section revealed" data-section="0">Cześć! Jestem Jed, założyciel</span>
+                <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
+                <span class="reveal-section revealed" data-section="0">— pomagam firmom wyglądać tak dobrze, jak działają.</span>
+
+                <span class="reveal-section" data-section="1">Na co dzień jestem</span>
+                <button class="reveal-chip" data-section="1">HEAD OF DESIGN</button>
+                <span class="reveal-section" data-section="1">w firmie SaaS. New Frame to miejsce, gdzie realizuję swoją pasję pomagania mniejszym zespołom.</span>
+
+                <span class="reveal-section" data-section="2">Pracuję</span>
+                <button class="reveal-chip" data-section="2">ZDALNIE</button>
+                <span class="reveal-section" data-section="2">ze startupami i małymi firmami, które potrzebują profesjonalnego designu bez kosztów agencji.</span>
+
+                <span class="reveal-section" data-section="3">Moja specjalność? Tworzenie</span>
+                <button class="reveal-chip" data-section="3">STRON WWW</button>
+                <span class="reveal-section" data-section="3">które zamieniają odwiedzających w klientów.</span>
+
+                <span class="reveal-section" data-section="4">Od</span>
+                <button class="reveal-chip" data-section="4">BRANDINGU</button>
+                <span class="reveal-section" data-section="4">po kompletne strony — dbam o każdy szczegół, żebyś Ty nie musiał.</span>
+
+                <span class="reveal-section" data-section="7">Gotowy stworzyć coś</span>
+                <button class="reveal-chip" data-section="7">NIEZWYKŁEGO</button>
+                <span class="reveal-section" data-section="7">razem? Porozmawiajmy.</span>
+            `
+        };
+
+        let currentLang = localStorage.getItem('newframe-lang') || 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('newframe-lang', lang);
+
+            // Update simple translations
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+
+            // Update about section (needs re-initialization)
+            const revealParagraph = document.getElementById('reveal-paragraph');
+            if (revealParagraph && aboutContent[lang]) {
+                revealParagraph.innerHTML = aboutContent[lang];
+                reinitializeRevealText();
+            }
+
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('lang-active', btn.dataset.lang === lang);
+            });
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+        }
+
+        function reinitializeRevealText() {
+            // Re-run the word wrapping logic from the original reveal script
+            const revealSections = document.querySelectorAll('#reveal-paragraph .reveal-section');
+
+            revealSections.forEach(section => {
+                const text = section.textContent;
+                const words = text.split(' ').filter(w => w.length > 0);
+                section.innerHTML = words.map(word => `<span class="reveal-word">${word}</span>`).join(' ');
+
+                const isInitiallyRevealed = section.classList.contains('revealed');
+                const wordElements = section.querySelectorAll('.reveal-word');
+
+                if (isInitiallyRevealed) {
+                    wordElements.forEach(word => word.classList.add('revealed'));
+                }
+            });
+
+            // Reinitialize chip click handlers
+            const chips = document.querySelectorAll('#reveal-paragraph .reveal-chip');
+            chips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const sectionId = this.dataset.section;
+                    this.classList.toggle('revealed');
+
+                    const relatedSections = document.querySelectorAll(`#reveal-paragraph .reveal-section[data-section="${sectionId}"]`);
+                    relatedSections.forEach(section => {
+                        section.classList.toggle('revealed');
+                        section.querySelectorAll('.reveal-word').forEach(word => {
+                            word.classList.toggle('revealed');
+                        });
+                    });
+                });
+            });
+
+            // Re-run Jed name hover effect
+            setTimeout(function() {
+                const jedImage = document.getElementById('jed-hover-image');
+                const allWords = document.querySelectorAll('#reveal-paragraph .reveal-word');
+
+                allWords.forEach(word => {
+                    if (word.textContent.trim() === 'Jed,' || word.textContent.trim() === 'Jed') {
+                        word.id = 'jed-name-trigger';
+                        word.classList.add('jed-name-hover');
+
+                        if (jedImage) {
+                            word.addEventListener('mouseenter', () => jedImage.classList.add('active'));
+                            word.addEventListener('mouseleave', () => jedImage.classList.remove('active'));
+                        }
+                    }
+                });
+            }, 50);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up language button listeners
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            // Apply saved language (if not default)
+            if (currentLang !== 'en') {
+                setLanguage(currentLang);
+            }
+        });
+    })();
     </script>
 </body></html>
