@@ -19,6 +19,13 @@
     <!-- Lenis Smooth Scroll -->
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.21/dist/lenis.min.js"></script>
 
+    <!-- Three.js for 3D Carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP for scroll-triggered animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         /* Lenis smooth scroll styles */
         html.lenis, html.lenis body {
@@ -1052,14 +1059,44 @@
     
     <!-- Custom Styles for Blur, Animation & Layout -->
     <style class="">
-        /* Performance: content-visibility for off-screen rendering optimization */
+        /* Performance: content-visibility disabled for 3D carousel compatibility */
         #selected-work {
-            content-visibility: auto;
-            contain-intrinsic-size: auto 2000px;
+            /* content-visibility removed - was clipping 3D carousel */
         }
         .portfolio-card {
             content-visibility: auto;
             contain-intrinsic-size: auto 600px;
+        }
+
+        /* 3D Carousel Styles */
+        #carousel3d-container {
+            position: relative;
+            width: 100%;
+            height: 130vh;
+            min-height: 910px;
+            margin: 2rem 0 4rem 0;
+            overflow: visible !important;
+            clip-path: none !important;
+        }
+        #carousel3d-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            clip-path: none !important;
+        }
+        /* Ensure parent containers don't clip the carousel */
+        #selected-work,
+        #selected-work > div,
+        #selected-work .md\:px-12,
+        #selected-work .flex-col {
+            overflow: visible !important;
+            clip-path: none !important;
+        }
+        @media (max-width: 768px) {
+            #carousel3d-container {
+                height: 50vh;
+                min-height: 350px;
+            }
         }
 
         @keyframes animationIn {
@@ -1577,72 +1614,313 @@
             }, 100);
         </script>
 
-        <!-- Cards Grid - Two Column Layout -->
-        <div class="flex flex-col md:flex-row w-full pb-64 gap-x-16">
-            <!-- Column 1: Cards 1 and 3 -->
-            <div class="flex flex-col justify-between flex-1 gap-y-16">
-                <!-- Card 1 -->
-                <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="0" onclick="window.location.href='https://esthetic.pl/'" role="button">
-                    <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
-                        <div class="z-10 group-hover:opacity-0 transition-opacity duration-500 bg-zinc-800/20 absolute top-0 right-0 bottom-0 left-0"></div>
-                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-100 group-hover:scale-[1.08] card-image" alt="System" loading="lazy" decoding="async" width="1600" height="2000">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40"></div>
-                        <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
-                            <span class="font-mono text-[10px] tracking-widest text-white/60">01</span>
-                        </div>
-                        <div class="card-info-blurred flex items-end justify-between">
-                            <div class="blur-stack"></div>
-                            <div class="relative z-10">
-                                <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Esthetic</h4>
-                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Brand Identity</p>
-                            </div>
-                            <div class="relative z-10 text-[10px] hover:bg-white/10 transition-colors font-medium text-white border-white/20 border rounded-full pt-1 pr-3 pb-1 pl-3">2025</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="2">
-                    <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 mix-blend-luminosity group-hover:mix-blend-normal scale-100 group-hover:scale-[1.08] card-image" alt="SLL" loading="lazy" decoding="async" width="1200" height="1600">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-50"></div>
-                        <div class="absolute top-6 left-6 text-white mix-blend-difference z-20 card-number">
-                            <span class="font-mono text-[10px] tracking-widest text-white/60">03</span>
-                        </div>
-                        <div class="card-info-blurred flex justify-between items-end">
-                            <div class="blur-stack"></div>
-                            <div class="relative z-10">
-                                <h4 class="text-lg font-medium text-white mb-0.5 tracking-tight">SLL</h4>
-                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Web Design</p>
-                            </div>
-                            <div class="relative z-10 px-3 py-1 rounded-full border border-[#e94e33] text-[#e94e33] text-[10px] font-medium hover:bg-[#e94e33] hover:text-white transition-colors">2023</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Column 2: Card 2 centered -->
-            <div class="flex flex-col justify-center flex-1 mt-16 md:mt-0">
-                <!-- Card 2 -->
-                <div class="flex flex-col animate-on-scroll group cursor-pointer portfolio-card" data-card-index="1">
-                    <div class="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-zinc-900 shadow-2xl card-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 scale-100 group-hover:scale-[1.08] card-image" alt="Beauty of Joseon" loading="lazy" decoding="async" width="1200" height="1200">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-30"></div>
-                        <div class="absolute top-6 right-6 text-white mix-blend-difference z-20 card-number">
-                            <span class="font-mono text-[10px] tracking-widest text-white/60">02</span>
-                        </div>
-                        <div class="card-info-blurred flex justify-between items-end">
-                            <div class="blur-stack"></div>
-                            <div class="relative z-10 px-3 py-1 rounded-full bg-white text-black text-[10px] font-semibold hover:bg-zinc-200 transition-colors">2024</div>
-                            <div class="relative z-10 text-right">
-                                <h4 class="text-lg font-medium text-white tracking-tight mb-0.5">Adfidence</h4>
-                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Art Direction</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- 3D Carousel Container -->
+        <div id="carousel3d-container" class="w-full animate-on-scroll">
+            <!-- Three.js canvas will be inserted here -->
         </div>
+
+        <!-- Three.js 3D Carousel Script -->
+        <script>
+        (function() {
+            // Portfolio projects for the 3D carousel - 5 projects only (each shows once)
+            const portfolioProjects = [
+                // Project 1: Esthetic
+                { image: 'https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg', link: 'https://google.com' },
+                // Project 2: Adfidence
+                { image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop', link: 'https://google.com' },
+                // Project 3: SLL
+                { image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=500&fit=crop', link: 'https://google.com' },
+                // Project 4: Placeholder for your 4th project
+                { image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop', link: 'https://google.com' },
+                // Project 5: Placeholder for your 5th project
+                { image: 'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=400&h=500&fit=crop', link: 'https://google.com' }
+            ];
+
+            let scene, camera, renderer, carousel;
+            // Rotation to show card 0 at front (no rotation needed)
+            const startRotation = 0;
+            // Rotation to show card 4 (last) at front: rotate by 4 steps (4 * 72° = 288°)
+            const endRotation = -4 * (Math.PI * 2 / 5);  // -4 * 72° in radians
+
+            let targetRotation = startRotation;
+            let currentRotation = startRotation;
+
+            function initCarousel3D() {
+                const container = document.getElementById('carousel3d-container');
+                if (!container || typeof THREE === 'undefined') {
+                    console.log('Three.js or container not found, retrying...');
+                    setTimeout(initCarousel3D, 100);
+                    return;
+                }
+
+                // Scene setup
+                scene = new THREE.Scene();
+
+                // Camera
+                camera = new THREE.PerspectiveCamera(
+                    60,
+                    container.clientWidth / container.clientHeight,
+                    0.1,
+                    1000
+                );
+                camera.position.z = 14;  // Pulled back more to see full tornado
+                camera.position.y = 0;   // Centered vertically
+
+                // Renderer
+                renderer = new THREE.WebGLRenderer({
+                    antialias: true,
+                    alpha: true
+                });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                renderer.setClearColor(0x000000, 0);
+                container.appendChild(renderer.domElement);
+
+                // Create carousel group
+                carousel = new THREE.Group();
+                scene.add(carousel);
+
+                // Create image planes in a cylinder
+                const radius = 3.5;  // Slightly smaller radius for 5 cards
+                const imageCount = portfolioProjects.length;
+                const angleStep = (Math.PI * 2) / imageCount;
+
+                // Texture loader
+                const textureLoader = new THREE.TextureLoader();
+
+                // Raycaster for click detection
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+
+                // Create each image plane - tornado style (spread vertically)
+                portfolioProjects.forEach((project, i) => {
+                    const angle = angleStep * i;
+
+                    // Tornado effect: each card at different height, spiraling down
+                    const verticalSpread = 5.5;  // Tighter vertical spread
+                    const topOffset = 2.2;       // First card position
+                    const yPosition = topOffset - (i / (portfolioProjects.length - 1)) * verticalSpread;
+
+                    // Vary radius slightly for more organic tornado look
+                    const radiusVariation = radius + (Math.sin(i * 0.8) * 0.3);
+
+                    // All cards same size (30% larger)
+                    const baseWidth = 2.91;
+                    const baseHeight = 3.82;
+
+                    // Create plane geometry - uniform size for all cards
+                    const geometry = new THREE.PlaneGeometry(baseWidth, baseHeight);
+
+                    // Load texture
+                    const material = new THREE.MeshBasicMaterial({
+                        color: 0x333333,
+                        side: THREE.DoubleSide
+                    });
+
+                    const plane = new THREE.Mesh(geometry, material);
+
+                    // Position in cylinder - tornado spiral
+                    plane.position.x = Math.sin(angle) * radiusVariation;
+                    plane.position.z = Math.cos(angle) * radiusVariation;
+                    plane.position.y = yPosition + (Math.random() - 0.5) * 0.3;  // Slight randomness
+
+                    // Rotate to face center
+                    plane.rotation.y = angle + Math.PI;
+
+                    // Add slight tilt for dynamic feel
+                    plane.rotation.x = (Math.random() - 0.5) * 0.15;
+                    plane.rotation.z = (Math.random() - 0.5) * 0.08;
+
+                    // Store base angle for scale calculation and link
+                    plane.userData.baseAngle = angle;
+                    plane.userData.link = project.link;
+
+                    carousel.add(plane);
+
+                    // Load texture asynchronously
+                    textureLoader.load(
+                        project.image,
+                        (texture) => {
+                            texture.minFilter = THREE.LinearFilter;
+                            texture.magFilter = THREE.LinearFilter;
+                            material.map = texture;
+                            material.color.setHex(0xffffff);
+                            material.needsUpdate = true;
+                        },
+                        undefined,
+                        (error) => {
+                            console.log('Error loading texture:', project.image);
+                        }
+                    );
+                });
+
+                // Click handler for cards
+                container.addEventListener('click', (event) => {
+                    const rect = container.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(carousel.children);
+
+                    if (intersects.length > 0) {
+                        const clickedCard = intersects[0].object;
+                        if (clickedCard.userData.link) {
+                            window.open(clickedCard.userData.link, '_blank');
+                        }
+                    }
+                });
+
+                // Track hovered card for smooth animation
+                let hoveredCard = null;
+
+                // Change cursor on hover and track hovered card
+                container.addEventListener('mousemove', (event) => {
+                    const rect = container.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(carousel.children);
+
+                    if (intersects.length > 0) {
+                        hoveredCard = intersects[0].object;
+                        container.style.cursor = 'pointer';
+                    } else {
+                        hoveredCard = null;
+                        container.style.cursor = 'default';
+                    }
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    hoveredCard = null;
+                    container.style.cursor = 'default';
+                });
+
+                // Store hoveredCard reference for animation loop
+                window._carouselHoveredCard = () => hoveredCard;
+
+                // Single row only - each project shows once
+
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+                scene.add(ambientLight);
+
+                // Handle window resize
+                window.addEventListener('resize', onCarouselResize);
+
+                // Initialize GSAP ScrollTrigger for rotation
+                initScrollRotation();
+
+                // Start animation
+                animateCarousel();
+
+                console.log('3D Carousel initialized successfully');
+            }
+
+            function onCarouselResize() {
+                const container = document.getElementById('carousel3d-container');
+                if (!container || !camera || !renderer) return;
+
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+
+            let isCarouselInView = false;
+
+            function animateCarousel() {
+                requestAnimationFrame(animateCarousel);
+
+                // Smooth rotation based on scroll
+                currentRotation += (targetRotation - currentRotation) * 0.05;
+
+                // Get currently hovered card
+                const hoveredCard = window._carouselHoveredCard ? window._carouselHoveredCard() : null;
+
+                if (carousel) {
+                    carousel.rotation.y = currentRotation;
+
+                    // Scale cards based on proximity to front (facing camera) + hover effect
+                    carousel.children.forEach((plane) => {
+                        if (plane.userData.baseAngle !== undefined) {
+                            // Card's world angle (base angle + carousel rotation)
+                            let worldAngle = plane.userData.baseAngle + currentRotation;
+                            // Normalize to [-PI, PI]
+                            worldAngle = ((worldAngle + Math.PI) % (Math.PI * 2)) - Math.PI;
+                            // Front-facing is at angle 0, calculate proximity (1 = front, 0 = back)
+                            const proximity = Math.cos(worldAngle);
+                            // Base scale: 1.0 at back, 1.3 at front
+                            let baseScale = 1.0 + 0.3 * Math.max(0, proximity);
+
+                            // Initialize hover scale if not set
+                            if (plane.userData.hoverScale === undefined) {
+                                plane.userData.hoverScale = 1.0;
+                            }
+
+                            // Target hover scale
+                            const targetHoverScale = (plane === hoveredCard) ? 1.15 : 1.0;
+                            // Smooth lerp to target
+                            plane.userData.hoverScale += (targetHoverScale - plane.userData.hoverScale) * 0.1;
+
+                            // Apply combined scale
+                            const finalScale = baseScale * plane.userData.hoverScale;
+                            plane.scale.set(finalScale, finalScale, finalScale);
+
+                            // Hover brightness effect
+                            if (plane.material) {
+                                const targetBrightness = (plane === hoveredCard) ? 1.3 : 1.0;
+                                if (plane.userData.brightness === undefined) {
+                                    plane.userData.brightness = 1.0;
+                                }
+                                plane.userData.brightness += (targetBrightness - plane.userData.brightness) * 0.1;
+                                const b = plane.userData.brightness;
+                                plane.material.color.setRGB(b, b, b);
+                            }
+                        }
+                    });
+                }
+
+                if (renderer && scene && camera) {
+                    renderer.render(scene, camera);
+                }
+            }
+
+            function initScrollRotation() {
+                if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+                    console.log('GSAP not loaded, retrying...');
+                    setTimeout(initScrollRotation, 100);
+                    return;
+                }
+
+                gsap.registerPlugin(ScrollTrigger);
+
+                ScrollTrigger.create({
+                    trigger: '#carousel3d-container',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1,
+                    onEnter: () => { isCarouselInView = true; },
+                    onLeave: () => { isCarouselInView = false; },
+                    onEnterBack: () => { isCarouselInView = true; },
+                    onLeaveBack: () => { isCarouselInView = false; },
+                    onUpdate: (self) => {
+                        // Map scroll: 38% = card 0 front, 65% = card 4 front
+                        // Remap progress from [0.38, 0.65] to [0, 1], continue rotating after 65%
+                        const remappedProgress = Math.max(0, (self.progress - 0.38) / 0.27);
+                        targetRotation = startRotation + (endRotation - startRotation) * remappedProgress;
+                    }
+                });
+            }
+
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCarousel3D);
+            } else {
+                initCarousel3D();
+            }
+        })();
+        </script>
 
             </div>
 
