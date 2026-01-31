@@ -121,9 +121,62 @@
             color: #EA4E33;
             background: rgba(234, 78, 51, 0.1);
         }
+
+        /* Pixel Confetti */
+        .pixel-container {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        .pixel {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #EA4E33;
+        }
+
+        /* Cursor Crosshair Tracker */
+        .cursor-crosshair {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .cursor-crosshair.active {
+            opacity: 1;
+        }
+        .crosshair-h,
+        .crosshair-v {
+            position: absolute;
+            background: rgba(234, 78, 51, 0.4);
+            will-change: transform;
+        }
+        .crosshair-h {
+            width: 100%;
+            height: 1px;
+            left: 0;
+            top: 0;
+        }
+        .crosshair-v {
+            width: 1px;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
     </style>
 </head>
 <body class="bg-black text-white font-sans antialiased selection:bg-white selection:text-black overflow-x-hidden">
+
+<!-- Cursor Crosshair Tracker (Desktop Only) -->
+<div id="cursor-crosshair" class="cursor-crosshair hidden md:block">
+    <div class="crosshair-h"></div>
+    <div class="crosshair-v"></div>
+</div>
 
 <!-- Background (component) added by Aura -->
 <div class="aura-background-component fixed top-0 w-full h-screen -z-10" data-alpha-mask="80" style="; mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)"><div data-us-project="cqcLtDwfoHqqRPttBbQE" class="absolute top-0 left-0 -z-10 w-full h-full"></div>
@@ -1979,7 +2032,7 @@
 
 <!-- TESTIMONIAL SECTION -->
 <section id="testimonials" class="relative w-full py-32 bg-transparent z-20 overflow-hidden">
-    <div class="max-w-4xl mx-auto px-6 md:px-12">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
         <!-- Section Header -->
         <div class="mb-16 text-center">
             <div class="flex items-center justify-center gap-4 mb-3">
@@ -1989,38 +2042,79 @@
             </div>
         </div>
 
-        <!-- Testimonial Card -->
-        <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-8 md:p-12 backdrop-blur-sm">
-            <!-- Quote Icon -->
-            <div class="absolute -top-4 left-8 md:left-12">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
-                </svg>
+        <!-- Testimonials Grid - 3 columns on desktop, stacked on mobile -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+
+            <!-- Testimonial 1 -->
+            <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+                <div class="absolute -top-3 left-6 md:left-8">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
+                    </svg>
+                </div>
+                <blockquote class="relative z-10 pt-4">
+                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-6" data-i18n="testimonial.quote1">
+                        "Working with Jed was a game-changer for our brand. He understood our vision immediately and delivered a website that exceeded our expectations."
+                    </p>
+                    <footer class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#EA4E33]/30 to-[#EA4E33]/10 flex items-center justify-center flex-shrink-0">
+                            <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: #EA4E33;">SK</span>
+                        </div>
+                        <div>
+                            <cite style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: white; font-style: normal; display: block;">Sarah K.</cite>
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role1">FOUNDER, STARTUP CO.</span>
+                        </div>
+                    </footer>
+                </blockquote>
             </div>
 
-            <!-- Quote Text -->
-            <blockquote class="relative z-10">
-                <p style="font-family: 'Manrope', sans-serif; font-size: clamp(1.25rem, 2.5vw, 1.75rem); line-height: 1.6; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-8" data-i18n="testimonial.quote">
-                    "Working with Jed was a game-changer for our brand. He understood our vision immediately and delivered a website that exceeded our expectations. The attention to detail and communication throughout the project was exceptional."
-                </p>
+            <!-- Testimonial 2 -->
+            <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+                <div class="absolute -top-3 left-6 md:left-8">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
+                    </svg>
+                </div>
+                <blockquote class="relative z-10 pt-4">
+                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-6" data-i18n="testimonial.quote2">
+                        "The attention to detail and communication throughout the project was exceptional. Our new site has significantly improved our conversion rates."
+                    </p>
+                    <footer class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#EA4E33]/30 to-[#EA4E33]/10 flex items-center justify-center flex-shrink-0">
+                            <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: #EA4E33;">MR</span>
+                        </div>
+                        <div>
+                            <cite style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: white; font-style: normal; display: block;">Michael R.</cite>
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role2">CEO, TECH VENTURES</span>
+                        </div>
+                    </footer>
+                </blockquote>
+            </div>
 
-                <!-- Attribution -->
-                <footer class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#EA4E33]/30 to-[#EA4E33]/10 flex items-center justify-center">
-                        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: #EA4E33;">SK</span>
-                    </div>
-                    <div>
-                        <cite style="font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 500; color: white; font-style: normal; display: block;">Sarah K.</cite>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role">FOUNDER, STARTUP CO.</span>
-                    </div>
-                </footer>
-            </blockquote>
+            <!-- Testimonial 3 -->
+            <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+                <div class="absolute -top-3 left-6 md:left-8">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
+                    </svg>
+                </div>
+                <blockquote class="relative z-10 pt-4">
+                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-6" data-i18n="testimonial.quote3">
+                        "Jed transformed our online presence completely. Professional, creative, and incredibly easy to work with. Highly recommend for any business."
+                    </p>
+                    <footer class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#EA4E33]/30 to-[#EA4E33]/10 flex items-center justify-center flex-shrink-0">
+                            <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: #EA4E33;">AL</span>
+                        </div>
+                        <div>
+                            <cite style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: white; font-style: normal; display: block;">Amanda L.</cite>
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role3">DIRECTOR, CREATIVE AGENCY</span>
+                        </div>
+                    </footer>
+                </blockquote>
+            </div>
+
         </div>
-
-        <!-- Subtle note for social proof -->
-        <p class="text-center mt-8" style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.3);" data-i18n="testimonial.more">
-            MORE TESTIMONIALS COMING SOON
-        </p>
     </div>
 </section>
 
@@ -2369,6 +2463,140 @@
                 setLanguage(currentLang);
             }
         });
+    })();
+    </script>
+
+    <!-- Cursor Crosshair Tracker Script -->
+    <script>
+    (function() {
+        const crosshair = document.getElementById('cursor-crosshair');
+        if (!crosshair) return;
+
+        const hLine = crosshair.querySelector('.crosshair-h');
+        const vLine = crosshair.querySelector('.crosshair-v');
+
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+        let isVisible = false;
+        let animationId = null;
+
+        function animate() {
+            currentX += (mouseX - currentX) * 0.15;
+            currentY += (mouseY - currentY) * 0.15;
+
+            hLine.style.transform = `translateY(${currentY}px)`;
+            vLine.style.transform = `translateX(${currentX}px)`;
+
+            if (Math.abs(mouseX - currentX) > 0.1 || Math.abs(mouseY - currentY) > 0.1) {
+                animationId = requestAnimationFrame(animate);
+            } else {
+                animationId = null;
+            }
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            if (!isVisible) {
+                isVisible = true;
+                crosshair.classList.add('active');
+            }
+
+            if (!animationId) {
+                animationId = requestAnimationFrame(animate);
+            }
+        });
+
+        document.addEventListener('mouseleave', () => {
+            isVisible = false;
+            crosshair.classList.remove('active');
+        });
+
+        document.addEventListener('mouseenter', () => {
+            isVisible = true;
+            crosshair.classList.add('active');
+        });
+    })();
+    </script>
+
+    <!-- Pixel Confetti on Click Script -->
+    <script>
+    (function() {
+        // Only on desktop
+        if (window.innerWidth < 768) return;
+
+        const PIXEL_COUNT = 12;
+        const PIXEL_SIZE = 4;
+        const SPREAD = 80;
+        const DURATION = 400;
+        const COOLDOWN = 200;
+
+        let lastClickTime = 0;
+
+        document.addEventListener('click', (e) => {
+            const now = Date.now();
+            if (now - lastClickTime < COOLDOWN) return;
+            lastClickTime = now;
+            createPixelBurst(e.clientX, e.clientY);
+        });
+
+        function createPixelBurst(x, y) {
+            const container = document.createElement('div');
+            container.className = 'pixel-container';
+            container.style.left = x + 'px';
+            container.style.top = y + 'px';
+            document.body.appendChild(container);
+
+            const pixels = [];
+
+            for (let i = 0; i < PIXEL_COUNT; i++) {
+                const pixel = document.createElement('div');
+                pixel.className = 'pixel';
+
+                const angle = (Math.PI * 2 * i / PIXEL_COUNT) + (Math.random() - 0.5) * 0.5;
+                const distance = SPREAD * (0.5 + Math.random() * 0.5);
+
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                const size = PIXEL_SIZE * (0.5 + Math.random() * 1);
+                pixel.style.width = size + 'px';
+                pixel.style.height = size + 'px';
+
+                const hue = 15 + Math.random() * 10;
+                const lightness = 50 + Math.random() * 15;
+                pixel.style.background = `hsl(${hue}, 85%, ${lightness}%)`;
+
+                container.appendChild(pixel);
+                pixels.push({ el: pixel, tx, ty });
+            }
+
+            const startTime = performance.now();
+
+            function animatePixels(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / DURATION, 1);
+
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const opacity = 1 - progress;
+
+                pixels.forEach(({ el, tx, ty }) => {
+                    const currentX = tx * ease;
+                    const currentY = ty * ease - (progress * 20);
+                    el.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                    el.style.opacity = opacity;
+                });
+
+                if (progress < 1) {
+                    requestAnimationFrame(animatePixels);
+                } else {
+                    container.remove();
+                }
+            }
+
+            requestAnimationFrame(animatePixels);
+        }
     })();
     </script>
 </body></html>
