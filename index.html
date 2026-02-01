@@ -293,10 +293,22 @@
         <!-- Hero JavaScript -->
         <script>
             (function() {
+                // Skip cursor tracking on mobile and tablet (< 1024px)
+                const isMobileOrTablet = window.innerWidth < 1024;
+
                 // Mouse-reactive glow effect and 3D tilt
                 const hero = document.getElementById('hero');
                 const cursorGlow = document.getElementById('hero-cursor');
                 const typeStack = document.getElementById('hero-type-stack');
+
+                // Hide cursor glow on mobile/tablet
+                if (isMobileOrTablet && cursorGlow) {
+                    cursorGlow.style.display = 'none';
+                }
+
+                // Only add cursor tracking on desktop
+                if (isMobileOrTablet) return;
+
                 let mouseX = 0, mouseY = 0;
                 let glowX = 0, glowY = 0;
                 let currentRotateX = 0;
@@ -1004,8 +1016,14 @@
                     bentoObserver.observe(bentoHeader);
                 }
 
+                // Skip cursor tracking on mobile and tablet (< 1024px)
+                const isMobileOrTablet = window.innerWidth < 1024;
+
                 bentoCards.forEach(card => {
                     bentoObserver.observe(card);
+
+                    // Skip cursor tracking effects on mobile/tablet
+                    if (isMobileOrTablet) return;
 
                     // 3D Tilt and Glow Follow on hover
                     card.addEventListener('mousemove', (e) => {
@@ -1045,15 +1063,10 @@
                         card.style.setProperty('--pointer-y', '0');
                     });
 
-                    // Touch support - disable tilt on touch devices
-                    card.addEventListener('touchstart', () => {
-                        card.style.transform = 'scale(1.02)';
-                    });
-
-                    card.addEventListener('touchend', () => {
-                        card.style.transform = 'scale(1)';
-                    });
                 });
+
+                // Skip global pointer tracking on mobile/tablet
+                if (isMobileOrTablet) return;
 
                 // Global pointer tracking for all cards (like jh3y's effect)
                 // Optimized: Uses RAF throttling and cached geometry
@@ -2514,6 +2527,9 @@
     <!-- Cursor Crosshair Tracker Script -->
     <script>
     (function() {
+        // Skip on mobile and tablet (< 1024px)
+        if (window.innerWidth < 1024) return;
+
         const crosshair = document.getElementById('cursor-crosshair');
         if (!crosshair) return;
 
