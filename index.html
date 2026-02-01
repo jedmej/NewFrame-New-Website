@@ -55,77 +55,6 @@
             animation: revealBlur 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Progressive Blur Bottom Component - Stacked layers approach */
-        .progressive-blur {
-            position: absolute;
-            z-index: 5;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            inset: auto 0 0 0;
-        }
-
-        .progressive-blur > div {
-            position: absolute;
-            inset: 0;
-        }
-
-        .progressive-blur > div:nth-child(1) {
-            backdrop-filter: blur(1px);
-            -webkit-backdrop-filter: blur(1px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 37.5%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 37.5%);
-            z-index: 1;
-        }
-
-        .progressive-blur > div:nth-child(2) {
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,0) 50%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,0) 50%);
-            z-index: 2;
-        }
-
-        .progressive-blur > div:nth-child(3) {
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 62.5%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,1) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 62.5%);
-            z-index: 3;
-        }
-
-        .progressive-blur > div:nth-child(4) {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,0) 75%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 37.5%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,0) 75%);
-            z-index: 4;
-        }
-
-        .progressive-blur > div:nth-child(5) {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 87.5%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 87.5%);
-            z-index: 5;
-        }
-
-        .progressive-blur > div:nth-child(6) {
-            backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 62.5%, rgba(0,0,0,1) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,0) 100%);
-            z-index: 6;
-        }
-
-        .progressive-blur > div:nth-child(7) {
-            backdrop-filter: blur(64px);
-            -webkit-backdrop-filter: blur(64px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,1) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 87.5%, rgba(0,0,0,1) 100%);
-            z-index: 7;
-        }
-
         /* Progressive Blur Top Component - Reversed stacked layers */
         .progressive-blur-top {
             position: absolute;
@@ -286,28 +215,43 @@
                 display: none !important;
             }
 
-            /* Disable progressive blur on mobile for performance */
-            #progressive-blur-bottom {
-                display: none !important;
-            }
         }
 
     </style>
 </head>
 <body class="text-white font-sans antialiased selection:bg-white selection:text-black overflow-x-hidden" style="background: #242424;">
 
-<!-- Progressive Blur Bottom (Fixed to viewport bottom) -->
-<div id="progressive-blur-bottom" class="fixed z-40 pointer-events-none w-full h-[25vh] bottom-0 left-0">
-    <div class="progressive-blur">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
+<!-- Scroll Mosaic Grid - Bottom Zone -->
+<div id="scroll-mosaic-bottom" class="fixed bottom-0 left-0 w-full h-[20vh] pointer-events-none z-[100]"></div>
+
+<style>
+    #scroll-mosaic-bottom {
+        display: grid;
+        grid-template-columns: repeat(var(--mosaic-cols, 16), 1fr);
+        grid-template-rows: repeat(var(--mosaic-rows, 4), 1fr);
+        transform: translateZ(0);
+        contain: layout style;
+        mix-blend-mode: difference;
+    }
+
+    .mosaic-cell {
+        background-color: #D2D2D2;
+        opacity: 1;
+        transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity;
+    }
+
+    .mosaic-cell.consumed {
+        opacity: 0;
+        transition: opacity 0.25s cubic-bezier(0.0, 0, 0.2, 1);
+    }
+
+    @media (max-width: 768px) {
+        #scroll-mosaic-bottom {
+            display: none;
+        }
+    }
+</style>
 
 <!-- Cursor Crosshair Tracker (Desktop Only) -->
 <div id="cursor-crosshair" class="cursor-crosshair hidden md:block">
@@ -523,841 +467,13 @@
         </script>
     </div>
 
-    <!-- Capabilities Bento Grid Section -->
-    <section class="z-10 relative py-32 bg-transparent" id="scope">
-        <!-- Subtle grid background -->
-        <div class="absolute inset-0 opacity-[0.04] pointer-events-none">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="bento-grid-pattern" width="80" height="80" patternUnits="userSpaceOnUse">
-                        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255, 255, 255, 0.3)" stroke-width="0.5"/>
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#bento-grid-pattern)" />
-            </svg>
-        </div>
 
-        <div class="flex flex-col w-full items-center justify-start bg-transparent px-6 md:px-12">
-            <!-- Section Header -->
-            <div class="relative z-30 mb-16 w-full max-w-[1200px] bento-header">
-                <div class="flex items-center gap-4 mb-3">
-                    <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);" data-i18n="services.label">CAPABILITIES</div>
-                </div>
-                <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.9; letter-spacing: -0.02em; color: #fff;" data-i18n="services.title">WHAT I DO</h2>
-            </div>
+    <!-- Combined Intro + Bento Section -->
+    <section class="z-10 relative bg-transparent intro-bento-section" id="scope">
+        <div class="flex flex-col w-full items-center justify-start bg-transparent px-6 md:px-12 h-full">
 
-            <!-- SVG Blur Filter for glow effect -->
-            <svg class="sr-only" style="position: absolute; width: 0; height: 0; overflow: visible !important;" xmlns="http://www.w3.org/2000/svg">
-                <filter id="bento-blur-filter" width="400%" height="400%" x="-150%" y="-150%">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="40" />
-                </filter>
-            </svg>
-
-            <!-- Bento Grid -->
-            <div class="bento-grid w-full max-w-[1200px] relative z-20">
-                <!-- Card 01: Web Design (Large - 2x2) -->
-                <div class="bento-card bento-card-large" data-card="1" style="grid-column: span 2; grid-row: span 2;">
-                    <div class="bento-glow-source"></div>
-                    <div class="bento-card-glow"></div>
-                    <div class="bento-card-content">
-                        <div class="bento-card-number">01</div>
-                        <div class="bento-card-body">
-                            <h3 class="bento-card-title" data-i18n="services.web.title">Web Design</h3>
-                            <p class="bento-card-desc" data-i18n="services.web.desc">Custom websites that look stunning and actually convert visitors into customers</p>
-                        </div>
-                        <!-- Decorative: Browser window -->
-                        <div class="bento-decor bento-decor-browser">
-                            <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="1" y="1" width="118" height="78" rx="8" stroke="currentColor" stroke-width="1" opacity="0.3"/>
-                                <line x1="1" y1="16" x2="119" y2="16" stroke="currentColor" stroke-width="1" opacity="0.2"/>
-                                <circle cx="12" cy="9" r="3" fill="#EA4E33" opacity="0.6"/>
-                                <circle cx="22" cy="9" r="3" fill="currentColor" opacity="0.2"/>
-                                <circle cx="32" cy="9" r="3" fill="currentColor" opacity="0.2"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 02: UX/UI Design (Tall - 1x2) -->
-                <div class="bento-card bento-card-tall" data-card="2" style="grid-column: span 1; grid-row: span 2;">
-                    <div class="bento-glow-source"></div>
-                    <div class="bento-card-glow"></div>
-                    <div class="bento-card-content">
-                        <div class="bento-card-number">02</div>
-                        <div class="bento-card-body">
-                            <h3 class="bento-card-title" data-i18n="services.ux.title">UX/UI Design</h3>
-                            <p class="bento-card-desc" data-i18n="services.ux.desc">User-first interfaces that make your product a joy to use</p>
-                        </div>
-                        <!-- Decorative: Cursor -->
-                        <div class="bento-decor bento-decor-cursor">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 4L10.5 20L13 13L20 10.5L4 4Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" opacity="0.4"/>
-                                <path d="M13 13L19 19" stroke="#EA4E33" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 03: Animation (Compact - 1x1) -->
-                <div class="bento-card bento-card-compact" data-card="3" style="grid-column: span 1; grid-row: span 1;">
-                    <div class="bento-glow-source"></div>
-                    <div class="bento-card-glow"></div>
-                    <div class="bento-card-content">
-                        <div class="bento-card-number">03</div>
-                        <div class="bento-card-body">
-                            <h3 class="bento-card-title" data-i18n="services.animation.title">Animation</h3>
-                            <p class="bento-card-desc" data-i18n="services.animation.desc">Motion that tells stories</p>
-                        </div>
-                        <!-- Decorative: Motion wave -->
-                        <div class="bento-decor bento-decor-motion">
-                            <svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path class="motion-wave" d="M5 20C15 8 25 32 35 20C45 8 55 20 55 20" stroke="#EA4E33" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-                                <path d="M5 28C15 20 25 36 35 28C45 20 55 28 55 28" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.2"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 04: Art Direction (Wide - 2x1) -->
-                <div class="bento-card bento-card-wide" data-card="4" style="grid-column: span 2; grid-row: span 1;">
-                    <div class="bento-glow-source"></div>
-                    <div class="bento-card-glow"></div>
-                    <div class="bento-card-content">
-                        <div class="bento-card-number">04</div>
-                        <div class="bento-card-body">
-                            <h3 class="bento-card-title" data-i18n="services.art.title">Art Direction</h3>
-                            <p class="bento-card-desc" data-i18n="services.art.desc">Cohesive visual strategy that makes your brand instantly recognizable</p>
-                        </div>
-                        <!-- Decorative: Geometric shapes -->
-                        <div class="bento-decor bento-decor-geo">
-                            <svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="25" cy="30" r="20" stroke="currentColor" stroke-width="1" opacity="0.2"/>
-                                <rect x="45" y="10" width="40" height="40" stroke="#EA4E33" stroke-width="1" opacity="0.4"/>
-                                <polygon points="70,15 90,45 50,45" stroke="currentColor" stroke-width="1" fill="none" opacity="0.15"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 05: Brand Identity (Wide - 2x1) -->
-                <div class="bento-card bento-card-wide" data-card="5" style="grid-column: span 2; grid-row: span 1;">
-                    <div class="bento-glow-source"></div>
-                    <div class="bento-card-glow"></div>
-                    <div class="bento-card-content">
-                        <div class="bento-card-number">05</div>
-                        <div class="bento-card-body">
-                            <h3 class="bento-card-title" data-i18n="services.brand.title">Brand Identity</h3>
-                            <p class="bento-card-desc" data-i18n="services.brand.desc">Logos, colors, and guidelines that help you stand out in a crowded market</p>
-                        </div>
-                        <!-- Decorative: Abstract logo mark -->
-                        <div class="bento-decor bento-decor-brand">
-                            <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="5" y="5" width="25" height="25" fill="#EA4E33" opacity="0.3"/>
-                                <rect x="30" y="30" width="25" height="25" stroke="currentColor" stroke-width="1" opacity="0.3"/>
-                                <rect x="20" y="20" width="20" height="20" stroke="currentColor" stroke-width="1" opacity="0.2"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CTA Card - Let's Work Together -->
-                <div class="bento-card bento-card-accent" data-card="accent" style="grid-column: span 1; grid-row: span 1;">
-                    <div class="bento-glow-source"></div>
-                    <div class="bento-card-glow"></div>
-                    <a href="#lets-talk-section" class="bento-card-content bento-accent-content" style="text-decoration: none;">
-                        <div class="bento-accent-symbol">
-                            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 20h24M24 12l8 8-8 8" stroke="#EA4E33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                        <span class="bento-accent-text" data-i18n="services.cta">Start a project</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bento Grid Styles -->
-        <style>
-            /* Utility: Screen reader only */
-            .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border-width: 0;
-            }
-
-            /* CSS Custom Properties */
-            :root {
-                --bento-bg: rgba(255, 255, 255, 0.02);
-                --bento-bg-hover: rgba(255, 255, 255, 0.04);
-                --bento-border: rgba(255, 255, 255, 0.08);
-                --bento-border-hover: rgba(234, 78, 51, 0.4);
-                --bento-glow: rgba(234, 78, 51, 0.12);
-                --bento-radius: 20px;
-                --bento-gap: 20px;
-                --glow-scale: 2.5;
-                /* --glow-opacity is set via JS on first pointer move to prevent glow on load */
-            }
-
-            /* Noise texture */
-            .bento-noise {
-                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            }
-
-            /* Grid Layout */
-            .bento-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-auto-rows: minmax(200px, auto);
-                gap: var(--bento-gap);
-            }
-
-            /* Card Base */
-            .bento-card {
-                position: relative;
-                background: rgba(0, 0, 0, 0.4);
-                backdrop-filter: blur(20px) saturate(1.2);
-                -webkit-backdrop-filter: blur(20px) saturate(1.2);
-                border: 1px solid var(--bento-border);
-                border-radius: var(--bento-radius);
-                overflow: hidden;
-                cursor: pointer;
-                transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-                            border-color 0.4s ease,
-                            background 0.4s ease,
-                            box-shadow 0.35s ease-out,
-                            backdrop-filter 0.4s ease,
-                            filter 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-                            opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-                            scale 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-                will-change: transform, filter, opacity, scale;
-                transform-style: preserve-3d;
-                perspective: 1000px;
-                /* Container for cqi/cqh units in glow positioning */
-                container-type: size;
-                /* Clip the glow to card bounds */
-                clip-path: inset(0 round var(--bento-radius));
-            }
-
-            .bento-card::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.4s ease;
-            }
-
-            /* Context-aware hover effect - when grid has a hovered card, dim siblings */
-            .bento-grid:has(.bento-card:hover) .bento-card:not(:hover) {
-                filter: brightness(0.6) saturate(0.5);
-                opacity: 0.7;
-                scale: 0.98;
-            }
-
-            /* The hovered card pops forward */
-            .bento-card:hover {
-                border-color: var(--bento-border-hover);
-                background: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(30px) saturate(1.4);
-                -webkit-backdrop-filter: blur(30px) saturate(1.4);
-                /* Optimized: Reduced from 4 shadows to 2 for better paint performance */
-                box-shadow: 0 0 60px -10px rgba(234, 78, 51, 0.4),
-                            0 20px 40px -10px rgba(0, 0, 0, 0.5);
-                filter: brightness(1.05);
-                scale: 1.02;
-                z-index: 10;
-            }
-
-            .bento-card:hover::before {
-                opacity: 1;
-            }
-
-            /* Pointer-tracking glow source - the colorful blob that follows cursor */
-            .bento-glow-source {
-                position: absolute;
-                inset: 0;
-                display: grid;
-                place-items: center;
-                pointer-events: none;
-                transform: translateZ(0);
-                /* Follows pointer: translate based on --pointer-x/y (-1 to 1 range) */
-                translate: calc(var(--pointer-x, 0) * 50cqi) calc(var(--pointer-y, 0) * 50cqh);
-                scale: var(--glow-scale, 2.5);
-                opacity: var(--glow-opacity, 0);
-                will-change: transform, opacity;
-                transition: opacity 0.3s ease;
-                z-index: 1;
-            }
-
-            .bento-glow-source::before {
-                content: '';
-                width: 150px;
-                height: 150px;
-                background: radial-gradient(circle, #EA4E33 0%, #ff6b4a 25%, #EA4E33 50%, transparent 70%);
-                border-radius: 50%;
-                filter: url(#bento-blur-filter) saturate(1.8) brightness(1.2);
-            }
-
-            .bento-card:hover .bento-glow-source {
-                opacity: var(--glow-opacity, 0.35);
-            }
-
-            /* Glow effect layer - subtle radial gradient */
-            .bento-card-glow {
-                position: absolute;
-                inset: 0;
-                opacity: 0;
-                transition: opacity 0.4s ease;
-                pointer-events: none;
-                background: radial-gradient(
-                    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-                    var(--bento-glow),
-                    transparent 40%
-                );
-                z-index: 1;
-            }
-
-            .bento-card:hover .bento-card-glow {
-                opacity: 1;
-            }
-
-            /* Card Content */
-            .bento-card-content {
-                position: relative;
-                z-index: 2;
-                height: 100%;
-                padding: 2rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-            }
-
-            /* Number Badge */
-            .bento-card-number {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.7rem;
-                font-weight: 600;
-                letter-spacing: 0.1em;
-                color: #EA4E33;
-                opacity: 0.7;
-                transition: opacity 0.3s ease;
-                flex-shrink: 0;
-            }
-
-            .bento-card:hover .bento-card-number {
-                opacity: 1;
-            }
-
-            /* Card Body */
-            .bento-card-body {
-                margin-top: auto;
-                flex-shrink: 0;
-            }
-
-            /* Title */
-            .bento-card-title {
-                font-family: 'Bebas Neue', sans-serif;
-                font-size: clamp(2rem, 4vw, 3.5rem);
-                line-height: 0.95;
-                letter-spacing: -0.02em;
-                color: #fff;
-                margin: 0;
-                transform: translateY(0);
-                transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            }
-
-            .bento-card:hover .bento-card-title {
-                transform: translateY(-4px);
-            }
-
-            /* Description */
-            .bento-card-desc {
-                font-family: 'Inter', sans-serif;
-                font-size: 0.85rem;
-                font-weight: 400;
-                color: rgba(255, 255, 255, 0.4);
-                margin: 0.75rem 0 0 0;
-                max-width: 280px;
-                line-height: 1.5;
-                transition: color 0.4s ease;
-            }
-
-            .bento-card:hover .bento-card-desc {
-                color: rgba(255, 255, 255, 0.6);
-            }
-
-            /* Decorative Elements */
-            .bento-decor {
-                position: absolute;
-                color: rgba(255, 255, 255, 0.5);
-                transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
-                pointer-events: none;
-            }
-
-            .bento-card:hover .bento-decor {
-                transform: scale(1.05);
-            }
-
-            .bento-decor-browser {
-                bottom: 2rem;
-                right: 2rem;
-                width: 140px;
-                opacity: 0.6;
-            }
-
-            .bento-decor-cursor {
-                bottom: 2rem;
-                right: 2rem;
-                width: 48px;
-            }
-
-            .bento-decor-motion {
-                bottom: 1.5rem;
-                right: 1.5rem;
-                width: 80px;
-            }
-
-            .bento-decor-geo {
-                bottom: 1.5rem;
-                right: 2rem;
-                width: 120px;
-            }
-
-            .bento-decor-brand {
-                bottom: 1.5rem;
-                right: 2rem;
-                width: 70px;
-            }
-
-            /* Motion wave animation */
-            @keyframes waveMotion {
-                0%, 100% { d: path("M5 20C15 8 25 32 35 20C45 8 55 20 55 20"); }
-                50% { d: path("M5 20C15 32 25 8 35 20C45 32 55 20 55 20"); }
-            }
-
-            .motion-wave {
-                animation: waveMotion 3s ease-in-out infinite;
-            }
-
-            /* Accent Card */
-            .bento-card-accent {
-                background: rgba(0, 0, 0, 0.2);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border-style: dashed;
-            }
-
-            .bento-card-accent:hover {
-                background: rgba(0, 0, 0, 0.3);
-            }
-
-            .bento-accent-content {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                gap: 1rem;
-            }
-
-            .bento-accent-symbol {
-                width: 40px;
-                height: 40px;
-                opacity: 0.5;
-                transition: transform 0.4s ease, opacity 0.3s ease;
-            }
-
-            .bento-card-accent:hover .bento-accent-symbol {
-                transform: rotate(90deg);
-                opacity: 0.8;
-            }
-
-            .bento-accent-text {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.7rem;
-                letter-spacing: 0.1em;
-                color: rgba(255, 255, 255, 0.3);
-                text-transform: uppercase;
-            }
-
-            /* Header animation - controlled by IntersectionObserver */
-            .bento-header {
-                opacity: 0;
-            }
-
-            .bento-header.bento-visible {
-                animation: bentoFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            }
-
-            .bento-header.bento-animated {
-                opacity: 1;
-                transform: none;
-                filter: none;
-                animation: none;
-            }
-
-            /* Card entrance animations */
-            @keyframes bentoFadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                    filter: blur(10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                    filter: blur(0);
-                }
-            }
-
-            .bento-card {
-                opacity: 0;
-            }
-
-            .bento-card.bento-visible {
-                animation: bentoFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            }
-
-            .bento-card.bento-animated {
-                opacity: 1;
-                transform: none;
-                filter: none;
-                animation: none;
-            }
-
-            .bento-card[data-card="1"].bento-visible { animation-delay: 0.1s; }
-            .bento-card[data-card="2"].bento-visible { animation-delay: 0.2s; }
-            .bento-card[data-card="3"].bento-visible { animation-delay: 0.3s; }
-            .bento-card[data-card="4"].bento-visible { animation-delay: 0.35s; }
-            .bento-card[data-card="5"].bento-visible { animation-delay: 0.45s; }
-            .bento-card[data-card="accent"].bento-visible { animation-delay: 0.5s; }
-
-            /* Responsive */
-            @media (max-width: 1024px) {
-                .bento-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-
-                .bento-card-large {
-                    grid-column: span 2 !important;
-                    grid-row: span 1 !important;
-                }
-
-                .bento-card-tall {
-                    grid-column: span 1 !important;
-                    grid-row: span 1 !important;
-                }
-            }
-
-            @media (max-width: 640px) {
-                .bento-grid {
-                    grid-template-columns: 1fr;
-                    gap: 16px;
-                }
-
-                .bento-card-large,
-                .bento-card-tall,
-                .bento-card-wide,
-                .bento-card-compact,
-                .bento-card-accent {
-                    grid-column: span 1 !important;
-                    grid-row: span 1 !important;
-                }
-
-                .bento-card-content {
-                    padding: 1.5rem;
-                }
-
-                .bento-card-title {
-                    font-size: 2rem;
-                }
-
-                .bento-decor {
-                    display: none;
-                }
-            }
-        </style>
-
-        <!-- Bento Grid JavaScript -->
-        <script>
-            (function() {
-                const bentoGrid = document.querySelector('.bento-grid');
-                const bentoCards = document.querySelectorAll('.bento-card');
-                const bentoHeader = document.querySelector('.bento-header');
-
-                // Intersection Observer for entrance animations
-                const observerOptions = {
-                    threshold: 0.1,
-                    rootMargin: '0px 0px -50px 0px'
-                };
-
-                const bentoObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('bento-visible');
-                            // Lock in final state after animation completes
-                            entry.target.addEventListener('animationend', () => {
-                                entry.target.classList.add('bento-animated');
-                            }, { once: true });
-                            bentoObserver.unobserve(entry.target);
-                        }
-                    });
-                }, observerOptions);
-
-                // Observe the header too
-                if (bentoHeader) {
-                    bentoObserver.observe(bentoHeader);
-                }
-
-                // Skip cursor tracking on mobile and tablet (< 1024px)
-                const isMobileOrTablet = window.innerWidth < 1024;
-
-                bentoCards.forEach(card => {
-                    bentoObserver.observe(card);
-
-                    // Skip cursor tracking effects on mobile/tablet
-                    if (isMobileOrTablet) return;
-
-                    // 3D Tilt and Glow Follow on hover
-                    card.addEventListener('mousemove', (e) => {
-                        const rect = card.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        const centerX = rect.width / 2;
-                        const centerY = rect.height / 2;
-
-                        // Normalize to -1 to 1
-                        const normalizedX = (x - centerX) / centerX;
-                        const normalizedY = (y - centerY) / centerY;
-
-                        // Calculate rotation (max 8 degrees)
-                        const rotateY = normalizedX * 8;
-                        const rotateX = -normalizedY * 8;
-
-                        // Apply 3D transform
-                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-
-                        // Update glow position (percentage for radial gradient)
-                        const glowX = (x / rect.width) * 100;
-                        const glowY = (y / rect.height) * 100;
-                        card.style.setProperty('--mouse-x', `${glowX}%`);
-                        card.style.setProperty('--mouse-y', `${glowY}%`);
-
-                        // Update pointer position for the colorful glow (-1 to 1 range)
-                        card.style.setProperty('--pointer-x', normalizedX.toFixed(3));
-                        card.style.setProperty('--pointer-y', normalizedY.toFixed(3));
-                    });
-
-                    card.addEventListener('mouseleave', () => {
-                        // Reset transform with smooth transition
-                        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-                        // Reset pointer to center
-                        card.style.setProperty('--pointer-x', '0');
-                        card.style.setProperty('--pointer-y', '0');
-                    });
-
-                });
-
-                // Skip global pointer tracking on mobile/tablet
-                if (isMobileOrTablet) return;
-
-                // Global pointer tracking for all cards (like jh3y's effect)
-                // Optimized: Uses RAF throttling and cached geometry
-                let glowActivated = false;
-                let pointerRAF = null;
-                let lastPointerX = 0, lastPointerY = 0;
-
-                // Cache card geometry to avoid repeated getBoundingClientRect calls
-                const cardGeometry = new Map();
-
-                function cacheCardGeometry() {
-                    bentoCards.forEach((card) => {
-                        const rect = card.getBoundingClientRect();
-                        cardGeometry.set(card, {
-                            left: rect.left,
-                            top: rect.top,
-                            width: rect.width,
-                            height: rect.height,
-                            centerX: rect.left + rect.width / 2,
-                            centerY: rect.top + rect.height / 2,
-                            halfWidth: rect.width / 2,
-                            halfHeight: rect.height / 2
-                        });
-                    });
-                }
-
-                // Update geometry on scroll/resize
-                let geometryTimeout;
-                const debouncedCacheGeometry = () => {
-                    clearTimeout(geometryTimeout);
-                    geometryTimeout = setTimeout(cacheCardGeometry, 50);
-                };
-                window.addEventListener('scroll', debouncedCacheGeometry, { passive: true });
-                window.addEventListener('resize', debouncedCacheGeometry, { passive: true });
-
-                document.addEventListener('pointermove', (event) => {
-                    // Activate glow on first pointer move (prevents glow showing on load)
-                    if (!glowActivated) {
-                        document.documentElement.style.setProperty('--glow-opacity', '0.35');
-                        glowActivated = true;
-                        cacheCardGeometry(); // Initial cache
-                    }
-
-                    lastPointerX = event.clientX;
-                    lastPointerY = event.clientY;
-
-                    // Throttle updates to RAF (max 60fps)
-                    if (pointerRAF) return;
-
-                    pointerRAF = requestAnimationFrame(() => {
-                        bentoCards.forEach((card) => {
-                            const geo = cardGeometry.get(card);
-                            if (!geo) return;
-
-                            // Calculate pointer position relative to card center
-                            const relativeX = lastPointerX - geo.centerX;
-                            const relativeY = lastPointerY - geo.centerY;
-
-                            // Normalize to -1 to 1 range
-                            const x = relativeX / geo.halfWidth;
-                            const y = relativeY / geo.halfHeight;
-
-                            // Update CSS custom properties
-                            card.style.setProperty('--pointer-x', x.toFixed(3));
-                            card.style.setProperty('--pointer-y', y.toFixed(3));
-                        });
-                        pointerRAF = null;
-                    });
-                });
-
-                // Pause wave animation when bento section is not visible
-                const motionWave = document.querySelector('.motion-wave');
-                if (motionWave) {
-                    const waveObserver = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            motionWave.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
-                        });
-                    }, { threshold: 0 });
-                    waveObserver.observe(bentoGrid);
-                }
-            })();
-        </script>
-    </section>
-
-    <!-- SELECTED WORK SECTION -->
-    <section class="min-h-[140vh] flex flex-col z-20 overflow-visible bg-transparent w-full relative items-center" id="selected-work">
-    
-    <!-- Custom Styles for Blur, Animation & Layout -->
-    <style class="">
-        /* Performance: content-visibility disabled for 3D carousel compatibility */
-        #selected-work {
-            /* content-visibility removed - was clipping 3D carousel */
-        }
-        .portfolio-card {
-            content-visibility: auto;
-            contain-intrinsic-size: auto 600px;
-        }
-
-        /* 3D Carousel Styles */
-        #carousel3d-container {
-            position: relative;
-            width: 100%;
-            height: 130vh;
-            min-height: 910px;
-            margin: 2rem 0 4rem 0;
-            overflow: visible !important;
-            clip-path: none !important;
-        }
-        #carousel3d-container canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-            clip-path: none !important;
-        }
-        /* Ensure parent containers don't clip the carousel */
-        #selected-work,
-        #selected-work > div,
-        #selected-work .md\:px-12,
-        #selected-work .flex-col {
-            overflow: visible !important;
-            clip-path: none !important;
-        }
-        @media (max-width: 768px) {
-            #carousel3d-container {
-                height: 50vh;
-                min-height: 350px;
-            }
-        }
-
-        @keyframes animationIn {
-            0% { opacity: 0; transform: translateY(80px) scale(0.96); filter: blur(12px); }
-            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
-        }
-        .animate-on-scroll { opacity: 0; will-change: transform, opacity, filter; }
-        .animate-on-scroll.animate { animation: animationIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-on-scroll.animated { opacity: 1; transform: none; filter: none; animation: none; }
-
-        /* Portfolio card info with progressive blur - stacked layers approach */
-        .card-info-blurred {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 30;
-            padding: 1.5rem;
-        }
-
-        .blur-stack {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-
-        .blur-stack::before,
-        .blur-stack::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            backdrop-filter: blur(20px) contrast(1.2) brightness(1.1);
-            -webkit-backdrop-filter: blur(20px) contrast(1.2) brightness(1.1);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
-        }
-
-        .blur-stack::after {
-            backdrop-filter: blur(40px) contrast(1.3) brightness(1.15);
-            -webkit-backdrop-filter: blur(40px) contrast(1.3) brightness(1.15);
-            mask-image: linear-gradient(to bottom, transparent 20%, black 60%, black 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 60%, black 100%);
-        }
-    </style>
-
-    <!-- Progressive Blur Top (Sticky) -->
-    <div id="progressive-blur-top" class="sticky top-0 left-0 w-full h-[25vh] z-40 pointer-events-none" style="opacity: 1; transition: opacity 0.8s ease-out;">
-        <div class="progressive-blur-top">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
-
-    <!-- Scrollable Content Container -->
-    <div class="md:px-12 flex flex-col -mt-[10vh] w-full max-w-[1400px] z-10 pr-6 pl-6 relative items-center">
-        
         <!-- Header Text -->
-        <div class="text-center mb-40 pt-32 animate-on-scroll relative z-20">
+        <div class="text-center mb-6 pt-6 animate-on-scroll relative z-20 flex-shrink-0">
             <!-- Hover Image Container (positioned behind text) -->
             <div id="jed-hover-image" class="jed-hover-image">
                 <div class="jed-image-placeholder">
@@ -1365,7 +481,7 @@
                 </div>
             </div>
 
-            <div id="reveal-paragraph" class="text-2xl md:text-3xl lg:text-[2.5rem] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-5xl mx-auto select-none relative z-10">
+            <div id="reveal-paragraph" class="text-lg md:text-xl lg:text-[22px] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-[1400px] mx-auto select-none relative z-10">
                 <span class="reveal-section revealed" data-section="0">Hey! I'm Jed, the founder of</span>
                 <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
                 <span class="reveal-section revealed" data-section="0">— and I help businesses look as good as they perform.</span>
@@ -1392,7 +508,7 @@
             </div>
 
             <!-- Reveal All Button -->
-            <button id="reveal-all-btn" class="reveal-all-btn mt-8">
+            <button id="reveal-all-btn" class="reveal-all-btn mt-4">
                 <span class="reveal-all-text reveal-all-text-show" data-i18n="about.revealAll">Reveal All</span>
                 <span class="reveal-all-text reveal-all-text-hide" data-i18n="about.hideAll">Hide All</span>
                 <div class="reveal-all-icons">
@@ -1819,6 +935,407 @@
             }, 100);
         </script>
 
+            <!-- Pixel Bento Grid -->
+            <div class="pixel-bento-grid w-full max-w-[1400px] relative z-20 flex-1">
+                <!-- Card 01: Web Design (Large - 2x2) -->
+                <div class="pixel-card pixel-card-large" style="grid-column: span 2; grid-row: span 2;">
+                    <div class="pixel-card-content">
+                        <div class="pixel-card-number">01</div>
+                        <div class="pixel-card-body">
+                            <h3 class="pixel-card-title">Web Design</h3>
+                            <p class="pixel-card-desc">Custom websites that look stunning and actually convert visitors into customers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 02: UX/UI Design (Tall - 1x2) -->
+                <div class="pixel-card pixel-card-tall" style="grid-column: span 1; grid-row: span 2;">
+                    <div class="pixel-card-content">
+                        <div class="pixel-card-number">02</div>
+                        <div class="pixel-card-body">
+                            <h3 class="pixel-card-title">UX/UI Design</h3>
+                            <p class="pixel-card-desc">User-first interfaces that make your product a joy to use</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 03: Animation (Compact - 1x1) -->
+                <div class="pixel-card pixel-card-compact" style="grid-column: span 1; grid-row: span 1;">
+                    <div class="pixel-card-content">
+                        <div class="pixel-card-number">03</div>
+                        <div class="pixel-card-body">
+                            <h3 class="pixel-card-title">Animation</h3>
+                            <p class="pixel-card-desc">Motion that tells stories</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 04: Art Direction (Wide - 2x1) -->
+                <div class="pixel-card pixel-card-wide" style="grid-column: span 2; grid-row: span 1;">
+                    <div class="pixel-card-content">
+                        <div class="pixel-card-number">04</div>
+                        <div class="pixel-card-body">
+                            <h3 class="pixel-card-title">Art Direction</h3>
+                            <p class="pixel-card-desc">Cohesive visual strategy that makes your brand instantly recognizable</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 05: Brand Identity (Wide - 2x1) -->
+                <div class="pixel-card pixel-card-wide" style="grid-column: span 2; grid-row: span 1;">
+                    <div class="pixel-card-content">
+                        <div class="pixel-card-number">05</div>
+                        <div class="pixel-card-body">
+                            <h3 class="pixel-card-title">Brand Identity</h3>
+                            <p class="pixel-card-desc">Logos, colors, and guidelines that help you stand out in a crowded market</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Card -->
+                <div class="pixel-card pixel-card-accent" style="grid-column: span 1; grid-row: span 1;">
+                    <a href="#lets-talk-section" class="pixel-card-content pixel-accent-content" style="text-decoration: none;">
+                        <div class="pixel-accent-symbol">
+                            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 20h24M24 12l8 8-8 8" stroke="#EA4E33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span class="pixel-accent-text">Start a project</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pixel Bento Styles -->
+        <style>
+            /* Intro + Bento Combined Section */
+            .intro-bento-section {
+                max-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                padding: 10vh 0;
+            }
+
+            .intro-bento-section > div {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+            }
+
+
+            /* Pixel Bento Grid */
+            .pixel-bento-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                gap: 1px;
+                background: rgba(255, 255, 255, 0.15);
+                min-height: 0;
+            }
+
+            .pixel-card {
+                position: relative;
+                background: rgba(0, 0, 0, 0.7);
+                border: none;
+                border-radius: 0;
+                overflow: hidden;
+                cursor: pointer;
+                transition: transform 0.15s ease-out,
+                            box-shadow 0.15s ease-out,
+                            background 0.15s ease-out;
+            }
+
+            /* Inset/pressed hover effect */
+            .pixel-card:hover {
+                background: rgba(0, 0, 0, 0.85);
+                transform: scale(0.98);
+                box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.8),
+                            inset 0 2px 6px rgba(0, 0, 0, 0.9);
+            }
+
+            /* Subtle inner highlight on top edge when not hovered */
+            .pixel-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+                transition: opacity 0.15s ease-out;
+            }
+
+            .pixel-card:hover::before {
+                opacity: 0;
+            }
+
+            /* Bottom/right shadow edge for 3D pixel look */
+            .pixel-card::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+                transition: box-shadow 0.15s ease-out;
+            }
+
+            .pixel-card:hover::after {
+                box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.05),
+                            inset -2px -2px 0 rgba(0, 0, 0, 0.5);
+            }
+
+            /* Context-aware hover - dim siblings */
+            .pixel-bento-grid:has(.pixel-card:hover) .pixel-card:not(:hover) {
+                filter: brightness(0.7);
+            }
+
+            .pixel-card-content {
+                position: relative;
+                z-index: 2;
+                height: 100%;
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                transition: transform 0.15s ease-out;
+            }
+
+            .pixel-card:hover .pixel-card-content {
+                transform: translateY(2px);
+            }
+
+            .pixel-card-number {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                color: #EA4E33;
+                opacity: 0.7;
+                flex-shrink: 0;
+            }
+
+            .pixel-card-body {
+                margin-top: auto;
+                flex-shrink: 0;
+            }
+
+            .pixel-card-title {
+                font-family: 'Bebas Neue', sans-serif;
+                font-size: clamp(2rem, 4vw, 3.5rem);
+                line-height: 0.95;
+                letter-spacing: -0.02em;
+                color: #fff;
+                margin: 0;
+            }
+
+            .pixel-card-desc {
+                font-family: 'Inter', sans-serif;
+                font-size: 0.85rem;
+                font-weight: 400;
+                color: rgba(255, 255, 255, 0.4);
+                margin: 0.75rem 0 0 0;
+                max-width: 280px;
+                line-height: 1.5;
+            }
+
+            /* Accent Card */
+            .pixel-card-accent {
+                background: rgba(0, 0, 0, 0.5);
+            }
+
+            .pixel-accent-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .pixel-accent-symbol {
+                width: 40px;
+                height: 40px;
+                opacity: 0.5;
+                transition: opacity 0.15s ease-out;
+            }
+
+            .pixel-card-accent:hover .pixel-accent-symbol {
+                opacity: 0.8;
+            }
+
+            .pixel-accent-text {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                letter-spacing: 0.1em;
+                color: rgba(255, 255, 255, 0.3);
+                text-transform: uppercase;
+            }
+
+            /* Header styling */
+            .pixel-bento-header {
+                opacity: 1;
+            }
+
+            /* Responsive */
+            @media (max-width: 1024px) {
+                .intro-bento-section {
+                    min-height: auto;
+                    padding: 1rem 0;
+                }
+
+                .pixel-bento-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-rows: auto;
+                }
+
+                .pixel-card-large {
+                    grid-column: span 2 !important;
+                    grid-row: span 1 !important;
+                }
+
+                .pixel-card-tall {
+                    grid-column: span 1 !important;
+                    grid-row: span 1 !important;
+                }
+            }
+
+            @media (max-width: 640px) {
+                #reveal-paragraph-bento {
+                    font-size: 0.9rem;
+                }
+
+                .pixel-bento-grid {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto;
+                }
+
+                .pixel-card-large,
+                .pixel-card-tall,
+                .pixel-card-wide,
+                .pixel-card-compact,
+                .pixel-card-accent {
+                    grid-column: span 1 !important;
+                    grid-row: span 1 !important;
+                }
+
+                .pixel-card-content {
+                    padding: 1.5rem;
+                }
+
+                .pixel-card-title {
+                    font-size: 2rem;
+                }
+            }
+        </style>
+    </section>
+
+    <!-- SELECTED WORK SECTION -->
+    <section class="min-h-[140vh] flex flex-col z-20 overflow-visible bg-transparent w-full relative items-center" id="selected-work">
+    
+    <!-- Custom Styles for Blur, Animation & Layout -->
+    <style class="">
+        /* Performance: content-visibility disabled for 3D carousel compatibility */
+        #selected-work {
+            /* content-visibility removed - was clipping 3D carousel */
+        }
+        .portfolio-card {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 600px;
+        }
+
+        /* 3D Carousel Styles */
+        #carousel3d-container {
+            position: relative;
+            width: 100%;
+            height: 130vh;
+            min-height: 910px;
+            margin: 2rem 0 4rem 0;
+            overflow: visible !important;
+            clip-path: none !important;
+        }
+        #carousel3d-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            clip-path: none !important;
+        }
+        /* Ensure parent containers don't clip the carousel */
+        #selected-work,
+        #selected-work > div,
+        #selected-work .md\:px-12,
+        #selected-work .flex-col {
+            overflow: visible !important;
+            clip-path: none !important;
+        }
+        @media (max-width: 768px) {
+            #carousel3d-container {
+                height: 50vh;
+                min-height: 350px;
+            }
+        }
+
+        @keyframes animationIn {
+            0% { opacity: 0; transform: translateY(80px) scale(0.96); filter: blur(12px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+        }
+        .animate-on-scroll { opacity: 0; will-change: transform, opacity, filter; }
+        .animate-on-scroll.animate { animation: animationIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-on-scroll.animated { opacity: 1; transform: none; filter: none; animation: none; }
+
+        /* Portfolio card info with progressive blur - stacked layers approach */
+        .card-info-blurred {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            padding: 1.5rem;
+        }
+
+        .blur-stack {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .blur-stack::before,
+        .blur-stack::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(20px) contrast(1.2) brightness(1.1);
+            -webkit-backdrop-filter: blur(20px) contrast(1.2) brightness(1.1);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+        }
+
+        .blur-stack::after {
+            backdrop-filter: blur(40px) contrast(1.3) brightness(1.15);
+            -webkit-backdrop-filter: blur(40px) contrast(1.3) brightness(1.15);
+            mask-image: linear-gradient(to bottom, transparent 20%, black 60%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 60%, black 100%);
+        }
+    </style>
+
+    <!-- Progressive Blur Top (Sticky) -->
+    <div id="progressive-blur-top" class="sticky top-0 left-0 w-full h-[25vh] z-40 pointer-events-none" style="opacity: 1; transition: opacity 0.8s ease-out;">
+        <div class="progressive-blur-top">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- Scrollable Content Container -->
+    <div class="md:px-12 flex flex-col -mt-[10vh] w-full max-w-[1400px] z-10 pr-6 pl-6 relative items-center">
+        
         <!-- 3D Carousel Container -->
         <div id="carousel3d-container" class="w-full animate-on-scroll">
             <!-- Three.js canvas will be inserted here -->
@@ -2797,6 +2314,162 @@
 
             requestAnimationFrame(animatePixels);
         }
+    })();
+    </script>
+
+    <!-- Scroll Mosaic Grid Effect - Chase Effect -->
+    <script>
+    (function() {
+        // Skip on mobile/tablet
+        if (window.innerWidth < 768) return;
+
+        const bottomGrid = document.getElementById('scroll-mosaic-bottom');
+        if (!bottomGrid) return;
+
+        // Grid configuration
+        const cols = 16;
+        const rows = 4;
+        const totalCells = cols * rows;
+
+        // Set CSS variables for grid
+        document.documentElement.style.setProperty('--mosaic-cols', cols);
+        document.documentElement.style.setProperty('--mosaic-rows', rows);
+
+        // Generate cells - all start visible (white)
+        const cells = [];
+        for (let i = 0; i < totalCells; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'mosaic-cell';
+            bottomGrid.appendChild(cell);
+            cells.push(cell);
+        }
+
+        // Row fill percentages (from bottom to top)
+        // Row 3 (bottom): 100%, Row 2: 70%, Row 1: 40%, Row 0 (top): 30%
+        const rowFillPercentages = [0.30, 0.40, 0.70, 1.00];
+
+        // Get scattered filled indices - NO horizontal neighbors allowed
+        function getScatteredFilledIndices(rowIndex, fillPercent) {
+            const rowStart = rowIndex * cols;
+            const fillCount = Math.round(cols * fillPercent);
+
+            // If 100% fill, return all
+            if (fillPercent >= 1) {
+                return new Set(Array.from({ length: cols }, (_, i) => rowStart + i));
+            }
+
+            const filled = new Set();
+            const blocked = new Set(); // Columns that can't be used (neighbors of filled)
+
+            // Shuffle column order
+            const colOrder = Array.from({ length: cols }, (_, i) => i);
+            for (let i = colOrder.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [colOrder[i], colOrder[j]] = [colOrder[j], colOrder[i]];
+            }
+
+            // First pass: place cells with strict no-neighbor rule
+            for (const col of colOrder) {
+                if (filled.size >= fillCount) break;
+                if (blocked.has(col)) continue;
+
+                const idx = rowStart + col;
+                filled.add(idx);
+
+                // Block adjacent columns
+                if (col > 0) blocked.add(col - 1);
+                if (col < cols - 1) blocked.add(col + 1);
+            }
+
+            // Second pass: if we need more cells, allow some adjacency
+            // but still try to minimize it
+            if (filled.size < fillCount) {
+                for (const col of colOrder) {
+                    if (filled.size >= fillCount) break;
+                    const idx = rowStart + col;
+                    if (!filled.has(idx)) {
+                        filled.add(idx);
+                    }
+                }
+            }
+
+            return filled;
+        }
+
+        // Apply a pattern to the grid
+        function applyPattern(filledCells) {
+            cells.forEach((cell, index) => {
+                if (filledCells.has(index)) {
+                    cell.classList.remove('consumed');
+                } else {
+                    cell.classList.add('consumed');
+                }
+            });
+        }
+
+        // Generate a new random pattern maintaining row percentages
+        function generatePattern() {
+            const filled = new Set();
+
+            for (let row = 0; row < rows; row++) {
+                const rowFilled = getScatteredFilledIndices(row, rowFillPercentages[row]);
+                rowFilled.forEach(idx => filled.add(idx));
+            }
+
+            return filled;
+        }
+
+        // Current pattern
+        let currentPattern = generatePattern();
+        applyPattern(currentPattern);
+
+        // State tracking
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+        let scrollAccumulator = 0;
+        const pixelsPerShuffle = 30; // Pixels of scroll to trigger a pattern shuffle
+
+        function shufflePattern() {
+            currentPattern = generatePattern();
+            applyPattern(currentPattern);
+        }
+
+        function updateGrid() {
+            const shuffles = Math.floor(scrollAccumulator / pixelsPerShuffle);
+
+            if (shuffles > 0) {
+                shufflePattern();
+                scrollAccumulator = scrollAccumulator % pixelsPerShuffle;
+            }
+
+            ticking = false;
+        }
+
+        function onScroll() {
+            const currentScrollY = window.scrollY;
+            const delta = currentScrollY - lastScrollY;
+
+            // Accumulate scroll (both directions trigger shuffle)
+            scrollAccumulator += Math.abs(delta);
+
+            if (!ticking) {
+                requestAnimationFrame(updateGrid);
+                ticking = true;
+            }
+
+            lastScrollY = currentScrollY;
+        }
+
+        // Use passive scroll listener for performance
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 768) {
+                cells.forEach(cell => cell.classList.remove('consumed'));
+                scrollAccumulator = 0;
+            }
+        });
     })();
     </script>
 </body></html>
