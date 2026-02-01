@@ -207,14 +207,7 @@
                 display: none !important;
             }
 
-            /* Reduce filter complexity on reveal words */
-            .reveal-word {
-                filter: none !important;
-                color: rgba(255, 255, 255, 0.4);
-            }
-            .reveal-word.revealed {
-                color: rgba(255, 255, 255, 1);
-            }
+            /* Keep reveal word blur effect - important for the design */
 
             /* Disable progressive blur on mobile for performance */
             #progressive-blur-bottom {
@@ -251,10 +244,10 @@
   !function(){
     // Only load UnicornStudio on desktop (> 1024px) for performance
     if (window.innerWidth <= 1024) {
-      // Add a subtle gradient fallback for mobile/tablet
+      // Use solid background color for mobile/tablet
       var bg = document.querySelector('.aura-background-component');
       if (bg) {
-        bg.style.background = 'radial-gradient(ellipse at 50% 30%, rgba(234, 78, 51, 0.15) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(ellipse at 80% 80%, rgba(100, 50, 150, 0.1) 0%, rgba(0, 0, 0, 0) 40%)';
+        bg.style.background = '#242424';
       }
       return;
     }
