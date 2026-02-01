@@ -1,0 +1,22 @@
+<!--
+  Unicorn Studio Background Effect - BACKUP
+  This was removed from index.html for performance reasons.
+  To restore, replace the .aura-background-component div in index.html with this code.
+-->
+
+<!-- Background (component) added by Aura - Disabled on mobile/tablet for performance -->
+<div class="aura-background-component fixed top-0 w-full h-screen -z-10" data-alpha-mask="80" style="; mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)"><div data-us-project="cqcLtDwfoHqqRPttBbQE" class="absolute top-0 left-0 -z-10 w-full h-full"></div>
+<script type="text/javascript">
+  !function(){
+    // Only load UnicornStudio on desktop (> 1024px) for performance
+    if (window.innerWidth <= 1024) {
+      // Use solid background color for mobile/tablet
+      var bg = document.querySelector('.aura-background-component');
+      if (bg) {
+        bg.style.background = '#242424';
+      }
+      return;
+    }
+    if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}
+  }();
+</script></div>
