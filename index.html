@@ -221,18 +221,35 @@
 </head>
 <body class="text-white font-sans antialiased selection:bg-white selection:text-black overflow-x-hidden" style="background: #242424;">
 
-<!-- Static Mosaic Background Grid -->
+<!-- Static Mosaic Background Grid (theme toggleable) -->
 <div id="mosaic-background" class="absolute top-0 left-0 w-full pointer-events-none z-0"></div>
 
+<!-- Mosaic Overlay Grid (scroll reveal effect) -->
+<div id="mosaic-overlay" class="absolute top-0 left-0 w-full pointer-events-none z-40"></div>
+
 <style>
-    #mosaic-background {
+    #mosaic-background, #mosaic-overlay {
         display: grid;
         grid-template-columns: repeat(var(--mosaic-cols, 10), 1fr);
         transform: translateZ(0);
         contain: layout style;
     }
 
-    .mosaic-cell {
+    /* Background grid cells - static, toggles between light/dark */
+    .bg-cell {
+        aspect-ratio: 1;
+        background-color: #242424;
+        transition: background-color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+        transition-delay: var(--stagger-delay, 0ms);
+        will-change: background-color;
+    }
+
+    .bg-cell.light-theme {
+        background-color: #D2D2D2;
+    }
+
+    /* Overlay grid cells - scroll reveal effect */
+    .overlay-cell {
         aspect-ratio: 1;
         background-color: #D2D2D2;
         transition: background-color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -240,17 +257,17 @@
         will-change: background-color;
     }
 
-    .mosaic-cell.in-view {
+    .overlay-cell.in-view {
+        background-color: transparent;
+    }
+
+    /* Overlay cells in dark theme */
+    .overlay-cell.dark-theme {
         background-color: #242424;
     }
 
-    /* Inverted theme - swap the colors */
-    .mosaic-cell.inverted {
-        background-color: #242424;
-    }
-
-    .mosaic-cell.inverted.in-view {
-        background-color: #D2D2D2;
+    .overlay-cell.dark-theme.in-view {
+        background-color: transparent;
     }
 
     /* Mix blend mode for text to adapt to grid background */
@@ -2352,17 +2369,148 @@
     })();
     </script>
 
-    <!-- Static Mosaic Background Effect -->
+    <!-- Static Mosaic Background Grid (theme toggle only) -->
     <script>
     (function() {
-        const grid = document.getElementById('mosaic-background');
-        if (!grid) return;
+        const bgGrid = document.getElementById('mosaic-background');
+        if (!bgGrid) return;
 
         // Grid configuration
         const cols = 15;
         const cellSize = window.innerWidth / cols;
 
-        // Calculate total rows needed to cover the entire page
+        function calculateTotalRows() {
+            const pageHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight
+            );
+            return Math.ceil(pageHeight / cellSize);
+        }
+
+        let totalRows = calculateTotalRows();
+        let bgCells = [];
+
+        // Set CSS variables
+        document.documentElement.style.setProperty('--mosaic-cols', cols);
+
+        function generateBgGrid() {
+            const fragment = document.createDocumentFragment();
+            bgCells = [];
+            const totalCells = cols * totalRows;
+
+            for (let i = 0; i < totalCells; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'bg-cell';
+                fragment.appendChild(cell);
+                bgCells.push(cell);
+            }
+
+            bgGrid.innerHTML = '';
+            bgGrid.appendChild(fragment);
+            bgGrid.style.height = (totalRows * cellSize) + 'px';
+        }
+
+        generateBgGrid();
+
+        // Handle resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (window.innerWidth < 768) {
+                    bgGrid.innerHTML = '';
+                    bgCells = [];
+                } else {
+                    totalRows = calculateTotalRows();
+                    generateBgGrid();
+                }
+            }, 200);
+        });
+
+        // Recalculate on content changes
+        let resizeObserverInitialized = false;
+        const resizeObserver = new ResizeObserver(() => {
+            if (!resizeObserverInitialized) {
+                resizeObserverInitialized = true;
+                return;
+            }
+            const newTotalRows = calculateTotalRows();
+            if (newTotalRows !== totalRows) {
+                totalRows = newTotalRows;
+                generateBgGrid();
+            }
+        });
+        resizeObserver.observe(document.body);
+
+        // Theme toggle with wave animation from top-right
+        let isLightTheme = false;
+        const themeToggle = document.getElementById('theme-toggle');
+        const moonIcon = document.getElementById('theme-icon-moon');
+        const sunIcon = document.getElementById('theme-icon-sun');
+        const WAVE_CELL_DELAY = 10;
+
+        function toggleThemeWithWave() {
+            isLightTheme = !isLightTheme;
+
+            // Toggle icons
+            moonIcon.classList.toggle('hidden');
+            sunIcon.classList.toggle('hidden');
+
+            // Get overlay cells too
+            const overlayCells = document.querySelectorAll('#mosaic-overlay .overlay-cell');
+
+            const totalCells = cols * totalRows;
+
+            for (let cellIdx = 0; cellIdx < totalCells; cellIdx++) {
+                const row = Math.floor(cellIdx / cols);
+                const col = cellIdx % cols;
+
+                // Diagonal distance from top-right corner
+                const diagonalDist = row + (cols - 1 - col);
+                const delay = diagonalDist * WAVE_CELL_DELAY;
+
+                setTimeout(() => {
+                    // Toggle background cell
+                    const bgCell = bgCells[cellIdx];
+                    if (bgCell) {
+                        bgCell.style.setProperty('--stagger-delay', '0ms');
+                        if (isLightTheme) {
+                            bgCell.classList.add('light-theme');
+                        } else {
+                            bgCell.classList.remove('light-theme');
+                        }
+                    }
+
+                    // Toggle overlay cell (opposite of background)
+                    const overlayCell = overlayCells[cellIdx];
+                    if (overlayCell) {
+                        overlayCell.style.setProperty('--stagger-delay', '0ms');
+                        if (isLightTheme) {
+                            overlayCell.classList.add('dark-theme');
+                        } else {
+                            overlayCell.classList.remove('dark-theme');
+                        }
+                    }
+                }, delay);
+            }
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleThemeWithWave);
+        }
+    })();
+    </script>
+
+    <!-- Mosaic Overlay Grid (scroll reveal effect) -->
+    <script>
+    (function() {
+        const overlayGrid = document.getElementById('mosaic-overlay');
+        if (!overlayGrid) return;
+
+        // Grid configuration
+        const cols = 15;
+        const cellSize = window.innerWidth / cols;
+
         function calculateTotalRows() {
             const pageHeight = Math.max(
                 document.body.scrollHeight,
@@ -2373,74 +2521,57 @@
 
         let totalRows = calculateTotalRows();
         let cells = [];
-        let cellStates = new Uint8Array(cols * totalRows); // 0 = light, 1 = dark (more efficient)
-        let processedRows = new Set(); // Track which rows have been processed to avoid reprocessing
+        let cellStates = new Uint8Array(cols * totalRows);
 
-        // Set CSS variables
-        document.documentElement.style.setProperty('--mosaic-cols', cols);
+        const rowPatternCache = new Map();
+        const rowActiveCells = new Map();
+        let viewportRows = new Set();
 
-        // Generate all cells using DocumentFragment for better performance
-        // Get row index from Y position
         function getRowFromY(y) {
             return Math.floor(y / cellSize);
         }
 
-        // Pre-calculate random patterns for rows (cached)
-        // Cache stores the BASE scattered order for each row (consistent across fill percentages)
-        const rowPatternCache = new Map();
-
-        // Track which cells are currently active for each row (for consistent exit)
-        const rowActiveCells = new Map();
-
-        // Track which rows are currently in viewport (dark)
-        let viewportRows = new Set();
-
-        function generateGrid() {
+        function generateOverlayGrid() {
             const fragment = document.createDocumentFragment();
             cells = [];
             const totalCells = cols * totalRows;
             cellStates = new Uint8Array(totalCells);
-            processedRows.clear();
             rowActiveCells.clear();
             viewportRows.clear();
             rowPatternCache.clear();
 
             for (let i = 0; i < totalCells; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'mosaic-cell';
+                cell.className = 'overlay-cell';
                 fragment.appendChild(cell);
                 cells.push(cell);
             }
 
-            grid.innerHTML = '';
-            grid.appendChild(fragment);
-            grid.style.height = (totalRows * cellSize) + 'px';
+            overlayGrid.innerHTML = '';
+            overlayGrid.appendChild(fragment);
+            overlayGrid.style.height = (totalRows * cellSize) + 'px';
         }
 
-        generateGrid();
+        generateOverlayGrid();
 
         function getRowPattern(rowIndex, fillPercent) {
             const startIdx = rowIndex * cols;
             const numToReveal = Math.round(cols * fillPercent);
 
-            // Get or create the base scattered order for this row
             let baseOrder;
             if (rowPatternCache.has(rowIndex)) {
                 baseOrder = rowPatternCache.get(rowIndex);
             } else {
-                // Generate scattered order (avoid adjacent cells when possible)
                 const available = Array.from({ length: cols }, (_, i) => i);
                 const blocked = new Set();
                 const scattered = [];
                 const remaining = [];
 
-                // Shuffle
                 for (let i = available.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [available[i], available[j]] = [available[j], available[i]];
                 }
 
-                // First pass: non-adjacent cells
                 for (const col of available) {
                     if (blocked.has(col)) {
                         remaining.push(col);
@@ -2451,32 +2582,25 @@
                     if (col < cols - 1) blocked.add(col + 1);
                 }
 
-                // Combine: scattered first, then remaining (for higher fill percentages)
                 baseOrder = [...scattered, ...remaining];
                 rowPatternCache.set(rowIndex, baseOrder);
             }
 
-            // Return the first N cells from the base order
             return baseOrder.slice(0, numToReveal).map(col => startIdx + col);
         }
 
-        // Viewport-based dark reveal configuration
-        const EDGE_ROWS = 5;            // Rows to stagger at viewport edge
-        const CELL_STAGGER_MS = 30;     // Stagger between cells in a row
-        const ROW_STAGGER_MS = 70;      // Stagger between rows
+        const EDGE_ROWS = 5;
+        const CELL_STAGGER_MS = 30;
+        const ROW_STAGGER_MS = 70;
 
-        // Batch DOM updates with stagger support
         let pendingUpdates = [];
         let updateScheduled = false;
-
-        // Track pending "add" operations so we can cancel them on fast scroll
         const pendingAdds = new Set();
 
         function scheduleUpdate(cellIdx, addClass, staggerDelay = 0) {
             if (addClass) {
                 pendingAdds.add(cellIdx);
             } else {
-                // If removing, cancel any pending add for this cell
                 pendingAdds.delete(cellIdx);
             }
             pendingUpdates.push({ cellIdx, addClass, staggerDelay });
@@ -2491,12 +2615,10 @@
             pendingUpdates = [];
             updateScheduled = false;
 
-            // Process updates, but skip adds that were cancelled
             for (const { cellIdx, addClass, staggerDelay } of updates) {
                 const cell = cells[cellIdx];
                 if (!cell) continue;
 
-                // If this is an add but it's no longer in pendingAdds, it was cancelled
                 if (addClass && !pendingAdds.has(cellIdx)) {
                     continue;
                 }
@@ -2511,16 +2633,13 @@
             }
         }
 
-        // Mark row as in viewport (turn dark) with stagger
         function markRowInView(rowIndex, rowDelay, fillPercent) {
             if (rowIndex < 0 || rowIndex >= totalRows) return;
 
-            // If row already in view, check if we need to add more cells (progressive fill)
             const existingCells = rowActiveCells.get(rowIndex);
             const pattern = getRowPattern(rowIndex, fillPercent);
 
             if (existingCells) {
-                // Row already partially visible - add any new cells from the pattern
                 const newCells = pattern.filter(idx => !existingCells.has(idx));
                 if (newCells.length === 0) return;
 
@@ -2534,7 +2653,6 @@
                     }
                 }
             } else {
-                // New row - track all activated cells
                 viewportRows.add(rowIndex);
                 const activeCells = new Set();
 
@@ -2552,46 +2670,38 @@
             }
         }
 
-        // Mark row as outside viewport (turn white) with stagger
         function markRowOutOfView(rowIndex, rowDelay) {
             if (rowIndex < 0 || rowIndex >= totalRows) return;
             if (!viewportRows.has(rowIndex)) return;
 
             viewportRows.delete(rowIndex);
 
-            // Get the cells that were actually activated for this row
             const activeCells = rowActiveCells.get(rowIndex);
             rowActiveCells.delete(rowIndex);
 
             if (activeCells && activeCells.size > 0) {
-                // Deactivate cells that were tracked as active
-                // Use immediate update (no stagger) to prevent stuck cells on fast scroll
                 for (const cellIdx of activeCells) {
                     cellStates[cellIdx] = 0;
-                    scheduleUpdate(cellIdx, false, 0); // No delay on exit
+                    scheduleUpdate(cellIdx, false, 0);
                 }
             } else {
-                // Fallback: deactivate all cells in the row (for init rows)
                 const startIdx = rowIndex * cols;
                 for (let i = 0; i < cols; i++) {
                     const cellIdx = startIdx + i;
                     if (cellStates[cellIdx] === 1) {
                         cellStates[cellIdx] = 0;
-                        scheduleUpdate(cellIdx, false, 0); // No delay on exit
+                        scheduleUpdate(cellIdx, false, 0);
                     }
                 }
             }
         }
 
-        // Track scroll state
         let lastScrollY = window.scrollY;
         let lastTopRow = -1;
         let lastBottomRow = -1;
         let ticking = false;
-
-        // Throttle scroll processing
         let lastProcessTime = 0;
-        const throttleMs = 16; // ~60fps
+        const throttleMs = 16;
 
         function updateOnScroll() {
             const now = performance.now();
@@ -2607,19 +2717,15 @@
             const currentTopRow = getRowFromY(scrollY);
             const currentBottomRow = getRowFromY(scrollY + viewportHeight);
 
-            // Skip if no meaningful scroll change
             const scrollDelta = scrollY - lastScrollY;
             if (Math.abs(scrollDelta) < 1) {
                 ticking = false;
                 return;
             }
 
-            // Detect scroll direction
             const direction = scrollDelta > 0 ? 1 : -1;
 
-            // Process entering rows (turn dark with stagger)
             if (direction > 0) {
-                // Scrolling down - new rows entering at bottom
                 for (let i = 0; i < EDGE_ROWS; i++) {
                     const row = currentBottomRow - i;
                     if (row >= 0 && row < totalRows && !viewportRows.has(row)) {
@@ -2628,7 +2734,6 @@
                     }
                 }
             } else {
-                // Scrolling up - new rows entering at top
                 for (let i = 0; i < EDGE_ROWS; i++) {
                     const row = currentTopRow + i;
                     if (row >= 0 && row < totalRows && !viewportRows.has(row)) {
@@ -2638,15 +2743,12 @@
                 }
             }
 
-            // Process exiting rows (turn white) - give more buffer room
             const rowsToRemove = [];
             for (const row of viewportRows) {
-                // More generous buffer (2 rows) to prevent premature removal
                 if (row < currentTopRow - 2 || row > currentBottomRow + 2) {
                     rowsToRemove.push(row);
                 }
             }
-            // Sort rows by distance from viewport for smoother exit
             rowsToRemove.sort((a, b) => {
                 const distA = a < currentTopRow ? currentTopRow - a : a - currentBottomRow;
                 const distB = b < currentTopRow ? currentTopRow - b : b - currentBottomRow;
@@ -2667,11 +2769,9 @@
                 requestAnimationFrame(updateOnScroll);
                 ticking = true;
             }
-            // Schedule cleanup after scrolling stops
             scheduleScrollCleanup();
         }
 
-        // Cleanup function that runs after scrolling stops
         let scrollCleanupTimeout;
         function scheduleScrollCleanup() {
             clearTimeout(scrollCleanupTimeout);
@@ -2685,13 +2785,11 @@
             const bottomRow = Math.min(totalRows - 1, getRowFromY(scrollY + viewportHeight) + 2);
             const viewportCenter = (topRow + bottomRow) / 2;
 
-            // Build set of rows that SHOULD be in view
             const shouldBeInView = new Set();
             for (let row = topRow; row <= bottomRow; row++) {
                 shouldBeInView.add(row);
             }
 
-            // Collect cells that need fixing
             const cellsToTurnDark = [];
             const cellsToTurnLight = [];
 
@@ -2707,15 +2805,12 @@
                     const isDark = cell.classList.contains('in-view');
 
                     if (shouldBeDark && !isDark) {
-                        // Cell should be dark but isn't
                         cellsToTurnDark.push({ cellIdx, row, col: i });
                     } else if (!shouldBeDark && isDark) {
-                        // Cell should be light but isn't
                         cellsToTurnLight.push({ cellIdx, row, col: i });
                     }
                 }
 
-                // Update tracking sets
                 if (shouldBeDark) {
                     if (!viewportRows.has(row)) {
                         viewportRows.add(row);
@@ -2731,25 +2826,21 @@
                 }
             }
 
-            // Apply staggered fixes - sort by distance from viewport center for nice wave effect
             const CLEANUP_CELL_DELAY = 15;
             const CLEANUP_ROW_DELAY = 25;
 
-            // Sort cells to turn dark by distance from center (closest first)
             cellsToTurnDark.sort((a, b) => {
                 const distA = Math.abs(a.row - viewportCenter);
                 const distB = Math.abs(b.row - viewportCenter);
                 return distA - distB || a.col - b.col;
             });
 
-            // Sort cells to turn light by distance from viewport (closest to viewport edge first)
             cellsToTurnLight.sort((a, b) => {
                 const distA = a.row < topRow ? topRow - a.row : a.row - bottomRow;
                 const distB = b.row < topRow ? topRow - b.row : b.row - bottomRow;
                 return distA - distB || a.col - b.col;
             });
 
-            // Apply dark fixes with stagger
             cellsToTurnDark.forEach(({ cellIdx, row }, index) => {
                 const rowGroup = Math.abs(row - Math.round(viewportCenter));
                 const delay = rowGroup * CLEANUP_ROW_DELAY + (index % cols) * CLEANUP_CELL_DELAY;
@@ -2759,7 +2850,6 @@
                 cellStates[cellIdx] = 1;
             });
 
-            // Apply light fixes with stagger
             cellsToTurnLight.forEach(({ cellIdx }, index) => {
                 const delay = index * CLEANUP_CELL_DELAY;
                 const cell = cells[cellIdx];
@@ -2768,21 +2858,17 @@
                 cellStates[cellIdx] = 0;
             });
 
-            // Clear any pending operations
             pendingAdds.clear();
         }
 
-        // Use passive scroll listener for performance
         window.addEventListener('scroll', onScroll, { passive: true });
 
-        // Initialize: mark initial viewport rows as in-view (dark) - ALL cells, no pattern
         function initViewport() {
             const scrollY = window.scrollY;
             const viewportHeight = window.innerHeight;
-            const topRow = Math.max(0, getRowFromY(scrollY) - 2); // Buffer above
-            const bottomRow = Math.min(totalRows - 1, getRowFromY(scrollY + viewportHeight) + 2); // Buffer below
+            const topRow = Math.max(0, getRowFromY(scrollY) - 2);
+            const bottomRow = Math.min(totalRows - 1, getRowFromY(scrollY + viewportHeight) + 2);
 
-            // Mark all cells in viewport + buffer as dark (no stagger, no pattern - full rows)
             for (let row = topRow; row <= bottomRow; row++) {
                 if (row >= 0 && row < totalRows) {
                     viewportRows.add(row);
@@ -2796,7 +2882,6 @@
                         cells[cellIdx].classList.add('in-view');
                     }
 
-                    // Track all cells as active for this row
                     rowActiveCells.set(row, activeCells);
                 }
             }
@@ -2806,20 +2891,18 @@
             lastBottomRow = getRowFromY(scrollY + viewportHeight);
         }
 
-        // Initialize after DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initViewport);
         } else {
             initViewport();
         }
 
-        // Handle resize - regenerate grid
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 if (window.innerWidth < 768) {
-                    grid.innerHTML = '';
+                    overlayGrid.innerHTML = '';
                     cells = [];
                     cellStates = [];
                     rowActiveCells.clear();
@@ -2827,7 +2910,7 @@
                     rowPatternCache.clear();
                 } else {
                     totalRows = calculateTotalRows();
-                    generateGrid();
+                    generateOverlayGrid();
                     initViewport();
                     lastScrollY = window.scrollY;
                     lastBottomRow = getRowFromY(window.scrollY + window.innerHeight);
@@ -2836,8 +2919,6 @@
             }, 200);
         });
 
-        // Recalculate on content changes (in case page height changes)
-        // Skip initial observation to prevent clearing state set by initViewport
         let resizeObserverInitialized = false;
         const resizeObserver = new ResizeObserver(() => {
             if (!resizeObserverInitialized) {
@@ -2847,59 +2928,11 @@
             const newTotalRows = calculateTotalRows();
             if (newTotalRows !== totalRows) {
                 totalRows = newTotalRows;
-                generateGrid();
+                generateOverlayGrid();
                 initViewport();
             }
         });
         resizeObserver.observe(document.body);
-
-        // Theme toggle with wave animation from top-right
-        let isInverted = false;
-        const themeToggle = document.getElementById('theme-toggle');
-        const moonIcon = document.getElementById('theme-icon-moon');
-        const sunIcon = document.getElementById('theme-icon-sun');
-        const WAVE_CELL_DELAY = 10; // Delay per diagonal step
-
-        function toggleThemeWithWave() {
-            isInverted = !isInverted;
-
-            // Toggle icons
-            moonIcon.classList.toggle('hidden');
-            sunIcon.classList.toggle('hidden');
-
-            // Calculate diagonal distance from top-right for each cell
-            // Top-right is (row=0, col=cols-1)
-            const totalCells = cols * totalRows;
-
-            for (let cellIdx = 0; cellIdx < totalCells; cellIdx++) {
-                const row = Math.floor(cellIdx / cols);
-                const col = cellIdx % cols;
-
-                // Diagonal distance from top-right corner
-                const diagonalDist = row + (cols - 1 - col);
-                const delay = diagonalDist * WAVE_CELL_DELAY;
-
-                // Schedule the toggle with delay
-                setTimeout(() => {
-                    const cell = cells[cellIdx];
-                    if (!cell) return;
-
-                    cell.style.setProperty('--stagger-delay', '0ms');
-
-                    if (isInverted) {
-                        // Inverted: swap colors
-                        cell.classList.toggle('inverted', true);
-                    } else {
-                        // Normal: remove inverted
-                        cell.classList.toggle('inverted', false);
-                    }
-                }, delay);
-            }
-        }
-
-        if (themeToggle) {
-            themeToggle.addEventListener('click', toggleThemeWithWave);
-        }
     })();
     </script>
 </body></html>
