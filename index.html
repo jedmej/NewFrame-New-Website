@@ -221,35 +221,58 @@
 </head>
 <body class="text-white font-sans antialiased selection:bg-white selection:text-black overflow-x-hidden" style="background: #242424;">
 
-<!-- Scroll Mosaic Grid - Bottom Zone -->
-<div id="scroll-mosaic-bottom" class="fixed bottom-0 left-0 w-full h-[20vh] pointer-events-none z-[100]"></div>
+<!-- Static Mosaic Background Grid -->
+<div id="mosaic-background" class="absolute top-0 left-0 w-full pointer-events-none z-0"></div>
 
 <style>
-    #scroll-mosaic-bottom {
+    #mosaic-background {
         display: grid;
-        grid-template-columns: repeat(var(--mosaic-cols, 16), 1fr);
-        grid-template-rows: repeat(var(--mosaic-rows, 4), 1fr);
+        grid-template-columns: repeat(var(--mosaic-cols, 10), 1fr);
         transform: translateZ(0);
         contain: layout style;
-        mix-blend-mode: difference;
     }
 
     .mosaic-cell {
+        aspect-ratio: 1;
         background-color: #D2D2D2;
-        opacity: 1;
-        transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: opacity;
+        transition: background-color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+        transition-delay: var(--stagger-delay, 0ms);
+        will-change: background-color;
     }
 
-    .mosaic-cell.consumed {
-        opacity: 0;
-        transition: opacity 0.25s cubic-bezier(0.0, 0, 0.2, 1);
+    .mosaic-cell.in-view {
+        background-color: #242424;
+    }
+
+    /* Inverted theme - swap the colors */
+    .mosaic-cell.inverted {
+        background-color: #242424;
+    }
+
+    .mosaic-cell.inverted.in-view {
+        background-color: #D2D2D2;
     }
 
     @media (max-width: 768px) {
-        #scroll-mosaic-bottom {
+        #mosaic-background {
             display: none;
         }
+    }
+
+    /* Mix blend mode for text to adapt to grid background */
+    .blend-text {
+        mix-blend-mode: difference;
+    }
+
+    /* For sections that need blend mode on all text content */
+    .blend-section {
+        mix-blend-mode: difference;
+    }
+
+    /* Ensure colored elements (like accent color) don't get blended */
+    .no-blend {
+        mix-blend-mode: normal;
+        isolation: isolate;
     }
 </style>
 
@@ -282,16 +305,34 @@
                 <span class="text-white/30 text-xs">/</span>
                 <button id="lang-pl" class="lang-btn" data-lang="pl" title="Polski">PL</button>
             </div>
+
+            <!-- Theme Toggle (Moon/Sun) -->
+            <button id="theme-toggle" class="ml-4 pl-4 border-l border-white/20 p-1 hover:opacity-70 transition-opacity" title="Toggle theme">
+                <svg id="theme-icon-moon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg id="theme-icon-sun" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
         </div>
     </nav>
 
     <!-- Hero Section - Editorial Brutalism -->
-    <div id="hero" class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden" style="opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0px); will-change: transform, opacity, filter; transition: filter 0.15s ease-out; pointer-events: auto; z-index: 15;">
+    <div id="hero" class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden" style="z-index: 1;">
 
-        <div class="hero-content-container w-full h-full px-6 md:px-12 py-20 flex flex-col justify-center relative max-w-[2000px] mx-auto" style="perspective: 1500px;">
+        <div class="hero-content-container w-full h-full px-6 md:px-12 py-20 flex flex-col justify-center relative max-w-[2000px] mx-auto">
 
             <!-- Main Typography Stack -->
-            <div id="hero-type-stack" class="hero-type-stack relative" style="will-change: transform; transform-style: preserve-3d;">
+            <div id="hero-type-stack" class="hero-type-stack relative blend-section">
 
                 <!-- NEW FRAME -->
                 <div class="hero-title-row mb-8 md:mb-12 flex items-center justify-center gap-3 md:gap-6 opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
@@ -469,7 +510,7 @@
 
 
     <!-- Combined Intro + Bento Section -->
-    <section class="z-10 relative bg-transparent intro-bento-section" id="scope">
+    <section class="z-[1] relative bg-transparent intro-bento-section" id="scope">
         <div class="flex flex-col w-full items-center justify-start bg-transparent px-6 md:px-12 h-full">
 
         <!-- Header Text -->
@@ -481,7 +522,7 @@
                 </div>
             </div>
 
-            <div id="reveal-paragraph" class="text-lg md:text-xl lg:text-[22px] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-[1400px] mx-auto select-none relative z-10">
+            <div id="reveal-paragraph" class="text-lg md:text-xl lg:text-[22px] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-[1400px] mx-auto select-none relative z-10 blend-section">
                 <span class="reveal-section revealed" data-section="0">Hey! I'm Jed, the founder of</span>
                 <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
                 <span class="reveal-section revealed" data-section="0">— and I help businesses look as good as they perform.</span>
@@ -530,9 +571,9 @@
             .reveal-section { display: inline; }
             /* Individual words - start hidden */
             /* Performance: Hardware acceleration with translateZ */
-            .reveal-word { display: inline-block; color: rgba(255, 255, 255, 0.4); filter: blur(5px); transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1); transform: translateZ(0); vertical-align: baseline; }
+            .reveal-word { display: inline-block; color: rgba(255, 255, 255, 0.4); opacity: 0.4; transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1); vertical-align: baseline; }
             /* Individual words - revealed state */
-            .reveal-word.revealed { color: white; filter: blur(0); }
+            .reveal-word.revealed { color: white; opacity: 1; }
             /* Dim variant words */
             .reveal-word.dim-word { color: rgba(161, 161, 170, 0.4); }
             .reveal-word.dim-word.revealed { color: rgb(161 161 170); }
@@ -1729,7 +1770,7 @@
 </section>
 
 <!-- TESTIMONIAL SECTION -->
-<section id="testimonials" class="relative w-full py-32 bg-transparent z-20 overflow-hidden">
+<section id="testimonials" class="relative w-full py-32 bg-transparent z-20 overflow-hidden blend-section">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
         <!-- Section Header -->
         <div class="mb-16 text-center">
@@ -1817,7 +1858,7 @@
 </section>
 
 <!-- LET'S TALK SECTION -->
-<section id="lets-talk-section" class="relative w-full min-h-screen bg-transparent flex flex-col items-center justify-center z-30 overflow-hidden">
+<section id="lets-talk-section" class="relative w-full min-h-screen bg-transparent flex flex-col items-center justify-center z-30 overflow-hidden blend-section">
     <style>
         .frame-container { position: relative; width: min(70vw, 600px); height: min(70vw, 600px); display: flex; align-items: center; justify-content: center; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .frame-container:hover { transform: scale(1.02); }
@@ -1859,7 +1900,7 @@
 </section>
 
     <!-- Footer -->
-    <footer class="relative z-50 bg-transparent py-16 px-6 md:px-12 border-t border-white/10">
+    <footer class="relative z-50 bg-transparent py-16 px-6 md:px-12 border-t border-white/10 blend-section">
         <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
             <div class="flex items-center gap-2 text-white/40">
                 <svg width="24" height="24" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
@@ -2317,159 +2358,380 @@
     })();
     </script>
 
-    <!-- Scroll Mosaic Grid Effect - Chase Effect -->
+    <!-- Static Mosaic Background Effect -->
     <script>
     (function() {
         // Skip on mobile/tablet
         if (window.innerWidth < 768) return;
 
-        const bottomGrid = document.getElementById('scroll-mosaic-bottom');
-        if (!bottomGrid) return;
+        const grid = document.getElementById('mosaic-background');
+        if (!grid) return;
 
         // Grid configuration
-        const cols = 16;
-        const rows = 4;
-        const totalCells = cols * rows;
+        const cols = 15;
+        const cellSize = window.innerWidth / cols;
 
-        // Set CSS variables for grid
-        document.documentElement.style.setProperty('--mosaic-cols', cols);
-        document.documentElement.style.setProperty('--mosaic-rows', rows);
-
-        // Generate cells - all start visible (white)
-        const cells = [];
-        for (let i = 0; i < totalCells; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'mosaic-cell';
-            bottomGrid.appendChild(cell);
-            cells.push(cell);
+        // Calculate total rows needed to cover the entire page
+        function calculateTotalRows() {
+            const pageHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight
+            );
+            return Math.ceil(pageHeight / cellSize);
         }
 
-        // Row fill percentages (from bottom to top)
-        // Row 3 (bottom): 100%, Row 2: 70%, Row 1: 40%, Row 0 (top): 30%
-        const rowFillPercentages = [0.30, 0.40, 0.70, 1.00];
+        let totalRows = calculateTotalRows();
+        let cells = [];
+        let cellStates = new Uint8Array(cols * totalRows); // 0 = light, 1 = dark (more efficient)
+        let processedRows = new Set(); // Track which rows have been processed to avoid reprocessing
 
-        // Get scattered filled indices - NO horizontal neighbors allowed
-        function getScatteredFilledIndices(rowIndex, fillPercent) {
-            const rowStart = rowIndex * cols;
-            const fillCount = Math.round(cols * fillPercent);
+        // Set CSS variables
+        document.documentElement.style.setProperty('--mosaic-cols', cols);
 
-            // If 100% fill, return all
-            if (fillPercent >= 1) {
-                return new Set(Array.from({ length: cols }, (_, i) => rowStart + i));
+        // Generate all cells using DocumentFragment for better performance
+        function generateGrid() {
+            const fragment = document.createDocumentFragment();
+            cells = [];
+            const totalCells = cols * totalRows;
+            cellStates = new Uint8Array(totalCells);
+            processedRows.clear();
+
+            for (let i = 0; i < totalCells; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'mosaic-cell';
+                fragment.appendChild(cell);
+                cells.push(cell);
             }
 
-            const filled = new Set();
-            const blocked = new Set(); // Columns that can't be used (neighbors of filled)
+            grid.innerHTML = '';
+            grid.appendChild(fragment);
+            grid.style.height = (totalRows * cellSize) + 'px';
+        }
 
-            // Shuffle column order
-            const colOrder = Array.from({ length: cols }, (_, i) => i);
-            for (let i = colOrder.length - 1; i > 0; i--) {
+        generateGrid();
+
+        // Get row index from Y position
+        function getRowFromY(y) {
+            return Math.floor(y / cellSize);
+        }
+
+        // Pre-calculate random patterns for rows (cached)
+        const rowPatternCache = new Map();
+
+        function getRowPattern(rowIndex, fillPercent) {
+            const cacheKey = `${rowIndex}-${Math.round(fillPercent * 100)}`;
+            if (rowPatternCache.has(cacheKey)) {
+                return rowPatternCache.get(cacheKey);
+            }
+
+            const startIdx = rowIndex * cols;
+            const numToReveal = Math.round(cols * fillPercent);
+            const indices = [];
+
+            // Generate scattered pattern (avoid adjacent cells when possible)
+            const available = Array.from({ length: cols }, (_, i) => i);
+            const blocked = new Set();
+
+            // Shuffle
+            for (let i = available.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [colOrder[i], colOrder[j]] = [colOrder[j], colOrder[i]];
+                [available[i], available[j]] = [available[j], available[i]];
             }
 
-            // First pass: place cells with strict no-neighbor rule
-            for (const col of colOrder) {
-                if (filled.size >= fillCount) break;
+            for (const col of available) {
+                if (indices.length >= numToReveal) break;
                 if (blocked.has(col)) continue;
-
-                const idx = rowStart + col;
-                filled.add(idx);
-
-                // Block adjacent columns
+                indices.push(startIdx + col);
                 if (col > 0) blocked.add(col - 1);
                 if (col < cols - 1) blocked.add(col + 1);
             }
 
-            // Second pass: if we need more cells, allow some adjacency
-            // but still try to minimize it
-            if (filled.size < fillCount) {
-                for (const col of colOrder) {
-                    if (filled.size >= fillCount) break;
-                    const idx = rowStart + col;
-                    if (!filled.has(idx)) {
-                        filled.add(idx);
+            // Fill remaining if needed
+            for (const col of available) {
+                if (indices.length >= numToReveal) break;
+                const idx = startIdx + col;
+                if (!indices.includes(idx)) {
+                    indices.push(idx);
+                }
+            }
+
+            rowPatternCache.set(cacheKey, indices);
+            return indices;
+        }
+
+        // Viewport-based dark reveal configuration
+        const EDGE_ROWS = 5;            // Rows to stagger at viewport edge
+        const CELL_STAGGER_MS = 30;     // Stagger between cells in a row
+        const ROW_STAGGER_MS = 70;      // Stagger between rows
+
+        // Track which rows are currently in viewport (dark)
+        let viewportRows = new Set();
+
+        // Batch DOM updates with stagger support
+        let pendingUpdates = [];
+        let updateScheduled = false;
+
+        function scheduleUpdate(cellIdx, addClass, staggerDelay = 0) {
+            pendingUpdates.push({ cellIdx, addClass, staggerDelay });
+            if (!updateScheduled) {
+                updateScheduled = true;
+                requestAnimationFrame(flushUpdates);
+            }
+        }
+
+        function flushUpdates() {
+            const updates = pendingUpdates;
+            pendingUpdates = [];
+            updateScheduled = false;
+
+            for (const { cellIdx, addClass, staggerDelay } of updates) {
+                const cell = cells[cellIdx];
+                if (!cell) continue;
+
+                cell.style.setProperty('--stagger-delay', `${staggerDelay}ms`);
+                if (addClass) {
+                    cell.classList.add('in-view');
+                } else {
+                    cell.classList.remove('in-view');
+                }
+            }
+        }
+
+        // Mark row as in viewport (turn dark) with stagger
+        function markRowInView(rowIndex, rowDelay, fillPercent) {
+            if (rowIndex < 0 || rowIndex >= totalRows) return;
+            if (viewportRows.has(rowIndex)) return;
+
+            viewportRows.add(rowIndex);
+            const pattern = getRowPattern(rowIndex, fillPercent);
+
+            for (let i = 0; i < pattern.length; i++) {
+                const cellIdx = pattern[i];
+                if (cellStates[cellIdx] === 0) {
+                    cellStates[cellIdx] = 1;
+                    const cellDelay = rowDelay + (i * CELL_STAGGER_MS);
+                    scheduleUpdate(cellIdx, true, cellDelay);
+                }
+            }
+        }
+
+        // Mark row as outside viewport (turn white) with stagger
+        function markRowOutOfView(rowIndex, rowDelay) {
+            if (rowIndex < 0 || rowIndex >= totalRows) return;
+            if (!viewportRows.has(rowIndex)) return;
+
+            viewportRows.delete(rowIndex);
+            const startIdx = rowIndex * cols;
+
+            let cellCount = 0;
+            for (let i = 0; i < cols; i++) {
+                const cellIdx = startIdx + i;
+                if (cellStates[cellIdx] === 1) {
+                    cellStates[cellIdx] = 0;
+                    const cellDelay = rowDelay + (cellCount * CELL_STAGGER_MS);
+                    scheduleUpdate(cellIdx, false, cellDelay);
+                    cellCount++;
+                }
+            }
+        }
+
+        // Track scroll state
+        let lastScrollY = window.scrollY;
+        let lastTopRow = -1;
+        let lastBottomRow = -1;
+        let ticking = false;
+
+        // Throttle scroll processing
+        let lastProcessTime = 0;
+        const throttleMs = 16; // ~60fps
+
+        function updateOnScroll() {
+            const now = performance.now();
+            if (now - lastProcessTime < throttleMs) {
+                ticking = false;
+                return;
+            }
+            lastProcessTime = now;
+
+            const scrollY = window.scrollY;
+            const viewportHeight = window.innerHeight;
+
+            const currentTopRow = getRowFromY(scrollY);
+            const currentBottomRow = getRowFromY(scrollY + viewportHeight);
+
+            // Skip if no meaningful scroll change
+            const scrollDelta = scrollY - lastScrollY;
+            if (Math.abs(scrollDelta) < 1) {
+                ticking = false;
+                return;
+            }
+
+            // Detect scroll direction
+            const direction = scrollDelta > 0 ? 1 : -1;
+
+            // Process entering rows (turn dark with stagger)
+            if (direction > 0) {
+                // Scrolling down - new rows entering at bottom
+                for (let i = 0; i < EDGE_ROWS; i++) {
+                    const row = currentBottomRow - i;
+                    if (row >= 0 && row < totalRows && !viewportRows.has(row)) {
+                        const fillPercent = Math.max(0.4, 1.0 - (i * 0.12));
+                        markRowInView(row, i * ROW_STAGGER_MS, fillPercent);
+                    }
+                }
+            } else {
+                // Scrolling up - new rows entering at top
+                for (let i = 0; i < EDGE_ROWS; i++) {
+                    const row = currentTopRow + i;
+                    if (row >= 0 && row < totalRows && !viewportRows.has(row)) {
+                        const fillPercent = Math.max(0.4, 1.0 - (i * 0.12));
+                        markRowInView(row, i * ROW_STAGGER_MS, fillPercent);
                     }
                 }
             }
 
-            return filled;
-        }
-
-        // Apply a pattern to the grid
-        function applyPattern(filledCells) {
-            cells.forEach((cell, index) => {
-                if (filledCells.has(index)) {
-                    cell.classList.remove('consumed');
-                } else {
-                    cell.classList.add('consumed');
+            // Process exiting rows (turn white) - give more buffer room
+            const rowsToRemove = [];
+            for (const row of viewportRows) {
+                // More generous buffer (2 rows) to prevent premature removal
+                if (row < currentTopRow - 2 || row > currentBottomRow + 2) {
+                    rowsToRemove.push(row);
                 }
+            }
+            // Sort rows by distance from viewport for smoother exit
+            rowsToRemove.sort((a, b) => {
+                const distA = a < currentTopRow ? currentTopRow - a : a - currentBottomRow;
+                const distB = b < currentTopRow ? currentTopRow - b : b - currentBottomRow;
+                return distB - distA;
             });
-        }
-
-        // Generate a new random pattern maintaining row percentages
-        function generatePattern() {
-            const filled = new Set();
-
-            for (let row = 0; row < rows; row++) {
-                const rowFilled = getScatteredFilledIndices(row, rowFillPercentages[row]);
-                rowFilled.forEach(idx => filled.add(idx));
+            for (let i = 0; i < rowsToRemove.length; i++) {
+                markRowOutOfView(rowsToRemove[i], i * ROW_STAGGER_MS);
             }
 
-            return filled;
-        }
-
-        // Current pattern
-        let currentPattern = generatePattern();
-        applyPattern(currentPattern);
-
-        // State tracking
-        let lastScrollY = window.scrollY;
-        let ticking = false;
-        let scrollAccumulator = 0;
-        const pixelsPerShuffle = 30; // Pixels of scroll to trigger a pattern shuffle
-
-        function shufflePattern() {
-            currentPattern = generatePattern();
-            applyPattern(currentPattern);
-        }
-
-        function updateGrid() {
-            const shuffles = Math.floor(scrollAccumulator / pixelsPerShuffle);
-
-            if (shuffles > 0) {
-                shufflePattern();
-                scrollAccumulator = scrollAccumulator % pixelsPerShuffle;
-            }
-
+            lastScrollY = scrollY;
+            lastTopRow = currentTopRow;
+            lastBottomRow = currentBottomRow;
             ticking = false;
         }
 
         function onScroll() {
-            const currentScrollY = window.scrollY;
-            const delta = currentScrollY - lastScrollY;
-
-            // Accumulate scroll (both directions trigger shuffle)
-            scrollAccumulator += Math.abs(delta);
-
             if (!ticking) {
-                requestAnimationFrame(updateGrid);
+                requestAnimationFrame(updateOnScroll);
                 ticking = true;
             }
-
-            lastScrollY = currentScrollY;
         }
 
         // Use passive scroll listener for performance
         window.addEventListener('scroll', onScroll, { passive: true });
 
-        // Handle resize
+        // Initialize: mark initial viewport rows as in-view (dark) - ALL cells, no pattern
+        function initViewport() {
+            const scrollY = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            const topRow = Math.max(0, getRowFromY(scrollY) - 2); // Buffer above
+            const bottomRow = Math.min(totalRows - 1, getRowFromY(scrollY + viewportHeight) + 2); // Buffer below
+
+            // Mark all cells in viewport + buffer as dark (no stagger, no pattern - full rows)
+            for (let row = topRow; row <= bottomRow; row++) {
+                if (row >= 0 && row < totalRows) {
+                    viewportRows.add(row);
+                    const startIdx = row * cols;
+                    for (let i = 0; i < cols; i++) {
+                        const cellIdx = startIdx + i;
+                        cellStates[cellIdx] = 1;
+                        cells[cellIdx].classList.add('in-view');
+                    }
+                }
+            }
+
+            lastScrollY = scrollY;
+            lastTopRow = getRowFromY(scrollY);
+            lastBottomRow = getRowFromY(scrollY + viewportHeight);
+        }
+
+        // Initialize after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initViewport);
+        } else {
+            initViewport();
+        }
+
+        // Handle resize - regenerate grid
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            if (window.innerWidth < 768) {
-                cells.forEach(cell => cell.classList.remove('consumed'));
-                scrollAccumulator = 0;
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (window.innerWidth < 768) {
+                    grid.innerHTML = '';
+                    cells = [];
+                    cellStates = [];
+                } else {
+                    totalRows = calculateTotalRows();
+                    generateGrid();
+                    lastScrollY = window.scrollY;
+                    lastBottomRow = getRowFromY(window.scrollY + window.innerHeight);
+                    lastTopRow = getRowFromY(window.scrollY);
+                }
+            }, 200);
+        });
+
+        // Recalculate on content changes (in case page height changes)
+        const resizeObserver = new ResizeObserver(() => {
+            const newTotalRows = calculateTotalRows();
+            if (newTotalRows !== totalRows) {
+                totalRows = newTotalRows;
+                generateGrid();
             }
         });
+        resizeObserver.observe(document.body);
+
+        // Theme toggle with wave animation from top-right
+        let isInverted = false;
+        const themeToggle = document.getElementById('theme-toggle');
+        const moonIcon = document.getElementById('theme-icon-moon');
+        const sunIcon = document.getElementById('theme-icon-sun');
+        const WAVE_CELL_DELAY = 10; // Delay per diagonal step
+
+        function toggleThemeWithWave() {
+            isInverted = !isInverted;
+
+            // Toggle icons
+            moonIcon.classList.toggle('hidden');
+            sunIcon.classList.toggle('hidden');
+
+            // Calculate diagonal distance from top-right for each cell
+            // Top-right is (row=0, col=cols-1)
+            const totalCells = cols * totalRows;
+
+            for (let cellIdx = 0; cellIdx < totalCells; cellIdx++) {
+                const row = Math.floor(cellIdx / cols);
+                const col = cellIdx % cols;
+
+                // Diagonal distance from top-right corner
+                const diagonalDist = row + (cols - 1 - col);
+                const delay = diagonalDist * WAVE_CELL_DELAY;
+
+                // Schedule the toggle with delay
+                setTimeout(() => {
+                    const cell = cells[cellIdx];
+                    if (!cell) return;
+
+                    cell.style.setProperty('--stagger-delay', '0ms');
+
+                    if (isInverted) {
+                        // Inverted: swap colors
+                        cell.classList.toggle('inverted', true);
+                    } else {
+                        // Normal: remove inverted
+                        cell.classList.toggle('inverted', false);
+                    }
+                }, delay);
+            }
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleThemeWithWave);
+        }
     })();
     </script>
 </body></html>
