@@ -253,12 +253,6 @@
         background-color: #D2D2D2;
     }
 
-    @media (max-width: 768px) {
-        #mosaic-background {
-            display: none;
-        }
-    }
-
     /* Mix blend mode for text to adapt to grid background */
     .blend-text {
         mix-blend-mode: difference;
@@ -2361,9 +2355,6 @@
     <!-- Static Mosaic Background Effect -->
     <script>
     (function() {
-        // Skip on mobile/tablet
-        if (window.innerWidth < 768) return;
-
         const grid = document.getElementById('mosaic-background');
         if (!grid) return;
 
