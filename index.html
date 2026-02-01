@@ -168,6 +168,68 @@
             top: 0;
             left: 0;
         }
+
+        /* ========================================
+           MOBILE/TABLET PERFORMANCE OPTIMIZATIONS
+           ======================================== */
+        @media (max-width: 1024px) {
+            /* Disable heavy backdrop-filter effects on mobile */
+            .gradient-blur-optimized {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.3) 40%,
+                    rgba(0, 0, 0, 0.7) 70%,
+                    rgba(0, 0, 0, 0.95) 100%
+                ) !important;
+            }
+
+            /* Disable backdrop-blur on testimonial cards */
+            .backdrop-blur-sm {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+
+            /* Reduce/disable heavy blur effects */
+            .hero-cursor-glow {
+                display: none !important;
+            }
+
+            /* Pause noise animation on mobile (runs continuously) */
+            .noise-overlay {
+                animation-play-state: paused !important;
+                opacity: 0 !important;
+            }
+
+            /* Simplify bento card glow effects */
+            .bento-card-glow {
+                display: none !important;
+            }
+
+            /* Reduce filter complexity on reveal words */
+            .reveal-word {
+                filter: none !important;
+                color: rgba(255, 255, 255, 0.4);
+            }
+            .reveal-word.revealed {
+                color: rgba(255, 255, 255, 1);
+            }
+
+            /* Disable progressive blur on mobile for performance */
+            #progressive-blur-bottom {
+                display: none !important;
+            }
+        }
+
+        /* Additional optimization for tablets (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            /* Keep some effects but simplified */
+            .noise-overlay {
+                opacity: 0.01 !important;
+                animation: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-black text-white font-sans antialiased selection:bg-white selection:text-black overflow-x-hidden">
@@ -183,10 +245,21 @@
     <div class="crosshair-v"></div>
 </div>
 
-<!-- Background (component) added by Aura -->
+<!-- Background (component) added by Aura - Disabled on mobile/tablet for performance -->
 <div class="aura-background-component fixed top-0 w-full h-screen -z-10" data-alpha-mask="80" style="; mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)"><div data-us-project="cqcLtDwfoHqqRPttBbQE" class="absolute top-0 left-0 -z-10 w-full h-full"></div>
 <script type="text/javascript">
-  !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
+  !function(){
+    // Only load UnicornStudio on desktop (> 1024px) for performance
+    if (window.innerWidth <= 1024) {
+      // Add a subtle gradient fallback for mobile/tablet
+      var bg = document.querySelector('.aura-background-component');
+      if (bg) {
+        bg.style.background = 'radial-gradient(ellipse at 50% 30%, rgba(234, 78, 51, 0.15) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(ellipse at 80% 80%, rgba(100, 50, 150, 0.1) 0%, rgba(0, 0, 0, 0) 40%)';
+      }
+      return;
+    }
+    if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}
+  }();
 </script></div>
 
     <!-- Navbar -->
@@ -1764,13 +1837,16 @@
                 camera.position.z = 14;  // Pulled back more to see full tornado
                 camera.position.y = 0;   // Centered vertically
 
-                // Renderer
+                // Renderer - optimized for mobile
+                const isMobileDevice = window.innerWidth <= 1024;
                 renderer = new THREE.WebGLRenderer({
-                    antialias: true,
-                    alpha: true
+                    antialias: !isMobileDevice, // Disable antialiasing on mobile for performance
+                    alpha: true,
+                    powerPreference: isMobileDevice ? 'low-power' : 'high-performance'
                 });
                 renderer.setSize(container.clientWidth, container.clientHeight);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                // Lower pixel ratio on mobile for better performance
+                renderer.setPixelRatio(isMobileDevice ? 1 : Math.min(window.devicePixelRatio, 2));
                 renderer.setClearColor(0x000000, 0);
                 container.appendChild(renderer.domElement);
 
@@ -1875,42 +1951,45 @@
                 // Track hovered card for smooth animation
                 let hoveredCard = null;
 
-                // Optimization: Throttle raycaster with RAF (but get fresh rect each time since scroll changes position)
-                let carouselPointerRAF = null;
-                let lastMouseX = 0, lastMouseY = 0;
+                // Only enable hover effects on desktop (no hover on touch devices)
+                if (!isMobileDevice) {
+                    // Optimization: Throttle raycaster with RAF (but get fresh rect each time since scroll changes position)
+                    let carouselPointerRAF = null;
+                    let lastMouseX = 0, lastMouseY = 0;
 
-                // Change cursor on hover and track hovered card (RAF throttled)
-                container.addEventListener('mousemove', (event) => {
-                    lastMouseX = event.clientX;
-                    lastMouseY = event.clientY;
+                    // Change cursor on hover and track hovered card (RAF throttled)
+                    container.addEventListener('mousemove', (event) => {
+                        lastMouseX = event.clientX;
+                        lastMouseY = event.clientY;
 
-                    // Throttle raycaster to RAF (max 60fps)
-                    if (carouselPointerRAF) return;
+                        // Throttle raycaster to RAF (max 60fps)
+                        if (carouselPointerRAF) return;
 
-                    carouselPointerRAF = requestAnimationFrame(() => {
-                        // Get fresh rect each RAF frame (scroll changes container position)
-                        const rect = container.getBoundingClientRect();
-                        mouse.x = ((lastMouseX - rect.left) / rect.width) * 2 - 1;
-                        mouse.y = -((lastMouseY - rect.top) / rect.height) * 2 + 1;
+                        carouselPointerRAF = requestAnimationFrame(() => {
+                            // Get fresh rect each RAF frame (scroll changes container position)
+                            const rect = container.getBoundingClientRect();
+                            mouse.x = ((lastMouseX - rect.left) / rect.width) * 2 - 1;
+                            mouse.y = -((lastMouseY - rect.top) / rect.height) * 2 + 1;
 
-                        raycaster.setFromCamera(mouse, camera);
-                        const intersects = raycaster.intersectObjects(carousel.children);
+                            raycaster.setFromCamera(mouse, camera);
+                            const intersects = raycaster.intersectObjects(carousel.children);
 
-                        if (intersects.length > 0) {
-                            hoveredCard = intersects[0].object;
-                            container.style.cursor = 'pointer';
-                        } else {
-                            hoveredCard = null;
-                            container.style.cursor = 'default';
-                        }
-                        carouselPointerRAF = null;
+                            if (intersects.length > 0) {
+                                hoveredCard = intersects[0].object;
+                                container.style.cursor = 'pointer';
+                            } else {
+                                hoveredCard = null;
+                                container.style.cursor = 'default';
+                            }
+                            carouselPointerRAF = null;
+                        });
                     });
-                });
 
-                container.addEventListener('mouseleave', () => {
-                    hoveredCard = null;
-                    container.style.cursor = 'default';
-                });
+                    container.addEventListener('mouseleave', () => {
+                        hoveredCard = null;
+                        container.style.cursor = 'default';
+                    });
+                }
 
                 // Store hoveredCard reference for animation loop
                 window._carouselHoveredCard = () => hoveredCard;
@@ -1948,12 +2027,21 @@
 
             let isCarouselInView = false;
             let isCarouselVisible = true; // For visibility-based rendering optimization
+            const isMobileCarousel = window.innerWidth <= 1024;
+            let lastFrameTime = 0;
+            const mobileFrameInterval = 1000 / 30; // 30fps on mobile instead of 60fps
 
-            function animateCarousel() {
+            function animateCarousel(currentTime) {
                 requestAnimationFrame(animateCarousel);
 
                 // Skip rendering when carousel is not visible (major performance optimization)
                 if (!isCarouselVisible) return;
+
+                // Throttle to 30fps on mobile for better performance
+                if (isMobileCarousel) {
+                    if (currentTime - lastFrameTime < mobileFrameInterval) return;
+                    lastFrameTime = currentTime;
+                }
 
                 // Smooth rotation based on scroll
                 currentRotation += (targetRotation - currentRotation) * 0.05;
@@ -2601,8 +2689,8 @@
     <!-- Pixel Confetti on Click Script -->
     <script>
     (function() {
-        // Only on desktop
-        if (window.innerWidth < 768) return;
+        // Only on desktop (> 1024px) for performance
+        if (window.innerWidth <= 1024) return;
 
         const PIXEL_COUNT = 12;
         const PIXEL_SIZE = 4;
