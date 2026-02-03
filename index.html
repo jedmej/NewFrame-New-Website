@@ -430,8 +430,6 @@
             </div>
 
 
-            <!-- Interactive Mouse Follower -->
-            <div id="hero-cursor" class="hero-cursor-glow pointer-events-none absolute w-64 h-64 rounded-full bg-[#EA4E33] opacity-0 blur-[120px] transition-opacity duration-1000" style="mix-blend-mode: screen; transform: translate(-50%, -50%);"></div>
         </div>
 
         <!-- Hero Custom Styles -->
@@ -446,133 +444,6 @@
             }
         </style>
 
-        <!-- Hero JavaScript -->
-        <script>
-            (function() {
-                // Skip cursor tracking on mobile and tablet (< 1024px)
-                const isMobileOrTablet = window.innerWidth < 1024;
-
-                // Mouse-reactive glow effect and 3D tilt
-                const hero = document.getElementById('hero');
-                const cursorGlow = document.getElementById('hero-cursor');
-                const typeStack = document.getElementById('hero-type-stack');
-
-                // Hide cursor glow on mobile/tablet
-                if (isMobileOrTablet && cursorGlow) {
-                    cursorGlow.style.display = 'none';
-                }
-
-                // Only add cursor tracking on desktop
-                if (isMobileOrTablet) return;
-
-                let mouseX = 0, mouseY = 0;
-                let glowX = 0, glowY = 0;
-                let currentRotateX = 0;
-                let currentRotateY = 0;
-                let currentRotateZ = -2;
-                let targetRotateX = 0;
-                let targetRotateY = 0;
-                let targetRotateZ = -2;
-
-                // Animation control (for visibility-based pausing)
-                let heroAnimationId = null;
-                let isHeroVisible = true;
-                let needsAnimation = true;
-
-                // Parallax effect elements (moved up to combine with main mousemove)
-                const titleElements = document.querySelectorAll('.hero-title-row');
-
-                // Single combined mousemove handler for glow, tilt, and parallax effects
-                hero.addEventListener('mousemove', (e) => {
-                    const rect = hero.getBoundingClientRect();
-                    mouseX = e.clientX;
-                    mouseY = e.clientY;
-                    cursorGlow.style.opacity = '0.15';
-
-                    // Calculate 3D tilt based on mouse position relative to hero center
-                    const centerX = rect.left + rect.width / 2;
-                    const centerY = rect.top + rect.height / 2;
-
-                    // Normalize to -1 to 1 range
-                    const normalizedX = (e.clientX - centerX) / (rect.width / 2);
-                    const normalizedY = (e.clientY - centerY) / (rect.height / 2);
-
-                    // Map to rotation values
-                    targetRotateY = normalizedX * 12; // Horizontal tilt (rotateY): ±12 degrees
-                    targetRotateX = -normalizedY * 8; // Vertical tilt (rotateX): ±8 degrees (inverted)
-                    targetRotateZ = -normalizedX * 3; // Slight Z rotation for extra dynamism
-
-                    // Parallax effect on title elements (merged from duplicate listener)
-                    const xPos = (e.clientX / window.innerWidth - 0.5) * 20;
-                    const yPos = (e.clientY / window.innerHeight - 0.5) * 20;
-                    titleElements.forEach((el, index) => {
-                        const depth = (index + 1) * 0.3;
-                        el.style.transform = `translate(${xPos * depth}px, ${yPos * depth}px)`;
-                    });
-
-                    // Restart animation if it was paused due to convergence
-                    needsAnimation = true;
-                });
-
-                hero.addEventListener('mouseleave', () => {
-                    cursorGlow.style.opacity = '0';
-                    // Return to default position
-                    targetRotateX = 0;
-                    targetRotateY = 0;
-                    targetRotateZ = -2;
-                });
-
-                // Smooth lerp animation for cursor glow and 3D tilt
-                // Optimized: Pauses when hero is not visible and when values converge
-                // Intersection Observer to pause animation when hero is not visible
-                const heroObserver = new IntersectionObserver((entries) => {
-                    isHeroVisible = entries[0].isIntersecting;
-                    if (isHeroVisible && !heroAnimationId) {
-                        needsAnimation = true;
-                        animateHeroEffects();
-                    }
-                }, { threshold: 0 });
-                heroObserver.observe(hero);
-
-                function animateHeroEffects() {
-                    // Don't run if hero is not visible
-                    if (!isHeroVisible) {
-                        heroAnimationId = null;
-                        return;
-                    }
-
-                    // Check if values have converged (optimization for idle state)
-                    const glowDiff = Math.abs(mouseX - glowX) + Math.abs(mouseY - glowY);
-                    const rotateDiff = Math.abs(targetRotateX - currentRotateX) +
-                                       Math.abs(targetRotateY - currentRotateY) +
-                                       Math.abs(targetRotateZ - currentRotateZ);
-
-                    needsAnimation = glowDiff > 0.5 || rotateDiff > 0.01;
-
-                    if (needsAnimation) {
-                        // Glow position
-                        glowX += (mouseX - glowX) * 0.1;
-                        glowY += (mouseY - glowY) * 0.1;
-                        cursorGlow.style.left = glowX + 'px';
-                        cursorGlow.style.top = glowY + 'px';
-
-                        // Smooth 3D rotation with lerp
-                        currentRotateX += (targetRotateX - currentRotateX) * 0.08;
-                        currentRotateY += (targetRotateY - currentRotateY) * 0.08;
-                        currentRotateZ += (targetRotateZ - currentRotateZ) * 0.08;
-
-                        typeStack.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) rotateZ(${currentRotateZ}deg)`;
-                    }
-
-                    heroAnimationId = requestAnimationFrame(animateHeroEffects);
-                }
-                animateHeroEffects();
-
-                // Initialize with default tilt
-                targetRotateZ = -2;
-                currentRotateZ = -2;
-            })();
-        </script>
     </div>
 
 
@@ -1164,21 +1035,10 @@
                 border: none;
                 border-radius: 0;
                 overflow: hidden;
-                cursor: pointer;
-                transition: transform 0.15s ease-out,
-                            box-shadow 0.15s ease-out,
-                            background 0.15s ease-out;
             }
 
-            /* Inset/pressed hover effect */
-            .pixel-card:hover {
-                background: rgba(0, 0, 0, 0.85);
-                transform: scale(0.98);
-                box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.8),
-                            inset 0 2px 6px rgba(0, 0, 0, 0.9);
-            }
 
-            /* Subtle inner highlight on top edge when not hovered */
+            /* Subtle inner highlight on top edge */
             .pixel-card::before {
                 content: '';
                 position: absolute;
@@ -1187,12 +1047,8 @@
                 right: 0;
                 height: 1px;
                 background: rgba(255, 255, 255, 0.1);
-                transition: opacity 0.15s ease-out;
             }
 
-            .pixel-card:hover::before {
-                opacity: 0;
-            }
 
             /* Bottom/right shadow edge for 3D pixel look */
             .pixel-card::after {
@@ -1204,18 +1060,8 @@
                 height: 100%;
                 pointer-events: none;
                 box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3);
-                transition: box-shadow 0.15s ease-out;
             }
 
-            .pixel-card:hover::after {
-                box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.05),
-                            inset -2px -2px 0 rgba(0, 0, 0, 0.5);
-            }
-
-            /* Context-aware hover - dim siblings */
-            .pixel-bento-grid:has(.pixel-card:hover) .pixel-card:not(:hover) {
-                filter: brightness(0.7);
-            }
 
             .pixel-card-content {
                 position: relative;
@@ -1225,12 +1071,8 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
-                transition: transform 0.15s ease-out;
             }
 
-            .pixel-card:hover .pixel-card-content {
-                transform: translateY(2px);
-            }
 
             .pixel-card-number {
                 font-family: 'JetBrains Mono', monospace;
@@ -1284,12 +1126,8 @@
                 width: 40px;
                 height: 40px;
                 opacity: 0.5;
-                transition: opacity 0.15s ease-out;
             }
 
-            .pixel-card-accent:hover .pixel-accent-symbol {
-                opacity: 0.8;
-            }
 
             .pixel-accent-text {
                 font-family: 'JetBrains Mono', monospace;
