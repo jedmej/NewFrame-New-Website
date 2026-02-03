@@ -7,17 +7,23 @@
     <!-- Fonts - Async loading for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="dns-prefetch" href="https://hoirqrkdgbmvpwutwuwj.supabase.co">
+    <link rel="preload" as="image" href="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind (pre-built, purged to used classes only) -->
+    <link rel="stylesheet" href="tailwind-output.css">
     
     <!-- Lucide Icons - deferred for faster initial render -->
-    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://unpkg.com/lucide@0.563.0" defer></script>
 
     <!-- Lenis Smooth Scroll -->
-    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.21/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.21/dist/lenis.min.js" defer></script>
 
     <!-- Three.js for 3D Carousel - deferred for faster initial render -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
@@ -250,7 +256,6 @@
         aspect-ratio: 1;
         background-color: #242424;
         transition: background-color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
-        transition-delay: var(--stagger-delay, 0ms);
         will-change: background-color;
     }
 
@@ -263,7 +268,6 @@
         aspect-ratio: 1;
         background-color: #D2D2D2;
         transition: background-color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
-        transition-delay: var(--stagger-delay, 0ms);
         will-change: background-color;
     }
 
@@ -1470,7 +1474,7 @@
             0% { opacity: 0; transform: translateY(80px) scale(0.96); filter: blur(12px); }
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
         }
-        .animate-on-scroll { opacity: 0; will-change: transform, opacity, filter; }
+        .animate-on-scroll { opacity: 0; }
         .animate-on-scroll.animate { animation: animationIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-on-scroll.animated { opacity: 1; transform: none; filter: none; animation: none; }
 
@@ -1542,13 +1546,13 @@
                 // Project 1: Esthetic
                 { name: 'ESTHETIC', image: 'https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg', link: 'https://google.com' },
                 // Project 2: Adfidence
-                { name: 'ADFIDENCE', image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop', link: 'https://google.com' },
+                { name: 'ADFIDENCE', image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&h=1000&fit=crop&q=80', link: 'https://google.com' },
                 // Project 3: SLL
-                { name: 'SLL', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=500&fit=crop', link: 'https://google.com' },
+                { name: 'SLL', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=1000&fit=crop&q=80', link: 'https://google.com' },
                 // Project 4: Placeholder for your 4th project
-                { name: 'PROJECT 4', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop', link: 'https://google.com' },
+                { name: 'PROJECT 4', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=1000&fit=crop&q=80', link: 'https://google.com' },
                 // Project 5: Placeholder for your 5th project
-                { name: 'PROJECT 5', image: 'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=400&h=500&fit=crop', link: 'https://google.com' }
+                { name: 'PROJECT 5', image: 'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=800&h=1000&fit=crop&q=80', link: 'https://google.com' }
             ];
 
             let scene, camera, renderer, carousel;
@@ -1966,10 +1970,14 @@
             const animateObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
+                        // Promote to compositor layer just before animating
+                        entry.target.style.willChange = 'transform, opacity, filter';
                         entry.target.classList.add('animate');
                         // Lock in final state after animation completes to prevent re-triggering
                         entry.target.addEventListener('animationend', () => {
                             entry.target.classList.add('animated');
+                            // Release compositor layer after animation completes
+                            entry.target.style.willChange = 'auto';
                         }, { once: true });
                         animateObserver.unobserve(entry.target);
                     }
@@ -2167,9 +2175,16 @@
             });
         } else {
             // For mobile/tablet, use native scroll event for blur visibility
+            let blurTicking = false;
             window.addEventListener('scroll', () => {
-                if (window._updateBlurVisibility) window._updateBlurVisibility();
-            });
+                if (!blurTicking) {
+                    blurTicking = true;
+                    requestAnimationFrame(() => {
+                        if (window._updateBlurVisibility) window._updateBlurVisibility();
+                        blurTicking = false;
+                    });
+                }
+            }, { passive: true });
         }
 
         // Smooth scroll for nav links
@@ -2615,8 +2630,7 @@
                 bgCells.push(cell);
             }
 
-            bgGrid.innerHTML = '';
-            bgGrid.appendChild(fragment);
+            bgGrid.replaceChildren(fragment);
             bgGrid.style.height = (totalRows * cellSize) + 'px';
         }
 
@@ -2628,7 +2642,7 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 if (window.innerWidth < 768) {
-                    bgGrid.innerHTML = '';
+                    bgGrid.replaceChildren();
                     bgCells = [];
                 } else {
                     totalRows = calculateTotalRows();
@@ -2679,38 +2693,44 @@
             }, midDelay);
 
             // Get overlay cells too
-            const overlayCells = document.querySelectorAll('#mosaic-overlay .overlay-cell');
+            const overlayCells = window._overlayGridCells || [];
 
             const totalCells = cols * totalRows;
 
+            // Group cells by diagonal distance to batch setTimeout calls
+            const delayBuckets = new Map();
             for (let cellIdx = 0; cellIdx < totalCells; cellIdx++) {
                 const row = Math.floor(cellIdx / cols);
                 const col = cellIdx % cols;
-
-                // Diagonal distance from top-right corner
                 const diagonalDist = row + (cols - 1 - col);
                 const delay = diagonalDist * WAVE_CELL_DELAY;
+                if (!delayBuckets.has(delay)) {
+                    delayBuckets.set(delay, []);
+                }
+                delayBuckets.get(delay).push(cellIdx);
+            }
 
+            // One setTimeout per unique delay instead of one per cell
+            for (const [delay, cellIndices] of delayBuckets) {
                 setTimeout(() => {
-                    // Toggle background cell
-                    const bgCell = bgCells[cellIdx];
-                    if (bgCell) {
-                        bgCell.style.setProperty('--stagger-delay', '0ms');
-                        if (isLightTheme) {
-                            bgCell.classList.add('light-theme');
-                        } else {
-                            bgCell.classList.remove('light-theme');
+                    for (const cellIdx of cellIndices) {
+                        const bgCell = bgCells[cellIdx];
+                        if (bgCell) {
+                            bgCell.style.transitionDelay = '0ms';
+                            if (isLightTheme) {
+                                bgCell.classList.add('light-theme');
+                            } else {
+                                bgCell.classList.remove('light-theme');
+                            }
                         }
-                    }
-
-                    // Toggle overlay cell (opposite of background)
-                    const overlayCell = overlayCells[cellIdx];
-                    if (overlayCell) {
-                        overlayCell.style.setProperty('--stagger-delay', '0ms');
-                        if (isLightTheme) {
-                            overlayCell.classList.add('dark-theme');
-                        } else {
-                            overlayCell.classList.remove('dark-theme');
+                        const overlayCell = overlayCells[cellIdx];
+                        if (overlayCell) {
+                            overlayCell.style.transitionDelay = '0ms';
+                            if (isLightTheme) {
+                                overlayCell.classList.add('dark-theme');
+                            } else {
+                                overlayCell.classList.remove('dark-theme');
+                            }
                         }
                     }
                 }, delay);
@@ -2769,9 +2789,11 @@
                 cells.push(cell);
             }
 
-            overlayGrid.innerHTML = '';
-            overlayGrid.appendChild(fragment);
+            overlayGrid.replaceChildren(fragment);
             overlayGrid.style.height = (totalRows * cellSize) + 'px';
+
+            // Expose cells for theme toggle to avoid querySelectorAll
+            window._overlayGridCells = cells;
         }
 
         generateOverlayGrid();
@@ -2845,7 +2867,7 @@
                     continue;
                 }
 
-                cell.style.setProperty('--stagger-delay', `${staggerDelay}ms`);
+                cell.style.transitionDelay = `${staggerDelay}ms`;
                 if (addClass) {
                     cell.classList.add('in-view');
                     pendingAdds.delete(cellIdx);
@@ -3067,7 +3089,7 @@
                 const rowGroup = Math.abs(row - Math.round(viewportCenter));
                 const delay = rowGroup * CLEANUP_ROW_DELAY + (index % cols) * CLEANUP_CELL_DELAY;
                 const cell = cells[cellIdx];
-                cell.style.setProperty('--stagger-delay', `${delay}ms`);
+                cell.style.transitionDelay = `${delay}ms`;
                 cell.classList.add('in-view');
                 cellStates[cellIdx] = 1;
             });
@@ -3075,7 +3097,7 @@
             cellsToTurnLight.forEach(({ cellIdx }, index) => {
                 const delay = index * CLEANUP_CELL_DELAY;
                 const cell = cells[cellIdx];
-                cell.style.setProperty('--stagger-delay', `${delay}ms`);
+                cell.style.transitionDelay = `${delay}ms`;
                 cell.classList.remove('in-view');
                 cellStates[cellIdx] = 0;
             });
@@ -3124,7 +3146,7 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 if (window.innerWidth < 768) {
-                    overlayGrid.innerHTML = '';
+                    overlayGrid.replaceChildren();
                     cells = [];
                     cellStates = [];
                     rowActiveCells.clear();
