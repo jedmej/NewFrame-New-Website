@@ -138,12 +138,22 @@
             cursor: pointer;
             padding: 0.25rem 0.35rem;
             border-radius: 3px;
-            transition: color 0.3s ease, background 0.3s ease;
+            transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
         .lang-btn:hover {
             color: rgba(255, 255, 255, 0.8);
         }
         .lang-btn.lang-active {
+            color: #EA4E33;
+            background: rgba(234, 78, 51, 0.1);
+        }
+        body.light-mosaic .lang-btn {
+            color: rgba(0, 0, 0, 0.4);
+        }
+        body.light-mosaic .lang-btn:hover {
+            color: rgba(0, 0, 0, 0.8);
+        }
+        body.light-mosaic .lang-btn.lang-active {
             color: #EA4E33;
             background: rgba(234, 78, 51, 0.1);
         }
@@ -285,6 +295,48 @@
         mix-blend-mode: normal;
         isolation: isolate;
     }
+
+    /* JS-driven theme-adaptive colors for sections where mix-blend-mode can't reach */
+    .theme-text { color: #fff; transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); }
+    body.light-mosaic .theme-text { color: #242424; }
+
+    .theme-muted { color: rgba(255,255,255,0.5); transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); }
+    body.light-mosaic .theme-muted { color: rgba(0,0,0,0.5); }
+
+    .theme-muted-strong { color: rgba(255,255,255,0.4); transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); }
+    body.light-mosaic .theme-muted-strong { color: rgba(0,0,0,0.4); }
+
+    .theme-border { border-color: rgba(255,255,255,0.2); transition: border-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); }
+    body.light-mosaic .theme-border { border-color: rgba(0,0,0,0.2); }
+
+    /* Testimonial card theme-adaptive */
+    .testimonial-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), border-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    body.light-mosaic .testimonial-card {
+        background: rgba(255, 255, 255, 0.7);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .testimonial-quote {
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    body.light-mosaic .testimonial-quote { color: rgba(0, 0, 0, 0.85); }
+
+    .testimonial-name {
+        color: white;
+        transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    body.light-mosaic .testimonial-name { color: #242424; }
+
+    .testimonial-role {
+        color: rgba(255, 255, 255, 0.4);
+        transition: color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    body.light-mosaic .testimonial-role { color: rgba(0, 0, 0, 0.4); }
 </style>
 
 <!-- Cursor Crosshair Tracker (Desktop Only) -->
@@ -295,8 +347,8 @@
 
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-6 md:px-12 mix-blend-difference">
-        <a href="#hero" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-6 md:px-12">
+        <a href="#hero" class="flex items-center gap-2 hover:opacity-80 transition-opacity theme-text">
             <svg width="24" height="24" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
                 <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
                 <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
@@ -306,19 +358,19 @@
             <span class="text-sm font-semibold tracking-tight uppercase">New Frame Studio</span>
         </a>
         <div class="hidden md:flex items-center gap-8">
-            <a href="#scope" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors" data-i18n="nav.scope">Scope</a>
-            <a href="#selected-work" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors" data-i18n="nav.work">Work</a>
-            <a href="#lets-talk-section" class="text-xs font-medium uppercase tracking-widest hover:text-gray-400 transition-colors" data-i18n="nav.contact">Contact</a>
+            <a href="#scope" class="text-xs font-medium uppercase tracking-widest hover:opacity-60 transition-opacity theme-text" data-i18n="nav.scope">Scope</a>
+            <a href="#selected-work" class="text-xs font-medium uppercase tracking-widest hover:opacity-60 transition-opacity theme-text" data-i18n="nav.work">Work</a>
+            <a href="#lets-talk-section" class="text-xs font-medium uppercase tracking-widest hover:opacity-60 transition-opacity theme-text" data-i18n="nav.contact">Contact</a>
 
             <!-- Language Selector -->
-            <div class="lang-selector flex items-center gap-1 ml-4 pl-4 border-l border-white/20">
+            <div class="lang-selector flex items-center gap-1 ml-4 pl-4 border-l border-white/20 theme-border">
                 <button id="lang-en" class="lang-btn lang-active" data-lang="en" title="English">EN</button>
-                <span class="text-white/30 text-xs">/</span>
+                <span class="text-white/30 text-xs theme-muted-strong">/</span>
                 <button id="lang-pl" class="lang-btn" data-lang="pl" title="Polski">PL</button>
             </div>
 
             <!-- Theme Toggle (Moon/Sun) -->
-            <button id="theme-toggle" class="ml-4 pl-4 border-l border-white/20 p-1 hover:opacity-70 transition-opacity" title="Toggle theme">
+            <button id="theme-toggle" class="ml-4 pl-4 border-l border-white/20 theme-border theme-text p-1 hover:opacity-70 transition-opacity" title="Toggle theme">
                 <svg id="theme-icon-moon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
@@ -343,25 +395,25 @@
         <div class="hero-content-container w-full h-full px-6 md:px-12 py-20 flex flex-col justify-center relative max-w-[2000px] mx-auto">
 
             <!-- Main Typography Stack -->
-            <div id="hero-type-stack" class="hero-type-stack relative blend-section">
+            <div id="hero-type-stack" class="hero-type-stack relative">
 
                 <!-- NEW FRAME -->
                 <div class="hero-title-row mb-8 md:mb-12 flex items-center justify-center gap-3 md:gap-6 opacity-0" style="animation: fadeSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
-                    <h1 class="hero-title-massive" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(7rem, 22vw, 28rem); line-height: 0.82; letter-spacing: -0.04em; color: #fff; text-shadow: 4px 4px 0 rgba(0,0,0,0.3);">NEW FRAME</h1>
+                    <h1 class="hero-title-massive theme-text" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(7rem, 22vw, 28rem); line-height: 0.82; letter-spacing: -0.04em; text-shadow: 4px 4px 0 rgba(0,0,0,0.3);">NEW FRAME</h1>
                 </div>
 
                 <!-- Info Bar - Centered under title -->
                 <div class="hero-info-bar flex items-center justify-center mt-16 md:mt-24 opacity-0 w-full" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;">
                     <div class="flex items-center gap-8">
                         <div class="hero-location text-center">
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;" data-i18n="hero.location">LOCATION</div>
+                            <div class="theme-muted" style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.25rem;" data-i18n="hero.location">LOCATION</div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; color: #EA4E33;" data-i18n="hero.remote">REMOTE</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);" data-i18n="hero.worldwide">WORKING WITH CLIENTS WORLDWIDE</div>
+                            <div class="theme-muted-strong" style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.1em;" data-i18n="hero.worldwide">WORKING WITH CLIENTS WORLDWIDE</div>
                         </div>
-                        <div class="w-px h-16 bg-white/20"></div>
+                        <div class="w-px h-16 bg-white/20 theme-border"></div>
                         <div class="hero-year text-center">
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem;" data-i18n="hero.established">ESTABLISHED</div>
-                            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.05em; color: #fff;">20<span style="color: #EA4E33;">23</span></div>
+                            <div class="theme-muted" style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.25rem;" data-i18n="hero.established">ESTABLISHED</div>
+                            <div class="theme-text" style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.05em;">20<span style="color: #EA4E33;">23</span></div>
                         </div>
                     </div>
                 </div>
@@ -369,8 +421,8 @@
 
             <!-- Scroll to Explore - Absolute bottom -->
             <div class="hero-scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0" style="animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);" data-i18n="hero.scroll">SCROLL TO EXPLORE</div>
-                <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="animation: bounce 2s infinite;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                <div class="theme-muted" style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em;" data-i18n="hero.scroll">SCROLL TO EXPLORE</div>
+                <svg class="w-5 h-5 theme-muted-strong" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="animation: bounce 2s infinite;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
 
 
@@ -533,7 +585,7 @@
                 </div>
             </div>
 
-            <div id="reveal-paragraph" class="text-lg md:text-xl lg:text-[22px] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-[1400px] mx-auto select-none relative z-10 blend-section">
+            <div id="reveal-paragraph" class="text-lg md:text-xl lg:text-[22px] font-normal leading-[1.5] md:leading-[1.4] tracking-tight max-w-[1400px] mx-auto select-none relative z-10">
                 <span class="reveal-section revealed" data-section="0">Hey! I'm Jed, the founder of</span>
                 <button class="reveal-chip revealed" data-section="0">NEWFRAME</button>
                 <span class="reveal-section revealed" data-section="0">— and I help businesses look as good as they perform.</span>
@@ -596,6 +648,19 @@
             .reveal-chip.dim-chip { border-color: rgba(161, 161, 170, 0.4); color: rgb(161 161 170); background: rgba(161, 161, 170, 0.08); }
             .reveal-chip.dim-chip:not(.revealed):hover { background: rgba(161, 161, 170, 0.15); border-color: rgba(161, 161, 170, 0.6); }
             .reveal-chip.dim-chip.revealed { background: rgba(234, 78, 51, 0.1); border-color: #EA4E33; color: #EA4E33; }
+
+            /* Light mosaic theme variants for reveal words */
+            body.light-mosaic .reveal-word { color: rgba(36, 36, 36, 0.4); }
+            body.light-mosaic .reveal-word.revealed { color: #242424; }
+            body.light-mosaic .reveal-word.dim-word { color: rgba(100, 100, 100, 0.4); }
+            body.light-mosaic .reveal-word.dim-word.revealed { color: rgb(100, 100, 100); }
+
+            /* Light mosaic theme variants for reveal chips (unrevealed only) */
+            body.light-mosaic .reveal-chip:not(.revealed) { border-color: rgba(0, 0, 0, 0.5); background: rgba(0, 0, 0, 0.1); color: #242424; }
+            body.light-mosaic .reveal-chip:not(.revealed):hover { background: rgba(0, 0, 0, 0.18); border-color: rgba(0, 0, 0, 0.7); }
+            /* Orange stays orange when revealed — no override needed */
+            body.light-mosaic .reveal-chip.dim-chip:not(.revealed) { border-color: rgba(100, 100, 100, 0.4); color: rgb(100, 100, 100); background: rgba(100, 100, 100, 0.08); }
+            body.light-mosaic .reveal-chip.dim-chip:not(.revealed):hover { background: rgba(100, 100, 100, 0.15); border-color: rgba(100, 100, 100, 0.6); }
 
             /* Jed Name Hover Effect */
             .jed-name-hover {
@@ -1083,6 +1148,10 @@
                 gap: 1px;
                 background: rgba(255, 255, 255, 0.15);
                 min-height: 0;
+                transition: background 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            }
+            body.light-mosaic .pixel-bento-grid {
+                background: rgba(0, 0, 0, 0.15);
             }
 
             .pixel-card {
@@ -1307,6 +1376,7 @@
             margin: 2rem 0 4rem 0;
             overflow: visible !important;
             clip-path: none !important;
+            isolation: isolate;
         }
         #carousel3d-container canvas {
             width: 100% !important;
@@ -1781,13 +1851,13 @@
 </section>
 
 <!-- TESTIMONIAL SECTION -->
-<section id="testimonials" class="relative w-full py-32 bg-transparent z-20 overflow-hidden blend-section">
+<section id="testimonials" class="relative w-full py-32 bg-transparent z-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
         <!-- Section Header -->
         <div class="mb-16 text-center">
             <div class="flex items-center justify-center gap-4 mb-3">
                 <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em; color: rgba(255,255,255,0.5);" data-i18n="testimonial.label">WHAT CLIENTS SAY</div>
+                <div class="theme-muted" style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 400; letter-spacing: 0.15em;" data-i18n="testimonial.label">WHAT CLIENTS SAY</div>
                 <div class="w-12 h-[2px] bg-[#EA4E33]"></div>
             </div>
         </div>
@@ -1796,14 +1866,14 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
 
             <!-- Testimonial 1 -->
-            <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+            <div class="testimonial-card relative rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                 <div class="absolute -top-3 left-6 md:left-8">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
                     </svg>
                 </div>
                 <blockquote class="relative z-10 pt-4">
-                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-6" data-i18n="testimonial.quote1">
+                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; font-weight: 400;" class="mb-6 testimonial-quote" data-i18n="testimonial.quote1">
                         "Working with Jed was a game-changer for our brand. He understood our vision immediately and delivered a website that exceeded our expectations."
                     </p>
                     <footer class="flex items-center gap-3">
@@ -1811,22 +1881,22 @@
                             <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: #EA4E33;">SK</span>
                         </div>
                         <div>
-                            <cite style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: white; font-style: normal; display: block;">Sarah K.</cite>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role1">FOUNDER, STARTUP CO.</span>
+                            <cite class="testimonial-name" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; font-style: normal; display: block;">Sarah K.</cite>
+                            <span class="testimonial-role" style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em;" data-i18n="testimonial.role1">FOUNDER, STARTUP CO.</span>
                         </div>
                     </footer>
                 </blockquote>
             </div>
 
             <!-- Testimonial 2 -->
-            <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+            <div class="testimonial-card relative rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                 <div class="absolute -top-3 left-6 md:left-8">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
                     </svg>
                 </div>
                 <blockquote class="relative z-10 pt-4">
-                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-6" data-i18n="testimonial.quote2">
+                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; font-weight: 400;" class="mb-6 testimonial-quote" data-i18n="testimonial.quote2">
                         "The attention to detail and communication throughout the project was exceptional. Our new site has significantly improved our conversion rates."
                     </p>
                     <footer class="flex items-center gap-3">
@@ -1834,22 +1904,22 @@
                             <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: #EA4E33;">MR</span>
                         </div>
                         <div>
-                            <cite style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: white; font-style: normal; display: block;">Michael R.</cite>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role2">CEO, TECH VENTURES</span>
+                            <cite class="testimonial-name" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; font-style: normal; display: block;">Michael R.</cite>
+                            <span class="testimonial-role" style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em;" data-i18n="testimonial.role2">CEO, TECH VENTURES</span>
                         </div>
                     </footer>
                 </blockquote>
             </div>
 
             <!-- Testimonial 3 -->
-            <div class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+            <div class="testimonial-card relative rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                 <div class="absolute -top-3 left-6 md:left-8">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11 7.5V17H4.5V11.5C4.5 9.29 6.29 7.5 8.5 7.5H11ZM19.5 7.5V17H13V11.5C13 9.29 14.79 7.5 17 7.5H19.5Z" fill="#EA4E33" opacity="0.3"/>
                     </svg>
                 </div>
                 <blockquote class="relative z-10 pt-4">
-                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 400;" class="mb-6" data-i18n="testimonial.quote3">
+                    <p style="font-family: 'Manrope', sans-serif; font-size: 1rem; line-height: 1.7; font-weight: 400;" class="mb-6 testimonial-quote" data-i18n="testimonial.quote3">
                         "Jed transformed our online presence completely. Professional, creative, and incredibly easy to work with. Highly recommend for any business."
                     </p>
                     <footer class="flex items-center gap-3">
@@ -1857,8 +1927,8 @@
                             <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: #EA4E33;">AL</span>
                         </div>
                         <div>
-                            <cite style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; color: white; font-style: normal; display: block;">Amanda L.</cite>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.4);" data-i18n="testimonial.role3">DIRECTOR, CREATIVE AGENCY</span>
+                            <cite class="testimonial-name" style="font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; font-style: normal; display: block;">Amanda L.</cite>
+                            <span class="testimonial-role" style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em;" data-i18n="testimonial.role3">DIRECTOR, CREATIVE AGENCY</span>
                         </div>
                     </footer>
                 </blockquote>
@@ -2455,6 +2525,18 @@
             // Toggle icons
             moonIcon.classList.toggle('hidden');
             sunIcon.classList.toggle('hidden');
+
+            // Toggle body class for theme-adaptive CSS
+            // Delay to sync with wave animation reaching roughly 1/3 of the page
+            const maxDiag = (totalRows - 1) + (cols - 1);
+            const midDelay = Math.round((maxDiag * WAVE_CELL_DELAY) / 3);
+            setTimeout(() => {
+                if (isLightTheme) {
+                    document.body.classList.add('light-mosaic');
+                } else {
+                    document.body.classList.remove('light-mosaic');
+                }
+            }, midDelay);
 
             // Get overlay cells too
             const overlayCells = document.querySelectorAll('#mosaic-overlay .overlay-cell');
