@@ -1399,6 +1399,73 @@
             }
         }
 
+        /* Project name overlay on 3D carousel */
+        #carousel-project-name {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            mix-blend-mode: difference;
+            padding-top: 35vh;
+            padding-bottom: 35vh;
+        }
+        #carousel-project-name .project-name-text {
+            position: sticky;
+            top: 35vh;
+            width: 100%;
+            transform: translateY(-50%);
+        }
+        #carousel-project-name .project-name-text span {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(6rem, 18vw, 22rem);
+            line-height: 0.85;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+            text-align: center;
+            white-space: nowrap;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+                        transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        /* Active name: visible and centered */
+        #carousel-project-name .project-name-text span.active {
+            opacity: 1;
+            transform: translateX(-50%);
+        }
+        /* Exiting name slides up and fades out */
+        #carousel-project-name .project-name-text span.exit-up {
+            opacity: 0;
+            transform: translate(-50%, -80%);
+        }
+        /* Exiting name slides down and fades out */
+        #carousel-project-name .project-name-text span.exit-down {
+            opacity: 0;
+            transform: translate(-50%, 80%);
+        }
+        /* Entering from below (when scrolling forward) */
+        #carousel-project-name .project-name-text span.enter-from-below {
+            opacity: 0;
+            transform: translate(-50%, 80%);
+        }
+        /* Entering from above (when scrolling backward) */
+        #carousel-project-name .project-name-text span.enter-from-above {
+            opacity: 0;
+            transform: translate(-50%, -80%);
+        }
+        @media (max-width: 768px) {
+            #carousel-project-name .project-name-text span {
+                font-size: clamp(3rem, 14vw, 6rem);
+            }
+        }
+
         @keyframes animationIn {
             0% { opacity: 0; transform: translateY(80px) scale(0.96); filter: blur(12px); }
             100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
@@ -1461,6 +1528,10 @@
         <!-- 3D Carousel Container -->
         <div id="carousel3d-container" class="w-full animate-on-scroll">
             <!-- Three.js canvas will be inserted here -->
+            <!-- Project name overlay -->
+            <div id="carousel-project-name">
+                <div class="project-name-text"></div>
+            </div>
         </div>
 
         <!-- Three.js 3D Carousel Script -->
@@ -1469,15 +1540,15 @@
             // Portfolio projects for the 3D carousel - 5 projects only (each shows once)
             const portfolioProjects = [
                 // Project 1: Esthetic
-                { image: 'https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg', link: 'https://google.com' },
+                { name: 'ESTHETIC', image: 'https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg', link: 'https://google.com' },
                 // Project 2: Adfidence
-                { image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop', link: 'https://google.com' },
+                { name: 'ADFIDENCE', image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop', link: 'https://google.com' },
                 // Project 3: SLL
-                { image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=500&fit=crop', link: 'https://google.com' },
+                { name: 'SLL', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=500&fit=crop', link: 'https://google.com' },
                 // Project 4: Placeholder for your 4th project
-                { image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop', link: 'https://google.com' },
+                { name: 'PROJECT 4', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop', link: 'https://google.com' },
                 // Project 5: Placeholder for your 5th project
-                { image: 'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=400&h=500&fit=crop', link: 'https://google.com' }
+                { name: 'PROJECT 5', image: 'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=400&h=500&fit=crop', link: 'https://google.com' }
             ];
 
             let scene, camera, renderer, carousel;
@@ -1683,6 +1754,9 @@
                 // Initialize GSAP ScrollTrigger for rotation
                 initScrollRotation();
 
+                // Initialize project name overlay
+                initProjectNameOverlay();
+
                 // Start animation
                 animateCarousel();
 
@@ -1696,6 +1770,69 @@
                 camera.aspect = container.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+
+            // --- Project name overlay ---
+            let currentFrontIndex = 0;
+            let prevFrontIndex = 0;
+
+            function initProjectNameOverlay() {
+                const nameContainer = document.querySelector('#carousel-project-name .project-name-text');
+                if (!nameContainer) return;
+
+                portfolioProjects.forEach((project, i) => {
+                    const span = document.createElement('span');
+                    span.textContent = project.name;
+                    if (i === 0) span.classList.add('active');
+                    nameContainer.appendChild(span);
+                });
+            }
+
+            function updateFrontCardIndex() {
+                const imageCount = portfolioProjects.length;
+                const angleStep = (Math.PI * 2) / imageCount;
+
+                // Hide text when rotated past the last card (project 5)
+                const pastLastCard = currentRotation < (endRotation - angleStep * 0.4);
+
+                let bestProximity = -Infinity;
+                let bestIndex = 0;
+
+                for (let i = 0; i < imageCount; i++) {
+                    let worldAngle = (angleStep * i) + currentRotation;
+                    worldAngle = ((worldAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+                    if (worldAngle > Math.PI) worldAngle -= Math.PI * 2;
+                    const proximity = Math.cos(worldAngle);
+                    if (proximity > bestProximity) {
+                        bestProximity = proximity;
+                        bestIndex = i;
+                    }
+                }
+
+                const newIndex = pastLastCard ? -1 : bestIndex;
+
+                if (newIndex !== currentFrontIndex) {
+                    prevFrontIndex = currentFrontIndex;
+                    currentFrontIndex = newIndex;
+
+                    const spans = document.querySelectorAll('#carousel-project-name .project-name-text span');
+                    const goingForward = currentFrontIndex > prevFrontIndex || currentFrontIndex === -1;
+
+                    spans.forEach((span, i) => {
+                        span.classList.remove('active', 'exit-up', 'exit-down', 'enter-from-below', 'enter-from-above');
+
+                        if (i === currentFrontIndex) {
+                            span.style.transition = 'none';
+                            span.classList.add(goingForward ? 'enter-from-below' : 'enter-from-above');
+                            span.offsetHeight;
+                            span.style.transition = '';
+                            span.classList.remove('enter-from-below', 'enter-from-above');
+                            span.classList.add('active');
+                        } else if (i === prevFrontIndex) {
+                            span.classList.add(goingForward ? 'exit-up' : 'exit-down');
+                        }
+                    });
+                }
             }
 
             let isCarouselInView = false;
@@ -1721,6 +1858,9 @@
 
                 // Get currently hovered card
                 const hoveredCard = window._carouselHoveredCard ? window._carouselHoveredCard() : null;
+
+                // Update project name overlay
+                updateFrontCardIndex();
 
                 if (carousel) {
                     carousel.rotation.y = currentRotation;
