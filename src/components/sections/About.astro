@@ -12,57 +12,154 @@ const t = useTranslations(lang);
 
 <section
   id="scope"
-  class="relative min-h-[200vh] py-32 md:py-48 border-t border-[var(--color-border)]"
+  class="relative min-h-screen border-t border-[var(--color-border)]"
   style="background-color: var(--color-bg);"
 >
-  <div class="sticky top-0 h-screen flex items-center">
-    <div class="w-full px-6 md:px-10 max-w-[1400px] mx-auto">
-      <!-- Section label -->
-      <div class="mb-12 md:mb-16">
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.about.label}</span>
-      </div>
+  <div class="w-full px-6 md:px-10 max-w-[1400px] mx-auto py-24 md:py-32 lg:py-40">
 
-      <!-- Manifesto text - revealed word by word on scroll -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-        <!-- Text column -->
-        <div class="lg:col-span-8">
-          <p
-            id="manifesto-text"
-            class="text-serif-display leading-[1.3]"
-            style="color: var(--color-text);"
-            data-highlights={JSON.stringify(t.about.manifestoHighlights)}
-          >
-            {t.about.manifesto}
-          </p>
-        </div>
+    <!-- Section label -->
+    <div class="mb-8 md:mb-12">
+      <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.about.label}</span>
+      <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
+    </div>
 
-        <!-- Image column -->
-        <div class="lg:col-span-4 relative hidden lg:block">
+    <!-- Full-width manifesto text -->
+    <p
+      id="manifesto-text"
+      class="text-serif-display leading-[1.25]"
+      style="color: var(--color-text); font-size: clamp(1.5rem, 3.75vw, 3.375rem);"
+      data-highlights={JSON.stringify(t.about.manifestoHighlights)}
+    >
+      {t.about.manifesto}
+    </p>
+
+    <!-- Organic lower section — image breaks the grid, text floats independently -->
+    <div class="about-lower relative mt-12 md:mt-16 lg:mt-20">
+
+      <!-- Image block: intentionally off-grid, centered-ish but shifted left -->
+      <div class="about-image-wrapper relative md:absolute md:left-[5%] lg:left-[8%] md:top-0 z-10" style="width: min(100%, 480px);">
+        <div
+          id="about-image-block"
+          class="relative overflow-hidden"
+          style="aspect-ratio: 3/4; background-color: var(--color-text);"
+        >
+          <!-- Oversized monogram watermark -->
           <div
-            id="manifesto-image"
-            class="aspect-[3/4] rounded-2xl overflow-hidden opacity-0"
-            style="filter: contrast(1.1) saturate(0.8);"
+            id="about-monogram"
+            class="absolute -bottom-6 -right-4 select-none pointer-events-none"
+            style="font-family: var(--font-serif); font-size: clamp(10rem, 20vw, 18rem); font-style: italic; color: rgba(255,255,255,0.035); line-height: 0.8; letter-spacing: -0.06em;"
           >
-            <!-- Halftone-style photo placeholder -->
-            <div class="w-full h-full bg-[var(--color-text-faint)] flex items-center justify-center">
-              <div class="text-center">
-                <div
-                  class="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center"
-                  style="background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));"
-                >
-                  <span style="font-family: var(--font-display); font-size: 2rem; color: white;">JM</span>
-                </div>
-                <span class="text-mono-xs text-[var(--color-text-muted)]">JED MEJZNER</span>
-                <br/>
-                <span class="text-mono-xs text-[var(--color-text-ghost)]">FOUNDER</span>
-              </div>
-            </div>
+            JM
+          </div>
+
+          <!-- SVG grain texture -->
+          <svg class="absolute inset-0 w-full h-full pointer-events-none" style="opacity: 0.1; mix-blend-mode: overlay;">
+            <filter id="about-grain">
+              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+              <feColorMatrix type="saturate" values="0"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#about-grain)"/>
+          </svg>
+
+          <!-- Accent left edge -->
+          <div class="absolute top-0 left-0 w-px h-full" style="background-color: var(--color-accent); opacity: 0.5;"></div>
+
+          <!-- Bottom-left detail -->
+          <div class="absolute bottom-5 left-5 flex items-center gap-3">
+            <span class="block w-6 h-px" style="background-color: var(--color-accent);"></span>
+            <span class="text-mono-xs" style="color: rgba(255,255,255,0.35);">{t.about.founder}</span>
+          </div>
+
+          <!-- Top-right detail -->
+          <div class="absolute top-5 right-5">
+            <span class="text-mono-xs" style="color: rgba(255,255,255,0.2);">{t.about.role}</span>
           </div>
         </div>
       </div>
+
+      <!-- Body text + links: pushed to the right, sits higher than image bottom -->
+      <div class="about-text-wrapper relative z-20 mt-10 md:mt-0 md:ml-auto" style="max-width: 460px;">
+        <p
+          id="about-body"
+          class="text-base md:text-lg leading-relaxed"
+          style="font-family: var(--font-body); color: var(--color-text-muted);"
+        >
+          {t.about.body}
+        </p>
+
+        <!-- Link rows -->
+        <nav id="about-links" class="mt-10 md:mt-14">
+          {t.about.links.map((link, i) => (
+            <a
+              href={link.href}
+              class="about-link-row group flex items-center justify-between py-4 border-t transition-all duration-500"
+              style="border-color: var(--color-border-subtle);"
+              data-link-index={i}
+            >
+              <span
+                class="text-sm transition-all duration-500 group-hover:translate-x-2"
+                style="font-family: var(--font-body); color: var(--color-text);"
+              >
+                {link.label}
+              </span>
+              <svg
+                class="w-4 h-4 transition-all duration-500 group-hover:translate-x-1"
+                style="color: var(--color-text-subtle);"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          ))}
+          <div class="border-t" style="border-color: var(--color-border-subtle);"></div>
+        </nav>
+      </div>
+
     </div>
   </div>
 </section>
+
+<style>
+  .manifesto-word {
+    display: inline-block;
+    will-change: opacity;
+  }
+
+  /* Mobile: stacked, no overlap */
+  .about-lower {
+    min-height: auto;
+  }
+
+  /* Tablet+: organic overlap layout */
+  @media (min-width: 768px) {
+    .about-lower {
+      min-height: 520px;
+    }
+
+    .about-text-wrapper {
+      /* Sits to the right, vertically offset from the image top */
+      padding-top: 3rem;
+      width: 45%;
+    }
+  }
+
+  /* Desktop: more dramatic offset */
+  @media (min-width: 1024px) {
+    .about-lower {
+      min-height: 580px;
+    }
+
+    .about-image-wrapper {
+      /* Nudge image down a touch so it doesn't start flush with the text */
+      top: 1.5rem !important;
+    }
+
+    .about-text-wrapper {
+      padding-top: 2rem;
+      width: 42%;
+    }
+  }
+</style>
 
 <script>
   import gsap from 'gsap';
@@ -72,68 +169,151 @@ const t = useTranslations(lang);
   gsap.registerPlugin(SplitText, ScrollTrigger);
 
   function initAbout() {
+    const section = document.getElementById('scope');
     const textEl = document.getElementById('manifesto-text');
-    const imageEl = document.getElementById('manifesto-image');
-    if (!textEl) return;
+    const imageBlock = document.getElementById('about-image-block');
+    const monogram = document.getElementById('about-monogram');
+    const bodyEl = document.getElementById('about-body');
+    const linksEl = document.getElementById('about-links');
 
+    if (!textEl || !section) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
 
-    // Split into words
+    // ===== Word-by-word manifesto reveal =====
+
     const split = new SplitText(textEl, {
       type: 'words',
       wordsClass: 'manifesto-word',
     });
 
-    // Style each word
     split.words.forEach((word: HTMLElement) => {
-      word.style.opacity = '0.1';
+      word.style.opacity = prefersReducedMotion ? '1' : '0.08';
       word.style.transition = 'none';
       word.style.display = 'inline-block';
 
-      // Highlight special words
       const text = word.textContent?.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, '') || '';
       if (highlights.some((h: string) => text.toLowerCase() === h.toLowerCase())) {
-        word.style.color = 'var(--color-accent)';
-        word.style.fontWeight = '400';
+        word.dataset.highlight = 'true';
       }
     });
 
-    // Scroll-driven word reveal
-    gsap.to(split.words, {
-      opacity: 1,
-      stagger: 0.02,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '#scope',
-        start: 'top 30%',
-        end: 'bottom 60%',
-        scrub: 1,
-      },
-    });
-
-    // Image parallax and reveal
-    if (imageEl) {
-      gsap.to(imageEl, {
+    if (!prefersReducedMotion) {
+      // Word reveal on scroll
+      gsap.to(split.words, {
         opacity: 1,
-        duration: 1,
+        stagger: 0.02,
+        ease: 'none',
         scrollTrigger: {
-          trigger: '#scope',
-          start: 'top 40%',
-          end: 'center center',
+          trigger: textEl,
+          start: 'top 80%',
+          end: 'bottom 40%',
           scrub: 1,
+          onUpdate: (self) => {
+            const revealed = Math.floor(self.progress * split.words.length);
+            split.words.forEach((word: HTMLElement, i: number) => {
+              if (i <= revealed && word.dataset.highlight === 'true') {
+                word.style.color = 'var(--color-accent)';
+              }
+            });
+          },
         },
       });
 
-      gsap.to(imageEl, {
-        y: -80,
-        scrollTrigger: {
-          trigger: '#scope',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
+      // Image block parallax — slightly different rate than text for organic feel
+      if (imageBlock) {
+        gsap.fromTo(imageBlock,
+          { y: 50 },
+          {
+            y: -40,
+            scrollTrigger: {
+              trigger: imageBlock,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          }
+        );
+      }
+
+      // Monogram float — moves at its own pace
+      if (monogram) {
+        gsap.to(monogram, {
+          y: -25,
+          scrollTrigger: {
+            trigger: imageBlock,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+      }
+
+      // Body text reveal
+      if (bodyEl) {
+        gsap.fromTo(bodyEl,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: bodyEl,
+              start: 'top 85%',
+              once: true,
+            },
+          }
+        );
+      }
+
+      // Link rows staggered entrance
+      if (linksEl) {
+        const linkRows = linksEl.querySelectorAll('.about-link-row');
+        gsap.fromTo(linkRows,
+          { opacity: 0, x: 15 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: linksEl,
+              start: 'top 85%',
+              once: true,
+            },
+          }
+        );
+      }
+    } else {
+      split.words.forEach((word: HTMLElement) => {
+        if (word.dataset.highlight === 'true') {
+          word.style.color = 'var(--color-accent)';
+        }
       });
     }
+
+    // ===== Smooth scroll for link rows =====
+    const linkRows = document.querySelectorAll('.about-link-row');
+    linkRows.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const href = (link as HTMLAnchorElement).getAttribute('href');
+        if (href?.startsWith('#')) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            const lenis = (window as any).lenis;
+            if (lenis) {
+              lenis.scrollTo(target);
+            } else {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        }
+      });
+    });
   }
 
   initAbout();

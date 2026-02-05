@@ -11,15 +11,15 @@ const t = useTranslations(lang);
 
 const patterns = [
   // Web Design - wireframe grid
-  `<pattern id="p1" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 0h40v40H0z" fill="none" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  `<pattern id="p1" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 0h40v40H0z" fill="none" stroke="var(--pattern-color)" stroke-width="0.5"/></pattern>`,
   // UX/UI - dots
-  `<pattern id="p2" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="var(--color-text-faint)"/></pattern>`,
+  `<pattern id="p2" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="var(--pattern-color)"/></pattern>`,
   // Animation - diagonal lines
-  `<pattern id="p3" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0 10L10 0" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  `<pattern id="p3" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0 10L10 0" stroke="var(--pattern-color)" stroke-width="0.5"/></pattern>`,
   // Art Direction - circles
-  `<pattern id="p4" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="20" fill="none" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  `<pattern id="p4" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="20" fill="none" stroke="var(--pattern-color)" stroke-width="0.5"/></pattern>`,
   // Brand Identity - triangles
-  `<pattern id="p5" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M15 5L25 25H5Z" fill="none" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  `<pattern id="p5" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M15 5L25 25H5Z" fill="none" stroke="var(--pattern-color)" stroke-width="0.5"/></pattern>`,
 ];
 ---
 
@@ -32,18 +32,19 @@ const patterns = [
     <!-- Section label -->
     <div class="mb-12 md:mb-20">
       <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.services.label}</span>
+      <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
     </div>
 
     <!-- Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px] rounded-2xl overflow-hidden" style="background-color: var(--color-border-subtle);">
       {t.services.items.map((service, i) => (
         <div
-          class="service-card group relative p-8 md:p-10 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
+          class="service-card group relative p-8 md:p-10 transition-all duration-500 overflow-hidden"
           data-index={i}
           style={`background-color: var(--color-bg-elevated);${i === 0 ? ' grid-column: span 2;' : ''}`}
         >
-          {/* Background pattern */}
-          <svg class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" xmlns="http://www.w3.org/2000/svg">
+          {/* Background pattern - always visible, accent tint on hover */}
+          <svg class="absolute inset-0 w-full h-full opacity-100 transition-opacity duration-700 service-pattern" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <Fragment set:html={patterns[i]} />
             </defs>

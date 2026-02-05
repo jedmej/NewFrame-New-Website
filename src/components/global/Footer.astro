@@ -14,21 +14,21 @@ const email = 'jed.mejzner@gmail.com';
 const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  ✦  STRATEGY  ✦  ';
 ---
 
-<footer class="relative z-50" style="background-color: var(--color-bg);">
+<footer class="relative z-50" style="background-color: #DA382E; color: #ffffff;">
 
   <!-- ===== 1. Giant CTA Block ===== -->
   <div class="px-6 md:px-10 pt-32 md:pt-48 pb-16 md:pb-24">
     <div class="max-w-[1400px] mx-auto">
       <!-- Availability badge -->
       <div class="flex items-center gap-2.5 mb-8 md:mb-12">
-        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-        <span class="text-mono-xs text-[var(--color-text-muted)]">{t.footer.available}</span>
+        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+        <span class="text-mono-xs text-white/70">{t.footer.available}</span>
       </div>
 
       <!-- Giant CTA text -->
       <h2
         id="footer-cta"
-        class="text-display-lg text-[var(--color-text)] uppercase"
+        class="text-display-lg text-white uppercase"
         style="line-height: 0.95;"
       >
         {t.footer.cta}
@@ -41,20 +41,20 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
         data-cursor="CLICK"
       >
         <span
-          class="block text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors duration-500"
+          class="block text-white/70 group-hover:text-white transition-colors duration-500"
           style="font-family: var(--font-serif); font-size: clamp(1.4rem, 3.5vw, 3rem); font-style: italic; letter-spacing: -0.02em;"
         >
           {email}
         </span>
-        <span class="block w-0 group-hover:w-full h-px bg-[var(--color-accent)] transition-all duration-700 ease-out mt-2"></span>
+        <span class="block w-0 group-hover:w-full h-px bg-white transition-all duration-700 ease-out mt-2"></span>
       </a>
     </div>
   </div>
 
   <!-- ===== 2. Decorative Marquee Divider ===== -->
-  <div class="relative overflow-hidden py-6 border-t border-b border-[var(--color-border)]">
+  <div class="relative overflow-hidden py-6 border-t border-b border-white/15">
     <div class="footer-marquee whitespace-nowrap">
-      <span class="text-mono-xs text-[var(--color-text-faint)] inline-block">{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}</span>
+      <span class="text-mono-xs text-white/20 inline-block">{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}</span>
     </div>
   </div>
 
@@ -64,31 +64,31 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
       <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
         <!-- Column 1: Navigation -->
         <div>
-          <span class="text-mono-xs text-[var(--color-text-ghost)] block pb-4 mb-6 border-b border-[var(--color-border-subtle)]">
+          <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
             {t.footer.navigation}
           </span>
           <ul class="space-y-3">
             <li>
-              <a href={`/${lang}/`} class="footer-link text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-[var(--color-accent)] transition-all duration-300"></span>
+              <a href={`/${lang}/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
                 Home
               </a>
             </li>
             <li>
-              <a href={`/${lang}/work`} class="footer-link text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-[var(--color-accent)] transition-all duration-300"></span>
+              <a href={`/${lang}/work`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
                 {t.nav.work}
               </a>
             </li>
             <li>
-              <a href={`/${lang}/#about`} class="footer-link text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-[var(--color-accent)] transition-all duration-300"></span>
+              <a href={`/${lang}/#about`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
                 {t.nav.about || 'About'}
               </a>
             </li>
             <li>
-              <a href={`/${lang}/#contact`} class="footer-link text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-[var(--color-accent)] transition-all duration-300"></span>
+              <a href={`/${lang}/#contact`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
                 {t.nav.contact}
               </a>
             </li>
@@ -97,14 +97,14 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
 
         <!-- Column 2: Social -->
         <div>
-          <span class="text-mono-xs text-[var(--color-text-ghost)] block pb-4 mb-6 border-b border-[var(--color-border-subtle)]">
+          <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
             {t.footer.social}
           </span>
           <ul class="space-y-3">
             {['Instagram', 'LinkedIn', 'Behance', 'Awwwards'].map((social) => (
               <li>
-                <a href="#" class="footer-link text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-all duration-300 inline-flex items-center gap-2 group" target="_blank" rel="noopener">
-                  <span class="w-0 group-hover:w-3 h-px bg-[var(--color-accent)] transition-all duration-300"></span>
+                <a href="#" class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group" target="_blank" rel="noopener">
+                  <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
                   {social}
                   <svg class="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity duration-300 -translate-y-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" /></svg>
                 </a>
@@ -115,20 +115,20 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
 
         <!-- Column 3: Info -->
         <div>
-          <span class="text-mono-xs text-[var(--color-text-ghost)] block pb-4 mb-6 border-b border-[var(--color-border-subtle)]">
+          <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
             {t.footer.info}
           </span>
           <ul class="space-y-3">
-            <li class="text-sm text-[var(--color-text-muted)]">Remote Worldwide</li>
+            <li class="text-sm text-white/70">Remote Worldwide</li>
             <li>
-              <a href={`mailto:${email}`} class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-300">
+              <a href={`mailto:${email}`} class="text-sm text-white/70 hover:text-white transition-colors duration-300">
                 {email}
               </a>
             </li>
           </ul>
-          <div class="mt-8 pt-4 border-t border-[var(--color-border)]">
-            <p class="text-sm text-[var(--color-text-subtle)]">&copy; {year} New Frame Studio</p>
-            <p class="text-sm text-[var(--color-text-ghost)] mt-1">{t.footer.rights}</p>
+          <div class="mt-8 pt-4 border-t border-white/15">
+            <p class="text-sm text-white/60">&copy; {year} New Frame Studio</p>
+            <p class="text-sm text-white/40 mt-1">{t.footer.rights}</p>
           </div>
         </div>
       </div>
@@ -136,10 +136,10 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
   </div>
 
   <!-- ===== 4. Bottom Bar ===== -->
-  <div class="px-6 md:px-10 py-6 border-t border-[var(--color-border)]">
+  <div class="px-6 md:px-10 py-6 border-t border-white/15">
     <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
       <!-- Logo -->
-      <div class="flex items-center gap-2.5 text-[var(--color-text-ghost)]">
+      <div class="flex items-center gap-2.5 text-white/40">
         <svg class="w-4 h-4" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
           <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
@@ -149,15 +149,10 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
         <span class="text-mono-xs">NEW FRAME</span>
       </div>
 
-      <!-- Colophon -->
-      <p class="text-mono-xs text-[var(--color-text-faint)] text-center">
-        {t.footer.colophon}
-      </p>
-
       <!-- Back to top -->
       <button
         id="back-to-top"
-        class="group text-mono-xs text-[var(--color-text-ghost)] hover:text-[var(--color-text-muted)] transition-colors duration-300 flex items-center gap-2"
+        class="group text-mono-xs text-white/40 hover:text-white/70 transition-colors duration-300 flex items-center gap-2"
       >
         <span>{t.footer.backToTop}</span>
         <svg class="w-3.5 h-3.5 transition-transform duration-500 group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -14,79 +14,67 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
 <nav
   id="main-nav"
-  class="fixed top-0 left-0 w-full z-[100] flex justify-between items-center px-6 py-5 md:px-10 transition-transform duration-500 text-[var(--color-text)]"
-  style="transform: translateY(0)"
+  class="fixed top-0 left-0 w-full z-[100] grid grid-cols-[1fr_auto_1fr] items-center px-6 py-5 md:px-10 transition-transform duration-500 text-[var(--color-text)]"
+  style="opacity: 0"
 >
-  <!-- Logo -->
-  <a
-    href={`/${lang}/`}
-    class="group flex items-center gap-3 hover:opacity-90 transition-opacity"
-    transition:name="logo"
-  >
-    <svg
-      class="w-6 h-6 transition-all duration-500 group-hover:scale-105"
-      viewBox="0 0 500 500"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+  <!-- Left: Logo -->
+  <div class="flex items-center">
+    <a
+      href={`/${lang}/`}
+      class="group flex items-center gap-3 hover:opacity-90 transition-opacity"
+      transition:name="logo"
     >
-      <rect
-        class="transition-transform duration-500 group-hover:translate-x-[5px] group-hover:-translate-y-[5px]"
-        width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"
-      />
-      <rect
-        class="transition-transform duration-500 group-hover:translate-x-[5px] group-hover:-translate-y-[5px]"
-        width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"
-      />
-      <rect
-        class="transition-transform duration-500 group-hover:-translate-x-[5px] group-hover:translate-y-[5px]"
-        width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"
-      />
-      <rect
-        class="transition-transform duration-500 group-hover:-translate-x-[5px] group-hover:translate-y-[5px]"
-        width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"
-      />
-    </svg>
-    <span class="text-sm font-semibold tracking-tight uppercase" style="font-family: var(--font-display)">
-      New Frame
-    </span>
-  </a>
-
-  <!-- Desktop Nav Links -->
-  <div class="hidden md:flex items-center gap-8">
-    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
-      {t.nav.scope}
+      <span class="text-sm font-semibold tracking-tight uppercase" style="font-family: var(--font-display)">
+        New Frame<sup class="text-[0.5em] align-super opacity-40 ml-0.5">®</sup>
+      </span>
     </a>
+  </div>
+
+  <!-- Center: Desktop Nav Links -->
+  <div class="hidden md:flex items-center gap-10">
     <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
       {t.nav.work}
     </a>
-    <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
-      {t.nav.contact}
+    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
+      {t.nav.scope}
     </a>
-
-    <!-- Clock -->
-    <div class="flex items-center gap-2 ml-2 pl-4 border-l border-[var(--color-border-strong)]">
-      <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-      <span id="nav-clock" class="text-mono-xs opacity-40">--:-- CET</span>
-    </div>
-
-    <!-- Language Toggle -->
     <a
       href={altUrl}
-      class="text-mono-xs opacity-40 hover:opacity-100 transition-opacity ml-2 pl-4 border-l border-[var(--color-border-strong)]"
+      class="nav-link text-mono-xs opacity-40 hover:opacity-100 transition-opacity"
     >
       {altLang.toUpperCase()}
     </a>
   </div>
 
-  <!-- Mobile Menu Button -->
-  <button
-    id="mobile-menu-btn"
-    class="md:hidden flex flex-col gap-1.5 p-2 -mr-2"
-    aria-label="Open menu"
-  >
-    <span class="menu-line w-6 h-px transition-all duration-300 bg-[var(--color-text)]"></span>
-    <span class="menu-line w-4 h-px transition-all duration-300 ml-auto bg-[var(--color-text)]"></span>
-  </button>
+  <!-- Right: CTA + Mobile Menu -->
+  <div class="flex items-center justify-end gap-4">
+    <!-- Availability Dot + Clock -->
+    <div class="hidden md:flex items-center gap-2 mr-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+      <span id="nav-clock" class="text-mono-xs opacity-30">--:-- CET</span>
+    </div>
+
+    <!-- Let's Talk CTA -->
+    <a
+      href={`/${lang}/#contact`}
+      class="nav-cta hidden md:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 transition-all duration-300 group"
+    >
+      <span>{t.contact.cta}</span>
+      <svg class="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M1 11L11 1M11 1H3M11 1V9"/>
+      </svg>
+    </a>
+
+    <!-- Mobile Menu Button -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2 -mr-2"
+      aria-label="Open menu"
+    >
+      <span class="menu-line w-6 h-px transition-all duration-300 bg-[var(--color-text)]"></span>
+      <span class="menu-line w-4 h-px transition-all duration-300 ml-auto bg-[var(--color-text)]"></span>
+    </button>
+  </div>
 </nav>
 
 <!-- Mobile Menu Overlay -->
@@ -94,9 +82,9 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   id="mobile-menu"
   class="fixed inset-0 z-[99] bg-[var(--color-bg)] flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500"
 >
-  <a href={`/${lang}/#scope`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.scope}</a>
   <a href={`/${lang}/#work`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.work}</a>
-  <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.contact}</a>
+  <a href={`/${lang}/#scope`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.scope}</a>
+  <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.contact.cta}</a>
   <div class="flex items-center gap-6 mt-8 opacity-0 translate-y-8 mobile-menu-link">
     <a href={altUrl} class="text-mono-sm opacity-60 hover:opacity-100 transition-opacity">
       {altLang.toUpperCase()}
@@ -114,34 +102,19 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     const nav = document.getElementById('main-nav');
     if (!nav) return;
 
-    let lastScroll = 0;
-    let isHidden = false;
+    // Entrance animation on page load
+    gsap.to(nav, { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.3 });
 
-    // Hide/show nav on scroll
+    // Glass effect on scroll (no hide/show)
     ScrollTrigger.create({
       trigger: document.body,
       start: 'top top',
-      onUpdate: (self) => {
-        const scrollY = window.scrollY;
-        const direction = self.direction;
-
-        // Add glass effect after hero
-        if (scrollY > window.innerHeight * 0.8) {
+      onUpdate: () => {
+        if (window.scrollY > window.innerHeight * 0.8) {
           nav.classList.add('glass');
         } else {
           nav.classList.remove('glass');
         }
-
-        // Hide on scroll down, show on scroll up
-        if (direction === 1 && scrollY > 200 && !isHidden) {
-          gsap.to(nav, { y: -100, duration: 0.4, ease: 'power2.inOut' });
-          isHidden = true;
-        } else if (direction === -1 && isHidden) {
-          gsap.to(nav, { y: 0, duration: 0.4, ease: 'power2.out' });
-          isHidden = false;
-        }
-
-        lastScroll = scrollY;
       },
     });
 

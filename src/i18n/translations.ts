@@ -25,6 +25,13 @@ export const translations = {
       label: 'ABOUT',
       manifesto: `Hey! I'm Jed, the founder of NEWFRAME — and I help businesses look as good as they perform. Working remotely with startups and small businesses worldwide, I design websites that aren't just beautiful — they're strategic, intentional, and built to convert. From brand identity to full web experiences, every pixel is placed with purpose. I don't do cookie-cutter. I do extraordinary.`,
       manifestoHighlights: ['NEWFRAME', 'beautiful', 'strategic', 'intentional', 'convert', 'extraordinary'],
+      body: `I'm a designer who believes in craft over templates. Every project begins with understanding your business, your audience, and the story you want to tell. From there, I design brands and digital experiences that feel considered down to the last detail.`,
+      links: [
+        { label: 'About Me', href: '#scope' },
+        { label: 'My Process', href: '#services' },
+      ],
+      founder: 'JED MEJZNER',
+      role: 'FOUNDER',
     },
     services: {
       label: 'CAPABILITIES',
@@ -104,6 +111,13 @@ export const translations = {
       label: 'O MNIE',
       manifesto: `Cześć! Jestem Jed, założyciel NEWFRAME — pomagam firmom wyglądać tak dobrze, jak działają. Pracując zdalnie ze startupami i małymi firmami na całym świecie, projektuję strony, które nie są tylko piękne — są strategiczne, celowe i stworzone do konwersji. Od identyfikacji marki po pełne doświadczenia webowe, każdy piksel jest umieszczony z celem. Nie robię szablonów. Robię niezwykłe rzeczy.`,
       manifestoHighlights: ['NEWFRAME', 'piękne', 'strategiczne', 'celowe', 'konwersji', 'niezwykłe'],
+      body: `Jestem projektantem, który wierzy w rzemiosło ponad szablony. Każdy projekt zaczyna się od zrozumienia Twojego biznesu, odbiorców i historii, którą chcesz opowiedzieć. Na tej podstawie projektuję marki i cyfrowe doświadczenia, które są przemyślane do ostatniego szczegółu.`,
+      links: [
+        { label: 'O Mnie', href: '#scope' },
+        { label: 'Mój Proces', href: '#services' },
+      ],
+      founder: 'JED MEJZNER',
+      role: 'ZAŁOŻYCIEL',
     },
     services: {
       label: 'MOŻLIWOŚCI',
