@@ -279,13 +279,29 @@ const projects = allProjects.map((p) => ({
       // Smooth rotation
       currentRotation += (targetRotation - currentRotation) * 0.08;
 
-      // Update mesh positions
+      // Update mesh positions + depth-based focus
       meshes.forEach((mesh) => {
         const baseAngle = mesh.userData.baseAngle;
         const angle = baseAngle + currentRotation;
 
         mesh.position.x = Math.sin(angle) * radius;
         mesh.position.z = Math.cos(angle) * radius - radius;
+
+        // Depth-of-field: cards closer to camera are sharp, far cards fade out
+        // z ranges from 0 (closest, cos=1) to -2*radius (furthest, cos=-1)
+        const depth = mesh.position.z; // 0 = closest, -2*radius = furthest
+        const normalizedDepth = Math.max(0, Math.min(1, -depth / (2 * radius))); // 0 = front, 1 = back
+        const focusFalloff = 1 - normalizedDepth * normalizedDepth; // quadratic falloff for sharper focus zone
+
+        const mat = mesh.material as THREE.MeshBasicMaterial;
+        mat.opacity = 0.15 + focusFalloff * 0.85; // back cards fade to 0.15 opacity
+        mat.transparent = true;
+
+        // Dim color for far cards to simulate defocus
+        const brightness = 0.3 + focusFalloff * 0.7;
+        if (mat.map) {
+          mat.color.setRGB(brightness, brightness, brightness);
+        }
 
         // Mouse parallax tilt
         mesh.rotation.y = -angle + Math.PI + mouseX * 0.05;
