@@ -1,0 +1,321 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+import { projects as allProjects } from '../../lib/projects';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const projects = allProjects.map((p) => ({
+  name: p.name,
+  image: p.image,
+  category: p.category,
+  slug: p.slug,
+}));
+---
+
+<section
+  id="work"
+  class="relative border-t border-[var(--color-border)]"
+  style="background-color: var(--color-bg);"
+>
+  <!-- Section label -->
+  <div class="px-6 md:px-10 pt-32 md:pt-48 pb-8 max-w-[1400px] mx-auto flex justify-between items-end">
+    <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.work.label}</span>
+    <span id="work-counter" class="text-mono-xs text-[var(--color-text-ghost)]">01 {t.work.counter} {String(projects.length).padStart(2, '0')}</span>
+  </div>
+
+  <!-- Carousel container -->
+  <div id="carousel-section" class="relative h-[500vh]">
+    <!-- Sticky container -->
+    <div class="sticky top-0 h-screen overflow-hidden">
+      <!-- Progressive blur top -->
+      <div class="absolute top-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to bottom, var(--color-bg), transparent);"></div>
+
+      <!-- Three.js canvas -->
+      <canvas
+        id="carousel-canvas"
+        class="absolute inset-0 w-full h-full"
+        data-projects={JSON.stringify(projects)}
+        data-lang={lang}
+      ></canvas>
+
+      <!-- Project name overlay -->
+      <div
+        id="project-name-overlay"
+        class="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+        style="mix-blend-mode: difference;"
+      >
+        <h2
+          id="project-name-text"
+          class="text-display-xl text-[var(--color-text)] text-center select-none transition-all duration-500"
+        >
+          {projects[0].name}
+        </h2>
+      </div>
+
+      <!-- Project category badge -->
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
+        <span id="project-category" class="text-mono-xs text-[var(--color-text-muted)] bg-[var(--color-text-faint)] px-4 py-2 rounded-full backdrop-blur-sm">
+          {projects[0].category}
+        </span>
+      </div>
+
+      <!-- Bottom gradient -->
+      <div class="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to top, var(--color-bg), transparent);"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import * as THREE from 'three';
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initCarousel() {
+    const canvas = document.getElementById('carousel-canvas') as HTMLCanvasElement;
+    const nameText = document.getElementById('project-name-text');
+    const counterEl = document.getElementById('work-counter');
+    const categoryEl = document.getElementById('project-category');
+    if (!canvas) return;
+
+    const projects = JSON.parse(canvas.dataset.projects || '[]');
+    const lang = canvas.dataset.lang || 'en';
+    const isMobile = window.innerWidth < 768;
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    camera.position.set(0, 0, 5);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: !isMobile,
+      powerPreference: isMobile ? 'low-power' : 'high-performance',
+    });
+
+    const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // Load textures
+    const textureLoader = new THREE.TextureLoader();
+    const meshes: THREE.Mesh[] = [];
+    const cardWidth = isMobile ? 2.8 : 3.5;
+    const cardHeight = isMobile ? 3.8 : 4.5;
+    const radius = isMobile ? 4 : 5.5;
+    const projectCount = projects.length;
+
+    projects.forEach((project: any, i: number) => {
+      const geometry = new THREE.PlaneGeometry(cardWidth, cardHeight, 1, 1);
+
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x333333,
+        side: THREE.DoubleSide,
+      });
+
+      // Load texture asynchronously
+      textureLoader.load(project.image, (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        // Calculate UV scaling for cover behavior
+        const imgAspect = texture.image.width / texture.image.height;
+        const planeAspect = cardWidth / cardHeight;
+        let scaleX = 1, scaleY = 1;
+        if (imgAspect > planeAspect) {
+          scaleX = planeAspect / imgAspect;
+        } else {
+          scaleY = imgAspect / planeAspect;
+        }
+
+        texture.repeat.set(scaleX, scaleY);
+        texture.offset.set((1 - scaleX) / 2, (1 - scaleY) / 2);
+
+        material.map = texture;
+        material.color.set(0xffffff);
+        material.needsUpdate = true;
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+
+      // Position in a spiral/tornado arrangement
+      const angle = (i / projectCount) * Math.PI * 2;
+      mesh.position.x = Math.sin(angle) * radius;
+      mesh.position.z = Math.cos(angle) * radius - radius;
+      mesh.position.y = (i - projectCount / 2) * 0.3;
+
+      // Face center
+      mesh.lookAt(0, mesh.position.y, 0);
+
+      mesh.userData = { index: i, baseAngle: angle, project };
+      meshes.push(mesh);
+      scene.add(mesh);
+    });
+
+    // Scroll-driven rotation
+    let targetRotation = 0;
+    let currentRotation = 0;
+    let currentProjectIndex = 0;
+
+    ScrollTrigger.create({
+      trigger: '#carousel-section',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1,
+      onUpdate: (self) => {
+        targetRotation = self.progress * Math.PI * 2 * 0.8;
+
+        // Update project index
+        const newIndex = Math.min(
+          projectCount - 1,
+          Math.floor(self.progress * projectCount)
+        );
+
+        if (newIndex !== currentProjectIndex && nameText && counterEl && categoryEl) {
+          currentProjectIndex = newIndex;
+          const project = projects[currentProjectIndex];
+
+          // Animate name transition
+          gsap.to(nameText, {
+            y: -20,
+            opacity: 0,
+            duration: 0.2,
+            ease: 'power2.in',
+            onComplete: () => {
+              nameText.textContent = project.name;
+              gsap.fromTo(nameText, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+            },
+          });
+
+          counterEl.textContent = `${String(currentProjectIndex + 1).padStart(2, '0')} of ${String(projectCount).padStart(2, '0')}`;
+          categoryEl.textContent = project.category;
+        }
+      },
+    });
+
+    // Mouse parallax
+    let mouseX = 0;
+    let mouseY = 0;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    });
+
+    // Hover detection
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let hoveredMesh: THREE.Mesh | null = null;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(meshes);
+
+      if (intersects.length > 0) {
+        const mesh = intersects[0].object as THREE.Mesh;
+        if (hoveredMesh !== mesh) {
+          // Reset previous
+          if (hoveredMesh) {
+            gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
+          }
+          hoveredMesh = mesh;
+          gsap.to(mesh.scale, { x: 1.08, y: 1.08, z: 1.08, duration: 0.4, ease: 'power2.out' });
+          canvas.style.cursor = 'pointer';
+        }
+      } else {
+        if (hoveredMesh) {
+          gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
+          hoveredMesh = null;
+          canvas.style.cursor = 'default';
+        }
+      }
+    });
+
+    // Click to navigate
+    canvas.addEventListener('click', () => {
+      if (hoveredMesh) {
+        const project = hoveredMesh.userData.project;
+        if (project?.slug) {
+          window.location.href = `/${lang}/work/${project.slug}`;
+        }
+      }
+    });
+
+    // Render loop
+    let running = true;
+    const fps = isMobile ? 30 : 60;
+    const interval = 1000 / fps;
+    let lastTime = 0;
+
+    function animate(time: number) {
+      if (!running) {
+        requestAnimationFrame(animate);
+        return;
+      }
+
+      const delta = time - lastTime;
+      if (delta < interval) {
+        requestAnimationFrame(animate);
+        return;
+      }
+      lastTime = time - (delta % interval);
+
+      // Smooth rotation
+      currentRotation += (targetRotation - currentRotation) * 0.08;
+
+      // Update mesh positions
+      meshes.forEach((mesh) => {
+        const baseAngle = mesh.userData.baseAngle;
+        const angle = baseAngle + currentRotation;
+
+        mesh.position.x = Math.sin(angle) * radius;
+        mesh.position.z = Math.cos(angle) * radius - radius;
+
+        // Mouse parallax tilt
+        mesh.rotation.y = -angle + Math.PI + mouseX * 0.05;
+        mesh.rotation.x = mouseY * 0.03;
+      });
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    // Visibility observer
+    const observer = new IntersectionObserver(
+      (entries) => { running = entries[0].isIntersecting; },
+      { threshold: 0.1 }
+    );
+    observer.observe(canvas);
+
+    requestAnimationFrame(animate);
+
+    // Resize handler
+    const handleResize = () => {
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    };
+
+    let resizeTimeout: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(handleResize, 200);
+    });
+  }
+
+  initCarousel();
+  document.addEventListener('astro:after-swap', initCarousel);
+</script>

@@ -1,0 +1,174 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const patterns = [
+  // Web Design - wireframe grid
+  `<pattern id="p1" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 0h40v40H0z" fill="none" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  // UX/UI - dots
+  `<pattern id="p2" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="var(--color-text-faint)"/></pattern>`,
+  // Animation - diagonal lines
+  `<pattern id="p3" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0 10L10 0" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  // Art Direction - circles
+  `<pattern id="p4" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="20" fill="none" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+  // Brand Identity - triangles
+  `<pattern id="p5" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M15 5L25 25H5Z" fill="none" stroke="var(--color-text-faint)" stroke-width="0.5"/></pattern>`,
+];
+---
+
+<section
+  id="services"
+  class="relative py-32 md:py-48 border-t border-[var(--color-border)]"
+  style="background-color: var(--color-bg);"
+>
+  <div class="px-6 md:px-10 max-w-[1400px] mx-auto">
+    <!-- Section label -->
+    <div class="mb-12 md:mb-20">
+      <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.services.label}</span>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px] rounded-2xl overflow-hidden" style="background-color: var(--color-border-subtle);">
+      {t.services.items.map((service, i) => (
+        <div
+          class="service-card group relative p-8 md:p-10 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
+          data-index={i}
+          style={`background-color: var(--color-bg-elevated);${i === 0 ? ' grid-column: span 2;' : ''}`}
+        >
+          {/* Background pattern */}
+          <svg class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <Fragment set:html={patterns[i]} />
+            </defs>
+            <rect width="100%" height="100%" fill={`url(#p${i + 1})`} />
+          </svg>
+
+          {/* Content */}
+          <div class="relative z-10">
+            <span
+              class="service-number text-mono-xs text-[var(--color-text-subtle)] block mb-6"
+              data-target={service.num}
+            >
+              00
+            </span>
+            <h3
+              class="text-display-md mb-4 text-[var(--color-text)]"
+              style="font-size: clamp(1.5rem, 3vw, 2.2rem);"
+            >
+              {service.title}
+            </h3>
+            <p class="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-[340px]">
+              {service.desc}
+            </p>
+          </div>
+
+          {/* Hover glow */}
+          <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[var(--color-accent)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        </div>
+      ))}
+
+      <!-- CTA Card -->
+      <div
+        class="service-card relative p-8 md:p-10 flex items-center justify-center"
+        data-index="5"
+        style="background-color: var(--color-bg-elevated);"
+      >
+        <a
+          href={`/${lang}/#contact`}
+          class="magnetic-btn"
+          data-magnetic
+          data-cursor="CLICK"
+        >
+          {t.services.cta}
+          <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initServices() {
+    const cards = document.querySelectorAll('.service-card');
+    const numbers = document.querySelectorAll('.service-number');
+
+    // Stagger cards in on scroll
+    gsap.fromTo(cards,
+      { y: 30, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#services',
+          start: 'top 80%',
+        },
+      }
+    );
+
+    // Count up numbers
+    numbers.forEach((el) => {
+      const target = (el as HTMLElement).dataset.target;
+      if (!target) return;
+
+      const numVal = parseInt(target);
+
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.to({ val: 0 }, {
+            val: numVal,
+            duration: 0.8,
+            ease: 'power2.out',
+            onUpdate: function () {
+              (el as HTMLElement).textContent = String(Math.round(this.targets()[0].val)).padStart(2, '0');
+            },
+          });
+        },
+      });
+    });
+
+    // Magnetic button effect
+    const magneticBtns = document.querySelectorAll('[data-magnetic]');
+    magneticBtns.forEach((btn) => {
+      const el = btn as HTMLElement;
+
+      el.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(el, {
+          x: x * 0.2,
+          y: y * 0.2,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+
+      el.addEventListener('mouseleave', () => {
+        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+      });
+    });
+  }
+
+  initServices();
+  document.addEventListener('astro:after-swap', initServices);
+</script>

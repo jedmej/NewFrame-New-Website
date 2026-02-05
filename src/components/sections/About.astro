@@ -1,0 +1,141 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section
+  id="scope"
+  class="relative min-h-[200vh] py-32 md:py-48 border-t border-[var(--color-border)]"
+  style="background-color: var(--color-bg);"
+>
+  <div class="sticky top-0 h-screen flex items-center">
+    <div class="w-full px-6 md:px-10 max-w-[1400px] mx-auto">
+      <!-- Section label -->
+      <div class="mb-12 md:mb-16">
+        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.about.label}</span>
+      </div>
+
+      <!-- Manifesto text - revealed word by word on scroll -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <!-- Text column -->
+        <div class="lg:col-span-8">
+          <p
+            id="manifesto-text"
+            class="text-serif-display leading-[1.3]"
+            style="color: var(--color-text);"
+            data-highlights={JSON.stringify(t.about.manifestoHighlights)}
+          >
+            {t.about.manifesto}
+          </p>
+        </div>
+
+        <!-- Image column -->
+        <div class="lg:col-span-4 relative hidden lg:block">
+          <div
+            id="manifesto-image"
+            class="aspect-[3/4] rounded-2xl overflow-hidden opacity-0"
+            style="filter: contrast(1.1) saturate(0.8);"
+          >
+            <!-- Halftone-style photo placeholder -->
+            <div class="w-full h-full bg-[var(--color-text-faint)] flex items-center justify-center">
+              <div class="text-center">
+                <div
+                  class="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center"
+                  style="background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));"
+                >
+                  <span style="font-family: var(--font-display); font-size: 2rem; color: white;">JM</span>
+                </div>
+                <span class="text-mono-xs text-[var(--color-text-muted)]">JED MEJZNER</span>
+                <br/>
+                <span class="text-mono-xs text-[var(--color-text-ghost)]">FOUNDER</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/SplitText';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(SplitText, ScrollTrigger);
+
+  function initAbout() {
+    const textEl = document.getElementById('manifesto-text');
+    const imageEl = document.getElementById('manifesto-image');
+    if (!textEl) return;
+
+    const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
+
+    // Split into words
+    const split = new SplitText(textEl, {
+      type: 'words',
+      wordsClass: 'manifesto-word',
+    });
+
+    // Style each word
+    split.words.forEach((word: HTMLElement) => {
+      word.style.opacity = '0.1';
+      word.style.transition = 'none';
+      word.style.display = 'inline-block';
+
+      // Highlight special words
+      const text = word.textContent?.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, '') || '';
+      if (highlights.some((h: string) => text.toLowerCase() === h.toLowerCase())) {
+        word.style.color = 'var(--color-accent)';
+        word.style.fontWeight = '400';
+      }
+    });
+
+    // Scroll-driven word reveal
+    gsap.to(split.words, {
+      opacity: 1,
+      stagger: 0.02,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#scope',
+        start: 'top 30%',
+        end: 'bottom 60%',
+        scrub: 1,
+      },
+    });
+
+    // Image parallax and reveal
+    if (imageEl) {
+      gsap.to(imageEl, {
+        opacity: 1,
+        duration: 1,
+        scrollTrigger: {
+          trigger: '#scope',
+          start: 'top 40%',
+          end: 'center center',
+          scrub: 1,
+        },
+      });
+
+      gsap.to(imageEl, {
+        y: -80,
+        scrollTrigger: {
+          trigger: '#scope',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      });
+    }
+  }
+
+  initAbout();
+  document.addEventListener('astro:after-swap', initAbout);
+</script>

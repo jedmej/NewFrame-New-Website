@@ -1,0 +1,216 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations, getAlternateUrl } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const altLang = lang === 'en' ? 'pl' : 'en';
+const altUrl = getAlternateUrl(Astro.url, altLang);
+---
+
+<nav
+  id="main-nav"
+  class="fixed top-0 left-0 w-full z-[100] flex justify-between items-center px-6 py-5 md:px-10 transition-transform duration-500 text-[var(--color-text)]"
+  style="transform: translateY(0)"
+>
+  <!-- Logo -->
+  <a
+    href={`/${lang}/`}
+    class="group flex items-center gap-3 hover:opacity-90 transition-opacity"
+    transition:name="logo"
+  >
+    <svg
+      class="w-6 h-6 transition-all duration-500 group-hover:scale-105"
+      viewBox="0 0 500 500"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        class="transition-transform duration-500 group-hover:translate-x-[5px] group-hover:-translate-y-[5px]"
+        width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"
+      />
+      <rect
+        class="transition-transform duration-500 group-hover:translate-x-[5px] group-hover:-translate-y-[5px]"
+        width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"
+      />
+      <rect
+        class="transition-transform duration-500 group-hover:-translate-x-[5px] group-hover:translate-y-[5px]"
+        width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"
+      />
+      <rect
+        class="transition-transform duration-500 group-hover:-translate-x-[5px] group-hover:translate-y-[5px]"
+        width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"
+      />
+    </svg>
+    <span class="text-sm font-semibold tracking-tight uppercase" style="font-family: var(--font-display)">
+      New Frame
+    </span>
+  </a>
+
+  <!-- Desktop Nav Links -->
+  <div class="hidden md:flex items-center gap-8">
+    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
+      {t.nav.scope}
+    </a>
+    <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
+      {t.nav.work}
+    </a>
+    <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
+      {t.nav.contact}
+    </a>
+
+    <!-- Clock -->
+    <div class="flex items-center gap-2 ml-2 pl-4 border-l border-[var(--color-border-strong)]">
+      <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+      <span id="nav-clock" class="text-mono-xs opacity-40">--:-- CET</span>
+    </div>
+
+    <!-- Language Toggle -->
+    <a
+      href={altUrl}
+      class="text-mono-xs opacity-40 hover:opacity-100 transition-opacity ml-2 pl-4 border-l border-[var(--color-border-strong)]"
+    >
+      {altLang.toUpperCase()}
+    </a>
+  </div>
+
+  <!-- Mobile Menu Button -->
+  <button
+    id="mobile-menu-btn"
+    class="md:hidden flex flex-col gap-1.5 p-2 -mr-2"
+    aria-label="Open menu"
+  >
+    <span class="menu-line w-6 h-px transition-all duration-300 bg-[var(--color-text)]"></span>
+    <span class="menu-line w-4 h-px transition-all duration-300 ml-auto bg-[var(--color-text)]"></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-[99] bg-[var(--color-bg)] flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500"
+>
+  <a href={`/${lang}/#scope`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.scope}</a>
+  <a href={`/${lang}/#work`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.work}</a>
+  <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.contact}</a>
+  <div class="flex items-center gap-6 mt-8 opacity-0 translate-y-8 mobile-menu-link">
+    <a href={altUrl} class="text-mono-sm opacity-60 hover:opacity-100 transition-opacity">
+      {altLang.toUpperCase()}
+    </a>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initNav() {
+    const nav = document.getElementById('main-nav');
+    if (!nav) return;
+
+    let lastScroll = 0;
+    let isHidden = false;
+
+    // Hide/show nav on scroll
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      onUpdate: (self) => {
+        const scrollY = window.scrollY;
+        const direction = self.direction;
+
+        // Add glass effect after hero
+        if (scrollY > window.innerHeight * 0.8) {
+          nav.classList.add('glass');
+        } else {
+          nav.classList.remove('glass');
+        }
+
+        // Hide on scroll down, show on scroll up
+        if (direction === 1 && scrollY > 200 && !isHidden) {
+          gsap.to(nav, { y: -100, duration: 0.4, ease: 'power2.inOut' });
+          isHidden = true;
+        } else if (direction === -1 && isHidden) {
+          gsap.to(nav, { y: 0, duration: 0.4, ease: 'power2.out' });
+          isHidden = false;
+        }
+
+        lastScroll = scrollY;
+      },
+    });
+
+    // Clock
+    const clockEl = document.getElementById('nav-clock');
+    if (clockEl) {
+      const updateClock = () => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Warsaw',
+        });
+        clockEl.textContent = `${timeStr} CET`;
+      };
+      updateClock();
+      setInterval(updateClock, 60000);
+    }
+
+    // Mobile menu
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuLines = menuBtn?.querySelectorAll('.menu-line');
+    const menuLinks = mobileMenu?.querySelectorAll('.mobile-menu-link');
+    let menuOpen = false;
+
+    menuBtn?.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+
+      if (menuOpen) {
+        mobileMenu!.style.opacity = '1';
+        mobileMenu!.style.pointerEvents = 'all';
+        document.body.style.overflow = 'hidden';
+
+        // Animate lines to X
+        gsap.to(menuLines![0], { rotation: 45, y: 4, width: 24, duration: 0.3 });
+        gsap.to(menuLines![1], { rotation: -45, y: -4, width: 24, marginLeft: 0, duration: 0.3 });
+
+        // Stagger links in
+        gsap.to(menuLinks!, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'power3.out',
+          delay: 0.1,
+        });
+      } else {
+        gsap.to(menuLinks!, { opacity: 0, y: 8, duration: 0.3, stagger: 0.03 });
+        gsap.to(menuLines![0], { rotation: 0, y: 0, duration: 0.3 });
+        gsap.to(menuLines![1], { rotation: 0, y: 0, width: 16, marginLeft: 'auto', duration: 0.3 });
+
+        setTimeout(() => {
+          mobileMenu!.style.opacity = '0';
+          mobileMenu!.style.pointerEvents = 'none';
+          document.body.style.overflow = '';
+        }, 400);
+      }
+    });
+
+    // Close menu on link click
+    menuLinks?.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (menuOpen) menuBtn?.click();
+      });
+    });
+  }
+
+  // Init on page load and after view transitions
+  initNav();
+  document.addEventListener('astro:after-swap', initNav);
+</script>

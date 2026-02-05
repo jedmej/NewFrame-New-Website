@@ -1,0 +1,147 @@
+---
+---
+
+<div id="preloader" class="preloader">
+  <!-- Logo with stroke animation -->
+  <div class="preloader-logo">
+    <svg
+      width="80"
+      height="80"
+      viewBox="0 0 500 500"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <!-- Top-left bracket (drawn as a path for stroke animation) -->
+      <path
+        id="preloader-bracket-tl"
+        d="M 0 400 L 0 100 L 100 100 L 100 0 L 400 0 L 400 100"
+        stroke="currentColor"
+        stroke-width="8"
+        fill="none"
+        vector-effect="non-scaling-stroke"
+      />
+      <!-- Bottom-right bracket -->
+      <path
+        id="preloader-bracket-br"
+        d="M 500 100 L 500 400 L 400 400 L 400 500 L 100 500 L 100 400"
+        stroke="currentColor"
+        stroke-width="8"
+        fill="none"
+        vector-effect="non-scaling-stroke"
+      />
+    </svg>
+  </div>
+
+  <!-- Loading counter -->
+  <div class="preloader-counter">
+    <span id="preloader-percent">0</span>%
+  </div>
+
+  <!-- Horizontal expanding line -->
+  <div
+    id="preloader-line"
+    class="absolute left-1/2 top-1/2 h-px bg-[var(--color-text-ghost)] -translate-x-1/2"
+    style="width: 0"
+  ></div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+  import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+
+  gsap.registerPlugin(DrawSVGPlugin);
+
+  function initPreloader() {
+    const preloader = document.getElementById('preloader');
+    const percentEl = document.getElementById('preloader-percent');
+    const lineEl = document.getElementById('preloader-line');
+    const bracketTL = document.getElementById('preloader-bracket-tl');
+    const bracketBR = document.getElementById('preloader-bracket-br');
+
+    if (!preloader || !percentEl || !bracketTL || !bracketBR || !lineEl) return;
+
+    // Master timeline
+    const tl = gsap.timeline({
+      onComplete: () => {
+        preloader.classList.add('is-done');
+      },
+    });
+
+    // 1. Draw the brackets
+    tl.fromTo(
+      [bracketTL, bracketBR],
+      { drawSVG: '0%' },
+      {
+        drawSVG: '100%',
+        duration: 1.2,
+        ease: 'power2.inOut',
+        stagger: 0.1,
+      }
+    );
+
+    // 2. Count up percentage (overlapping with draw)
+    tl.to(
+      { val: 0 },
+      {
+        val: 100,
+        duration: 1.5,
+        ease: 'power1.inOut',
+        onUpdate: function () {
+          percentEl.textContent = Math.round(this.targets()[0].val).toString();
+        },
+      },
+      0.2
+    );
+
+    // 3. Fill the brackets (replace stroke with fill)
+    tl.to([bracketTL, bracketBR], {
+      stroke: 'rgba(234, 78, 51, 1)',
+      strokeWidth: 12,
+      duration: 0.4,
+      ease: 'power2.in',
+    }, '-=0.3');
+
+    // 4. Expand the line
+    tl.to(lineEl, {
+      width: '100vw',
+      duration: 0.6,
+      ease: 'power3.inOut',
+    }, '-=0.2');
+
+    // 5. Wipe away preloader
+    tl.to(preloader, {
+      clipPath: 'inset(0 0 100% 0)',
+      duration: 0.8,
+      ease: 'power3.inOut',
+    });
+
+    // 6. Clean up
+    tl.call(() => {
+      preloader.style.display = 'none';
+      document.body.style.overflow = '';
+
+      // Trigger hero animations
+      document.dispatchEvent(new CustomEvent('preloader:complete'));
+    });
+  }
+
+  // Only run preloader on first visit, not on view transitions
+  if (!sessionStorage.getItem('preloaded')) {
+    document.body.style.overflow = 'hidden';
+    // Wait for fonts
+    document.fonts.ready.then(() => {
+      initPreloader();
+      sessionStorage.setItem('preloaded', 'true');
+    });
+  } else {
+    // Skip preloader on subsequent navigations
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+      preloader.style.display = 'none';
+    }
+    // Trigger hero animations immediately
+    requestAnimationFrame(() => {
+      document.dispatchEvent(new CustomEvent('preloader:complete'));
+    });
+  }
+</script>

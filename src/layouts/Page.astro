@@ -1,0 +1,62 @@
+---
+import Base from './Base.astro';
+import Nav from '../components/global/Nav.astro';
+import Footer from '../components/global/Footer.astro';
+import Preloader from '../components/global/Preloader.astro';
+import CustomCursor from '../components/global/CustomCursor.astro';
+import type { Lang } from '../i18n/translations';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang: Lang;
+}
+
+const { title, description, lang } = Astro.props;
+---
+
+<Base title={title} description={description} lang={lang}>
+  <Preloader />
+  <CustomCursor />
+  <Nav lang={lang} />
+
+  <main>
+    <slot />
+  </main>
+
+  <Footer lang={lang} />
+
+  <!-- Initialize Lenis smooth scroll -->
+  <script>
+    import Lenis from 'lenis';
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initSmoothScroll() {
+      if (window.innerWidth < 1024) return;
+
+      const lenis = new Lenis({
+        autoRaf: true,
+      });
+
+      // Bridge Lenis to GSAP ScrollTrigger
+      lenis.on('scroll', ScrollTrigger.update);
+
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+
+      gsap.ticker.lagSmoothing(0);
+
+      // Store globally for nav scroll
+      (window as any).lenis = lenis;
+    }
+
+    initSmoothScroll();
+    document.addEventListener('astro:after-swap', initSmoothScroll);
+  </script>
+
+  <!-- Each section owns its own background color for reliable rendering -->
+</Base>

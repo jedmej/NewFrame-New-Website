@@ -1,0 +1,113 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section
+  id="contact"
+  class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden border-t border-white/[0.04]"
+  style="background-color: var(--color-ink);"
+>
+  <!-- Content -->
+  <div class="relative z-10 w-full h-full flex flex-col items-center justify-center py-32">
+    <!-- Animated frame logo -->
+    <div id="contact-frame" class="relative" style="width: min(65vw, 500px); height: min(65vw, 500px);">
+      <svg
+        class="absolute inset-0 w-full h-full"
+        viewBox="0 0 500 500"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+        <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+        <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+        <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+      </svg>
+
+      <!-- Center content inside the frame -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center" style="padding: 25%;">
+        <!-- Availability dot -->
+        <div class="flex items-center gap-2 mb-6">
+          <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+          <span class="text-mono-xs text-white/80">{t.contact.available}</span>
+        </div>
+
+        <!-- CTA -->
+        <a
+          href={`mailto:${t.contact.email}?subject=Project%20Inquiry%20-%20New%20Frame%20Studio`}
+          class="group relative"
+          data-magnetic
+          data-cursor="CLICK"
+        >
+          <span
+            class="block text-[var(--color-accent)] transition-transform duration-500 group-hover:scale-105"
+            style="font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 3rem); font-style: italic; letter-spacing: -0.02em;"
+          >
+            {t.contact.cta}
+          </span>
+          <span class="block w-full h-px bg-[var(--color-accent)] mt-2 transition-transform duration-500 origin-left group-hover:scale-x-0"></span>
+        </a>
+
+        <!-- Email -->
+        <span class="text-mono-xs text-white/50 mt-4">{t.contact.email}</span>
+      </div>
+    </div>
+
+    <!-- Social links -->
+    <div class="flex flex-wrap justify-center gap-8 mt-16 md:mt-24">
+      <a href="#" class="text-mono-xs text-white/40 hover:text-white transition-colors duration-300">Instagram</a>
+      <a href="#" class="text-mono-xs text-white/40 hover:text-white transition-colors duration-300">LinkedIn</a>
+      <a href="#" class="text-mono-xs text-white/40 hover:text-white transition-colors duration-300">Behance</a>
+      <a href="#" class="text-mono-xs text-white/40 hover:text-white transition-colors duration-300">Awwwards</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initContact() {
+    const frame = document.getElementById('contact-frame');
+    if (!frame) return;
+
+    // Scale up frame on scroll into view
+    gsap.from(frame, {
+      scale: 0.6,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#contact',
+        start: 'top 60%',
+      },
+    });
+
+    // Magnetic effect on CTA
+    const magneticBtns = frame.querySelectorAll('[data-magnetic]');
+    magneticBtns.forEach((btn) => {
+      const el = btn as HTMLElement;
+      el.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(el, { x: x * 0.15, y: y * 0.15, duration: 0.3, ease: 'power2.out' });
+      });
+      el.addEventListener('mouseleave', () => {
+        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+      });
+    });
+  }
+
+  initContact();
+  document.addEventListener('astro:after-swap', initContact);
+</script>

@@ -1,0 +1,119 @@
+---
+---
+
+<div id="custom-cursor" class="hidden lg:block">
+  <div id="cursor-dot" class="cursor-dot"></div>
+  <div id="cursor-circle" class="cursor-circle"></div>
+  <span id="cursor-label" class="cursor-label"></span>
+</div>
+
+<script>
+  function initCursor() {
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch || window.innerWidth < 1024) return;
+
+    const dot = document.getElementById('cursor-dot');
+    const circle = document.getElementById('cursor-circle');
+    const label = document.getElementById('cursor-label');
+    if (!dot || !circle || !label) return;
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let dotX = 0;
+    let dotY = 0;
+    let circleX = 0;
+    let circleY = 0;
+
+    // Hide default cursor
+    document.body.style.cursor = 'none';
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animate() {
+      // Dot follows immediately with slight smoothing
+      dotX += (mouseX - dotX) * 0.2;
+      dotY += (mouseY - dotY) * 0.2;
+      dot.style.transform = `translate(${dotX - 4}px, ${dotY - 4}px)`;
+
+      // Circle follows with more lag
+      circleX += (mouseX - circleX) * 0.08;
+      circleY += (mouseY - circleY) * 0.08;
+      circle.style.transform = `translate(${circleX - 20}px, ${circleY - 20}px)`;
+
+      // Label follows circle
+      label.style.transform = `translate(${circleX + 24}px, ${circleY - 6}px)`;
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Handle hover states
+    const interactiveElements = document.querySelectorAll('a, button, [data-cursor]');
+
+    interactiveElements.forEach((el) => {
+      el.addEventListener('mouseenter', () => {
+        circle.classList.add('is-hovering');
+        const cursorType = (el as HTMLElement).dataset.cursor;
+        if (cursorType) {
+          label.textContent = cursorType;
+          label.style.opacity = '1';
+        }
+      });
+      el.addEventListener('mouseleave', () => {
+        circle.classList.remove('is-hovering');
+        label.style.opacity = '0';
+        label.textContent = '';
+      });
+    });
+
+    // Confetti on click
+    document.addEventListener('click', (e) => {
+      createConfetti(e.clientX, e.clientY);
+    });
+  }
+
+  function createConfetti(x: number, y: number) {
+    const style = getComputedStyle(document.documentElement);
+    const textColor = style.getPropertyValue('--color-text').trim() || '#ffffff';
+    const bgColor = style.getPropertyValue('--color-bg').trim() || '#0a0a0a';
+    const colors = ['#EA4E33', textColor, bgColor, '#6b6b6b'];
+    const count = 10;
+
+    for (let i = 0; i < count; i++) {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        pointer-events: none;
+        z-index: 10000;
+        left: ${x}px;
+        top: ${y}px;
+      `;
+      document.body.appendChild(particle);
+
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+      const distance = 40 + Math.random() * 60;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+
+      particle.animate(
+        [
+          { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+          { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 },
+        ],
+        {
+          duration: 500 + Math.random() * 200,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }
+      ).onfinish = () => particle.remove();
+    }
+  }
+
+  initCursor();
+  document.addEventListener('astro:after-swap', initCursor);
+</script>
