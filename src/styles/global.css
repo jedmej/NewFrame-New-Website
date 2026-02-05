@@ -371,10 +371,36 @@ body::-webkit-scrollbar {
   overflow: visible;
 }
 
-.preloader-logo svg path,
-.preloader-logo svg rect {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
+.preloader-logo svg path {
+  will-change: transform, opacity;
+}
+
+.preloader-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.preloader-lang-option {
+  color: var(--color-text-subtle);
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.preloader-lang-option:hover,
+.preloader-lang-option.is-active {
+  color: var(--color-text);
+}
+
+.preloader-lang-divider {
+  color: var(--color-text-subtle);
 }
 
 .preloader-counter {

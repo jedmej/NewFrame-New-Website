@@ -1,8 +1,11 @@
 ---
+import { getLangFromUrl } from '../../i18n/translations';
+
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <div id="preloader" class="preloader">
-  <!-- Logo with stroke animation -->
+  <!-- Logo -->
   <div class="preloader-logo">
     <svg
       width="80"
@@ -11,29 +14,38 @@
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <!-- Top-left bracket (drawn as a path for stroke animation) -->
+      <!-- Top-left bracket -->
       <path
         id="preloader-bracket-tl"
-        d="M 0 400 L 0 100 L 100 100 L 100 0 L 400 0 L 400 100"
-        stroke="currentColor"
-        stroke-width="8"
-        fill="none"
-        vector-effect="non-scaling-stroke"
+        d="M100 400H0V1H400V100H100V400Z"
+        fill="var(--color-text)"
       />
       <!-- Bottom-right bracket -->
       <path
         id="preloader-bracket-br"
-        d="M 500 100 L 500 400 L 400 400 L 400 500 L 100 500 L 100 400"
-        stroke="currentColor"
-        stroke-width="8"
-        fill="none"
-        vector-effect="non-scaling-stroke"
+        d="M400 100H500L500 499L100 499V400L400 400L400 100Z"
+        fill="var(--color-text)"
       />
     </svg>
   </div>
 
-  <!-- Loading counter -->
-  <div class="preloader-counter">
+  <!-- Language picker -->
+  <div id="preloader-lang" class="preloader-lang">
+    <a
+      href="/en/"
+      class={`preloader-lang-option ${lang === 'en' ? 'is-active' : ''}`}
+      data-lang="en"
+    >EN</a>
+    <span class="preloader-lang-divider">/</span>
+    <a
+      href="/pl/"
+      class={`preloader-lang-option ${lang === 'pl' ? 'is-active' : ''}`}
+      data-lang="pl"
+    >PL</a>
+  </div>
+
+  <!-- Loading counter (hidden until language is chosen) -->
+  <div class="preloader-counter" id="preloader-counter" style="display: none;">
     <span id="preloader-percent">0</span>%
   </div>
 
@@ -47,9 +59,6 @@
 
 <script>
   import gsap from 'gsap';
-  import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-
-  gsap.registerPlugin(DrawSVGPlugin);
 
   function initPreloader() {
     const preloader = document.getElementById('preloader');
@@ -60,6 +69,10 @@
 
     if (!preloader || !percentEl || !bracketTL || !bracketBR || !lineEl) return;
 
+    // Start both brackets invisible (scaled down from their origin corner)
+    gsap.set(bracketTL, { opacity: 0, scale: 0.6, transformOrigin: '0% 0%' });
+    gsap.set(bracketBR, { opacity: 0, scale: 0.6, transformOrigin: '100% 100%' });
+
     // Master timeline
     const tl = gsap.timeline({
       onComplete: () => {
@@ -67,19 +80,22 @@
       },
     });
 
-    // 1. Draw the brackets
-    tl.fromTo(
-      [bracketTL, bracketBR],
-      { drawSVG: '0%' },
-      {
-        drawSVG: '100%',
-        duration: 1.2,
-        ease: 'power2.inOut',
-        stagger: 0.1,
-      }
-    );
+    // 1. Reveal the brackets (scale + fade in from their corners)
+    tl.to(bracketTL, {
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      ease: 'power2.out',
+    });
 
-    // 2. Count up percentage (overlapping with draw)
+    tl.to(bracketBR, {
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      ease: 'power2.out',
+    }, '-=0.6');
+
+    // 2. Count up percentage (overlapping with bracket reveal)
     tl.to(
       { val: 0 },
       {
@@ -93,10 +109,9 @@
       0.2
     );
 
-    // 3. Fill the brackets (replace stroke with fill)
+    // 3. Flash brackets to accent color
     tl.to([bracketTL, bracketBR], {
-      stroke: 'rgba(234, 78, 51, 1)',
-      strokeWidth: 12,
+      fill: '#DA382E',
       duration: 0.4,
       ease: 'power2.in',
     }, '-=0.3');
@@ -125,23 +140,73 @@
     });
   }
 
-  // Only run preloader on first visit, not on view transitions
-  if (!sessionStorage.getItem('preloaded')) {
-    document.body.style.overflow = 'hidden';
-    // Wait for fonts
-    document.fonts.ready.then(() => {
+  function startAnimation() {
+    // Hide language picker, show counter
+    const langPicker = document.getElementById('preloader-lang');
+    const counter = document.getElementById('preloader-counter');
+    if (langPicker) langPicker.style.display = 'none';
+    if (counter) counter.style.display = '';
+
+    // Wait for fonts, but start after 3s max to avoid getting stuck
+    const fontTimeout = new Promise(resolve => setTimeout(resolve, 3000));
+    Promise.race([document.fonts.ready, fontTimeout]).then(() => {
       initPreloader();
       sessionStorage.setItem('preloaded', 'true');
-    });
-  } else {
-    // Skip preloader on subsequent navigations
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
-      preloader.style.display = 'none';
-    }
-    // Trigger hero animations immediately
-    requestAnimationFrame(() => {
-      document.dispatchEvent(new CustomEvent('preloader:complete'));
+      sessionStorage.removeItem('lang-chosen');
     });
   }
+
+  function setupLangPicker() {
+    const langPicker = document.getElementById('preloader-lang');
+    if (!langPicker) return;
+
+    const options = langPicker.querySelectorAll('.preloader-lang-option');
+    const currentLang = document.documentElement.lang || 'en';
+
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        const selectedLang = (option as HTMLElement).dataset.lang;
+
+        if (selectedLang === currentLang) {
+          // Same language — start animation immediately
+          e.preventDefault();
+          sessionStorage.setItem('lang-chosen', 'true');
+          startAnimation();
+        } else {
+          // Different language — set flag, let the link navigate
+          sessionStorage.setItem('lang-chosen', 'true');
+        }
+      });
+    });
+  }
+
+  function initPage() {
+    if (!sessionStorage.getItem('preloaded')) {
+      document.body.style.overflow = 'hidden';
+
+      if (sessionStorage.getItem('lang-chosen')) {
+        // Language was already chosen (user switched locale) — auto-start animation
+        startAnimation();
+      } else {
+        // First visit — show language picker and wait for selection
+        setupLangPicker();
+      }
+    } else {
+      // Skip preloader on subsequent navigations
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.style.display = 'none';
+      }
+      // Trigger hero animations immediately
+      requestAnimationFrame(() => {
+        document.dispatchEvent(new CustomEvent('preloader:complete'));
+      });
+    }
+  }
+
+  // Run on initial load
+  initPage();
+
+  // Re-run after Astro view transitions (ClientRouter soft navigations)
+  document.addEventListener('astro:page-load', initPage);
 </script>
