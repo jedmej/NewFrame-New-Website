@@ -34,14 +34,6 @@ const totalStr = String(items.length).padStart(2, '0');
         <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
       </div>
 
-      <!-- Decorative: Large quote mark SVG -->
-      <div class="absolute top-[12%] left-[5%] md:left-[8%] z-0 pointer-events-none" id="decorative-quote">
-        <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 md:w-48 md:h-48 lg:w-64 lg:h-64">
-          <path d="M80 40V140H20V90C20 62.4 42.4 40 70 40H80ZM180 40V140H120V90C120 62.4 142.4 40 170 40H180Z"
-            stroke="var(--color-accent)" stroke-width="1.5" fill="none" opacity="0.06"/>
-        </svg>
-      </div>
-
       <!-- Decorative: Background panel index number -->
       <div
         id="testimonial-bg-number"
@@ -161,7 +153,6 @@ const totalStr = String(items.length).padStart(2, '0');
     const bgNumberEl = document.getElementById('testimonial-bg-number');
     const bgNumberSpan = bgNumberEl?.querySelector('span');
     const dots = section.querySelectorAll('.testimonial-dot');
-    const decorativeQuote = document.getElementById('decorative-quote');
     const totalPanels = panels.length;
 
     if (totalPanels === 0) return;
@@ -317,20 +308,6 @@ const totalStr = String(items.length).padStart(2, '0');
         });
       },
     });
-
-    // ===== DECORATIVE PARALLAX =====
-    if (decorativeQuote && !prefersReducedMotion) {
-      gsap.to(decorativeQuote, {
-        y: -100,
-        rotation: 5,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      });
-    }
 
     // ===== BACKGROUND NUMBER PARALLAX =====
     if (bgNumberEl && !prefersReducedMotion) {

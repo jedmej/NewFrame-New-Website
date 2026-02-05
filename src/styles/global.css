@@ -311,16 +311,6 @@ body::-webkit-scrollbar {
   transform-origin: right;
 }
 
-/* ===== SERVICE CARD PATTERN ===== */
-
-.service-card {
-  --pattern-color: var(--color-text-faint);
-}
-
-.service-card:hover {
-  --pattern-color: rgba(218, 56, 46, 0.15);
-}
-
 /* ===== MAGNETIC BUTTON ===== */
 
 .magnetic-btn {
