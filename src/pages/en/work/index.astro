@@ -3,6 +3,7 @@ import Page from '../../../layouts/Page.astro';
 import { projects, getCategories } from '../../../lib/projects';
 
 const categories = getCategories();
+const hasUrl = (url: string) => url && url !== '#';
 ---
 
 <Page lang="en" title="Work — New Frame Studio">
@@ -35,7 +36,9 @@ const categories = getCategories();
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8" id="work-grid">
         {projects.map((project, i) => (
           <a
-            href={`/en/work/${project.slug}`}
+            href={hasUrl(project.url) ? project.url : undefined}
+            target={hasUrl(project.url) ? '_blank' : undefined}
+            rel={hasUrl(project.url) ? 'noopener' : undefined}
             class="work-card group block relative overflow-hidden rounded-xl"
             data-category={project.category}
             style={i === 0 ? 'grid-column: 1 / -1;' : ''}
@@ -53,23 +56,17 @@ const categories = getCategories();
               {/* View label */}
               <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <span class="text-mono-xs text-white bg-white/10 backdrop-blur-sm px-5 py-2.5 rounded-full border border-white/20">
-                  VIEW PROJECT
+                  VISIT WEBSITE
                 </span>
               </div>
             </div>
 
             {/* Info */}
             <div class="flex justify-between items-end mt-4 pb-2">
-              <div>
-                <h2 class="text-lg font-semibold text-[var(--color-text)]" style="font-family: var(--font-display);">
-                  {project.name}
-                </h2>
-                <span class="text-mono-xs text-[var(--color-text-muted)]">{project.client}</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="text-mono-xs text-[var(--color-text-muted)]">{project.category}</span>
-                <span class="text-mono-xs text-[var(--color-text-subtle)]">{project.year}</span>
-              </div>
+              <h2 class="text-lg font-semibold text-[var(--color-text)]" style="font-family: var(--font-display);">
+                {project.name}
+              </h2>
+              <span class="text-mono-xs text-[var(--color-text-muted)]">{project.category}</span>
             </div>
           </a>
         ))}

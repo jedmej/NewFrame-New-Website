@@ -14,7 +14,7 @@ const projects = allProjects.map((p) => ({
   name: p.name,
   image: p.image,
   category: p.category,
-  slug: p.slug,
+  url: p.url,
 }));
 ---
 
@@ -55,17 +55,10 @@ const projects = allProjects.map((p) => ({
       >
         <h2
           id="project-name-text"
-          class="text-display-xl text-white text-center select-none transition-all duration-500"
+          class="text-display-xl text-white text-center select-none"
         >
           {projects[0].name}
         </h2>
-      </div>
-
-      <!-- Project category badge -->
-      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
-        <span id="project-category" class="text-mono-xs text-[var(--color-text-muted)] bg-[var(--color-text-faint)] px-4 py-2 rounded-full backdrop-blur-sm">
-          {projects[0].category}
-        </span>
       </div>
 
       <!-- Bottom gradient -->
@@ -85,7 +78,6 @@ const projects = allProjects.map((p) => ({
     const canvas = document.getElementById('carousel-canvas') as HTMLCanvasElement;
     const nameText = document.getElementById('project-name-text');
     const counterEl = document.getElementById('work-counter');
-    const categoryEl = document.getElementById('project-category');
     if (!canvas) return;
 
     const projects = JSON.parse(canvas.dataset.projects || '[]');
@@ -182,24 +174,13 @@ const projects = allProjects.map((p) => ({
           Math.floor(self.progress * projectCount)
         );
 
-        if (newIndex !== currentProjectIndex && nameText && counterEl && categoryEl) {
+        if (newIndex !== currentProjectIndex && nameText && counterEl) {
           currentProjectIndex = newIndex;
           const project = projects[currentProjectIndex];
 
-          // Animate name transition
-          gsap.to(nameText, {
-            y: -20,
-            opacity: 0,
-            duration: 0.2,
-            ease: 'power2.in',
-            onComplete: () => {
-              nameText.textContent = project.name;
-              gsap.fromTo(nameText, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
-            },
-          });
+          nameText.textContent = project.name;
 
           counterEl.textContent = `${String(currentProjectIndex + 1).padStart(2, '0')} of ${String(projectCount).padStart(2, '0')}`;
-          categoryEl.textContent = project.category;
         }
       },
     });
@@ -247,12 +228,12 @@ const projects = allProjects.map((p) => ({
       }
     });
 
-    // Click to navigate
+    // Click to navigate to external site
     canvas.addEventListener('click', () => {
       if (hoveredMesh) {
         const project = hoveredMesh.userData.project;
-        if (project?.slug) {
-          window.location.href = `/${lang}/work/${project.slug}`;
+        if (project?.url && project.url !== '#') {
+          window.open(project.url, '_blank', 'noopener');
         }
       }
     });

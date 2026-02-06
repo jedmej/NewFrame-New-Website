@@ -58,10 +58,10 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <!-- Let's Talk CTA -->
     <a
       href={`/${lang}/#contact`}
-      class="nav-cta hidden md:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 transition-all duration-300 group"
+      class="nav-cta hidden md:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300 group"
     >
       <span>{t.contact.cta}</span>
-      <svg class="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+      <svg class="nav-cta-arrow w-3 h-3 transition-transform duration-300 ease-out" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M1 11L11 1M11 1H3M11 1V9"/>
       </svg>
     </a>
@@ -117,6 +117,18 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
         });
       });
     });
+
+    // Animate CTA arrow: rotate to point right on hover
+    const ctaLink = nav.querySelector('.nav-cta');
+    const ctaArrow = nav.querySelector('.nav-cta-arrow');
+    if (ctaLink && ctaArrow) {
+      ctaLink.addEventListener('mouseenter', () => {
+        gsap.to(ctaArrow, { rotation: 45, duration: 0.3, ease: 'power2.out' });
+      });
+      ctaLink.addEventListener('mouseleave', () => {
+        gsap.to(ctaArrow, { rotation: 0, duration: 0.3, ease: 'power2.out' });
+      });
+    }
 
     // Glass effect on scroll (no hide/show)
     ScrollTrigger.create({

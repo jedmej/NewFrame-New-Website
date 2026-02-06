@@ -27,8 +27,8 @@ const totalStr = String(items.length).padStart(2, '0');
       <div class="absolute top-0 left-0 right-0 px-6 md:px-10 pt-24 z-20">
         <div class="flex justify-between items-center">
           <span class="text-mono-xs text-[#0A0A0A]">{t.testimonials.label}</span>
-          <span id="testimonial-counter" class="text-mono-xs text-[var(--color-text-subtle)]">
-            01 / {totalStr}
+          <span class="text-mono-xs text-[var(--color-text-subtle)]">
+            <span id="testimonial-counter-active" style="color: var(--color-accent);">01</span> / {totalStr}
           </span>
         </div>
         <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
@@ -154,7 +154,7 @@ const totalStr = String(items.length).padStart(2, '0');
     if (!section) return;
 
     const panels = section.querySelectorAll('.testimonial-panel');
-    const counterEl = document.getElementById('testimonial-counter');
+    const counterActiveEl = document.getElementById('testimonial-counter-active');
     const progressEl = document.getElementById('testimonial-progress');
     const bgNumberEl = document.getElementById('testimonial-bg-number');
     const bgNumberSpan = bgNumberEl?.querySelector('span');
@@ -221,10 +221,8 @@ const totalStr = String(items.length).padStart(2, '0');
         }
 
         // Update counter
-        if (counterEl) {
-          const displayIndex = String(activePanelIndex + 1).padStart(2, '0');
-          const total = String(totalPanels).padStart(2, '0');
-          counterEl.textContent = `${displayIndex} / ${total}`;
+        if (counterActiveEl) {
+          counterActiveEl.textContent = String(activePanelIndex + 1).padStart(2, '0');
         }
 
         // Update background number
