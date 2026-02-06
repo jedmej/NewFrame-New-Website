@@ -58,17 +58,27 @@ const hoverImages = [
     </div>
 
     <!-- CTA -->
-    <div class="service-cta mt-16 md:mt-24">
+    <div class="service-cta mt-20 md:mt-32">
       <a
         href={`/${lang}/#contact`}
-        class="magnetic-btn"
-        data-magnetic
+        id="services-cta-link"
+        class="services-cta-block group"
         data-cursor="CLICK"
       >
-        {t.services.cta}
-        <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
-        </svg>
+        <div class="services-cta-inner">
+          <h3 class="services-cta-text">{t.services.cta}</h3>
+        </div>
+        <div class="services-cta-icon">
+          <svg id="cta-morph-svg" viewBox="0 0 566 566" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Logo path (single combined path for MorphSVG) -->
+            <path id="cta-logo-path" d="M113,0 L453,0 L453,113 L113,113 Z M453,113 L566,113 L566,566 L453,566 Z M113,453 L453,453 L453,566 L113,566 Z M0,0 L113,0 L113,453 L0,453 Z" fill="currentColor" />
+            <!-- Arrow target (hidden, used as morph target) -->
+            <path id="cta-arrow-path" d="M478.297,337.073 L78.297,337.073 L78.297,238.073 L478.297,238.073 Z M212.132,70.711 L282.843,0 L564.978,282.136 L282.136,564.978 L212.132,494.975 L424.264,282.843 Z" fill="currentColor" style="visibility:hidden;position:absolute;" />
+          </svg>
+        </div>
+        <div class="services-cta-inner">
+          <h3 class="services-cta-text">{t.services.ctaRight}</h3>
+        </div>
       </a>
     </div>
   </div>
@@ -127,6 +137,64 @@ const hoverImages = [
     transition: transform 0.6s var(--ease-out-expo), background-color 0.3s;
   }
 
+  /* ===== Giant CTA Block ===== */
+  .services-cta-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 2rem 0;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  @media (min-width: 768px) {
+    .services-cta-block {
+      padding: 2.5rem 0;
+    }
+  }
+
+  .services-cta-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .services-cta-text {
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    transition: color 0.5s var(--ease-out-expo);
+  }
+
+  .services-cta-block:hover .services-cta-text {
+    color: var(--color-accent);
+  }
+
+  .services-cta-icon {
+    flex-shrink: 0;
+    width: clamp(42px, 7.5vw, 105px);
+    height: clamp(42px, 7.5vw, 105px);
+    color: var(--color-text);
+    transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
+  }
+
+  .services-cta-block:hover .services-cta-icon {
+    color: var(--color-accent);
+    transform: scale(1.1);
+  }
+
+  .services-cta-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+
   /* Hover image that follows cursor */
   .service-hover-img {
     position: fixed;
@@ -147,8 +215,9 @@ const hoverImages = [
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+  import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 
-  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, MorphSVGPlugin);
 
   function initServices() {
     const section = document.getElementById('services');
@@ -261,41 +330,50 @@ const hoverImages = [
       row.addEventListener('mouseleave', () => fade.reverse());
     });
 
-    // CTA fades in
+    // CTA entrance animation
     if (cta) {
-      gsap.fromTo(
-        cta,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: cta,
-            start: 'top 90%',
-            once: true,
-          },
+      const ctaTexts = cta.querySelectorAll('.services-cta-text');
+      const ctaIcon = cta.querySelector('.services-cta-icon');
+
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: cta,
+          start: 'top 85%',
+          once: true,
         },
-      );
+      });
+
+      ctaTl
+        .fromTo(ctaTexts[0], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+        .fromTo(ctaIcon, { opacity: 0, scale: 0.6, rotation: -20 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.7, ease: 'back.out(1.5)' }, '-=0.5')
+        .fromTo(ctaTexts[1], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
     }
 
-    // Magnetic button
-    const magneticBtns = section.querySelectorAll('[data-magnetic]');
-    magneticBtns.forEach((btn) => {
-      const el = btn as HTMLElement;
+    // MorphSVG: logo → arrow on hover
+    const ctaLink = document.getElementById('services-cta-link');
+    const logoPath = document.getElementById('cta-logo-path');
+    const arrowPath = document.getElementById('cta-arrow-path');
 
-      el.addEventListener('mousemove', (e: MouseEvent) => {
-        const rect = el.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        gsap.to(el, { x: x * 0.2, y: y * 0.2, duration: 0.3, ease: 'power2.out' });
+    if (ctaLink && logoPath && arrowPath) {
+      const arrowD = arrowPath.getAttribute('d')!;
+      const logoD = logoPath.getAttribute('d')!;
+
+      ctaLink.addEventListener('mouseenter', () => {
+        gsap.to(logoPath, {
+          morphSVG: arrowD,
+          duration: 0.6,
+          ease: 'expo.inOut',
+        });
       });
 
-      el.addEventListener('mouseleave', () => {
-        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+      ctaLink.addEventListener('mouseleave', () => {
+        gsap.to(logoPath, {
+          morphSVG: logoD,
+          duration: 0.6,
+          ease: 'expo.inOut',
+        });
       });
-    });
+    }
   }
 
   initServices();

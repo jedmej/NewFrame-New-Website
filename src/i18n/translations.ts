@@ -43,6 +43,7 @@ export const translations = {
         { num: '05', title: 'Brand Identity', desc: 'Logos, colors, and guidelines that make you unforgettable.' },
       ],
       cta: 'Start a project',
+      ctaRight: "Let's talk",
     },
     work: {
       label: 'SELECTED WORK',
@@ -129,6 +130,7 @@ export const translations = {
         { num: '05', title: 'Identyfikacja marki', desc: 'Loga, kolory i wytyczne, które czynią Cię niezapomnianym.' },
       ],
       cta: 'Rozpocznij projekt',
+      ctaRight: 'Porozmawiajmy',
     },
     work: {
       label: 'WYBRANE PROJEKTY',
