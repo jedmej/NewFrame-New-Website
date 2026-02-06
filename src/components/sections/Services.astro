@@ -20,7 +20,7 @@ const hoverImages = [
 
 <section
   id="services"
-  class="relative py-32 md:py-48 border-t border-[var(--color-border)]"
+  class="relative py-32 md:py-48"
   style="background-color: var(--color-bg);"
 >
   <div class="px-6 md:px-10 max-w-[1400px] mx-auto">
@@ -34,9 +34,11 @@ const hoverImages = [
     <div class="services-list">
       {t.services.items.map((service, i) => (
         <div class="service-row group" data-index={i}>
-          <div class="service-line">
-            <div class="service-line-fill"></div>
-          </div>
+          {i > 0 && (
+            <div class="service-line">
+              <div class="service-line-fill"></div>
+            </div>
+          )}
 
           <div class="service-row-inner" data-cursor="VIEW">
             <h3 class="service-title">{service.title}</h3>
@@ -118,7 +120,7 @@ const hoverImages = [
 
   .service-title {
     font-family: var(--font-serif);
-    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+    font-size: clamp(1.5rem, 1.8vw, 1.5rem);
     font-weight: 400;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -126,12 +128,14 @@ const hoverImages = [
     transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
   }
 
-  .service-row:hover .service-title {
+  .service-row:hover .service-title,
+  .service-row.is-active .service-title {
     transform: translateX(-4px);
     color: var(--color-accent);
   }
 
-  .service-row:hover .service-line .service-line-fill {
+  .service-row:hover .service-line .service-line-fill,
+  .service-row.is-active .service-line .service-line-fill {
     background-color: var(--color-accent);
     transform: scaleX(1) !important;
     transition: transform 0.6s var(--ease-out-expo), background-color 0.3s;
@@ -140,9 +144,10 @@ const hoverImages = [
   /* ===== Giant CTA Block ===== */
   .services-cta-block {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 24px;
+    gap: 20px;
     padding: 2rem 0;
     cursor: pointer;
     text-decoration: none;
@@ -151,6 +156,8 @@ const hoverImages = [
 
   @media (min-width: 768px) {
     .services-cta-block {
+      flex-direction: row;
+      gap: 24px;
       padding: 2.5rem 0;
     }
   }
@@ -163,7 +170,7 @@ const hoverImages = [
 
   .services-cta-text {
     font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 2vw, 1.5rem);
+    font-size: clamp(1.75rem, 2vw, 1.75rem);
     font-style: italic;
     font-weight: 400;
     line-height: 1.3;
@@ -172,19 +179,21 @@ const hoverImages = [
     transition: color 0.5s var(--ease-out-expo);
   }
 
-  .services-cta-block:hover .services-cta-text {
+  .services-cta-block:hover .services-cta-text,
+  .services-cta-block.is-active .services-cta-text {
     color: var(--color-accent);
   }
 
   .services-cta-icon {
     flex-shrink: 0;
-    width: clamp(42px, 7.5vw, 105px);
-    height: clamp(42px, 7.5vw, 105px);
+    width: clamp(84px, 15vw, 210px);
+    height: clamp(84px, 15vw, 210px);
     color: var(--color-text);
     transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
   }
 
-  .services-cta-block:hover .services-cta-icon {
+  .services-cta-block:hover .services-cta-icon,
+  .services-cta-block.is-active .services-cta-icon {
     color: var(--color-accent);
     transform: scale(1.1);
   }
@@ -195,7 +204,7 @@ const hoverImages = [
   }
 
 
-  /* Hover image that follows cursor */
+  /* Hover image that follows cursor (desktop) / fixed left (mobile) */
   .service-hover-img {
     position: fixed;
     top: 0;
@@ -208,6 +217,14 @@ const hoverImages = [
     opacity: 0;
     visibility: hidden;
     border-radius: 4px;
+  }
+
+  /* Mobile / touch: repositioned by JS — this just ensures the row is a positioning context */
+  @media (max-width: 767px), (hover: none) {
+    .service-row {
+      position: relative;
+      overflow: visible;
+    }
   }
 </style>
 
@@ -270,65 +287,151 @@ const hoverImages = [
       );
     });
 
-    // Hover image follow cursor (CodePen PwqrzeG style)
-    gsap.set('.service-hover-img', { xPercent: -50, yPercent: -50 });
+    const isTouch = window.matchMedia('(hover: none)').matches || window.innerWidth < 768;
 
-    let firstEnter: boolean;
+    // Random tilts for images
+    const tilts = [-5, 3, -7, 4, -3];
 
-    const tilts = [-8, 5, -12, 7, -4];
+    if (isTouch) {
+      // Touch devices: scroll-triggered active state — only ONE row active at a time
+      // Override base fixed-positioning styles and apply tilt
+      rows.forEach((row, i) => {
+        const img = row.querySelector('.service-hover-img') as HTMLElement;
+        if (!img) return;
+        // Reset from desktop fixed styles to absolute above-row
+        img.style.position = 'absolute';
+        img.style.top = 'auto';
+        img.style.left = '6px';
+        img.style.bottom = '100%';
+        img.style.width = 'min(50vw, 320px)';
+        img.style.height = 'auto';
+        img.style.aspectRatio = '4/3';
+        img.style.marginBottom = '0.5rem';
+        img.style.objectFit = 'cover';
+        gsap.set(img, { rotation: tilts[i % tilts.length], autoAlpha: 0 });
+      });
 
-    rows.forEach((row, i) => {
-      const image = row.querySelector('.service-hover-img') as HTMLElement;
-      if (!image) return;
+      let activeIndex = -1;
 
-      const tilt = tilts[i % tilts.length];
-      gsap.set(image, { rotation: tilt });
-
-      const setX = gsap.quickTo(image, 'x', { duration: 0.4, ease: 'power3' });
-      const setY = gsap.quickTo(image, 'y', { duration: 0.4, ease: 'power3' });
-
-      const align = (e: MouseEvent) => {
-        if (firstEnter) {
-          setX(e.clientX, e.clientX);
-          setY(e.clientY, e.clientY);
-          firstEnter = false;
-        } else {
-          setX(e.clientX);
-          setY(e.clientY);
-        }
+      const activateRow = (index: number) => {
+        if (index === activeIndex) return;
+        activeIndex = index;
+        rows.forEach((r, j) => {
+          const el = r as HTMLElement;
+          const img = r.querySelector('.service-hover-img') as HTMLElement;
+          if (j === index) {
+            el.classList.add('is-active');
+            if (img) gsap.to(img, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' });
+          } else {
+            el.classList.remove('is-active');
+            if (img) gsap.to(img, { autoAlpha: 0, duration: 0.3 });
+          }
+        });
       };
 
-      const startFollow = () => document.addEventListener('mousemove', align);
-      const stopFollow = () => document.removeEventListener('mousemove', align);
+      const deactivateAll = () => {
+        if (activeIndex === -1) return;
+        activeIndex = -1;
+        rows.forEach((r) => {
+          const el = r as HTMLElement;
+          const img = r.querySelector('.service-hover-img') as HTMLElement;
+          el.classList.remove('is-active');
+          if (img) gsap.to(img, { autoAlpha: 0, duration: 0.3 });
+        });
+      };
 
-      const fade = gsap.to(image, {
-        autoAlpha: 1,
-        ease: 'none',
-        paused: true,
-        duration: 0.15,
-        onReverseComplete: stopFollow,
-      });
+      // Use a single ScrollTrigger on the services list that checks which row
+      // is closest to the viewport center on every scroll tick
+      const servicesList = section.querySelector('.services-list') as HTMLElement;
 
-      // Scramble text on hover for service title
-      const title = row.querySelector('.service-title');
-      const titleOriginal = title?.textContent || '';
+      ScrollTrigger.create({
+        trigger: servicesList,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        onUpdate: () => {
+          const viewportCenter = window.innerHeight * 0.5;
+          let closestIndex = -1;
+          let closestDist = Infinity;
 
-      row.addEventListener('mouseenter', (e) => {
-        firstEnter = true;
-        fade.play();
-        startFollow();
-        align(e as MouseEvent);
-
-        if (title) {
-          gsap.to(title, {
-            duration: 0.5,
-            scrambleText: { text: titleOriginal, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
+          rows.forEach((row, i) => {
+            const rect = row.getBoundingClientRect();
+            const rowCenter = rect.top + rect.height / 2;
+            const dist = Math.abs(rowCenter - viewportCenter);
+            if (dist < closestDist) {
+              closestDist = dist;
+              closestIndex = i;
+            }
           });
-        }
-      });
 
-      row.addEventListener('mouseleave', () => fade.reverse());
-    });
+          // Only activate if closest row is within reasonable range of center
+          if (closestIndex >= 0 && closestDist < window.innerHeight * 0.3) {
+            activateRow(closestIndex);
+          } else {
+            deactivateAll();
+          }
+        },
+        onLeave: () => deactivateAll(),
+        onLeaveBack: () => deactivateAll(),
+      });
+    } else {
+      // Desktop: hover image follow cursor (CodePen PwqrzeG style)
+      gsap.set('.service-hover-img', { xPercent: -50, yPercent: -50 });
+
+      let firstEnter: boolean;
+
+      rows.forEach((row, i) => {
+        const image = row.querySelector('.service-hover-img') as HTMLElement;
+        if (!image) return;
+
+        const tilt = tilts[i % tilts.length];
+        gsap.set(image, { rotation: tilt });
+
+        const setX = gsap.quickTo(image, 'x', { duration: 0.4, ease: 'power3' });
+        const setY = gsap.quickTo(image, 'y', { duration: 0.4, ease: 'power3' });
+
+        const align = (e: MouseEvent) => {
+          if (firstEnter) {
+            setX(e.clientX, e.clientX);
+            setY(e.clientY, e.clientY);
+            firstEnter = false;
+          } else {
+            setX(e.clientX);
+            setY(e.clientY);
+          }
+        };
+
+        const startFollow = () => document.addEventListener('mousemove', align);
+        const stopFollow = () => document.removeEventListener('mousemove', align);
+
+        const fade = gsap.to(image, {
+          autoAlpha: 1,
+          ease: 'none',
+          paused: true,
+          duration: 0.15,
+          onReverseComplete: stopFollow,
+        });
+
+        // Scramble text on hover for service title
+        const title = row.querySelector('.service-title');
+        const titleOriginal = title?.textContent || '';
+
+        row.addEventListener('mouseenter', (e) => {
+          firstEnter = true;
+          fade.play();
+          startFollow();
+          align(e as MouseEvent);
+
+          if (title) {
+            gsap.to(title, {
+              duration: 0.5,
+              scrambleText: { text: titleOriginal, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
+            });
+          }
+        });
+
+        row.addEventListener('mouseleave', () => fade.reverse());
+      });
+    }
 
     // CTA entrance animation
     if (cta) {
@@ -358,6 +461,7 @@ const hoverImages = [
       const arrowD = arrowPath.getAttribute('d')!;
       const logoD = logoPath.getAttribute('d')!;
 
+      // Desktop: hover morph
       ctaLink.addEventListener('mouseenter', () => {
         gsap.to(logoPath, {
           morphSVG: arrowD,
@@ -373,6 +477,31 @@ const hoverImages = [
           ease: 'expo.inOut',
         });
       });
+
+      // Touch: scroll-triggered hover state when CTA is in viewport center
+      if (isTouch) {
+        ScrollTrigger.create({
+          trigger: ctaLink,
+          start: 'top 65%',
+          end: 'bottom 35%',
+          onEnter: () => {
+            ctaLink.classList.add('is-active');
+            gsap.to(logoPath, { morphSVG: arrowD, duration: 0.6, ease: 'expo.inOut' });
+          },
+          onLeave: () => {
+            ctaLink.classList.remove('is-active');
+            gsap.to(logoPath, { morphSVG: logoD, duration: 0.6, ease: 'expo.inOut' });
+          },
+          onEnterBack: () => {
+            ctaLink.classList.add('is-active');
+            gsap.to(logoPath, { morphSVG: arrowD, duration: 0.6, ease: 'expo.inOut' });
+          },
+          onLeaveBack: () => {
+            ctaLink.classList.remove('is-active');
+            gsap.to(logoPath, { morphSVG: logoD, duration: 0.6, ease: 'expo.inOut' });
+          },
+        });
+      }
     }
   }
 
