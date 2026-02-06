@@ -1,4 +1,16 @@
 ---
-// Redirect root to default locale
-return Astro.redirect('/en/');
+// If we can't run client-side JS (e.g. bots, curl), fall back to /en/
+const preferredLang = 'en';
 ---
+
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script is:inline>
+      var lang = localStorage.getItem('preferred-lang') || 'en';
+      window.location.replace('/' + lang + '/');
+    </script>
+    <meta http-equiv="refresh" content={`0;url=/${preferredLang}/`} />
+  </head>
+  <body></body>
+</html>

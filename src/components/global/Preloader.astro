@@ -5,48 +5,51 @@ const lang = getLangFromUrl(Astro.url);
 ---
 
 <div id="preloader" class="preloader">
-  <!-- Logo -->
-  <div class="preloader-logo">
-    <svg
-      width="80"
-      height="80"
-      viewBox="0 0 500 500"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <!-- Top-left bracket -->
-      <path
-        id="preloader-bracket-tl"
-        d="M100 400H0V1H400V100H100V400Z"
-        fill="var(--color-text)"
-      />
-      <!-- Bottom-right bracket -->
-      <path
-        id="preloader-bracket-br"
-        d="M400 100H500L500 499L100 499V400L400 400L400 100Z"
-        fill="var(--color-text)"
-      />
-    </svg>
-  </div>
+  <!-- Content layer (logo, lang picker, counter) -->
+  <div id="preloader-content" class="preloader-content">
+    <!-- Logo -->
+    <div class="preloader-logo">
+      <svg
+        width="80"
+        height="80"
+        viewBox="0 0 500 500"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <!-- Top-left bracket -->
+        <path
+          id="preloader-bracket-tl"
+          d="M100 400H0V1H400V100H100V400Z"
+          fill="var(--color-text)"
+        />
+        <!-- Bottom-right bracket -->
+        <path
+          id="preloader-bracket-br"
+          d="M400 100H500L500 499L100 499V400L400 400L400 100Z"
+          fill="var(--color-text)"
+        />
+      </svg>
+    </div>
 
-  <!-- Language picker -->
-  <div id="preloader-lang" class="preloader-lang">
-    <a
-      href="/en/"
-      class={`preloader-lang-option ${lang === 'en' ? 'is-active' : ''}`}
-      data-lang="en"
-    >EN</a>
-    <span class="preloader-lang-divider">/</span>
-    <a
-      href="/pl/"
-      class={`preloader-lang-option ${lang === 'pl' ? 'is-active' : ''}`}
-      data-lang="pl"
-    >PL</a>
-  </div>
+    <!-- Language picker -->
+    <div id="preloader-lang" class="preloader-lang">
+      <a
+        href="/en/"
+        class={`preloader-lang-option ${lang === 'en' ? 'is-active' : ''}`}
+        data-lang="en"
+      >EN</a>
+      <span class="preloader-lang-divider">/</span>
+      <a
+        href="/pl/"
+        class={`preloader-lang-option ${lang === 'pl' ? 'is-active' : ''}`}
+        data-lang="pl"
+      >PL</a>
+    </div>
 
-  <!-- Loading counter (hidden until language is chosen) -->
-  <div class="preloader-counter" id="preloader-counter" style="display: none;">
-    <span id="preloader-percent">0</span>%
+    <!-- Loading counter (hidden until language is chosen) -->
+    <div class="preloader-counter" id="preloader-counter" style="display: none;">
+      <span id="preloader-percent">0</span>%
+    </div>
   </div>
 
   <!-- Horizontal expanding line -->
@@ -55,89 +58,137 @@ const lang = getLangFromUrl(Astro.url);
     class="absolute left-1/2 top-1/2 h-px bg-[var(--color-text-ghost)] -translate-x-1/2"
     style="width: 0"
   ></div>
+
+  <!-- Split halves for center-out reveal -->
+  <div id="preloader-top" class="preloader-half preloader-half--top"></div>
+  <div id="preloader-bottom" class="preloader-half preloader-half--bottom"></div>
 </div>
 
 <script>
   import gsap from 'gsap';
 
-  function initPreloader() {
+  function runExitAnimation() {
     const preloader = document.getElementById('preloader');
+    const content = document.getElementById('preloader-content');
     const percentEl = document.getElementById('preloader-percent');
     const lineEl = document.getElementById('preloader-line');
     const bracketTL = document.getElementById('preloader-bracket-tl');
     const bracketBR = document.getElementById('preloader-bracket-br');
+    const topHalf = document.getElementById('preloader-top');
+    const bottomHalf = document.getElementById('preloader-bottom');
 
-    if (!preloader || !percentEl || !bracketTL || !bracketBR || !lineEl) return;
+    if (!preloader || !content || !percentEl || !bracketTL || !bracketBR || !lineEl || !topHalf || !bottomHalf) return;
 
-    // Start both brackets invisible (scaled down from their origin corner)
-    gsap.set(bracketTL, { opacity: 0, scale: 0.6, transformOrigin: '0% 0%' });
-    gsap.set(bracketBR, { opacity: 0, scale: 0.6, transformOrigin: '100% 100%' });
+    // Brackets start visible (already on screen from picker or entrance)
+    gsap.set(bracketTL, { opacity: 1, scale: 1 });
+    gsap.set(bracketBR, { opacity: 1, scale: 1 });
 
-    // Master timeline
-    const tl = gsap.timeline({
-      onComplete: () => {
-        preloader.classList.add('is-done');
+    const tl = gsap.timeline();
+
+    // 1. Count up percentage
+    tl.to(
+      { val: 0 },
+      {
+        val: 100,
+        duration: 1.2,
+        ease: 'power1.inOut',
+        onUpdate: function () {
+          percentEl.textContent = Math.round(this.targets()[0].val).toString();
+        },
       },
+    );
+
+    // 2. Expand line from center to full width
+    tl.to(lineEl, {
+      width: '100vw',
+      duration: 0.7,
+      ease: 'power2.inOut',
+    }, '-=0.3');
+
+    // 3. Fade out content (logo + counter)
+    tl.to(content, {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.in',
     });
 
-    // 1. Reveal the brackets (scale + fade in from their corners)
+    // 4. Remove preloader bg so page shows between the halves, then split
+    tl.set(preloader, { background: 'transparent' });
+
+    tl.to(topHalf, {
+      yPercent: -100,
+      duration: 0.8,
+      ease: 'power3.inOut',
+    });
+
+    tl.to(bottomHalf, {
+      yPercent: 100,
+      duration: 0.8,
+      ease: 'power3.inOut',
+    }, '<');
+
+    // Fade out the line with the split
+    tl.to(lineEl, {
+      opacity: 0,
+      duration: 0.3,
+    }, '<');
+
+    // 5. Clean up
+    tl.call(() => {
+      preloader.style.display = 'none';
+      document.body.style.overflow = '';
+      document.dispatchEvent(new CustomEvent('preloader:complete'));
+    });
+  }
+
+  function runEntranceAndExit() {
+    // Used after language navigation — animate the preloader IN, then OUT
+    const preloader = document.getElementById('preloader');
+    const content = document.getElementById('preloader-content');
+    const langPicker = document.getElementById('preloader-lang');
+    const counter = document.getElementById('preloader-counter');
+    const bracketTL = document.getElementById('preloader-bracket-tl');
+    const bracketBR = document.getElementById('preloader-bracket-br');
+
+    if (!preloader || !content || !bracketTL || !bracketBR) return;
+
+    // Hide lang picker, show counter
+    if (langPicker) langPicker.style.display = 'none';
+    if (counter) counter.style.display = '';
+
+    // Start with content invisible — animate it in
+    gsap.set(content, { opacity: 0 });
+    gsap.set(bracketTL, { opacity: 0, scale: 0.8, transformOrigin: '0% 0%' });
+    gsap.set(bracketBR, { opacity: 0, scale: 0.8, transformOrigin: '100% 100%' });
+
+    const tl = gsap.timeline();
+
+    // Entrance: fade in brackets
     tl.to(bracketTL, {
       opacity: 1,
       scale: 1,
-      duration: 0.8,
+      duration: 0.5,
       ease: 'power2.out',
     });
 
     tl.to(bracketBR, {
       opacity: 1,
       scale: 1,
-      duration: 0.8,
+      duration: 0.5,
       ease: 'power2.out',
-    }, '-=0.6');
-
-    // 2. Count up percentage (overlapping with bracket reveal)
-    tl.to(
-      { val: 0 },
-      {
-        val: 100,
-        duration: 1.5,
-        ease: 'power1.inOut',
-        onUpdate: function () {
-          percentEl.textContent = Math.round(this.targets()[0].val).toString();
-        },
-      },
-      0.2
-    );
-
-    // 3. Flash brackets to accent color
-    tl.to([bracketTL, bracketBR], {
-      fill: '#DA382E',
-      duration: 0.4,
-      ease: 'power2.in',
     }, '-=0.3');
 
-    // 4. Expand the line
-    tl.to(lineEl, {
-      width: '100vw',
-      duration: 0.6,
-      ease: 'power3.inOut',
-    }, '-=0.2');
+    // Fade in the counter
+    tl.to(content, {
+      opacity: 1,
+      duration: 0.3,
+      ease: 'power2.out',
+    }, '-=0.3');
 
-    // 5. Wipe away preloader
-    tl.to(preloader, {
-      clipPath: 'inset(0 0 100% 0)',
-      duration: 0.8,
-      ease: 'power3.inOut',
-    });
-
-    // 6. Clean up
+    // Then run the exit
     tl.call(() => {
-      preloader.style.display = 'none';
-      document.body.style.overflow = '';
-
-      // Trigger hero animations
-      document.dispatchEvent(new CustomEvent('preloader:complete'));
-    });
+      runExitAnimation();
+    }, undefined, '+=0.1');
   }
 
   function startAnimation() {
@@ -147,12 +198,22 @@ const lang = getLangFromUrl(Astro.url);
     if (langPicker) langPicker.style.display = 'none';
     if (counter) counter.style.display = '';
 
-    // Wait for fonts, but start after 3s max to avoid getting stuck
+    // Wait for fonts, then run exit animation
     const fontTimeout = new Promise(resolve => setTimeout(resolve, 3000));
     Promise.race([document.fonts.ready, fontTimeout]).then(() => {
-      initPreloader();
-      sessionStorage.setItem('preloaded', 'true');
-      sessionStorage.removeItem('lang-chosen');
+      runExitAnimation();
+      localStorage.setItem('preloaded', 'true');
+      localStorage.removeItem('lang-chosen');
+    });
+  }
+
+  function startEntranceAnimation() {
+    // Wait for fonts, then run entrance + exit
+    const fontTimeout = new Promise(resolve => setTimeout(resolve, 3000));
+    Promise.race([document.fonts.ready, fontTimeout]).then(() => {
+      runEntranceAndExit();
+      localStorage.setItem('preloaded', 'true');
+      localStorage.removeItem('lang-chosen');
     });
   }
 
@@ -167,40 +228,39 @@ const lang = getLangFromUrl(Astro.url);
       option.addEventListener('click', (e) => {
         const selectedLang = (option as HTMLElement).dataset.lang;
 
+        localStorage.setItem('preferred-lang', selectedLang!);
+
         if (selectedLang === currentLang) {
-          // Same language — start animation immediately
+          // Same language — start exit animation immediately
           e.preventDefault();
-          sessionStorage.setItem('lang-chosen', 'true');
+          localStorage.setItem('lang-chosen', 'true');
           startAnimation();
         } else {
           // Different language — set flag, let the link navigate
-          sessionStorage.setItem('lang-chosen', 'true');
+          localStorage.setItem('lang-chosen', 'true');
         }
       });
     });
   }
 
   function initPage() {
-    if (!sessionStorage.getItem('preloaded')) {
+    if (!localStorage.getItem('preloaded')) {
       document.body.style.overflow = 'hidden';
 
-      if (sessionStorage.getItem('lang-chosen')) {
-        // Language was already chosen (user switched locale) — auto-start animation
-        startAnimation();
+      if (localStorage.getItem('lang-chosen')) {
+        // Arrived after language switch — animate in, then out
+        startEntranceAnimation();
       } else {
         // First visit — show language picker and wait for selection
         setupLangPicker();
       }
     } else {
-      // Skip preloader on subsequent navigations
+      // Skip preloader on subsequent visits — hide it explicitly
+      // (the <head> inline script handles full page loads, but Astro view
+      // transitions swap the DOM so we must also hide it here)
       const preloader = document.getElementById('preloader');
-      if (preloader) {
-        preloader.style.display = 'none';
-      }
-      // Trigger hero animations immediately
-      requestAnimationFrame(() => {
-        document.dispatchEvent(new CustomEvent('preloader:complete'));
-      });
+      if (preloader) preloader.style.display = 'none';
+      document.dispatchEvent(new CustomEvent('preloader:complete'));
     }
   }
 

@@ -38,6 +38,16 @@ const {
     <!-- Unicorn Studio SDK -->
     <script is:inline src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js"></script>
 
+    <!-- Hide preloader instantly if user has already seen it -->
+    <script is:inline>
+      if (localStorage.getItem('preloaded')) {
+        document.documentElement.classList.add('preloader-done');
+      }
+    </script>
+    <style is:inline>
+      .preloader-done #preloader { display: none !important; }
+    </style>
+
     <!-- View Transitions -->
     <ClientRouter />
   </head>

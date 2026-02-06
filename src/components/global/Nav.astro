@@ -41,6 +41,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <a
       href={altUrl}
       class="nav-link text-mono-xs opacity-40 hover:opacity-100 transition-opacity"
+      data-lang-switch={altLang}
     >
       {altLang.toUpperCase()}
     </a>
@@ -86,7 +87,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   <a href={`/${lang}/#scope`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.nav.scope}</a>
   <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-md opacity-0 translate-y-8">{t.contact.cta}</a>
   <div class="flex items-center gap-6 mt-8 opacity-0 translate-y-8 mobile-menu-link">
-    <a href={altUrl} class="text-mono-sm opacity-60 hover:opacity-100 transition-opacity">
+    <a href={altUrl} class="text-mono-sm opacity-60 hover:opacity-100 transition-opacity" data-lang-switch={altLang}>
       {altLang.toUpperCase()}
     </a>
   </div>
@@ -185,6 +186,13 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
           document.body.style.overflow = '';
         }, 400);
       }
+    });
+
+    // Store language preference when switching via nav
+    document.querySelectorAll('[data-lang-switch]').forEach(link => {
+      link.addEventListener('click', () => {
+        localStorage.setItem('preferred-lang', (link as HTMLElement).dataset.langSwitch!);
+      });
     });
 
     // Close menu on link click
