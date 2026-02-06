@@ -146,8 +146,9 @@ const hoverImages = [
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
   function initServices() {
     const section = document.getElementById('services');
@@ -239,11 +240,22 @@ const hoverImages = [
         onReverseComplete: stopFollow,
       });
 
+      // Scramble text on hover for service title
+      const title = row.querySelector('.service-title');
+      const titleOriginal = title?.textContent || '';
+
       row.addEventListener('mouseenter', (e) => {
         firstEnter = true;
         fade.play();
         startFollow();
         align(e as MouseEvent);
+
+        if (title) {
+          gsap.to(title, {
+            duration: 0.5,
+            scrambleText: { text: titleOriginal, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
+          });
+        }
       });
 
       row.addEventListener('mouseleave', () => fade.reverse());

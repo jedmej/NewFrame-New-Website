@@ -95,8 +95,9 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
   function initNav() {
     const nav = document.getElementById('main-nav');
@@ -104,6 +105,17 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
     // Entrance animation on page load
     gsap.to(nav, { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.3 });
+
+    // Scramble text on hover for nav links
+    nav.querySelectorAll('.nav-link, .nav-cta span').forEach((el) => {
+      const original = el.textContent || '';
+      el.addEventListener('mouseenter', () => {
+        gsap.to(el, {
+          duration: 0.5,
+          scrambleText: { text: original, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
+        });
+      });
+    });
 
     // Glass effect on scroll (no hide/show)
     ScrollTrigger.create({

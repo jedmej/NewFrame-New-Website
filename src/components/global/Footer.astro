@@ -79,25 +79,25 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
             <li>
               <a href={`/${lang}/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                Home
+                <span class="scramble-target">Home</span>
               </a>
             </li>
             <li>
               <a href={`/${lang}/work`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                {t.nav.work}
+                <span class="scramble-target">{t.nav.work}</span>
               </a>
             </li>
             <li>
               <a href={`/${lang}/#about`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                {t.nav.about || 'About'}
+                <span class="scramble-target">{t.nav.about || 'About'}</span>
               </a>
             </li>
             <li>
               <a href={`/${lang}/#contact`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                {t.nav.contact}
+                <span class="scramble-target">{t.nav.contact}</span>
               </a>
             </li>
           </ul>
@@ -113,7 +113,7 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
               <li>
                 <a href="#" class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group" target="_blank" rel="noopener">
                   <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                  {social}
+                  <span class="scramble-target">{social}</span>
                   <svg class="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity duration-300 -translate-y-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" /></svg>
                 </a>
               </li>
@@ -194,8 +194,9 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
+  import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-  gsap.registerPlugin(SplitText, ScrollTrigger, MorphSVGPlugin);
+  gsap.registerPlugin(SplitText, ScrollTrigger, MorphSVGPlugin, ScrambleTextPlugin);
 
   function initFooter() {
     // Back to top — use Lenis if available
@@ -261,6 +262,19 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
         }
       );
     }
+
+    // Scramble text on hover for footer links
+    document.querySelectorAll('.footer-link').forEach((link) => {
+      const target = link.querySelector('.scramble-target');
+      if (!target) return;
+      const original = target.textContent || '';
+      link.addEventListener('mouseenter', () => {
+        gsap.to(target, {
+          duration: 0.5,
+          scrambleText: { text: original, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
+        });
+      });
+    });
   }
 
   initFooter();
