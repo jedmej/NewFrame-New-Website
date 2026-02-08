@@ -11,6 +11,7 @@ export const translations = {
       scope: 'Scope',
       work: 'Work',
       about: 'About',
+      services: 'Capabilities',
       contact: 'Contact',
       available: 'Available',
     },
@@ -26,21 +27,38 @@ export const translations = {
       manifesto: `Hey! I'm Jed, the founder of NEWFRAME — and I help businesses look as good as they perform. Working remotely with startups and small businesses worldwide, I design websites that aren't just beautiful — they're strategic, intentional, and built to convert. From brand identity to full web experiences, every pixel is placed with purpose. I don't do cookie-cutter. I do extraordinary.`,
       manifestoHighlights: ['NEWFRAME', 'beautiful', 'strategic', 'intentional', 'convert', 'extraordinary'],
       body: `I'm a designer who believes in craft over templates. Every project begins with understanding your business, your audience, and the story you want to tell. From there, I design brands and digital experiences that feel considered down to the last detail.`,
-      links: [
-        { label: 'About Me', href: '#scope' },
-        { label: 'My Process', href: '#services' },
-      ],
       founder: 'JED MEJZNER',
       role: 'FOUNDER',
     },
     services: {
       label: 'CAPABILITIES',
-      items: [
-        { num: '01', title: 'Web Design', desc: 'Custom websites that convert visitors into loyal customers.' },
-        { num: '02', title: 'UX/UI Design', desc: 'User-first interfaces that feel intuitive and look stunning.' },
-        { num: '03', title: 'Animation', desc: 'Motion that tells stories and guides the eye.' },
-        { num: '04', title: 'Art Direction', desc: 'Cohesive visual strategy across every touchpoint.' },
-        { num: '05', title: 'Brand Identity', desc: 'Logos, colors, and guidelines that make you unforgettable.' },
+      groups: [
+        {
+          category: 'Strategy',
+          items: [
+            { title: 'Digital Strategy' },
+            { title: 'Content Strategy' },
+            { title: 'User Experience' },
+            { title: 'Copywriting' },
+          ],
+        },
+        {
+          category: 'Design',
+          items: [
+            { title: 'Art Direction' },
+            { title: 'Web Design' },
+            { title: 'Brand Identity' },
+            { title: 'Design System' },
+          ],
+        },
+        {
+          category: 'Development',
+          items: [
+            { title: 'Web Development' },
+            { title: 'E-commerce' },
+            { title: 'Hosting' },
+          ],
+        },
       ],
       cta: 'Start a project',
       ctaRight: "Let's talk",
@@ -98,6 +116,7 @@ export const translations = {
       scope: 'Zakres',
       work: 'Projekty',
       about: 'O mnie',
+      services: 'Możliwości',
       contact: 'Kontakt',
       available: 'Dostępny',
     },
@@ -113,21 +132,38 @@ export const translations = {
       manifesto: `Cześć! Jestem Jed, założyciel NEWFRAME — pomagam firmom wyglądać tak dobrze, jak działają. Pracując zdalnie ze startupami i małymi firmami na całym świecie, projektuję strony, które nie są tylko piękne — są strategiczne, celowe i stworzone do konwersji. Od identyfikacji marki po pełne doświadczenia webowe, każdy piksel jest umieszczony z celem. Nie robię szablonów. Robię niezwykłe rzeczy.`,
       manifestoHighlights: ['NEWFRAME', 'piękne', 'strategiczne', 'celowe', 'konwersji', 'niezwykłe'],
       body: `Jestem projektantem, który wierzy w rzemiosło ponad szablony. Każdy projekt zaczyna się od zrozumienia Twojego biznesu, odbiorców i historii, którą chcesz opowiedzieć. Na tej podstawie projektuję marki i cyfrowe doświadczenia, które są przemyślane do ostatniego szczegółu.`,
-      links: [
-        { label: 'O Mnie', href: '#scope' },
-        { label: 'Mój Proces', href: '#services' },
-      ],
       founder: 'JED MEJZNER',
       role: 'ZAŁOŻYCIEL',
     },
     services: {
       label: 'MOŻLIWOŚCI',
-      items: [
-        { num: '01', title: 'Web Design', desc: 'Indywidualne strony, które zamieniają odwiedzających w lojalnych klientów.' },
-        { num: '02', title: 'UX/UI Design', desc: 'Interfejsy zorientowane na użytkownika, intuicyjne i oszałamiające.' },
-        { num: '03', title: 'Animacja', desc: 'Ruch, który opowiada historie i prowadzi wzrok.' },
-        { num: '04', title: 'Art Direction', desc: 'Spójna strategia wizualna w każdym punkcie styku.' },
-        { num: '05', title: 'Identyfikacja marki', desc: 'Loga, kolory i wytyczne, które czynią Cię niezapomnianym.' },
+      groups: [
+        {
+          category: 'Strategia',
+          items: [
+            { title: 'Strategia cyfrowa' },
+            { title: 'Strategia treści' },
+            { title: 'User Experience' },
+            { title: 'Copywriting' },
+          ],
+        },
+        {
+          category: 'Projektowanie',
+          items: [
+            { title: 'Art Direction' },
+            { title: 'Web Design' },
+            { title: 'Identyfikacja marki' },
+            { title: 'Design System' },
+          ],
+        },
+        {
+          category: 'Development',
+          items: [
+            { title: 'Web Development' },
+            { title: 'E-commerce' },
+            { title: 'Hosting' },
+          ],
+        },
       ],
       cta: 'Rozpocznij projekt',
       ctaRight: 'Porozmawiajmy',

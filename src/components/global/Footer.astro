@@ -14,7 +14,7 @@ const email = 'jed.mejzner@gmail.com';
 const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  ✦  STRATEGY  ✦  ';
 ---
 
-<footer class="relative z-50" style="color: #ffffff;">
+<footer id="contact" class="relative z-50" style="color: #ffffff;">
 
   <!-- ===== 1. Giant CTA Block ===== -->
   <div style="background-color: #DA382E;">
@@ -76,15 +76,21 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
               </a>
             </li>
             <li>
-              <a href={`/${lang}/work`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+              <a href={`/${lang}/#work`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
                 <span class="scramble-target">{t.nav.work}</span>
               </a>
             </li>
             <li>
-              <a href={`/${lang}/#about`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+              <a href={`/${lang}/#scope`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.nav.about || 'About'}</span>
+                <span class="scramble-target">{t.nav.scope}</span>
+              </a>
+            </li>
+            <li>
+              <a href={`/${lang}/#services`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
+                <span class="scramble-target">{t.nav.services}</span>
               </a>
             </li>
             <li>

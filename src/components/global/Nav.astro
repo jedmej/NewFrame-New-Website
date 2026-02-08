@@ -32,28 +32,36 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
   <!-- Center: Desktop Nav Links -->
   <div class="hidden md:flex items-center gap-10">
-    <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
+    <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
       {t.nav.work}
     </a>
-    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 transition-opacity">
+    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
       {t.nav.scope}
     </a>
-    <a
-      href={altUrl}
-      class="nav-link text-mono-xs opacity-40 hover:opacity-100 transition-opacity"
-      data-lang-switch={altLang}
-    >
-      {altLang.toUpperCase()}
+    <a href={`/${lang}/#services`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+      {t.nav.services}
+    </a>
+    <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+      {t.nav.contact}
     </a>
   </div>
 
   <!-- Right: CTA + Mobile Menu -->
   <div class="flex items-center justify-end gap-4">
     <!-- Availability Dot + Clock -->
-    <div class="hidden md:flex items-center gap-2 mr-2">
+    <div class="hidden md:flex items-center gap-2 mr-4">
       <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
       <span id="nav-clock" class="text-mono-xs opacity-30">--:-- CET</span>
     </div>
+
+    <!-- Language Selector -->
+    <a
+      href={altUrl}
+      class="nav-link hidden md:inline-flex text-mono-xs opacity-40 hover:opacity-100 transition-opacity mr-2"
+      data-lang-switch={altLang}
+    >
+      {altLang.toUpperCase()}
+    </a>
 
     <!-- Let's Talk CTA -->
     <a
@@ -86,7 +94,8 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   <div class="flex flex-col items-end gap-2">
     <a href={`/${lang}/#work`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.work}</a>
     <a href={`/${lang}/#scope`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.scope}</a>
-    <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.contact.cta}</a>
+    <a href={`/${lang}/#services`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.services}</a>
+    <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.contact}</a>
   </div>
   <div class="flex items-center gap-6 mt-10 opacity-0 translate-y-8 mobile-menu-link">
     <a href={altUrl} class="text-mono-sm opacity-60 hover:opacity-100 transition-opacity" data-lang-switch={altLang}>

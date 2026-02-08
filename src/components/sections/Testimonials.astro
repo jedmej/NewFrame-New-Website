@@ -51,7 +51,7 @@ const totalStr = String(items.length).padStart(2, '0');
       <div class="relative w-full px-6 md:px-10 max-w-[1100px] mx-auto z-10 testimonial-panels-container">
         {items.map((item, i) => (
           <div
-            class="testimonial-panel absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center"
+            class="testimonial-panel absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center px-6 md:px-10"
             data-panel-index={i}
             data-highlights={JSON.stringify(item.highlights)}
             style={i === 0
