@@ -34,11 +34,19 @@ const { title, description, lang } = Astro.props;
 
     gsap.registerPlugin(ScrollTrigger);
 
+    let tickerCallback: ((time: number) => void) | null = null;
+
     function initSmoothScroll() {
       // Destroy previous instance to prevent memory leak
       if ((window as any).lenis) {
         (window as any).lenis.destroy();
         (window as any).lenis = null;
+      }
+
+      // Remove previous ticker callback
+      if (tickerCallback) {
+        gsap.ticker.remove(tickerCallback);
+        tickerCallback = null;
       }
 
       if (window.innerWidth < 1024) return;
@@ -50,9 +58,10 @@ const { title, description, lang } = Astro.props;
       // Bridge Lenis to GSAP ScrollTrigger
       lenis.on('scroll', ScrollTrigger.update);
 
-      gsap.ticker.add((time) => {
+      tickerCallback = (time: number) => {
         lenis.raf(time * 1000);
-      });
+      };
+      gsap.ticker.add(tickerCallback);
 
       gsap.ticker.lagSmoothing(0);
 
@@ -63,6 +72,4 @@ const { title, description, lang } = Astro.props;
     initSmoothScroll();
     document.addEventListener('astro:after-swap', initSmoothScroll);
   </script>
-
-  <!-- Each section owns its own background color for reliable rendering -->
 </Base>

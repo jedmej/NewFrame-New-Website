@@ -246,9 +246,18 @@ const t = useTranslations(lang);
 
   gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, MorphSVGPlugin);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initServices() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const section = document.getElementById('services');
     if (!section) return;
+
+    const ac = new AbortController();
+    const { signal } = ac;
+    const scrollTriggers: ScrollTrigger[] = [];
 
     const rows = section.querySelectorAll('.service-row');
     const allLineFills = section.querySelectorAll('.service-line-fill');
@@ -258,11 +267,12 @@ const t = useTranslations(lang);
       allLineFills.forEach((line) => {
         (line as HTMLElement).style.transform = 'scaleX(1)';
       });
+      cleanupFn = () => ac.abort();
       return;
     }
 
     // Lines draw in
-    gsap.to(allLineFills, {
+    const linesTween = gsap.to(allLineFills, {
       scaleX: 1,
       duration: 1,
       stagger: 0.08,
@@ -273,13 +283,14 @@ const t = useTranslations(lang);
         once: true,
       },
     });
+    if (linesTween.scrollTrigger) scrollTriggers.push(linesTween.scrollTrigger);
 
     // Rows stagger in
     rows.forEach((row, i) => {
       const inner = row.querySelector('.service-row-inner');
       if (!inner) return;
 
-      gsap.fromTo(
+      const tween = gsap.fromTo(
         inner,
         { opacity: 0, y: 20 },
         {
@@ -295,12 +306,13 @@ const t = useTranslations(lang);
           },
         },
       );
+      if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     });
 
     // Category headings fade in
     const categories = section.querySelectorAll('.service-category');
     categories.forEach((cat, i) => {
-      gsap.fromTo(
+      const tween = gsap.fromTo(
         cat,
         { opacity: 0, y: 30 },
         {
@@ -316,6 +328,7 @@ const t = useTranslations(lang);
           },
         },
       );
+      if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     });
 
     const isTouch = window.matchMedia('(hover: none)').matches || window.innerWidth < 768;
@@ -347,7 +360,7 @@ const t = useTranslations(lang);
 
       const servicesList = section.querySelector('.services-list') as HTMLElement;
 
-      ScrollTrigger.create({
+      scrollTriggers.push(ScrollTrigger.create({
         trigger: servicesList,
         start: 'top 80%',
         end: 'bottom 20%',
@@ -374,7 +387,7 @@ const t = useTranslations(lang);
         },
         onLeave: () => deactivateAll(),
         onLeaveBack: () => deactivateAll(),
-      });
+      }));
     } else {
       // Desktop: scramble text on hover
       rows.forEach((row) => {
@@ -388,7 +401,7 @@ const t = useTranslations(lang);
               scrambleText: { text: titleOriginal, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
             });
           }
-        });
+        }, { signal });
       });
     }
 
@@ -404,6 +417,7 @@ const t = useTranslations(lang);
           once: true,
         },
       });
+      if (ctaTl.scrollTrigger) scrollTriggers.push(ctaTl.scrollTrigger);
 
       ctaTl
         .fromTo(ctaTexts[0], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
@@ -427,7 +441,7 @@ const t = useTranslations(lang);
           duration: 0.6,
           ease: 'expo.inOut',
         });
-      });
+      }, { signal });
 
       ctaLink.addEventListener('mouseleave', () => {
         gsap.to(logoPath, {
@@ -435,11 +449,11 @@ const t = useTranslations(lang);
           duration: 0.6,
           ease: 'expo.inOut',
         });
-      });
+      }, { signal });
 
       // Touch: scroll-triggered hover state when CTA is in viewport center
       if (isTouch) {
-        ScrollTrigger.create({
+        scrollTriggers.push(ScrollTrigger.create({
           trigger: ctaLink,
           start: 'top 65%',
           end: 'bottom 35%',
@@ -459,9 +473,14 @@ const t = useTranslations(lang);
             ctaLink.classList.remove('is-active');
             gsap.to(logoPath, { morphSVG: logoD, duration: 0.6, ease: 'expo.inOut' });
           },
-        });
+        }));
       }
     }
+
+    cleanupFn = () => {
+      ac.abort();
+      scrollTriggers.forEach((st) => st.kill());
+    };
   }
 
   initServices();

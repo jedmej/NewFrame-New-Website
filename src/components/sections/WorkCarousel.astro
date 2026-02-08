@@ -68,28 +68,36 @@ const projects = allProjects.map((p) => ({
 </section>
 
 <script>
-  import * as THREE from 'three';
+  import { Scene, PerspectiveCamera, WebGLRenderer, TextureLoader, PlaneGeometry, MeshBasicMaterial, Mesh, Raycaster, Vector2, SRGBColorSpace, DoubleSide } from 'three';
+  import type { Mesh as MeshType } from 'three';
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
   gsap.registerPlugin(ScrollTrigger);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initCarousel() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const canvas = document.getElementById('carousel-canvas') as HTMLCanvasElement;
     const nameText = document.getElementById('project-name-text');
     const counterEl = document.getElementById('work-counter');
     if (!canvas) return;
 
+    const ac = new AbortController();
+    const { signal } = ac;
+
     const projects = JSON.parse(canvas.dataset.projects || '[]');
-    const lang = canvas.dataset.lang || 'en';
     const isMobile = window.innerWidth < 768;
 
     // Scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
     camera.position.set(0, 0, 5);
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       canvas,
       alpha: true,
       antialias: !isMobile,
@@ -99,27 +107,27 @@ const projects = allProjects.map((p) => ({
     const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2);
     renderer.setPixelRatio(dpr);
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.outputColorSpace = SRGBColorSpace;
 
     // Load textures
-    const textureLoader = new THREE.TextureLoader();
-    const meshes: THREE.Mesh[] = [];
+    const textureLoader = new TextureLoader();
+    const meshes: MeshType[] = [];
     const cardWidth = isMobile ? 2.8 : 3.5;
     const cardHeight = isMobile ? 3.8 : 4.5;
     const radius = isMobile ? 4 : 5.5;
     const projectCount = projects.length;
 
     projects.forEach((project: any, i: number) => {
-      const geometry = new THREE.PlaneGeometry(cardWidth, cardHeight, 1, 1);
+      const geometry = new PlaneGeometry(cardWidth, cardHeight, 1, 1);
 
-      const material = new THREE.MeshBasicMaterial({
+      const material = new MeshBasicMaterial({
         color: 0x333333,
-        side: THREE.DoubleSide,
+        side: DoubleSide,
       });
 
       // Load texture asynchronously
       textureLoader.load(project.image, (texture) => {
-        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.colorSpace = SRGBColorSpace;
 
         // Calculate UV scaling for cover behavior
         const imgAspect = texture.image.width / texture.image.height;
@@ -139,7 +147,7 @@ const projects = allProjects.map((p) => ({
         material.needsUpdate = true;
       });
 
-      const mesh = new THREE.Mesh(geometry, material);
+      const mesh = new Mesh(geometry, material);
 
       // Position in a spiral/tornado arrangement
       const angle = (i / projectCount) * Math.PI * 2;
@@ -160,7 +168,7 @@ const projects = allProjects.map((p) => ({
     let currentRotation = 0;
     let currentProjectIndex = 0;
 
-    ScrollTrigger.create({
+    const scrollTriggerInstance = ScrollTrigger.create({
       trigger: '#carousel-section',
       start: 'top top',
       end: 'bottom bottom',
@@ -193,12 +201,12 @@ const projects = allProjects.map((p) => ({
       const rect = canvas.getBoundingClientRect();
       mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    });
+    }, { signal });
 
     // Hover detection
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
-    let hoveredMesh: THREE.Mesh | null = null;
+    const raycaster = new Raycaster();
+    const pointer = new Vector2();
+    let hoveredMesh: MeshType | null = null;
 
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
@@ -209,7 +217,7 @@ const projects = allProjects.map((p) => ({
       const intersects = raycaster.intersectObjects(meshes);
 
       if (intersects.length > 0) {
-        const mesh = intersects[0].object as THREE.Mesh;
+        const mesh = intersects[0].object as MeshType;
         if (hoveredMesh !== mesh) {
           // Reset previous
           if (hoveredMesh) {
@@ -226,7 +234,7 @@ const projects = allProjects.map((p) => ({
           canvas.style.cursor = 'default';
         }
       }
-    });
+    }, { signal });
 
     // Click to navigate to external site
     canvas.addEventListener('click', () => {
@@ -236,23 +244,27 @@ const projects = allProjects.map((p) => ({
           window.open(project.url, '_blank', 'noopener');
         }
       }
-    });
+    }, { signal });
 
     // Render loop
+    let destroyed = false;
     let running = true;
     const fps = isMobile ? 30 : 60;
     const interval = 1000 / fps;
     let lastTime = 0;
+    let rafId: number;
 
     function animate(time: number) {
+      if (destroyed) return;
+
       if (!running) {
-        requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
         return;
       }
 
       const delta = time - lastTime;
       if (delta < interval) {
-        requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
         return;
       }
       lastTime = time - (delta % interval);
@@ -273,7 +285,7 @@ const projects = allProjects.map((p) => ({
         const normalizedDepth = Math.max(0, Math.min(1, -depth / (2 * radius)));
         const focusFalloff = 1 - normalizedDepth * normalizedDepth;
 
-        const mat = mesh.material as THREE.MeshBasicMaterial;
+        const mat = mesh.material as MeshBasicMaterial;
         mat.opacity = 0.15 + focusFalloff * 0.85;
         mat.transparent = true;
 
@@ -289,7 +301,7 @@ const projects = allProjects.map((p) => ({
       });
 
       renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     }
 
     // Visibility observer
@@ -299,7 +311,7 @@ const projects = allProjects.map((p) => ({
     );
     observer.observe(canvas);
 
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
 
     // Resize handler
     const handleResize = () => {
@@ -312,7 +324,28 @@ const projects = allProjects.map((p) => ({
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(handleResize, 200);
-    });
+    }, { signal });
+
+    // Cleanup function for view transitions
+    cleanupFn = () => {
+      destroyed = true;
+      cancelAnimationFrame(rafId);
+      clearTimeout(resizeTimeout);
+      ac.abort();
+      observer.disconnect();
+      scrollTriggerInstance.kill();
+
+      // Dispose Three.js resources
+      meshes.forEach((mesh) => {
+        mesh.geometry.dispose();
+        const mat = mesh.material as MeshBasicMaterial;
+        mat.map?.dispose();
+        mat.dispose();
+      });
+      scene.clear();
+      renderer.dispose();
+      renderer.forceContextLoss();
+    };
   }
 
   initCarousel();

@@ -1,4 +1,4 @@
-export const languages = {
+const languages = {
   en: 'English',
   pl: 'Polski',
 } as const;
@@ -73,21 +73,21 @@ export const translations = {
           highlights: ['game-changer', 'outstanding', 'exceeded'],
           name: 'Sarah K.',
           role: 'FOUNDER, STARTUP CO.',
-          initials: 'SK',
+
         },
         {
           quote: 'Exceptional design work. Jed understood our brand perfectly and delivered a website that truly represents who we are. The results speak for themselves.',
           highlights: ['Exceptional', 'perfectly', 'results'],
           name: 'Michael R.',
           role: 'CEO, TECH VENTURES',
-          initials: 'MR',
+
         },
         {
           quote: 'Jed transformed our online presence completely. Professional, creative, and incredibly easy to work with. Highly recommend for any business.',
           highlights: ['transformed', 'creative', 'recommend'],
           name: 'Amanda L.',
           role: 'DIRECTOR, CREATIVE AGENCY',
-          initials: 'AL',
+
         },
       ],
     },
@@ -171,21 +171,21 @@ export const translations = {
           highlights: ['zmieniła', 'wyjątkową', 'przekroczyły'],
           name: 'Sarah K.',
           role: 'ZAŁOŻYCIELKA, STARTUP CO.',
-          initials: 'SK',
+
         },
         {
           quote: 'Wyjątkowa praca projektowa. Jed doskonale zrozumiał naszą markę i dostarczył stronę, która naprawdę reprezentuje to, kim jesteśmy.',
           highlights: ['Wyjątkowa', 'doskonale', 'naprawdę'],
           name: 'Michael R.',
           role: 'CEO, TECH VENTURES',
-          initials: 'MR',
+
         },
         {
           quote: 'Jed całkowicie odmienił naszą obecność w sieci. Profesjonalny, kreatywny i niesamowicie łatwy we współpracy. Gorąco polecam.',
           highlights: ['odmienił', 'kreatywny', 'polecam'],
           name: 'Amanda L.',
           role: 'DYREKTOR, AGENCJA KREATYWNA',
-          initials: 'AL',
+
         },
       ],
     },

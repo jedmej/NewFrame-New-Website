@@ -162,7 +162,12 @@ const totalStr = String(items.length).padStart(2, '0');
 
   gsap.registerPlugin(SplitText, ScrollTrigger);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initTestimonials() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const section = document.getElementById('testimonials');
     if (!section) return;
 
@@ -173,6 +178,7 @@ const totalStr = String(items.length).padStart(2, '0');
     const bgNumberSpan = bgNumberEl?.querySelector('span');
     const dots = section.querySelectorAll('.testimonial-dot');
     const totalPanels = panels.length;
+    const scrollTriggers: ScrollTrigger[] = [];
 
     if (totalPanels === 0) return;
 
@@ -213,11 +219,8 @@ const totalStr = String(items.length).padStart(2, '0');
       splits.push(split);
     });
 
-    // Track current active panel
-    let currentPanel = 0;
-
     // ===== MAIN SCROLL TRIGGER =====
-    ScrollTrigger.create({
+    scrollTriggers.push(ScrollTrigger.create({
       trigger: section,
       start: 'top top',
       end: 'bottom bottom',
@@ -361,11 +364,11 @@ const totalStr = String(items.length).padStart(2, '0');
           }
         });
       },
-    });
+    }));
 
     // ===== BACKGROUND NUMBER PARALLAX =====
     if (bgNumberEl && !prefersReducedMotion) {
-      gsap.to(bgNumberEl, {
+      const parallaxTween = gsap.to(bgNumberEl, {
         y: -60,
         scrollTrigger: {
           trigger: section,
@@ -374,7 +377,13 @@ const totalStr = String(items.length).padStart(2, '0');
           scrub: 1,
         },
       });
+      if (parallaxTween.scrollTrigger) scrollTriggers.push(parallaxTween.scrollTrigger);
     }
+
+    cleanupFn = () => {
+      scrollTriggers.forEach((st) => st.kill());
+      splits.forEach((split) => split.revert());
+    };
   }
 
   initTestimonials();

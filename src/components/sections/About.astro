@@ -93,13 +93,19 @@ const t = useTranslations(lang);
 
   gsap.registerPlugin(SplitText, ScrollTrigger);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initAbout() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const section = document.getElementById('scope');
     const textEl = document.getElementById('manifesto-text');
     const imageBlock = document.getElementById('about-image-block');
     const bodyEl = document.getElementById('about-body');
     if (!textEl || !section) return;
 
+    const scrollTriggers: ScrollTrigger[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
 
@@ -123,7 +129,7 @@ const t = useTranslations(lang);
 
     if (!prefersReducedMotion) {
       // Word reveal on scroll
-      gsap.to(split.words, {
+      const wordTween = gsap.to(split.words, {
         opacity: 1,
         stagger: 0.02,
         ease: 'none',
@@ -142,10 +148,11 @@ const t = useTranslations(lang);
           },
         },
       });
+      if (wordTween.scrollTrigger) scrollTriggers.push(wordTween.scrollTrigger);
 
       // Image block parallax — slightly different rate than text for organic feel
       if (imageBlock) {
-        gsap.fromTo(imageBlock,
+        const imgTween = gsap.fromTo(imageBlock,
           { y: 50 },
           {
             y: -40,
@@ -157,11 +164,12 @@ const t = useTranslations(lang);
             },
           }
         );
+        if (imgTween.scrollTrigger) scrollTriggers.push(imgTween.scrollTrigger);
       }
 
       // Body text reveal
       if (bodyEl) {
-        gsap.fromTo(bodyEl,
+        const bodyTween = gsap.fromTo(bodyEl,
           { opacity: 0, y: 20 },
           {
             opacity: 1,
@@ -175,6 +183,7 @@ const t = useTranslations(lang);
             },
           }
         );
+        if (bodyTween.scrollTrigger) scrollTriggers.push(bodyTween.scrollTrigger);
       }
 
     } else {
@@ -185,6 +194,11 @@ const t = useTranslations(lang);
       });
     }
 
+    cleanupFn = () => {
+      scrollTriggers.forEach((st) => st.kill());
+      split.revert();
+      destroyUnicorn();
+    };
   }
 
   // ===== Unicorn Studio WebGL scene =====
@@ -221,7 +235,6 @@ const t = useTranslations(lang);
   initUnicorn();
 
   document.addEventListener('astro:after-swap', () => {
-    destroyUnicorn();
     initAbout();
     initUnicorn();
   });

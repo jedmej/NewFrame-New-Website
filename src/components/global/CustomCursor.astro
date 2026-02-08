@@ -8,7 +8,12 @@
 </div>
 
 <script>
+  let cleanupFn: (() => void) | null = null;
+
   function initCursor() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch || window.innerWidth < 1024) return;
 
@@ -17,12 +22,17 @@
     const label = document.getElementById('cursor-label');
     if (!dot || !circle || !label) return;
 
+    const ac = new AbortController();
+    const { signal } = ac;
+
     let mouseX = 0;
     let mouseY = 0;
     let dotX = 0;
     let dotY = 0;
     let circleX = 0;
     let circleY = 0;
+    let destroyed = false;
+    let rafId: number;
 
     // Hide default cursor
     document.body.style.cursor = 'none';
@@ -30,9 +40,11 @@
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-    });
+    }, { signal });
 
     function animate() {
+      if (destroyed) return;
+
       // Dot follows immediately with slight smoothing
       dotX += (mouseX - dotX) * 0.2;
       dotY += (mouseY - dotY) * 0.2;
@@ -46,9 +58,9 @@
       // Label follows circle
       label.style.transform = `translate(${circleX + 24}px, ${circleY - 6}px)`;
 
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     }
-    animate();
+    rafId = requestAnimationFrame(animate);
 
     // Handle hover states
     const interactiveElements = document.querySelectorAll('a, button, [data-cursor]');
@@ -61,18 +73,25 @@
           label.textContent = cursorType;
           label.style.opacity = '1';
         }
-      });
+      }, { signal });
       el.addEventListener('mouseleave', () => {
         circle.classList.remove('is-hovering');
         label.style.opacity = '0';
         label.textContent = '';
-      });
+      }, { signal });
     });
 
     // Confetti on click
     document.addEventListener('click', (e) => {
       createConfetti(e.clientX, e.clientY);
-    });
+    }, { signal });
+
+    cleanupFn = () => {
+      destroyed = true;
+      cancelAnimationFrame(rafId);
+      ac.abort();
+      document.body.style.cursor = '';
+    };
   }
 
   function createConfetti(x: number, y: number) {

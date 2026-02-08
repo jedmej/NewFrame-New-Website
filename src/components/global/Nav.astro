@@ -118,9 +118,18 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
   gsap.registerPlugin(ScrambleTextPlugin);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initNav() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const nav = document.getElementById('main-nav');
     if (!nav) return;
+
+    const ac = new AbortController();
+    const { signal } = ac;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
 
     // Entrance animation on page load
     gsap.to(nav, { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.3 });
@@ -133,7 +142,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
           duration: 0.5,
           scrambleText: { text: original, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
         });
-      });
+      }, { signal });
     });
 
     // Animate CTA arrow: rotate to point right on hover
@@ -142,10 +151,10 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     if (ctaLink && ctaArrow) {
       ctaLink.addEventListener('mouseenter', () => {
         gsap.to(ctaArrow, { rotation: 45, duration: 0.3, ease: 'power2.out' });
-      });
+      }, { signal });
       ctaLink.addEventListener('mouseleave', () => {
         gsap.to(ctaArrow, { rotation: 0, duration: 0.3, ease: 'power2.out' });
-      });
+      }, { signal });
     }
 
     // Logo hover: text slides up, SVG slides in from bottom
@@ -175,7 +184,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
             },
             '>-0.05'
           );
-      });
+      }, { signal });
 
       logoLink.addEventListener('mouseleave', () => {
         if (logoTl) logoTl.kill();
@@ -192,7 +201,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
             duration: 0.3,
             ease: 'power3.out',
           }, '>-0.05');
-      });
+      }, { signal });
     }
 
     // Clock
@@ -208,7 +217,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
         clockEl.textContent = `${timeStr} CET`;
       };
       updateClock();
-      setInterval(updateClock, 60000);
+      intervalId = setInterval(updateClock, 60000);
     }
 
     // Mobile menu
@@ -250,21 +259,26 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
           document.body.style.overflow = '';
         }, 400);
       }
-    });
+    }, { signal });
 
     // Store language preference when switching via nav
     document.querySelectorAll('[data-lang-switch]').forEach(link => {
       link.addEventListener('click', () => {
         localStorage.setItem('preferred-lang', (link as HTMLElement).dataset.langSwitch!);
-      });
+      }, { signal });
     });
 
     // Close menu on link click
     menuLinks?.forEach((link) => {
       link.addEventListener('click', () => {
         if (menuOpen) menuBtn?.click();
-      });
+      }, { signal });
     });
+
+    cleanupFn = () => {
+      ac.abort();
+      if (intervalId) clearInterval(intervalId);
+    };
   }
 
   // Init on page load and after view transitions

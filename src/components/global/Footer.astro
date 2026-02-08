@@ -197,7 +197,17 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
 
   gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initFooter() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const ac = new AbortController();
+    const { signal } = ac;
+    const scrollTriggers: ScrollTrigger[] = [];
+    let splitInstance: any = null;
+
     // Back to top — use Lenis if available
     const btn = document.getElementById('back-to-top');
     btn?.addEventListener('click', () => {
@@ -207,19 +217,19 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
       } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    });
+    }, { signal });
 
     // SplitText character animation on giant CTA
     const ctaEl = document.getElementById('footer-cta');
-    if (ctaEl && !ctaEl.dataset.animated) {
-      ctaEl.dataset.animated = 'true';
+    if (ctaEl) {
+      delete ctaEl.dataset.animated;
 
-      const split = new SplitText(ctaEl, {
+      splitInstance = new SplitText(ctaEl, {
         type: 'chars',
         charsClass: 'split-char',
       });
 
-      gsap.fromTo(split.chars,
+      const tween = gsap.fromTo(splitInstance.chars,
         { y: 60, opacity: 0, rotateX: -40 },
         {
           y: 0,
@@ -235,6 +245,7 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
           },
         }
       );
+      if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     }
 
     // Scramble text on hover for footer links
@@ -247,8 +258,14 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
           duration: 0.5,
           scrambleText: { text: original, chars: 'abcdefghijklmnopqrstuvwxyz', speed: 0.4 },
         });
-      });
+      }, { signal });
     });
+
+    cleanupFn = () => {
+      ac.abort();
+      scrollTriggers.forEach((st) => st.kill());
+      if (splitInstance) splitInstance.revert();
+    };
   }
 
   initFooter();

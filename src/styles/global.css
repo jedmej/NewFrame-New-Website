@@ -4,17 +4,10 @@
 
 @theme {
   /* Colors */
-  --color-ink: #0a0a0a;
-  --color-paper: #f0ede8;
   --color-accent: #DA382E;
-  --color-accent-dark: #b82d24;
-  --color-muted: #6b6b6b;
-  --color-midnight: #1a1a2e;
-  --color-subtle: #1a1a1a;
 
   /* Semantic tokens (light mode) */
   --color-bg: #f0ede8;
-  --color-bg-elevated: #ffffff;
   --color-text: #0a0a0a;
   --color-text-muted: rgba(10,10,10,0.5);
   --color-text-subtle: rgba(10,10,10,0.3);
@@ -23,7 +16,6 @@
   --color-border: rgba(10,10,10,0.06);
   --color-border-subtle: rgba(10,10,10,0.08);
   --color-border-strong: rgba(10,10,10,0.1);
-  --color-border-stronger: rgba(10,10,10,0.2);
   --color-glass-bg: rgba(240,237,232,0.7);
   --color-glass-border: rgba(10,10,10,0.06);
 
@@ -35,8 +27,6 @@
 
   /* Easing */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* ===== FONT FACES ===== */
@@ -120,14 +110,6 @@ body::-webkit-scrollbar {
   font-weight: 700;
   line-height: 0.9;
   letter-spacing: -0.04em;
-}
-
-.text-display-md {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 4vw, 3.5rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.03em;
 }
 
 .text-serif-display {
@@ -273,9 +255,6 @@ body::-webkit-scrollbar {
   transform-origin: right;
 }
 
-/* ===== SECTION TRANSITIONS ===== */
-/* Each section manages its own background color */
-
 /* ===== PRELOADER ===== */
 
 .preloader {
@@ -290,10 +269,6 @@ body::-webkit-scrollbar {
   pointer-events: all;
   cursor: auto;
   overflow: hidden;
-}
-
-.preloader.is-done {
-  pointer-events: none;
 }
 
 .preloader-content {

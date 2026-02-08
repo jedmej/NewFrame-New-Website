@@ -63,9 +63,18 @@ const t = useTranslations(lang);
 
   gsap.registerPlugin(SplitText, ScrollTrigger);
 
+  let cleanupFn: (() => void) | null = null;
+
   function initHero() {
+    cleanupFn?.();
+    cleanupFn = null;
+
     const titleEl = document.getElementById('hero-title');
     if (!titleEl) return;
+
+    const ac = new AbortController();
+    const { signal } = ac;
+    const scrollTriggers: ScrollTrigger[] = [];
 
     // Split title into characters
     const split = new SplitText(titleEl, {
@@ -104,13 +113,13 @@ const t = useTranslations(lang);
     }
 
     // Listen for preloader completion
-    document.addEventListener('preloader:complete', playEntrance, { once: true });
+    document.addEventListener('preloader:complete', playEntrance, { once: true, signal });
 
     // Scroll-driven parallax: characters spread apart
     if (split.chars && split.chars.length > 0) {
       split.chars.forEach((char: HTMLElement, i: number) => {
         const offset = (i - split.chars.length / 2) * 8;
-        gsap.to(char, {
+        const tween = gsap.to(char, {
           x: offset,
           opacity: 0.3,
           scrollTrigger: {
@@ -120,11 +129,12 @@ const t = useTranslations(lang);
             scrub: 1,
           },
         });
+        if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
       });
     }
 
     // Fade out hero on scroll
-    gsap.to('#hero', {
+    const fadeTween = gsap.to('#hero', {
       opacity: 0,
       scrollTrigger: {
         trigger: '#hero',
@@ -133,6 +143,13 @@ const t = useTranslations(lang);
         scrub: 1,
       },
     });
+    if (fadeTween.scrollTrigger) scrollTriggers.push(fadeTween.scrollTrigger);
+
+    cleanupFn = () => {
+      ac.abort();
+      scrollTriggers.forEach((st) => st.kill());
+      split.revert();
+    };
   }
 
   initHero();
