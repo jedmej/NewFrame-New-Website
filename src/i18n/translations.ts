@@ -10,10 +10,8 @@ export const translations = {
     nav: {
       scope: 'Scope',
       work: 'Work',
-      about: 'About',
       services: 'Capabilities',
       contact: 'Contact',
-      available: 'Available',
     },
     hero: {
       title: 'NEW FRAME',
@@ -65,8 +63,6 @@ export const translations = {
     },
     work: {
       label: 'SELECTED WORK',
-      viewProject: 'View Project',
-      allFilter: 'All',
       counter: 'of',
     },
     testimonials: {
@@ -112,10 +108,8 @@ export const translations = {
     nav: {
       scope: 'Zakres',
       work: 'Projekty',
-      about: 'O mnie',
       services: 'Możliwości',
       contact: 'Kontakt',
-      available: 'Dostępny',
     },
     hero: {
       title: 'NEW FRAME',
@@ -167,8 +161,6 @@ export const translations = {
     },
     work: {
       label: 'WYBRANE PROJEKTY',
-      viewProject: 'Zobacz projekt',
-      allFilter: 'Wszystko',
       counter: 'z',
     },
     testimonials: {

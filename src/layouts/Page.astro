@@ -35,6 +35,12 @@ const { title, description, lang } = Astro.props;
     gsap.registerPlugin(ScrollTrigger);
 
     function initSmoothScroll() {
+      // Destroy previous instance to prevent memory leak
+      if ((window as any).lenis) {
+        (window as any).lenis.destroy();
+        (window as any).lenis = null;
+      }
+
       if (window.innerWidth < 1024) return;
 
       const lenis = new Lenis({

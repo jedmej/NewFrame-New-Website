@@ -14,19 +14,27 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
 <nav
   id="main-nav"
-  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 md:grid md:grid-cols-[1fr_auto_1fr] md:px-10 transition-transform duration-500 text-[var(--color-text)]"
+  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 md:grid md:grid-cols-[1fr_auto_1fr] md:px-10 transition-transform duration-500 text-[var(--color-text)] glass"
   style="opacity: 0"
 >
   <!-- Left: Logo -->
   <div class="flex items-center">
     <a
       href={`/${lang}/`}
-      class="group flex items-center gap-3 hover:opacity-90 transition-opacity"
+      id="logo-link"
+      class="group flex items-center gap-3 relative overflow-hidden"
       transition:name="logo"
+      style="height: 1.35rem;"
     >
-      <span class="text-sm font-semibold tracking-tight uppercase" style="font-family: var(--font-display)">
+      <span id="logo-text" class="text-sm font-semibold tracking-tight uppercase block" style="font-family: var(--font-display)">
         New Frame<sup class="text-[0.5em] align-super opacity-40 ml-0.5">®</sup>
       </span>
+      <svg id="logo-icon" class="absolute left-1/2 -translate-x-1/2 w-auto block" style="height: 1.35rem; top: 100%;" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
+        <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
+        <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
+        <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
+      </svg>
     </a>
   </div>
 
@@ -106,10 +114,9 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
 <script>
   import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+  gsap.registerPlugin(ScrambleTextPlugin);
 
   function initNav() {
     const nav = document.getElementById('main-nav');
@@ -141,18 +148,52 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
       });
     }
 
-    // Glass effect on scroll (no hide/show)
-    ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      onUpdate: () => {
-        if (window.scrollY > window.innerHeight * 0.8) {
-          nav.classList.add('glass');
-        } else {
-          nav.classList.remove('glass');
-        }
-      },
-    });
+    // Logo hover: text slides up, SVG slides in from bottom
+    const logoLink = document.getElementById('logo-link');
+    const logoText = document.getElementById('logo-text');
+    const logoIcon = document.getElementById('logo-icon');
+
+    if (logoLink && logoText && logoIcon) {
+      let logoTl: gsap.core.Timeline | null = null;
+
+      logoLink.addEventListener('mouseenter', () => {
+        if (logoTl) logoTl.kill();
+        logoTl = gsap.timeline()
+          .to(logoText, {
+            y: '-100%',
+            opacity: 0,
+            duration: 0.25,
+            ease: 'power3.in',
+          })
+          .fromTo(logoIcon,
+            { y: '0%', opacity: 0 },
+            {
+              y: '-100%',
+              opacity: 1,
+              duration: 0.3,
+              ease: 'power3.out',
+            },
+            '>-0.05'
+          );
+      });
+
+      logoLink.addEventListener('mouseleave', () => {
+        if (logoTl) logoTl.kill();
+        logoTl = gsap.timeline()
+          .to(logoIcon, {
+            y: '0%',
+            opacity: 0,
+            duration: 0.25,
+            ease: 'power3.in',
+          })
+          .to(logoText, {
+            y: '0%',
+            opacity: 1,
+            duration: 0.3,
+            ease: 'power3.out',
+          }, '>-0.05');
+      });
+    }
 
     // Clock
     const clockEl = document.getElementById('nav-clock');
