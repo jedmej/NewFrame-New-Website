@@ -90,8 +90,10 @@ const t = useTranslations(lang);
     ].filter(Boolean);
 
     // Entrance timeline triggered by preloader
+    let entranceTl: gsap.core.Timeline | null = null;
     function playEntrance() {
-      const tl = gsap.timeline();
+      entranceTl = gsap.timeline();
+      const tl = entranceTl;
 
       // Characters animate in from below with stagger
       tl.from(split.chars, {
@@ -147,6 +149,7 @@ const t = useTranslations(lang);
 
     cleanupFn = () => {
       ac.abort();
+      entranceTl?.kill();
       scrollTriggers.forEach((st) => st.kill());
       split.revert();
     };

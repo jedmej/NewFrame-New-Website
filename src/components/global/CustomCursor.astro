@@ -91,6 +91,7 @@
       cancelAnimationFrame(rafId);
       ac.abort();
       document.body.style.cursor = '';
+      document.querySelectorAll('.confetti-particle').forEach(el => el.remove());
     };
   }
 
@@ -103,6 +104,7 @@
 
     for (let i = 0; i < count; i++) {
       const particle = document.createElement('div');
+      particle.className = 'confetti-particle';
       particle.style.cssText = `
         position: fixed;
         width: 4px;

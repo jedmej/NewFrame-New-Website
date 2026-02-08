@@ -52,7 +52,7 @@ const { title, description, lang } = Astro.props;
       if (window.innerWidth < 1024) return;
 
       const lenis = new Lenis({
-        autoRaf: true,
+        autoRaf: false,
       });
 
       // Bridge Lenis to GSAP ScrollTrigger

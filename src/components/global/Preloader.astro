@@ -67,6 +67,9 @@ const lang = getLangFromUrl(Astro.url);
 <script>
   import gsap from 'gsap';
 
+  let cleanupFn: (() => void) | null = null;
+  const timelines: gsap.core.Timeline[] = [];
+
   function runExitAnimation() {
     const preloader = document.getElementById('preloader');
     const content = document.getElementById('preloader-content');
@@ -84,6 +87,7 @@ const lang = getLangFromUrl(Astro.url);
     gsap.set(bracketBR, { opacity: 1, scale: 1 });
 
     const tl = gsap.timeline();
+    timelines.push(tl);
 
     // 1. Count up percentage
     tl.to(
@@ -162,6 +166,7 @@ const lang = getLangFromUrl(Astro.url);
     gsap.set(bracketBR, { opacity: 0, scale: 0.8, transformOrigin: '100% 100%' });
 
     const tl = gsap.timeline();
+    timelines.push(tl);
 
     // Entrance: fade in brackets
     tl.to(bracketTL, {
@@ -191,7 +196,7 @@ const lang = getLangFromUrl(Astro.url);
     }, undefined, '+=0.1');
   }
 
-  function startAnimation() {
+  function startAnimation(ac: AbortController) {
     // Hide language picker, show counter
     const langPicker = document.getElementById('preloader-lang');
     const counter = document.getElementById('preloader-counter');
@@ -201,23 +206,25 @@ const lang = getLangFromUrl(Astro.url);
     // Wait for fonts, then run exit animation
     const fontTimeout = new Promise(resolve => setTimeout(resolve, 3000));
     Promise.race([document.fonts.ready, fontTimeout]).then(() => {
+      if (ac.signal.aborted) return;
       runExitAnimation();
       localStorage.setItem('preloaded', 'true');
       localStorage.removeItem('lang-chosen');
     });
   }
 
-  function startEntranceAnimation() {
+  function startEntranceAnimation(ac: AbortController) {
     // Wait for fonts, then run entrance + exit
     const fontTimeout = new Promise(resolve => setTimeout(resolve, 3000));
     Promise.race([document.fonts.ready, fontTimeout]).then(() => {
+      if (ac.signal.aborted) return;
       runEntranceAndExit();
       localStorage.setItem('preloaded', 'true');
       localStorage.removeItem('lang-chosen');
     });
   }
 
-  function setupLangPicker() {
+  function setupLangPicker(ac: AbortController) {
     const langPicker = document.getElementById('preloader-lang');
     if (!langPicker) return;
 
@@ -234,25 +241,30 @@ const lang = getLangFromUrl(Astro.url);
           // Same language — start exit animation immediately
           e.preventDefault();
           localStorage.setItem('lang-chosen', 'true');
-          startAnimation();
+          startAnimation(ac);
         } else {
           // Different language — set flag, let the link navigate
           localStorage.setItem('lang-chosen', 'true');
         }
-      });
+      }, { signal: ac.signal });
     });
   }
 
   function initPage() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const ac = new AbortController();
+
     if (!localStorage.getItem('preloaded')) {
       document.body.style.overflow = 'hidden';
 
       if (localStorage.getItem('lang-chosen')) {
         // Arrived after language switch — animate in, then out
-        startEntranceAnimation();
+        startEntranceAnimation(ac);
       } else {
         // First visit — show language picker and wait for selection
-        setupLangPicker();
+        setupLangPicker(ac);
       }
     } else {
       // Skip preloader on subsequent visits — hide it explicitly
@@ -262,6 +274,12 @@ const lang = getLangFromUrl(Astro.url);
       if (preloader) preloader.style.display = 'none';
       document.dispatchEvent(new CustomEvent('preloader:complete'));
     }
+
+    cleanupFn = () => {
+      ac.abort();
+      timelines.forEach(tl => tl.kill());
+      timelines.length = 0;
+    };
   }
 
   // Run on initial load

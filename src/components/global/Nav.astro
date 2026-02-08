@@ -130,6 +130,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     const ac = new AbortController();
     const { signal } = ac;
     let intervalId: ReturnType<typeof setInterval> | null = null;
+    let menuCloseTimeout: ReturnType<typeof setTimeout>;
 
     // Entrance animation on page load
     gsap.to(nav, { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.3 });
@@ -253,7 +254,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
         gsap.to(menuLines![0], { rotation: 0, y: 0, duration: 0.3 });
         gsap.to(menuLines![1], { rotation: 0, y: 0, width: 16, marginLeft: 'auto', duration: 0.3 });
 
-        setTimeout(() => {
+        menuCloseTimeout = setTimeout(() => {
           mobileMenu!.style.opacity = '0';
           mobileMenu!.style.pointerEvents = 'none';
           document.body.style.overflow = '';
@@ -278,6 +279,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     cleanupFn = () => {
       ac.abort();
       if (intervalId) clearInterval(intervalId);
+      clearTimeout(menuCloseTimeout);
     };
   }
 

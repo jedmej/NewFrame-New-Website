@@ -98,6 +98,7 @@ const t = useTranslations(lang);
   function initAbout() {
     cleanupFn?.();
     cleanupFn = null;
+    unicornAborted = false;
 
     const section = document.getElementById('scope');
     const textEl = document.getElementById('manifesto-text');
@@ -197,12 +198,14 @@ const t = useTranslations(lang);
     cleanupFn = () => {
       scrollTriggers.forEach((st) => st.kill());
       split.revert();
+      unicornAborted = true;
       destroyUnicorn();
     };
   }
 
   // ===== Unicorn Studio WebGL scene =====
   let unicornScene: any = null;
+  let unicornAborted = false;
 
   function initUnicorn() {
     const container = document.getElementById('unicorn-container');
@@ -220,6 +223,10 @@ const t = useTranslations(lang);
       lazyLoad: true,
       production: true,
     }).then((scene: any) => {
+      if (unicornAborted) {
+        scene.destroy();
+        return;
+      }
       unicornScene = scene;
     }).catch(() => {});
   }

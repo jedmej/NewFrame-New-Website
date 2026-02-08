@@ -127,6 +127,7 @@ const projects = allProjects.map((p) => ({
 
       // Load texture asynchronously
       textureLoader.load(project.image, (texture) => {
+        if (destroyed) { texture.dispose(); return; }
         texture.colorSpace = SRGBColorSpace;
 
         // Calculate UV scaling for cover behavior
