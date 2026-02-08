@@ -14,7 +14,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
 <nav
   id="main-nav"
-  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 md:grid md:grid-cols-[1fr_auto_1fr] md:px-10 transition-transform duration-500 text-[var(--color-text)] glass"
+  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-10 transition-transform duration-500 text-[var(--color-text)] glass"
   style="opacity: 0"
 >
   <!-- Left: Logo -->
@@ -39,7 +39,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   </div>
 
   <!-- Center: Desktop Nav Links -->
-  <div class="hidden md:flex items-center gap-10">
+  <div class="hidden lg:flex items-center gap-10">
     <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
       {t.nav.work}
     </a>
@@ -57,7 +57,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   <!-- Right: CTA + Mobile Menu -->
   <div class="flex items-center justify-end gap-4">
     <!-- Availability Dot + Clock -->
-    <div class="hidden md:flex items-center gap-2 mr-4">
+    <div class="hidden lg:flex items-center gap-2 mr-4">
       <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
       <span id="nav-clock" class="text-mono-xs opacity-30">--:-- CET</span>
     </div>
@@ -65,7 +65,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <!-- Language Selector -->
     <a
       href={altUrl}
-      class="nav-link hidden md:inline-flex text-mono-xs opacity-40 hover:opacity-100 transition-opacity mr-2"
+      class="nav-link hidden lg:inline-flex text-mono-xs opacity-40 hover:opacity-100 transition-opacity mr-2"
       data-lang-switch={altLang}
     >
       {altLang.toUpperCase()}
@@ -74,7 +74,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <!-- Let's Talk CTA -->
     <a
       href={`/${lang}/#contact`}
-      class="nav-cta hidden md:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300 group"
+      class="nav-cta hidden lg:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300 group"
     >
       <span>{t.contact.cta}</span>
       <svg class="nav-cta-arrow w-3 h-3 transition-transform duration-300 ease-out" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -85,7 +85,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <!-- Mobile Menu Button -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden flex flex-col gap-1.5 p-2 -mr-2"
+      class="lg:hidden flex flex-col gap-1.5 p-2 -mr-2"
       aria-label="Open menu"
     >
       <span class="menu-line w-6 h-px transition-all duration-300 bg-[var(--color-text)]"></span>
