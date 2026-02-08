@@ -37,7 +37,3 @@ export const projects: Project[] = [
     url: '#',
   },
 ];
-
-export function getCategories(): string[] {
-  return ['ALL', ...new Set(projects.map((p) => p.category))];
-}

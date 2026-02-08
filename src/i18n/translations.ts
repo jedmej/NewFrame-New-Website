@@ -97,8 +97,6 @@ export const translations = {
     },
     contact: {
       cta: "Let's Talk",
-      email: 'jed.mejzner@gmail.com',
-      available: 'Available for projects',
     },
     footer: {
       cta: "Let's work together",
@@ -108,7 +106,6 @@ export const translations = {
       available: 'Available for projects',
       rights: 'All rights reserved',
       backToTop: 'Back to top',
-      colophon: 'Built with Astro, Three.js, GSAP. Set in General Sans.',
     },
   },
   pl: {
@@ -202,8 +199,6 @@ export const translations = {
     },
     contact: {
       cta: 'Porozmawiajmy',
-      email: 'jed.mejzner@gmail.com',
-      available: 'Dostępny do projektów',
     },
     footer: {
       cta: 'Pracujmy razem',
@@ -213,7 +208,6 @@ export const translations = {
       available: 'Dostępny do projektów',
       rights: 'Wszelkie prawa zastrzeżone',
       backToTop: 'Powrót na górę',
-      colophon: 'Zbudowane z Astro, Three.js, GSAP. Czcionka General Sans.',
     },
   },
 } as const;

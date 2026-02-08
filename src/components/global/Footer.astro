@@ -193,10 +193,9 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
   import gsap from 'gsap';
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-  gsap.registerPlugin(SplitText, ScrollTrigger, MorphSVGPlugin, ScrambleTextPlugin);
+  gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
   function initFooter() {
     // Back to top — use Lenis if available
