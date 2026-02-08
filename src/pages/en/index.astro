@@ -1,13 +1,16 @@
 ---
 import Page from '../../layouts/Page.astro';
+import { useTranslations } from '../../i18n/translations';
 import Hero from '../../components/sections/Hero.astro';
 import About from '../../components/sections/About.astro';
 import Services from '../../components/sections/Services.astro';
 import WorkCarousel from '../../components/sections/WorkCarousel.astro';
 import Testimonials from '../../components/sections/Testimonials.astro';
+
+const t = useTranslations('en');
 ---
 
-<Page lang="en">
+<Page lang="en" title={t.seo.title} description={t.seo.description}>
   <Hero lang="en" />
   <About lang="en" />
   <Services lang="en" />

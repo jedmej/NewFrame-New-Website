@@ -7,6 +7,11 @@ export type Lang = keyof typeof languages;
 
 export const translations = {
   en: {
+    seo: {
+      title: 'New Frame Studio | Web Design for Startups & Small Businesses',
+      description: 'Custom web design and branding that converts. I help startups and small businesses look as good as they perform.',
+      ogImageAlt: 'New Frame Studio - Web Design & Branding',
+    },
     nav: {
       scope: 'Scope',
       work: 'Work',
@@ -64,6 +69,7 @@ export const translations = {
     work: {
       label: 'SELECTED WORK',
       counter: 'of',
+      carouselLabel: 'Interactive 3D carousel showcasing selected design projects',
     },
     testimonials: {
       label: 'WHAT THEY SAY',
@@ -102,6 +108,11 @@ export const translations = {
     },
   },
   pl: {
+    seo: {
+      title: 'New Frame Studio | Projektowanie stron dla startupów i małych firm',
+      description: 'Indywidualny web design i branding, który konwertuje. Pomagam startupom i małym firmom wyglądać tak dobrze, jak działają.',
+      ogImageAlt: 'New Frame Studio - Web Design i Branding',
+    },
     nav: {
       scope: 'Zakres',
       work: 'Projekty',
@@ -159,6 +170,7 @@ export const translations = {
     work: {
       label: 'WYBRANE PROJEKTY',
       counter: 'z',
+      carouselLabel: 'Interaktywna karuzela 3D prezentująca wybrane projekty',
     },
     testimonials: {
       label: 'CO MÓWIĄ',

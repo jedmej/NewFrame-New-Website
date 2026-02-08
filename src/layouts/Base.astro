@@ -6,13 +6,26 @@ interface Props {
   title?: string;
   description?: string;
   lang?: string;
+  ogImage?: string;
 }
 
 const {
   title = 'New Frame Studio | Web Design for Startups & Small Businesses',
   description = 'Custom web design and branding that converts. I help startups and small businesses look as good as they perform.',
   lang = 'en',
+  ogImage = '/og-image.jpg',
 } = Astro.props;
+
+// Canonical URL
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+
+// Hreflang alternates
+const pathWithoutLang = Astro.url.pathname.replace(/^\/(en|pl)/, '');
+const enUrl = new URL(`/en${pathWithoutLang || '/'}`, Astro.site);
+const plUrl = new URL(`/pl${pathWithoutLang || '/'}`, Astro.site);
+
+// Absolute OG image URL
+const ogImageUrl = new URL(ogImage, Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -23,7 +36,33 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
+
+    <!-- Canonical & hreflang -->
+    <link rel="canonical" href={canonicalUrl.href} />
+    <link rel="alternate" hreflang="en" href={enUrl.href} />
+    <link rel="alternate" hreflang="pl" href={plUrl.href} />
+    <link rel="alternate" hreflang="x-default" href={enUrl.href} />
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#f0ede8" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'pl' ? 'pl_PL' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'pl' ? 'en_US' : 'pl_PL'} />
+    <meta property="og:site_name" content="New Frame Studio" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl.href} />
 
     <!-- Preload self-hosted fonts -->
     <link rel="preload" href="/fonts/GeneralSans-Medium.woff2" as="font" type="font/woff2" crossorigin />
@@ -60,6 +99,42 @@ const {
     <style is:inline>
       .preloader-done #preloader { display: none !important; }
     </style>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": `${Astro.site}#organization`,
+          name: "New Frame Studio",
+          url: Astro.site?.href,
+          logo: new URL("/favicon.svg", Astro.site).href,
+          founder: {
+            "@type": "Person",
+            name: "Jed Mejzner",
+          },
+          description: "Web design and branding studio for startups and small businesses.",
+        },
+        {
+          "@type": "WebSite",
+          "@id": `${Astro.site}#website`,
+          url: Astro.site?.href,
+          name: "New Frame Studio",
+          publisher: { "@id": `${Astro.site}#organization` },
+          inLanguage: ["en", "pl"],
+        },
+        {
+          "@type": "WebPage",
+          "@id": canonicalUrl.href,
+          url: canonicalUrl.href,
+          name: title,
+          description,
+          isPartOf: { "@id": `${Astro.site}#website` },
+          inLanguage: lang === "pl" ? "pl" : "en",
+        },
+      ],
+    })} />
 
     <!-- View Transitions -->
     <ClientRouter />
