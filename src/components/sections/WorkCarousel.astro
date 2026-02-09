@@ -243,20 +243,6 @@ const projects = allProjects.map((p) => ({
       },
     });
 
-    let skewTrigger: ScrollTrigger | null = null;
-    if (!prefersReducedMotion && nameText) {
-      const skewTo = gsap.quickTo(nameText, 'skewY', { duration: 0.6, ease: 'power3.out' });
-      const clamp = gsap.utils.clamp(-6, 6);
-      skewTrigger = ScrollTrigger.create({
-        trigger: '#carousel-section',
-        start: 'top bottom',
-        end: 'bottom top',
-        onUpdate: (self) => {
-          skewTo(clamp(self.getVelocity() / -700));
-        },
-      });
-    }
-
     // Mouse parallax
     let mouseX = 0;
     let mouseY = 0;
@@ -399,7 +385,6 @@ const projects = allProjects.map((p) => ({
       observer.disconnect();
       scrollTriggerInstance.kill();
       lineTrigger?.kill();
-      skewTrigger?.kill();
 
       // Dispose Three.js resources
       meshes.forEach((mesh) => {

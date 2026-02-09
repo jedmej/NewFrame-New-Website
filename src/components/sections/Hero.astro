@@ -90,43 +90,13 @@ const t = useTranslations(lang);
       document.getElementById('hero-corner-br'),
     ].filter(Boolean);
 
-    // Entrance timeline triggered by preloader
     let entranceTl: gsap.core.Timeline | null = null;
-    function playEntrance() {
-      entranceTl = gsap.timeline();
-      const tl = entranceTl;
 
-      if (prefersReducedMotion) {
-        gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
-        gsap.set(corners, { opacity: 1, y: 0 });
-        return;
-      }
+    // Scroll-driven animations — created only after corners are visible
+    // so GSAP captures opacity:1 as the base state for correct reversal
+    function setupScrollAnimations() {
+      if (prefersReducedMotion) return;
 
-      // Characters animate in from below with stagger
-      tl.from(split.chars, {
-        yPercent: 120,
-        opacity: 0,
-        rotateX: -80,
-        stagger: { each: 0.025, from: 'center' },
-        duration: 1.1,
-        ease: 'power4.out',
-      });
-
-      // Corner labels fade in
-      tl.to(corners, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power2.out',
-      }, '-=0.3');
-    }
-
-    // Listen for preloader completion
-    document.addEventListener('preloader:complete', playEntrance, { once: true, signal });
-
-    if (!prefersReducedMotion) {
-      // Scroll-driven parallax: characters spread apart
       if (split.chars && split.chars.length > 0) {
         split.chars.forEach((char: HTMLElement, i: number) => {
           const offset = (i - split.chars.length / 2) * 6;
@@ -144,7 +114,6 @@ const t = useTranslations(lang);
         });
       }
 
-      // Subtle parallax for metadata corners
       if (corners.length > 0) {
         const cornerTween = gsap.to(corners, {
           y: -24,
@@ -159,7 +128,6 @@ const t = useTranslations(lang);
         if (cornerTween.scrollTrigger) scrollTriggers.push(cornerTween.scrollTrigger);
       }
 
-      // Velocity-based skew for dynamic feel
       const skewTo = gsap.quickTo(titleEl, 'skewY', { duration: 0.6, ease: 'power3.out' });
       const clamp = gsap.utils.clamp(-6, 6);
       const skewTrigger = ScrollTrigger.create({
@@ -171,10 +139,7 @@ const t = useTranslations(lang);
         },
       });
       scrollTriggers.push(skewTrigger);
-    }
 
-    // Fade out hero on scroll
-    if (!prefersReducedMotion) {
       const fadeTween = gsap.to('#hero', {
         opacity: 0,
         scale: 0.98,
@@ -186,6 +151,46 @@ const t = useTranslations(lang);
         },
       });
       if (fadeTween.scrollTrigger) scrollTriggers.push(fadeTween.scrollTrigger);
+    }
+
+    const alreadyLoaded = localStorage.getItem('preloaded');
+
+    if (alreadyLoaded) {
+      // View transition or revisit — show immediately, then set up scrub
+      gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
+      gsap.set(corners, { opacity: 1, y: 0 });
+      setupScrollAnimations();
+    } else {
+      // First load — wait for preloader, then set up scrub on completion
+      function playEntrance() {
+        if (prefersReducedMotion) {
+          gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
+          gsap.set(corners, { opacity: 1, y: 0 });
+          setupScrollAnimations();
+          return;
+        }
+
+        entranceTl = gsap.timeline({ onComplete: setupScrollAnimations });
+
+        entranceTl.from(split.chars, {
+          yPercent: 120,
+          opacity: 0,
+          rotateX: -80,
+          stagger: { each: 0.025, from: 'center' },
+          duration: 1.1,
+          ease: 'power4.out',
+        });
+
+        entranceTl.to(corners, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }, '-=0.3');
+      }
+
+      document.addEventListener('preloader:complete', playEntrance, { once: true, signal });
     }
 
     cleanupFn = () => {

@@ -56,12 +56,6 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
   <!-- Right: CTA + Mobile Menu -->
   <div class="flex items-center justify-end gap-4">
-    <!-- Availability Dot + Clock -->
-    <div class="hidden lg:flex items-center gap-2 mr-4">
-      <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-      <span id="nav-clock" class="text-mono-xs opacity-30">--:-- CET</span>
-    </div>
-
     <!-- Language Selector -->
     <a
       href={altUrl}
@@ -130,7 +124,6 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
     const ac = new AbortController();
     const { signal } = ac;
-    let intervalId: ReturnType<typeof setInterval> | null = null;
     let menuCloseTimeout: ReturnType<typeof setTimeout>;
     let lastScrollY = window.scrollY;
     let navHidden = false;
@@ -206,22 +199,6 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
             ease: 'power3.out',
           }, '>-0.05');
       }, { signal });
-    }
-
-    // Clock
-    const clockEl = document.getElementById('nav-clock');
-    if (clockEl) {
-      const updateClock = () => {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-GB', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Warsaw',
-        });
-        clockEl.textContent = `${timeStr} CET`;
-      };
-      updateClock();
-      intervalId = setInterval(updateClock, 60000);
     }
 
     // Hide/show nav on scroll direction (desktop)
@@ -307,7 +284,6 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
     cleanupFn = () => {
       ac.abort();
-      if (intervalId) clearInterval(intervalId);
       clearTimeout(menuCloseTimeout);
     };
   }
