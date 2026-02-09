@@ -115,67 +115,15 @@
       item.addEventListener('mouseleave', handleLeave, { signal });
     });
 
-    // Confetti on click (skip if reduced motion preferred)
-    let lastConfettiTime = 0;
-    if (!prefersReducedMotion) {
-      document.addEventListener('click', (e) => {
-        const now = Date.now();
-        if (now - lastConfettiTime < 200) return;
-        lastConfettiTime = now;
-        createConfetti(e.clientX, e.clientY);
-      }, { signal });
-    }
-
     cleanupFn = () => {
       destroyed = true;
       cancelAnimationFrame(rafId);
       ac.abort();
       document.body.style.cursor = '';
-      document.querySelectorAll('.confetti-particle').forEach(el => el.remove());
       magneticItems.forEach((item) => {
         item.style.transform = '';
       });
     };
-  }
-
-  function createConfetti(x: number, y: number) {
-    const style = getComputedStyle(document.documentElement);
-    const textColor = style.getPropertyValue('--color-text').trim() || '#ffffff';
-    const bgColor = style.getPropertyValue('--color-bg').trim() || '#0a0a0a';
-    const colors = ['#DA382E', textColor, bgColor, '#6b6b6b'];
-    const count = 10;
-
-    for (let i = 0; i < count; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'confetti-particle';
-      particle.style.cssText = `
-        position: fixed;
-        width: 4px;
-        height: 4px;
-        background: ${colors[Math.floor(Math.random() * colors.length)]};
-        pointer-events: none;
-        z-index: 10000;
-        left: ${x}px;
-        top: ${y}px;
-      `;
-      document.body.appendChild(particle);
-
-      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
-      const distance = 40 + Math.random() * 60;
-      const tx = Math.cos(angle) * distance;
-      const ty = Math.sin(angle) * distance;
-
-      particle.animate(
-        [
-          { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-          { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 },
-        ],
-        {
-          duration: 500 + Math.random() * 200,
-          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        }
-      ).onfinish = () => particle.remove();
-    }
   }
 
   initCursor();

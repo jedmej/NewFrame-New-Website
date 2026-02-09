@@ -18,7 +18,7 @@ const t = useTranslations(lang);
   <div class="px-6 md:px-10 max-w-[1400px] mx-auto">
     <!-- Section label -->
     <div class="mb-12 md:mb-20">
-      <h2 class="text-mono-xs text-[#0A0A0A]">{t.services.label}</h2>
+      <h2 class="text-mono-xs text-[var(--color-text)]">{t.services.label}</h2>
       <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
     </div>
 
@@ -155,7 +155,7 @@ const t = useTranslations(lang);
 
   .service-title {
     font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 1.8vw, 1.5rem);
+    font-size: clamp(1.5rem, 1.8vw, 2rem);
     font-weight: 400;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -205,7 +205,7 @@ const t = useTranslations(lang);
 
   .services-cta-text {
     font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 2vw, 1.75rem);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-style: italic;
     font-weight: 400;
     line-height: 1.3;
