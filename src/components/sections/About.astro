@@ -20,7 +20,7 @@ const t = useTranslations(lang);
     <!-- Section label -->
     <div class="mb-8 md:mb-12">
       <h2 class="text-mono-xs text-[#0A0A0A]">{t.about.label}</h2>
-      <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
+      <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
     </div>
 
     <!-- Full-width manifesto text -->
@@ -106,6 +106,7 @@ const t = useTranslations(lang);
     const textEl = document.getElementById('manifesto-text');
     const imageBlock = document.getElementById('about-image-block');
     const bodyEl = document.getElementById('about-body');
+    const lines = section?.querySelectorAll('[data-line]') || [];
     if (!textEl || !section) return;
 
     const scrollTriggers: ScrollTrigger[] = [];
@@ -131,6 +132,21 @@ const t = useTranslations(lang);
     });
 
     if (!prefersReducedMotion) {
+      if (lines.length > 0) {
+        gsap.set(lines, { scaleX: 0, transformOrigin: 'left' });
+        const lineTween = gsap.to(lines, {
+          scaleX: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 85%',
+            once: true,
+          },
+        });
+        if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
+      }
+
       // Word reveal on scroll
       const wordTween = gsap.to(split.words, {
         opacity: 1,
@@ -153,8 +169,25 @@ const t = useTranslations(lang);
       });
       if (wordTween.scrollTrigger) scrollTriggers.push(wordTween.scrollTrigger);
 
-      // Image block parallax — slightly different rate than text for organic feel
+      // Image block reveal + parallax — slightly different rate than text for organic feel
       if (imageBlock) {
+        gsap.set(imageBlock, { willChange: 'transform, clip-path' });
+        const maskTween = gsap.fromTo(imageBlock,
+          { clipPath: 'inset(100% 0 0 0)', scale: 1.08 },
+          {
+            clipPath: 'inset(0% 0 0 0)',
+            scale: 1,
+            duration: 1.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: imageBlock,
+              start: 'top 85%',
+              once: true,
+            },
+          }
+        );
+        if (maskTween.scrollTrigger) scrollTriggers.push(maskTween.scrollTrigger);
+
         const imgTween = gsap.fromTo(imageBlock,
           { y: 50 },
           {

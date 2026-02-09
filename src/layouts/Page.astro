@@ -53,6 +53,9 @@ const { title, description, lang } = Astro.props;
 
       const lenis = new Lenis({
         autoRaf: false,
+        smoothWheel: true,
+        lerp: 0.085,
+        wheelMultiplier: 0.9,
       });
 
       // Bridge Lenis to GSAP ScrollTrigger

@@ -75,6 +75,7 @@ const t = useTranslations(lang);
     const ac = new AbortController();
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Split title into characters
     const split = new SplitText(titleEl, {
@@ -95,19 +96,26 @@ const t = useTranslations(lang);
       entranceTl = gsap.timeline();
       const tl = entranceTl;
 
+      if (prefersReducedMotion) {
+        gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
+        gsap.set(corners, { opacity: 1, y: 0 });
+        return;
+      }
+
       // Characters animate in from below with stagger
       tl.from(split.chars, {
-        y: 120,
+        yPercent: 120,
         opacity: 0,
         rotateX: -80,
-        stagger: 0.03,
-        duration: 1,
+        stagger: { each: 0.025, from: 'center' },
+        duration: 1.1,
         ease: 'power4.out',
       });
 
       // Corner labels fade in
       tl.to(corners, {
         opacity: 1,
+        y: 0,
         duration: 0.8,
         stagger: 0.1,
         ease: 'power2.out',
@@ -117,13 +125,30 @@ const t = useTranslations(lang);
     // Listen for preloader completion
     document.addEventListener('preloader:complete', playEntrance, { once: true, signal });
 
-    // Scroll-driven parallax: characters spread apart
-    if (split.chars && split.chars.length > 0) {
-      split.chars.forEach((char: HTMLElement, i: number) => {
-        const offset = (i - split.chars.length / 2) * 8;
-        const tween = gsap.to(char, {
-          x: offset,
-          opacity: 0.3,
+    if (!prefersReducedMotion) {
+      // Scroll-driven parallax: characters spread apart
+      if (split.chars && split.chars.length > 0) {
+        split.chars.forEach((char: HTMLElement, i: number) => {
+          const offset = (i - split.chars.length / 2) * 6;
+          const tween = gsap.to(char, {
+            x: offset,
+            opacity: 0.25,
+            scrollTrigger: {
+              trigger: '#hero',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          });
+          if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
+        });
+      }
+
+      // Subtle parallax for metadata corners
+      if (corners.length > 0) {
+        const cornerTween = gsap.to(corners, {
+          y: -24,
+          opacity: 0.6,
           scrollTrigger: {
             trigger: '#hero',
             start: 'top top',
@@ -131,21 +156,37 @@ const t = useTranslations(lang);
             scrub: 1,
           },
         });
-        if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
+        if (cornerTween.scrollTrigger) scrollTriggers.push(cornerTween.scrollTrigger);
+      }
+
+      // Velocity-based skew for dynamic feel
+      const skewTo = gsap.quickTo(titleEl, 'skewY', { duration: 0.6, ease: 'power3.out' });
+      const clamp = gsap.utils.clamp(-6, 6);
+      const skewTrigger = ScrollTrigger.create({
+        trigger: '#hero',
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => {
+          skewTo(clamp(self.getVelocity() / -650));
+        },
       });
+      scrollTriggers.push(skewTrigger);
     }
 
     // Fade out hero on scroll
-    const fadeTween = gsap.to('#hero', {
-      opacity: 0,
-      scrollTrigger: {
-        trigger: '#hero',
-        start: '60% top',
-        end: 'bottom top',
-        scrub: 1,
-      },
-    });
-    if (fadeTween.scrollTrigger) scrollTriggers.push(fadeTween.scrollTrigger);
+    if (!prefersReducedMotion) {
+      const fadeTween = gsap.to('#hero', {
+        opacity: 0,
+        scale: 0.98,
+        scrollTrigger: {
+          trigger: '#hero',
+          start: '60% top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      });
+      if (fadeTween.scrollTrigger) scrollTriggers.push(fadeTween.scrollTrigger);
+    }
 
     cleanupFn = () => {
       ac.abort();

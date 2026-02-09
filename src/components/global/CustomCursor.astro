@@ -8,6 +8,8 @@
 </div>
 
 <script>
+  import gsap from 'gsap';
+
   let cleanupFn: (() => void) | null = null;
 
   function initCursor() {
@@ -81,6 +83,36 @@
       }, { signal });
     });
 
+    // Magnetic hover for premium CTA feel
+    const magneticItems = document.querySelectorAll<HTMLElement>('[data-magnetic]');
+    magneticItems.forEach((item) => {
+      const strength = Number(item.dataset.magnetic || '0.3');
+      const xTo = gsap.quickTo(item, 'x', { duration: 0.4, ease: 'power3.out' });
+      const yTo = gsap.quickTo(item, 'y', { duration: 0.4, ease: 'power3.out' });
+      let bounds: DOMRect | null = null;
+
+      const handleEnter = () => {
+        bounds = item.getBoundingClientRect();
+      };
+
+      const handleMove = (e: MouseEvent) => {
+        if (!bounds) bounds = item.getBoundingClientRect();
+        const relX = e.clientX - bounds.left - bounds.width / 2;
+        const relY = e.clientY - bounds.top - bounds.height / 2;
+        xTo(relX * strength);
+        yTo(relY * strength);
+      };
+
+      const handleLeave = () => {
+        xTo(0);
+        yTo(0);
+      };
+
+      item.addEventListener('mouseenter', handleEnter, { signal });
+      item.addEventListener('mousemove', handleMove, { signal });
+      item.addEventListener('mouseleave', handleLeave, { signal });
+    });
+
     // Confetti on click
     document.addEventListener('click', (e) => {
       createConfetti(e.clientX, e.clientY);
@@ -92,6 +124,9 @@
       ac.abort();
       document.body.style.cursor = '';
       document.querySelectorAll('.confetti-particle').forEach(el => el.remove());
+      magneticItems.forEach((item) => {
+        item.style.transform = '';
+      });
     };
   }
 

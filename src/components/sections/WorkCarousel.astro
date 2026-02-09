@@ -29,7 +29,7 @@ const projects = allProjects.map((p) => ({
       <h2 class="text-mono-xs text-[#0A0A0A]">{t.work.label}</h2>
       <span id="work-counter" class="text-mono-xs text-[var(--color-text-ghost)]">01 {t.work.counter} {String(projects.length).padStart(2, '0')}</span>
     </div>
-    <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
+    <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
   </div>
 
   <!-- Carousel container -->
@@ -83,16 +83,35 @@ const projects = allProjects.map((p) => ({
     cleanupFn?.();
     cleanupFn = null;
 
+    const section = document.getElementById('work');
     const canvas = document.getElementById('carousel-canvas') as HTMLCanvasElement;
     const nameText = document.getElementById('project-name-text');
     const counterEl = document.getElementById('work-counter');
-    if (!canvas) return;
+    const line = section?.querySelector('[data-line]');
+    if (!canvas || !section) return;
 
     const ac = new AbortController();
     const { signal } = ac;
 
     const projects = JSON.parse(canvas.dataset.projects || '[]');
     const isMobile = window.innerWidth < 768;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let lineTrigger: ScrollTrigger | null = null;
+    if (!prefersReducedMotion && line) {
+      gsap.set(line, { scaleX: 0, transformOrigin: 'left' });
+      const lineTween = gsap.to(line, {
+        scaleX: 1,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 85%',
+          once: true,
+        },
+      });
+      if (lineTween.scrollTrigger) lineTrigger = lineTween.scrollTrigger;
+    }
 
     // Scene setup
     const scene = new Scene();
@@ -189,12 +208,54 @@ const projects = allProjects.map((p) => ({
           currentProjectIndex = newIndex;
           const project = projects[currentProjectIndex];
 
-          nameText.textContent = project.name;
+          if (prefersReducedMotion) {
+            nameText.textContent = project.name;
+            counterEl.textContent = `${String(currentProjectIndex + 1).padStart(2, '0')} of ${String(projectCount).padStart(2, '0')}`;
+          } else {
+            gsap.killTweensOf(nameText);
+            gsap.killTweensOf(counterEl);
 
-          counterEl.textContent = `${String(currentProjectIndex + 1).padStart(2, '0')} of ${String(projectCount).padStart(2, '0')}`;
+            gsap.to(nameText, {
+              y: -16,
+              opacity: 0,
+              duration: 0.2,
+              ease: 'power2.in',
+              onComplete: () => {
+                nameText.textContent = project.name;
+                gsap.fromTo(nameText,
+                  { y: 20, opacity: 0 },
+                  { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
+                );
+              },
+            });
+
+            gsap.to(counterEl, {
+              opacity: 0,
+              duration: 0.2,
+              ease: 'power2.in',
+              onComplete: () => {
+                counterEl.textContent = `${String(currentProjectIndex + 1).padStart(2, '0')} of ${String(projectCount).padStart(2, '0')}`;
+                gsap.to(counterEl, { opacity: 1, duration: 0.4, ease: 'power2.out' });
+              },
+            });
+          }
         }
       },
     });
+
+    let skewTrigger: ScrollTrigger | null = null;
+    if (!prefersReducedMotion && nameText) {
+      const skewTo = gsap.quickTo(nameText, 'skewY', { duration: 0.6, ease: 'power3.out' });
+      const clamp = gsap.utils.clamp(-6, 6);
+      skewTrigger = ScrollTrigger.create({
+        trigger: '#carousel-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => {
+          skewTo(clamp(self.getVelocity() / -700));
+        },
+      });
+    }
 
     // Mouse parallax
     let mouseX = 0;
@@ -337,6 +398,8 @@ const projects = allProjects.map((p) => ({
       ac.abort();
       observer.disconnect();
       scrollTriggerInstance.kill();
+      lineTrigger?.kill();
+      skewTrigger?.kill();
 
       // Dispose Three.js resources
       meshes.forEach((mesh) => {

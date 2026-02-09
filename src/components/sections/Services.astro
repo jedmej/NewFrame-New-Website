@@ -19,7 +19,7 @@ const t = useTranslations(lang);
     <!-- Section label -->
     <div class="mb-12 md:mb-20">
       <h2 class="text-mono-xs text-[#0A0A0A]">{t.services.label}</h2>
-      <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
+      <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
     </div>
 
     <!-- Services grouped by category -->
@@ -63,6 +63,7 @@ const t = useTranslations(lang);
         id="services-cta-link"
         class="services-cta-block group"
         data-cursor="CLICK"
+        data-magnetic="0.4"
       >
         <div class="services-cta-inner">
           <h3 class="services-cta-text">{t.services.cta}</h3>
@@ -262,13 +263,31 @@ const t = useTranslations(lang);
     const rows = section.querySelectorAll('.service-row');
     const allLineFills = section.querySelectorAll('.service-line-fill');
     const cta = section.querySelector('.service-cta');
+    const lines = section.querySelectorAll('[data-line]');
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
       allLineFills.forEach((line) => {
         (line as HTMLElement).style.transform = 'scaleX(1)';
       });
       cleanupFn = () => ac.abort();
       return;
+    }
+
+    if (lines.length > 0) {
+      gsap.set(lines, { scaleX: 0, transformOrigin: 'left' });
+      const lineTween = gsap.to(lines, {
+        scaleX: 1,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 85%',
+          once: true,
+        },
+      });
+      if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
     }
 
     // Lines draw in

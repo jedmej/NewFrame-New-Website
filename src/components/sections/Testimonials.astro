@@ -31,7 +31,7 @@ const totalStr = String(items.length).padStart(2, '0');
             <span id="testimonial-counter-active" style="color: var(--color-accent);">01</span> / {totalStr}
           </span>
         </div>
-        <div class="mt-4 w-full h-px bg-[var(--color-text)]"></div>
+        <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
       </div>
 
       <!-- Decorative: Background panel index number -->
@@ -177,6 +177,7 @@ const totalStr = String(items.length).padStart(2, '0');
     const bgNumberEl = document.getElementById('testimonial-bg-number');
     const bgNumberSpan = bgNumberEl?.querySelector('span');
     const dots = section.querySelectorAll('.testimonial-dot');
+    const line = section.querySelector('[data-line]');
     const totalPanels = panels.length;
     const scrollTriggers: ScrollTrigger[] = [];
 
@@ -218,6 +219,21 @@ const totalStr = String(items.length).padStart(2, '0');
 
       splits.push(split);
     });
+
+    if (!prefersReducedMotion && line) {
+      gsap.set(line, { scaleX: 0, transformOrigin: 'left' });
+      const lineTween = gsap.to(line, {
+        scaleX: 1,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 85%',
+          once: true,
+        },
+      });
+      if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
+    }
 
     // ===== MAIN SCROLL TRIGGER =====
     scrollTriggers.push(ScrollTrigger.create({
@@ -272,7 +288,9 @@ const totalStr = String(items.length).padStart(2, '0');
           if (i < activePanelIndex) {
             // Previous panels — visible behind the stack with subtle upward drift
             el.style.opacity = '1';
-            el.style.transform = `translateY(${-(activePanelIndex - i) * 15}px)`;
+            const depth = activePanelIndex - i;
+            const scale = prefersReducedMotion ? 1 : 1 - Math.min(0.05, depth * 0.015);
+            el.style.transform = `translateY(${-depth * 15}px) scale(${scale})`;
             el.style.clipPath = 'inset(0 0 0 0)';
             el.style.pointerEvents = 'none';
 
@@ -301,9 +319,10 @@ const totalStr = String(items.length).padStart(2, '0');
             // Slight upward drift as next panel starts covering
             if (panelLocalProgress > crossfadeStart && i < totalPanels - 1) {
               const drift = (panelLocalProgress - crossfadeStart) / (1 - crossfadeStart);
-              el.style.transform = `translateY(${-15 * drift}px)`;
+              const scale = prefersReducedMotion ? 1 : 1 - drift * 0.01;
+              el.style.transform = `translateY(${-15 * drift}px) scale(${scale})`;
             } else {
-              el.style.transform = 'translateY(0)';
+              el.style.transform = 'translateY(0) scale(1)';
             }
 
             // Char reveal based on local progress (first 70% of panel scroll)
@@ -338,7 +357,8 @@ const totalStr = String(items.length).padStart(2, '0');
             // Next panel — sliding up from below, covering the current one
             const reveal = (panelLocalProgress - crossfadeStart) / (1 - crossfadeStart); // 0→1
             el.style.opacity = '1';
-            el.style.transform = `translateY(${(1 - reveal) * 100}%)`;
+            const scale = prefersReducedMotion ? 1 : 1.02 - reveal * 0.02;
+            el.style.transform = `translateY(${(1 - reveal) * 100}%) scale(${scale})`;
             el.style.clipPath = `inset(${(1 - reveal) * 100}% 0 0 0)`;
             el.style.pointerEvents = 'none';
 
@@ -351,7 +371,8 @@ const totalStr = String(items.length).padStart(2, '0');
           } else {
             // Future panels — hidden below
             el.style.opacity = '0';
-            el.style.transform = 'translateY(100%)';
+            const scale = prefersReducedMotion ? 1 : 1.02;
+            el.style.transform = `translateY(100%) scale(${scale})`;
             el.style.clipPath = 'inset(100% 0 0 0)';
             el.style.pointerEvents = 'none';
 
