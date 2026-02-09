@@ -72,6 +72,7 @@ export const translations = {
       label: 'SELECTED WORK',
       counter: 'of',
       carouselLabel: 'Interactive 3D carousel showcasing selected design projects',
+      viewProject: 'View',
     },
     testimonials: {
       label: 'WHAT THEY SAY',
@@ -184,6 +185,7 @@ export const translations = {
       label: 'WYBRANE PROJEKTY',
       counter: 'z',
       carouselLabel: 'Interaktywna karuzela 3D prezentująca wybrane projekty',
+      viewProject: 'Zobacz',
     },
     testimonials: {
       label: 'CO MÓWIĄ',
