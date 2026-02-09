@@ -304,18 +304,19 @@ const t = useTranslations(lang);
     });
     if (linesTween.scrollTrigger) scrollTriggers.push(linesTween.scrollTrigger);
 
-    // Rows stagger in
+    // Rows stagger in — slide from right to match right-aligned layout
     rows.forEach((row, i) => {
       const inner = row.querySelector('.service-row-inner');
       if (!inner) return;
 
       const tween = gsap.fromTo(
         inner,
-        { opacity: 0, y: 20 },
+        { opacity: 0, y: 40, x: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
+          x: 0,
+          duration: 0.9,
           ease: 'power3.out',
           delay: 0.3 + i * 0.08,
           scrollTrigger: {

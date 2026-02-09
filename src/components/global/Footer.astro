@@ -14,7 +14,11 @@ const email = 'jed.mejzner@gmail.com';
 const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  ✦  STRATEGY  ✦  ';
 ---
 
-<footer id="contact" class="relative z-50" style="color: #ffffff;">
+<footer id="contact" class="relative z-50 overflow-hidden" style="color: #ffffff;">
+
+  <!-- Entrance wipe: cream overlay clips away to reveal footer -->
+  <div id="footer-wipe-in" class="absolute top-0 left-0 right-0 h-screen z-30 pointer-events-none"
+       style="background-color: var(--color-bg);"></div>
 
   <!-- ===== 1. Giant CTA Block ===== -->
   <div style="background-color: #DA382E;">
@@ -213,6 +217,30 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
     let splitInstance: any = null;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Entrance wipe — cream overlay clips away to reveal footer
+    const footerWipe = document.getElementById('footer-wipe-in');
+    const footer = document.getElementById('contact');
+    if (footerWipe && footer && !prefersReducedMotion) {
+      const wipeTween = gsap.fromTo(footerWipe,
+        { clipPath: 'inset(0% 0% 0% 0%)' },
+        {
+          clipPath: 'inset(0% 0% 100% 0%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: footer,
+            start: 'top bottom',
+            end: 'bottom bottom',
+            scrub: true,
+          },
+        }
+      );
+      if (wipeTween.scrollTrigger) scrollTriggers.push(wipeTween.scrollTrigger);
+    } else if (footerWipe) {
+      footerWipe.style.display = 'none';
+    }
 
     // Back to top — use Lenis if available
     const btn = document.getElementById('back-to-top');

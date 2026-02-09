@@ -23,6 +23,10 @@ const projects = allProjects.map((p) => ({
   class="relative"
   style="background-color: var(--color-bg-dark);"
 >
+  <!-- Entrance wipe: cream overlay clips away to reveal dark section -->
+  <div id="work-wipe-in" class="absolute top-0 left-0 right-0 h-screen z-30 pointer-events-none"
+       style="background-color: var(--color-bg);"></div>
+
   <!-- Section label -->
   <div class="px-6 md:px-10 pt-32 md:pt-48 pb-8 max-w-[1400px] mx-auto">
     <div class="flex justify-between items-end">
@@ -33,7 +37,7 @@ const projects = allProjects.map((p) => ({
   </div>
 
   <!-- Carousel container -->
-  <div id="carousel-section" class="relative h-[500vh]">
+  <div id="carousel-section" class="relative h-[350vh]">
     <!-- Sticky container -->
     <div class="sticky top-0 h-screen overflow-hidden">
       <!-- Progressive blur top -->
@@ -77,6 +81,10 @@ const projects = allProjects.map((p) => ({
 
       <!-- Bottom gradient -->
       <div class="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to top, var(--color-bg-dark), transparent);"></div>
+
+      <!-- Exit wipe: cream overlay clips in from top to cover dark section on exit -->
+      <div id="work-wipe-out" class="absolute inset-0 z-30 pointer-events-none"
+           style="background-color: var(--color-bg); clip-path: inset(100% 0% 0% 0%);"></div>
     </div>
   </div>
 </section>
@@ -120,6 +128,51 @@ const projects = allProjects.map((p) => ({
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let lineTrigger: ScrollTrigger | null = null;
+    let wipeTrigger: ScrollTrigger | null = null;
+    let wipeOutTrigger: ScrollTrigger | null = null;
+
+    // Entrance wipe — cream overlay clips away to reveal dark section
+    const wipeEl = document.getElementById('work-wipe-in');
+    if (wipeEl && !prefersReducedMotion) {
+      const wipeTween = gsap.fromTo(wipeEl,
+        { clipPath: 'inset(0% 0% 0% 0%)' },
+        {
+          clipPath: 'inset(0% 0% 100% 0%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top bottom',
+            end: 'top 10%',
+            scrub: true,
+          },
+        }
+      );
+      if (wipeTween.scrollTrigger) wipeTrigger = wipeTween.scrollTrigger;
+    } else if (wipeEl) {
+      wipeEl.style.display = 'none';
+    }
+
+    // Exit wipe — cream overlay clips in from top as section exits
+    const wipeOutEl = document.getElementById('work-wipe-out');
+    if (wipeOutEl && !prefersReducedMotion) {
+      const wipeOutTween = gsap.fromTo(wipeOutEl,
+        { clipPath: 'inset(100% 0% 0% 0%)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#carousel-section',
+            start: 'bottom bottom',
+            end: 'bottom 20%',
+            scrub: true,
+          },
+        }
+      );
+      if (wipeOutTween.scrollTrigger) wipeOutTrigger = wipeOutTween.scrollTrigger;
+    } else if (wipeOutEl) {
+      wipeOutEl.style.display = 'none';
+    }
+
     if (!prefersReducedMotion && line) {
       gsap.set(line, { scaleX: 0, transformOrigin: 'left' });
       const lineTween = gsap.to(line, {
@@ -416,6 +469,8 @@ const projects = allProjects.map((p) => ({
       observer.disconnect();
       scrollTriggerInstance.kill();
       lineTrigger?.kill();
+      wipeTrigger?.kill();
+      wipeOutTrigger?.kill();
 
       // Dispose Three.js resources
       meshes.forEach((mesh) => {
