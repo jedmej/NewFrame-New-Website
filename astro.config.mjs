@@ -6,7 +6,18 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://newframe.studio',
   compressHTML: true,
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: {
+          en: 'en',
+          pl: 'pl',
+        },
+      },
+      filter: (page) => !page.endsWith('newframe.studio/'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
@@ -15,7 +26,7 @@ export default defineConfig({
     locales: ['en', 'pl'],
     routing: {
       prefixDefaultLocale: true,
-      redirectToDefaultLocale: true,
+      redirectToDefaultLocale: false,
     },
   },
 });

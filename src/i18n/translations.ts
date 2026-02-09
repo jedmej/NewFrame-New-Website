@@ -17,7 +17,9 @@ export const translations = {
       work: 'Work',
       services: 'Capabilities',
       contact: 'Contact',
+      mobileMenuLabel: 'Site navigation',
     },
+    skipToContent: 'Skip to content',
     hero: {
       title: 'NEW FRAME',
       available: 'AVAILABLE FOR PROJECTS',
@@ -105,6 +107,21 @@ export const translations = {
       available: 'Available for projects',
       rights: 'All rights reserved',
       backToTop: 'Back to top',
+      privacy: 'Privacy',
+    },
+    notFound: {
+      title: 'Page not found',
+      description: "The page you're looking for doesn't exist or has been moved.",
+      backHome: 'Back to homepage',
+    },
+    privacy: {
+      title: 'Privacy',
+      heading: 'Privacy Policy',
+      intro: 'We believe in complete transparency about data practices.',
+      noCollection: 'We do not collect, store, or process any personal data. No cookies are set, no analytics are tracked, and no information is gathered about your visit.',
+      thirdParty: 'This website loads fonts from Google Fonts and a visual effects library from jsDelivr CDN. These services may log standard server access data (such as IP addresses) per their own privacy policies.',
+      contact: 'If you have any questions about this policy, you can reach us at',
+      lastUpdated: 'Last updated: February 2026',
     },
   },
   pl: {
@@ -118,7 +135,9 @@ export const translations = {
       work: 'Projekty',
       services: 'Możliwości',
       contact: 'Kontakt',
+      mobileMenuLabel: 'Nawigacja strony',
     },
+    skipToContent: 'Przejdź do treści',
     hero: {
       title: 'NEW FRAME',
       available: 'DOSTĘPNY DO PROJEKTÓW',
@@ -206,6 +225,21 @@ export const translations = {
       available: 'Dostępny do projektów',
       rights: 'Wszelkie prawa zastrzeżone',
       backToTop: 'Powrót na górę',
+      privacy: 'Prywatność',
+    },
+    notFound: {
+      title: 'Nie znaleziono strony',
+      description: 'Strona, której szukasz, nie istnieje lub została przeniesiona.',
+      backHome: 'Wróć na stronę główną',
+    },
+    privacy: {
+      title: 'Prywatność',
+      heading: 'Polityka prywatności',
+      intro: 'Wierzymy w pełną przejrzystość w zakresie praktyk dotyczących danych.',
+      noCollection: 'Nie zbieramy, nie przechowujemy ani nie przetwarzamy żadnych danych osobowych. Nie ustawiamy plików cookie, nie śledzimy analityki i nie zbieramy żadnych informacji o Twojej wizycie.',
+      thirdParty: 'Ta strona ładuje czcionki z Google Fonts oraz bibliotekę efektów wizualnych z jsDelivr CDN. Te usługi mogą rejestrować standardowe dane dostępowe serwera (takie jak adresy IP) zgodnie z własnymi politykami prywatności.',
+      contact: 'Jeśli masz pytania dotyczące tej polityki, możesz się z nami skontaktować pod adresem',
+      lastUpdated: 'Ostatnia aktualizacja: luty 2026',
     },
   },
 } as const;

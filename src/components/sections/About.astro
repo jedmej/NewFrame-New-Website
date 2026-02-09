@@ -41,7 +41,7 @@ const t = useTranslations(lang);
         <div
           id="about-image-block"
           class="relative overflow-hidden"
-          style="aspect-ratio: 3/4; background-color: var(--color-text);"
+          style="aspect-ratio: 3/4; background: radial-gradient(ellipse at 30% 50%, rgba(218, 56, 46, 0.15), transparent 70%), var(--color-text);"
         >
           <!-- Unicorn Studio WebGL scene -->
           <div
@@ -263,7 +263,11 @@ const t = useTranslations(lang);
         return;
       }
       unicornScene = scene;
-    }).catch(() => {});
+    }).catch((err: unknown) => {
+      if (!unicornAborted) {
+        console.warn('Unicorn Studio failed to load:', err);
+      }
+    });
   }
 
   function destroyUnicorn() {

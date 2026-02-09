@@ -16,6 +16,8 @@
     cleanupFn?.();
     cleanupFn = null;
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch || window.innerWidth < 1024) return;
 
@@ -113,10 +115,16 @@
       item.addEventListener('mouseleave', handleLeave, { signal });
     });
 
-    // Confetti on click
-    document.addEventListener('click', (e) => {
-      createConfetti(e.clientX, e.clientY);
-    }, { signal });
+    // Confetti on click (skip if reduced motion preferred)
+    let lastConfettiTime = 0;
+    if (!prefersReducedMotion) {
+      document.addEventListener('click', (e) => {
+        const now = Date.now();
+        if (now - lastConfettiTime < 200) return;
+        lastConfettiTime = now;
+        createConfetti(e.clientX, e.clientY);
+      }, { signal });
+    }
 
     cleanupFn = () => {
       destroyed = true;

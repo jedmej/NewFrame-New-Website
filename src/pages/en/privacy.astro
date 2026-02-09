@@ -1,0 +1,44 @@
+---
+import Page from '../../layouts/Page.astro';
+import { useTranslations } from '../../i18n/translations';
+
+const t = useTranslations('en');
+const email = 'jed.mejzner@gmail.com';
+---
+
+<Page lang="en" title={`${t.privacy.title} — New Frame Studio`} description={t.privacy.intro}>
+  <section class="min-h-screen pt-32 pb-20 px-6">
+    <div class="max-w-2xl mx-auto">
+      <p class="text-mono-xs text-[var(--color-text-muted)] mb-6">{t.privacy.title}</p>
+      <h1 class="text-display-lg mb-16">{t.privacy.heading}</h1>
+
+      <div class="space-y-8" style="font-family: var(--font-body); line-height: 1.75;">
+        <p class="text-lg text-[var(--color-text-muted)]" style="font-family: var(--font-serif); font-style: italic;">
+          {t.privacy.intro}
+        </p>
+
+        <p class="text-base text-[var(--color-text-muted)]">
+          {t.privacy.noCollection}
+        </p>
+
+        <p class="text-base text-[var(--color-text-muted)]">
+          {t.privacy.thirdParty}
+        </p>
+
+        <p class="text-base text-[var(--color-text-muted)]">
+          {t.privacy.contact}{' '}
+          <a
+            href={`mailto:${email}`}
+            class="text-[var(--color-text)] hover:text-[var(--color-accent)] transition-colors duration-300 underline underline-offset-4 decoration-[var(--color-border-strong)]"
+          >
+            {email}
+          </a>.
+        </p>
+
+        <p class="text-mono-xs text-[var(--color-text-subtle)] pt-8 border-t border-[var(--color-border)]">
+          {t.privacy.lastUpdated}
+        </p>
+      </div>
+    </div>
+  </section>
+</Page>

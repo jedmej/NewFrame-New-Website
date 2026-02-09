@@ -49,6 +49,18 @@ const projects = allProjects.map((p) => ({
         data-lang={lang}
       ></canvas>
 
+      <!-- WebGL fallback (hidden by default, shown only when WebGL unavailable) -->
+      <div id="carousel-fallback" class="absolute inset-0 hidden overflow-hidden">
+        <div class="flex items-center justify-center h-full px-6 gap-4">
+          {projects.map((p) => (
+            <a href={p.url !== '#' ? p.url : undefined} target="_blank" rel="noopener noreferrer"
+               class="block w-[200px] h-[260px] md:w-[280px] md:h-[360px] flex-shrink-0 overflow-hidden rounded-sm">
+              <img src={p.image} alt={p.name} class="w-full h-full object-cover" loading="lazy" />
+            </a>
+          ))}
+        </div>
+      </div>
+
       <!-- Project name overlay -->
       <div
         id="project-name-overlay"
@@ -90,6 +102,16 @@ const projects = allProjects.map((p) => ({
     const line = section?.querySelector('[data-line]');
     if (!canvas || !section) return;
 
+    // WebGL availability check
+    const testCanvas = document.createElement('canvas');
+    const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+    if (!gl) {
+      const fallback = document.getElementById('carousel-fallback');
+      if (fallback) fallback.classList.remove('hidden');
+      canvas.style.display = 'none';
+      return;
+    }
+
     const ac = new AbortController();
     const { signal } = ac;
 
@@ -118,12 +140,20 @@ const projects = allProjects.map((p) => ({
     const camera = new PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
     camera.position.set(0, 0, 5);
 
-    const renderer = new WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: !isMobile,
-      powerPreference: isMobile ? 'low-power' : 'high-performance',
-    });
+    let renderer: WebGLRenderer;
+    try {
+      renderer = new WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: !isMobile,
+        powerPreference: isMobile ? 'low-power' : 'high-performance',
+      });
+    } catch {
+      const fallback = document.getElementById('carousel-fallback');
+      if (fallback) fallback.classList.remove('hidden');
+      canvas.style.display = 'none';
+      return;
+    }
 
     const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2);
     renderer.setPixelRatio(dpr);
@@ -196,12 +226,13 @@ const projects = allProjects.map((p) => ({
       end: 'bottom bottom',
       scrub: 0.3,
       onUpdate: (self) => {
-        targetRotation = -(self.progress * Math.PI * 2);
+        targetRotation = -(self.progress * Math.PI * 2 * (projectCount - 1) / projectCount);
 
-        // Update project index
+        // Update project index (mapped to reduced rotation range, offset to sync with lerp)
+        const adjustedProgress = self.progress * (projectCount - 1);
         const newIndex = Math.min(
           projectCount - 1,
-          Math.floor(self.progress * projectCount)
+          Math.floor(adjustedProgress + 0.4)
         );
 
         if (newIndex !== currentProjectIndex && nameText && counterEl) {
@@ -216,26 +247,26 @@ const projects = allProjects.map((p) => ({
             gsap.killTweensOf(counterEl);
 
             gsap.to(nameText, {
-              y: -16,
+              y: -12,
               opacity: 0,
-              duration: 0.2,
+              duration: 0.15,
               ease: 'power2.in',
               onComplete: () => {
                 nameText.textContent = project.name;
                 gsap.fromTo(nameText,
-                  { y: 20, opacity: 0 },
-                  { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
+                  { y: 16, opacity: 0 },
+                  { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out' }
                 );
               },
             });
 
             gsap.to(counterEl, {
               opacity: 0,
-              duration: 0.2,
+              duration: 0.15,
               ease: 'power2.in',
               onComplete: () => {
                 counterEl.textContent = `${String(currentProjectIndex + 1).padStart(2, '0')} of ${String(projectCount).padStart(2, '0')}`;
-                gsap.to(counterEl, { opacity: 1, duration: 0.4, ease: 'power2.out' });
+                gsap.to(counterEl, { opacity: 1, duration: 0.3, ease: 'power2.out' });
               },
             });
           }

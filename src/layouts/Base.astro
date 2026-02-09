@@ -1,6 +1,8 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
+import { useTranslations } from '../i18n/translations';
+import type { Lang } from '../i18n/translations';
 
 interface Props {
   title?: string;
@@ -15,6 +17,8 @@ const {
   lang = 'en',
   ogImage = '/og-image.jpg',
 } = Astro.props;
+
+const t = useTranslations((lang === 'pl' ? 'pl' : 'en') as Lang);
 
 // Canonical URL
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
@@ -54,6 +58,7 @@ const ogImageUrl = new URL(ogImage, Astro.site);
     <meta property="og:image" content={ogImageUrl.href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.seo.ogImageAlt} />
     <meta property="og:locale" content={lang === 'pl' ? 'pl_PL' : 'en_US'} />
     <meta property="og:locale:alternate" content={lang === 'pl' ? 'en_US' : 'pl_PL'} />
     <meta property="og:site_name" content="New Frame Studio" />
@@ -73,6 +78,11 @@ const ogImageUrl = new URL(ogImage, Astro.site);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+    <!-- DNS prefetch for third-party resources -->
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://hoirqrkdgbmvpwutwuwj.supabase.co" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
     <!-- Google Fonts: Geist Mono + Instrument Serif (non-render-blocking) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&family=Instrument+Serif:ital@0;1&display=swap"
@@ -88,7 +98,7 @@ const ogImageUrl = new URL(ogImage, Astro.site);
     </noscript>
 
     <!-- Unicorn Studio SDK -->
-    <script is:inline defer src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js"></script>
+    <script is:inline defer src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js" integrity="sha384-1lLQq1gVm4jq4xkOwlLEylCkrhtY/15eum3dwQFjauuE6ZiI5/q/UH5yY2vS24dS" crossorigin="anonymous"></script>
 
     <!-- Hide preloader instantly if user has already seen it -->
     <script is:inline>
@@ -135,6 +145,8 @@ const ogImageUrl = new URL(ogImage, Astro.site);
         },
       ],
     })} />
+
+    <slot name="head" />
 
     <!-- View Transitions -->
     <ClientRouter />

@@ -5,6 +5,7 @@ import Footer from '../components/global/Footer.astro';
 import Preloader from '../components/global/Preloader.astro';
 import CustomCursor from '../components/global/CustomCursor.astro';
 import type { Lang } from '../i18n/translations';
+import { useTranslations } from '../i18n/translations';
 
 interface Props {
   title?: string;
@@ -13,14 +14,16 @@ interface Props {
 }
 
 const { title, description, lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <Base title={title} description={description} lang={lang}>
+  <a href="#main-content" class="skip-to-content">{t.skipToContent}</a>
   <Preloader />
   <CustomCursor />
   <Nav lang={lang} />
 
-  <main>
+  <main id="main-content">
     <slot />
   </main>
 

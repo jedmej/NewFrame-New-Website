@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/global/Nav.astro';
+import { translations } from '../i18n/translations';
+---
+
+<Base title="404 — Newframe Studio" description="Page not found" lang="en">
+  <meta slot="head" name="robots" content="noindex" />
+  <Nav lang="en" />
+
+  <section class="min-h-screen flex items-center justify-center px-6">
+    <div class="text-center max-w-2xl mx-auto">
+      <!-- English content -->
+      <div id="content-en" class="not-found-content" style="display: none;">
+        <p class="text-mono-xs text-[var(--color-text-muted)] mb-6">{translations.en.notFound.title}</p>
+        <h1 class="text-display-xl text-[var(--color-text)]">404</h1>
+        <p class="mt-8 text-lg text-[var(--color-text-muted)] max-w-md mx-auto" style="font-family: var(--font-body); line-height: 1.6;">
+          {translations.en.notFound.description}
+        </p>
+        <a
+          id="link-en"
+          href="/en/"
+          class="inline-flex items-center gap-2 mt-10 text-mono-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors duration-300 group"
+        >
+          <svg class="w-3 h-3 transition-transform duration-300 group-hover:-translate-x-1 rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M1 11L11 1M11 1H3M11 1V9"/>
+          </svg>
+          <span>{translations.en.notFound.backHome}</span>
+        </a>
+      </div>
+
+      <!-- Polish content -->
+      <div id="content-pl" class="not-found-content" style="display: none;">
+        <p class="text-mono-xs text-[var(--color-text-muted)] mb-6">{translations.pl.notFound.title}</p>
+        <h1 class="text-display-xl text-[var(--color-text)]">404</h1>
+        <p class="mt-8 text-lg text-[var(--color-text-muted)] max-w-md mx-auto" style="font-family: var(--font-body); line-height: 1.6;">
+          {translations.pl.notFound.description}
+        </p>
+        <a
+          id="link-pl"
+          href="/pl/"
+          class="inline-flex items-center gap-2 mt-10 text-mono-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors duration-300 group"
+        >
+          <svg class="w-3 h-3 transition-transform duration-300 group-hover:-translate-x-1 rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M1 11L11 1M11 1H3M11 1V9"/>
+          </svg>
+          <span>{translations.pl.notFound.backHome}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import gsap from 'gsap';
+
+    let cleanupFn: (() => void) | null = null;
+
+    function init() {
+      cleanupFn?.();
+      cleanupFn = null;
+
+      // Detect language
+      let lang = localStorage.getItem('preferred-lang');
+      if (lang !== 'en' && lang !== 'pl') {
+        const browserLang = navigator.language?.substring(0, 2);
+        lang = browserLang === 'pl' ? 'pl' : 'en';
+      }
+
+      // Show correct content block
+      const allContent = document.querySelectorAll('.not-found-content');
+      allContent.forEach((el) => {
+        (el as HTMLElement).style.display = 'none';
+      });
+
+      const activeContent = document.getElementById(`content-${lang}`);
+      if (activeContent) {
+        activeContent.style.display = 'block';
+      }
+
+      // Update nav lang attribute
+      const html = document.documentElement;
+      html.setAttribute('lang', lang);
+
+      // Entrance animation
+      const elements = activeContent?.children;
+      if (elements && elements.length > 0) {
+        const tl = gsap.timeline();
+        tl.fromTo(
+          Array.from(elements),
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: 'power3.out',
+            delay: 0.4,
+          }
+        );
+
+        cleanupFn = () => {
+          tl.kill();
+        };
+      }
+    }
+
+    init();
+    document.addEventListener('astro:after-swap', init);
+  </script>
+</Base>
