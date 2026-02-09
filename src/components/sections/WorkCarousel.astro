@@ -21,15 +21,15 @@ const projects = allProjects.map((p) => ({
 <section
   id="work"
   class="relative"
-  style="background-color: var(--color-bg);"
+  style="background-color: var(--color-bg-dark);"
 >
   <!-- Section label -->
   <div class="px-6 md:px-10 pt-32 md:pt-48 pb-8 max-w-[1400px] mx-auto">
     <div class="flex justify-between items-end">
-      <h2 class="text-mono-xs text-[var(--color-text)]">{t.work.label}</h2>
-      <span id="work-counter" class="text-mono-xs text-[var(--color-text-ghost)]">01 {t.work.counter} {String(projects.length).padStart(2, '0')}</span>
+      <h2 class="text-mono-xs text-white">{t.work.label}</h2>
+      <span id="work-counter" class="text-mono-xs text-white/40">01 {t.work.counter} {String(projects.length).padStart(2, '0')}</span>
     </div>
-    <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
+    <div class="mt-4 w-full h-px bg-white/20" data-line></div>
   </div>
 
   <!-- Carousel container -->
@@ -37,7 +37,7 @@ const projects = allProjects.map((p) => ({
     <!-- Sticky container -->
     <div class="sticky top-0 h-screen overflow-hidden">
       <!-- Progressive blur top -->
-      <div class="absolute top-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to bottom, var(--color-bg), transparent);"></div>
+      <div class="absolute top-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to bottom, var(--color-bg-dark), transparent);"></div>
 
       <!-- Three.js canvas -->
       <canvas
@@ -76,7 +76,7 @@ const projects = allProjects.map((p) => ({
       </div>
 
       <!-- Bottom gradient -->
-      <div class="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to top, var(--color-bg), transparent);"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to top, var(--color-bg-dark), transparent);"></div>
     </div>
   </div>
 </section>
