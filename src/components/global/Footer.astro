@@ -22,7 +22,7 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
 
   <!-- ===== 1. Giant CTA Block ===== -->
   <div style="background-color: #DA382E;">
-  <div class="px-6 md:px-10 pt-32 md:pt-48 pb-16 md:pb-24">
+  <div class="px-6 md:px-10 pt-24 md:pt-48 pb-8 md:pb-20">
     <div class="max-w-[1400px] mx-auto">
       <!-- Availability badge -->
       <div class="flex items-center gap-2.5 mb-8 md:mb-12">
@@ -57,22 +57,22 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
   </div>
 
   <!-- ===== 2. Decorative Marquee Divider ===== -->
-  <div class="relative overflow-hidden py-6 border-t border-b border-white/15">
+  <div class="relative overflow-hidden py-6 border-t border-b border-white/15 hidden">
     <div class="footer-marquee whitespace-nowrap">
       <span class="text-mono-xs text-white/20 inline-block">{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}</span>
     </div>
   </div>
 
   <!-- ===== 3. Link Grid ===== -->
-  <div class="px-6 md:px-10 py-16 md:py-20">
+  <div class="px-6 md:px-10 py-8 md:py-16">
     <div class="max-w-[1400px] mx-auto">
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Column 1: Navigation -->
         <div>
           <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
             {t.footer.navigation}
           </span>
-          <ul class="space-y-3">
+          <ul class="grid grid-cols-3 gap-x-8 gap-y-3">
             <li>
               <a href={`/${lang}/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
                 <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
@@ -103,6 +103,12 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
                 <span class="scramble-target">{t.nav.contact}</span>
               </a>
             </li>
+            <li>
+              <a href={`/${lang}/privacy/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
+                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
+                <span class="scramble-target">{t.footer.privacy}</span>
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -111,7 +117,7 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
           <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
             {t.footer.social}
           </span>
-          <ul class="space-y-3">
+          <ul class="grid grid-cols-2 gap-x-8 gap-y-3">
             {['Instagram', 'LinkedIn'].map((social) => (
               <li>
                 <a href="#" class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group" target="_blank" rel="noopener">
@@ -124,33 +130,18 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
           </ul>
         </div>
 
-        <!-- Column 3: Info -->
-        <div class="col-span-2 md:col-span-1">
-          <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
-            {t.footer.info}
-          </span>
-          <ul class="space-y-3">
-            <li class="text-sm text-white/70">Remote Worldwide</li>
-            <li>
-              <a href={`mailto:${email}`} class="text-sm text-white/70 hover:text-white transition-colors duration-300">
-                {email}
-              </a>
-            </li>
-            <li>
-              <a href={`/${lang}/privacy/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.footer.privacy}</span>
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>
 
   <!-- ===== 4. Bottom Bar ===== -->
-  <div class="px-6 md:px-10 py-6 border-t border-white/15">
+  <div class="px-6 md:px-10 py-8 md:py-6">
     <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <!-- Copyright -->
+      <div class="text-center">
+        <p class="text-mono-xs text-white/40">&copy; {year} New Frame Studio &middot; {t.footer.rights}</p>
+      </div>
+
       <!-- Logo -->
       <div class="flex items-center gap-2.5 text-white/40">
         <svg class="w-4 h-4" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -160,11 +151,6 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
           <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
         </svg>
         <span class="text-mono-xs">NEW FRAME</span>
-      </div>
-
-      <!-- Copyright -->
-      <div class="text-center">
-        <p class="text-mono-xs text-white/40">&copy; {year} New Frame Studio &middot; {t.footer.rights}</p>
       </div>
 
       <!-- Back to top -->

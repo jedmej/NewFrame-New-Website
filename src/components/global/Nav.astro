@@ -94,7 +94,8 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 <!-- Mobile Menu Overlay -->
 <div
   id="mobile-menu"
-  class="fixed inset-0 z-[99] bg-[var(--color-bg)] flex flex-col items-end justify-end px-4 pb-12 opacity-0 pointer-events-none transition-opacity duration-500"
+  class="fixed inset-0 z-[99] bg-[var(--color-bg)] flex flex-col items-end justify-end px-4 pb-12 pointer-events-none"
+  style="clip-path: ellipse(150% 0% at 50% 0%);"
   aria-hidden="true"
 >
   <div class="flex flex-col items-end gap-2">
@@ -239,7 +240,6 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
     function openMenu() {
       menuOpen = true;
-      mobileMenu!.style.opacity = '1';
       mobileMenu!.style.pointerEvents = 'all';
       document.body.style.overflow = 'hidden';
 
@@ -252,33 +252,49 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
       gsap.to(menuLines![0], { rotation: 45, y: 4, width: 24, duration: 0.3 });
       gsap.to(menuLines![1], { rotation: -45, y: -4, width: 24, marginLeft: 0, duration: 0.3 });
 
-      // Stagger links in
+      // Wipe open from top to bottom with curved edge
+      gsap.to(mobileMenu!, {
+        clipPath: 'ellipse(150% 110% at 50% 0%)',
+        duration: 0.9,
+        ease: 'power4.inOut',
+      });
+
+      // Stagger links in after wipe starts
       gsap.to(menuLinks!, {
         opacity: 1,
         y: 0,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: 'power3.out',
-        delay: 0.1,
+        duration: 0.7,
+        stagger: 0.06,
+        ease: 'power2.out',
+        delay: 0.35,
       });
     }
 
     function closeMenu() {
       menuOpen = false;
-      gsap.to(menuLinks!, { opacity: 0, y: 8, duration: 0.3, stagger: 0.03 });
+
+      // Animate lines back
       gsap.to(menuLines![0], { rotation: 0, y: 0, duration: 0.3 });
       gsap.to(menuLines![1], { rotation: 0, y: 0, width: 16, marginLeft: 'auto', duration: 0.3 });
+
+      // Wipe close from bottom to top with curved edge
+      gsap.to(mobileMenu!, {
+        clipPath: 'ellipse(150% 0% at 50% 0%)',
+        duration: 0.75,
+        ease: 'power4.inOut',
+        onComplete: () => {
+          mobileMenu!.style.pointerEvents = 'none';
+          document.body.style.overflow = '';
+
+          // Reset link positions for next open
+          gsap.set(menuLinks!, { opacity: 0, y: 8 });
+        },
+      });
 
       // Update aria states
       menuBtn!.setAttribute('aria-expanded', 'false');
       menuBtn!.setAttribute('aria-label', 'Open menu');
       mobileMenu!.setAttribute('aria-hidden', 'true');
-
-      menuCloseTimeout = setTimeout(() => {
-        mobileMenu!.style.opacity = '0';
-        mobileMenu!.style.pointerEvents = 'none';
-        document.body.style.overflow = '';
-      }, 400);
     }
 
     menuBtn?.addEventListener('click', () => {
