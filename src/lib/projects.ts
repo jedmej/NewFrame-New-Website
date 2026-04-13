@@ -30,10 +30,4 @@ export const projects: Project[] = [
     category: 'BRANDING',
     url: 'https://adfidence.com/',
   },
-  {
-    name: 'PHOTO STUDY',
-    image: '/images/work/photo.webp',
-    category: 'WEB',
-    url: '#',
-  },
 ];

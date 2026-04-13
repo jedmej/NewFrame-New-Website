@@ -25,7 +25,7 @@ export const translations = {
       available: 'AVAILABLE FOR PROJECTS',
       descriptor: 'DESIGN STUDIO',
       location: 'REMOTE',
-      credit: 'JED MEJZNER \u00A925',
+      credit: 'JED MEJZNER \u00A926',
     },
     about: {
       label: 'ABOUT',
@@ -97,7 +97,6 @@ export const translations = {
     footer: {
       cta: "Let's work together",
       navigation: 'Navigation',
-      social: 'Social',
       info: 'Info',
       available: 'Available for projects',
       rights: 'All rights reserved',
@@ -138,7 +137,7 @@ export const translations = {
       available: 'DOSTĘPNY DO PROJEKTÓW',
       descriptor: 'STUDIO PROJEKTOWE',
       location: 'ZDALNIE',
-      credit: 'JED MEJZNER \u00A925',
+      credit: 'JED MEJZNER \u00A926',
     },
     about: {
       label: 'O MNIE',
@@ -210,7 +209,6 @@ export const translations = {
     footer: {
       cta: 'Pracujmy razem',
       navigation: 'Nawigacja',
-      social: 'Social',
       info: 'Info',
       available: 'Dostępny do projektów',
       rights: 'Wszelkie prawa zastrzeżone',

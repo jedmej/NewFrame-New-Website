@@ -66,7 +66,7 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
   <!-- ===== 3. Link Grid ===== -->
   <div class="px-6 md:px-10 py-8 md:py-16">
     <div class="max-w-[1400px] mx-auto">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 gap-8">
         <!-- Column 1: Navigation -->
         <div>
           <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
@@ -109,24 +109,6 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
                 <span class="scramble-target">{t.footer.privacy}</span>
               </a>
             </li>
-          </ul>
-        </div>
-
-        <!-- Column 2: Social -->
-        <div>
-          <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
-            {t.footer.social}
-          </span>
-          <ul class="grid grid-cols-2 gap-x-8 gap-y-3">
-            {['Instagram', 'LinkedIn'].map((social) => (
-              <li>
-                <a href="#" class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group" target="_blank" rel="noopener">
-                  <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                  <span class="scramble-target">{social}</span>
-                  <svg class="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity duration-300 -translate-y-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" /></svg>
-                </a>
-              </li>
-            ))}
           </ul>
         </div>
 

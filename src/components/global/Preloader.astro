@@ -119,6 +119,12 @@ const lang = getLangFromUrl(Astro.url);
     // 4. Remove preloader bg so page shows between the halves, then split
     tl.set(preloader, { background: 'transparent' });
 
+    tl.call(() => {
+      document.dispatchEvent(new CustomEvent('preloader:split-start', {
+        detail: { splitDuration: 0.8 },
+      }));
+    });
+
     tl.to(topHalf, {
       yPercent: -100,
       duration: 0.8,
