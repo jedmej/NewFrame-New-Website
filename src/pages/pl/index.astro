@@ -5,15 +5,18 @@ import Hero from '../../components/sections/Hero.astro';
 import About from '../../components/sections/About.astro';
 import Services from '../../components/sections/Services.astro';
 import WorkCarousel from '../../components/sections/WorkCarousel.astro';
+import WorkSelectedMinimal from '../../components/sections/WorkSelectedMinimal.astro';
 import Testimonials from '../../components/sections/Testimonials.astro';
 
 const t = useTranslations('pl');
+const showLegacyWork = false;
 ---
 
 <Page lang="pl" title={t.seo.title} description={t.seo.description}>
   <Hero lang="pl" />
   <About lang="pl" />
   <Services lang="pl" />
-  <WorkCarousel lang="pl" />
+  {showLegacyWork && <WorkCarousel lang="pl" />}
+  <WorkSelectedMinimal lang="pl" />
   <Testimonials lang="pl" />
 </Page>

@@ -16,7 +16,7 @@ export const projects: Project[] = [
     name: 'PANENKA CREATIVES',
     image: '/images/work/panenka.webp',
     category: 'MOTION',
-    url: 'https://panenka-creatives.pages.dev/',
+    url: 'https://panenkacreatives.com/',
   },
   {
     name: 'ESTHETIC',

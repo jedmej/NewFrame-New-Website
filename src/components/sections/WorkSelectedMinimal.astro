@@ -1,0 +1,659 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+import { projects as allProjects } from '../../lib/projects';
+
+interface Props {
+  lang: Lang;
+}
+
+type GridProject = {
+  name: string;
+  image?: string;
+  category: string;
+  url: string;
+  placeholder?: boolean;
+  tone?: 'warm' | 'cool';
+};
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const placeholderProjects: GridProject[] = [
+  {
+    name: 'AMVIS',
+    category: 'COMING SOON',
+    url: '#',
+    placeholder: true,
+    tone: 'cool',
+  },
+  {
+    name: 'HUBERT',
+    image: '/images/work/hubert.jpg',
+    category: 'WEB',
+    url: 'https://hubertkesik.com/',
+  },
+];
+
+const gridProjects: GridProject[] = [...allProjects, ...placeholderProjects];
+---
+
+<section id="work-minimal" class="work-grid-reference" aria-label={`${t.work.label} grid alternative`}>
+  <span id="work" class="work-grid-reference__anchor" aria-hidden="true"></span>
+
+  <div
+    class="work-grid-reference__wipe work-grid-reference__wipe--in"
+    data-work-grid-wipe-in
+    aria-hidden="true"
+  ></div>
+
+  <div class="work-grid-reference__chrome" aria-hidden="true">
+    <span>{t.work.label}</span>
+    <span>{String(gridProjects.length).padStart(2, '0')} {t.work.counter} {String(gridProjects.length).padStart(2, '0')}</span>
+  </div>
+
+  <p class="work-grid-reference__wordmark" aria-hidden="true">SELECTED<br />WORK</p>
+
+  <div class="work-grid-reference__grid" role="list">
+    {gridProjects.map((project, index) => {
+      const href = project.placeholder ? undefined : project.url;
+      return (
+        <a
+          href={href}
+          target={href ? '_blank' : undefined}
+          rel={href ? 'noopener noreferrer' : undefined}
+          role="listitem"
+          class={`work-grid-reference__card${project.placeholder ? ' work-grid-reference__card--placeholder' : ''}${project.tone ? ` work-grid-reference__card--${project.tone}` : ''}`}
+          data-work-grid-card
+          data-tooltip-label={href ? t.work.viewProject : 'Preview'}
+          data-tooltip-title={project.name}
+          style={`--index: ${index}; --base-rotate: ${[-2.2, 1.4, -1.1, 1.8, -1.5, 1.2][index]}deg; --current-rotate: ${[-2.2, 1.4, -1.1, 1.8, -1.5, 1.2][index]}deg;`}
+          aria-label={`${project.name} ${project.category}`}
+        >
+          <span class="work-grid-reference__media">
+            {project.image ? (
+              <img src={project.image} alt="" loading="lazy" />
+            ) : (
+              <span class="work-grid-reference__placeholder-mark">
+                <span>{project.name}</span>
+              </span>
+            )}
+          </span>
+          <span class="work-grid-reference__caption">
+            <span>{project.name}</span>
+            <span>{project.category}</span>
+          </span>
+        </a>
+      );
+    })}
+  </div>
+
+  <div class="work-grid-reference__tooltip" data-work-grid-tooltip aria-hidden="true"></div>
+
+  <div
+    class="work-grid-reference__wipe work-grid-reference__wipe--out"
+    data-work-grid-wipe-out
+    aria-hidden="true"
+  ></div>
+</section>
+
+<style>
+  .work-grid-reference {
+    position: relative;
+    overflow: hidden;
+    min-height: 120vh;
+    padding: clamp(5rem, 8vw, 7.5rem) clamp(1.25rem, 4vw, 4rem) clamp(8.5rem, 14vw, 12rem);
+    background:
+      radial-gradient(circle at 18% 20%, rgba(218, 56, 46, 0.045), transparent 26rem),
+      #0d0d0c;
+    color: #f4f0e8;
+    isolation: isolate;
+  }
+
+  .work-grid-reference::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(244, 240, 232, 0.035), transparent 22rem);
+  }
+
+  .work-grid-reference__anchor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  .work-grid-reference__wipe {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 70;
+    pointer-events: none;
+    background: var(--color-bg);
+  }
+
+  .work-grid-reference__wipe--in {
+    top: 0;
+    height: 100vh;
+  }
+
+  .work-grid-reference__wipe--out {
+    inset: 0;
+    clip-path: inset(100% 0% 0% 0%);
+  }
+
+  .work-grid-reference__chrome {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    justify-content: space-between;
+    width: min(100%, 1180px);
+    margin: 0 auto clamp(2.8rem, 5vw, 4.5rem);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(244, 240, 232, 0.58);
+    pointer-events: none;
+  }
+
+  .work-grid-reference__grid {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(2rem, 5vw, 5rem);
+    row-gap: clamp(4.75rem, 8vw, 8.5rem);
+    align-items: start;
+  }
+
+  .work-grid-reference__card {
+    --mx: 0px;
+    --my: 0px;
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --active: 0;
+    position: relative;
+    display: block;
+    aspect-ratio: 3.5 / 4.55;
+    color: inherit;
+    text-decoration: none;
+    transform:
+      translate3d(var(--mx), var(--my), 0)
+      rotate(var(--current-rotate, var(--base-rotate)))
+      rotateX(var(--tilt-x))
+      rotateY(var(--tilt-y))
+      scale(calc(1 + (var(--active) * 0.012)));
+    transform-style: preserve-3d;
+    opacity: 0;
+    animation: grid-card-in 0.9s var(--ease-out-expo) forwards;
+    animation-delay: calc(var(--index) * 70ms);
+    will-change: transform;
+  }
+
+  .work-grid-reference__card:nth-child(2),
+  .work-grid-reference__card:nth-child(5) {
+    margin-top: clamp(3rem, 6vw, 5.5rem);
+  }
+
+  .work-grid-reference__card:nth-child(3) {
+    margin-top: clamp(1.2rem, 2.6vw, 2.25rem);
+  }
+
+  .work-grid-reference__card:nth-child(4) {
+    margin-top: clamp(0.6rem, 2vw, 1.5rem);
+  }
+
+  .work-grid-reference__card.is-active {
+    z-index: 6;
+  }
+
+  .work-grid-reference__media {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    border-radius: 3px;
+    background: rgba(244, 240, 232, 0.06);
+    box-shadow: 0 1.2rem 3.4rem rgba(0, 0, 0, 0.3);
+    transition:
+      box-shadow 0.65s var(--ease-out-expo),
+      filter 0.55s ease;
+  }
+
+  .work-grid-reference__card.is-active .work-grid-reference__media {
+    box-shadow: 0 1.55rem 4.2rem rgba(0, 0, 0, 0.4);
+    filter: brightness(1.045) saturate(1.035);
+  }
+
+  .work-grid-reference__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(1.03) saturate(0.98);
+    transform: scale(calc(1.006 + (var(--active) * 0.014)));
+    transition: transform 0.9s var(--ease-out-expo), filter 0.75s ease;
+  }
+
+  .work-grid-reference__card.is-active .work-grid-reference__media img {
+    filter: brightness(1.08) saturate(1.045) contrast(1.015);
+  }
+
+  .work-grid-reference__card--placeholder .work-grid-reference__media {
+    background:
+      linear-gradient(135deg, rgba(244, 240, 232, 0.08), rgba(244, 240, 232, 0.025)),
+      radial-gradient(circle at 30% 22%, rgba(244, 240, 232, 0.16), transparent 12rem),
+      #141413;
+  }
+
+  .work-grid-reference__card--cool .work-grid-reference__media {
+    background:
+      radial-gradient(circle at 72% 22%, rgba(142, 174, 255, 0.24), transparent 11rem),
+      linear-gradient(135deg, rgba(244, 240, 232, 0.07), rgba(244, 240, 232, 0.02)),
+      #111316;
+  }
+
+  .work-grid-reference__card--warm .work-grid-reference__media {
+    background:
+      radial-gradient(circle at 25% 25%, rgba(218, 56, 46, 0.26), transparent 11rem),
+      linear-gradient(135deg, rgba(244, 240, 232, 0.075), rgba(244, 240, 232, 0.02)),
+      #15110f;
+  }
+
+  .work-grid-reference__placeholder-mark {
+    position: absolute;
+    inset: 1px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(244, 240, 232, 0.12);
+  }
+
+  .work-grid-reference__placeholder-mark::before,
+  .work-grid-reference__placeholder-mark::after {
+    content: '';
+    position: absolute;
+    inset: 12%;
+    border: 1px solid rgba(244, 240, 232, 0.12);
+    transform: rotate(-8deg);
+  }
+
+  .work-grid-reference__placeholder-mark::after {
+    inset: 20%;
+    transform: rotate(7deg);
+  }
+
+  .work-grid-reference__placeholder-mark span {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 6vw, 5.75rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: #f4f0e8;
+  }
+
+  .work-grid-reference__caption {
+    position: absolute;
+    left: 50%;
+    bottom: -1.1rem;
+    display: grid;
+    gap: 0.35rem;
+    min-width: max-content;
+    padding: 0.58rem 0.72rem;
+    background: #f4f0e8;
+    color: #0a0a0a;
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    line-height: 1;
+    letter-spacing: 0.11em;
+    text-align: center;
+    text-transform: uppercase;
+    opacity: var(--active);
+    transform:
+      translate3d(-50%, calc(0.38rem - (var(--active) * 0.38rem)), 28px)
+      rotate(calc(var(--base-rotate) * -1));
+    transition: opacity 0.38s ease;
+    pointer-events: none;
+  }
+
+  .work-grid-reference__caption span:last-child {
+    color: rgba(10, 10, 10, 0.52);
+  }
+
+  .work-grid-reference__wordmark {
+    position: relative;
+    z-index: 3;
+    width: min(100%, 1180px);
+    margin: 0 auto clamp(4rem, 8vw, 7rem);
+    font-family: var(--font-display);
+    font-size: clamp(4.4rem, 10vw, 10rem);
+    font-weight: 700;
+    line-height: 0.78;
+    letter-spacing: 0;
+    text-align: left;
+    color: #f4f0e8;
+    opacity: 0.92;
+    pointer-events: none;
+  }
+
+  .work-grid-reference__tooltip {
+    position: fixed;
+    z-index: 80;
+    left: 0;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.56rem 0.72rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.96);
+    transition: opacity 0.24s ease, transform 0.34s var(--ease-out-expo);
+  }
+
+  .work-grid-reference__tooltip.is-active {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  .work-grid-reference__tooltip svg {
+    width: 0.72rem;
+    height: 0.72rem;
+    flex: none;
+  }
+
+  @keyframes grid-card-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0) rotate(var(--current-rotate, var(--base-rotate)));
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) rotate(var(--current-rotate, var(--base-rotate)));
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .work-grid-reference {
+      padding-top: 5rem;
+    }
+
+    .work-grid-reference__chrome {
+      gap: 1rem;
+    }
+
+    .work-grid-reference__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: clamp(3.5rem, 8vw, 6rem);
+    }
+
+    .work-grid-reference__card:nth-child(n) {
+      margin-top: 0;
+    }
+
+    .work-grid-reference__card:nth-child(even) {
+      margin-top: clamp(2rem, 6vw, 4rem);
+    }
+
+    .work-grid-reference__wordmark {
+      position: relative;
+      bottom: auto;
+      max-width: 100%;
+      font-size: clamp(4rem, 18vw, 8rem);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .work-grid-reference {
+      padding-inline: 1rem;
+    }
+
+    .work-grid-reference__chrome {
+      align-items: flex-start;
+      font-size: 0.62rem;
+    }
+
+    .work-grid-reference__grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .work-grid-reference__card,
+    .work-grid-reference__card:nth-child(even) {
+      margin-top: 0;
+    }
+
+    .work-grid-reference__caption {
+      opacity: 1;
+      transform: translate3d(-50%, 0, 28px) rotate(calc(var(--base-rotate) * -1));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-grid-reference__card {
+      animation: none;
+      opacity: 1;
+      transform: rotate(var(--current-rotate, var(--base-rotate)));
+    }
+
+    .work-grid-reference__media,
+    .work-grid-reference__media img,
+    .work-grid-reference__caption {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let cleanupWorkGrid: (() => void) | null = null;
+
+  function initWorkGrid() {
+    cleanupWorkGrid?.();
+
+    const section = document.getElementById('work-minimal');
+    if (!section) return;
+
+    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-work-grid-card]'));
+    const tooltip = section.querySelector<HTMLElement>('[data-work-grid-tooltip]');
+    const wipeIn = section.querySelector<HTMLElement>('[data-work-grid-wipe-in]');
+    const wipeOut = section.querySelector<HTMLElement>('[data-work-grid-wipe-out]');
+    const ac = new AbortController();
+    const { signal } = ac;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const states = new Map<HTMLElement, {
+      x: number;
+      y: number;
+      tx: number;
+      ty: number;
+      rx: number;
+      ry: number;
+      trx: number;
+      try: number;
+      active: number;
+      targetActive: number;
+    }>();
+    const tooltipState = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      tx: window.innerWidth / 2,
+      ty: window.innerHeight / 2,
+    };
+    let wipeInTrigger: ScrollTrigger | null = null;
+    let wipeOutTrigger: ScrollTrigger | null = null;
+
+    cards.forEach((card) => {
+      states.set(card, {
+        x: 0,
+        y: 0,
+        tx: 0,
+        ty: 0,
+        rx: 0,
+        ry: 0,
+        trx: 0,
+        try: 0,
+        active: 0,
+        targetActive: 0,
+      });
+    });
+
+    const baseRotation = (card: HTMLElement) => {
+      const value = card.style.getPropertyValue('--base-rotate').trim();
+      return Number.parseFloat(value) || 0;
+    };
+
+    const setTarget = (card: HTMLElement, event: PointerEvent | MouseEvent) => {
+      const state = states.get(card);
+      if (!state) return;
+
+      const rect = card.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width - 0.5;
+      const py = (event.clientY - rect.top) / rect.height - 0.5;
+
+      state.tx = px * 14;
+      state.ty = py * 12;
+      state.trx = py * -3.2;
+      state.try = px * 3.8;
+      state.targetActive = 1;
+      card.classList.add('is-active');
+
+      if (tooltip) {
+        const label = card.dataset.tooltipLabel || 'View';
+        const title = card.dataset.tooltipTitle || '';
+        tooltip.innerHTML = `<span>${label} ${title}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 11L11 1M11 1H3M11 1V9"/></svg>`;
+        tooltip.classList.add('is-active');
+        tooltipState.tx = event.clientX + 84;
+        tooltipState.ty = event.clientY - 18;
+      }
+    };
+
+    const release = (card: HTMLElement) => {
+      const state = states.get(card);
+      if (!state) return;
+      state.tx = 0;
+      state.ty = 0;
+      state.trx = 0;
+      state.try = 0;
+      state.targetActive = 0;
+      card.classList.remove('is-active');
+      tooltip?.classList.remove('is-active');
+    };
+
+    cards.forEach((card) => {
+      card.addEventListener('pointerenter', (event) => setTarget(card, event), { signal });
+      card.addEventListener('pointermove', (event) => setTarget(card, event), { signal });
+      card.addEventListener('pointerleave', () => release(card), { signal });
+      card.addEventListener('focus', () => {
+        const state = states.get(card);
+        if (!state) return;
+        state.targetActive = 1;
+        card.classList.add('is-active');
+      }, { signal });
+      card.addEventListener('blur', () => release(card), { signal });
+    });
+
+    let frame = 0;
+
+    const render = () => {
+      states.forEach((state, card) => {
+        state.x += (state.tx - state.x) * 0.09;
+        state.y += (state.ty - state.y) * 0.09;
+        state.rx += (state.trx - state.rx) * 0.078;
+        state.ry += (state.try - state.ry) * 0.078;
+        state.active += (state.targetActive - state.active) * 0.095;
+        const currentRotate = baseRotation(card) * (1 - state.active);
+
+        card.style.setProperty('--mx', `${state.x.toFixed(2)}px`);
+        card.style.setProperty('--my', `${state.y.toFixed(2)}px`);
+        card.style.setProperty('--tilt-x', `${state.rx.toFixed(2)}deg`);
+        card.style.setProperty('--tilt-y', `${state.ry.toFixed(2)}deg`);
+        card.style.setProperty('--active', state.active.toFixed(3));
+        card.style.setProperty('--current-rotate', `${currentRotate.toFixed(3)}deg`);
+      });
+
+      if (tooltip) {
+        tooltipState.x += (tooltipState.tx - tooltipState.x) * 0.16;
+        tooltipState.y += (tooltipState.ty - tooltipState.y) * 0.16;
+        tooltip.style.left = `${tooltipState.x.toFixed(2)}px`;
+        tooltip.style.top = `${tooltipState.y.toFixed(2)}px`;
+      }
+
+      frame = requestAnimationFrame(render);
+    };
+
+    if (!prefersReducedMotion) {
+      frame = requestAnimationFrame(render);
+
+      if (wipeIn) {
+        const wipeInTween = gsap.fromTo(
+          wipeIn,
+          { clipPath: 'inset(0% 0% 0% 0%)' },
+          {
+            clipPath: 'inset(0% 0% 100% 0%)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'top 10%',
+              scrub: true,
+            },
+          }
+        );
+        if (wipeInTween.scrollTrigger) wipeInTrigger = wipeInTween.scrollTrigger;
+      }
+
+      if (wipeOut) {
+        const wipeOutTween = gsap.fromTo(
+          wipeOut,
+          { clipPath: 'inset(100% 0% 0% 0%)' },
+          {
+            clipPath: 'inset(0% 0% 0% 0%)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'bottom 58%',
+              end: 'bottom top',
+              scrub: true,
+            },
+          }
+        );
+        if (wipeOutTween.scrollTrigger) wipeOutTrigger = wipeOutTween.scrollTrigger;
+      }
+    } else {
+      if (wipeIn) wipeIn.style.display = 'none';
+      if (wipeOut) wipeOut.style.display = 'none';
+    }
+
+    cleanupWorkGrid = () => {
+      cancelAnimationFrame(frame);
+      wipeInTrigger?.kill();
+      wipeOutTrigger?.kill();
+      ac.abort();
+    };
+  }
+
+  initWorkGrid();
+  document.addEventListener('astro:after-swap', initWorkGrid);
+</script>
