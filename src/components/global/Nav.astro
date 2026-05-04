@@ -14,7 +14,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
 <nav
   id="main-nav"
-  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[minmax(13rem,23vw)_minmax(0,1fr)_minmax(19rem,28vw)] lg:px-0 lg:py-0 transition-transform duration-500 text-[var(--color-text)] glass"
+  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[minmax(19rem,24vw)_minmax(0,1fr)_minmax(19rem,24vw)] lg:px-0 lg:py-0 transition-transform duration-500 text-[var(--color-text)] glass"
   style="opacity: 0"
 >
   <!-- Left: Logo -->
@@ -128,7 +128,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     }
 
     .nav-section--brand {
-      justify-content: flex-start;
+      justify-content: center;
     }
 
     .nav-section--links {
@@ -139,13 +139,14 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     }
 
     .nav-section--actions {
+      justify-content: center;
       gap: clamp(1rem, 1.8vw, 1.75rem);
     }
   }
 
   @media (min-width: 1024px) and (max-width: 1180px) {
     #main-nav {
-      grid-template-columns: minmax(12rem, 20vw) minmax(0, 1fr) minmax(17rem, 25vw);
+      grid-template-columns: minmax(17rem, 24vw) minmax(0, 1fr) minmax(17rem, 24vw);
     }
 
     .nav-section {
