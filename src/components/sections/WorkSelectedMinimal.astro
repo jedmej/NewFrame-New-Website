@@ -395,51 +395,76 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     z-index: 80;
     left: 0;
     top: 0;
-    display: grid;
-    gap: 0.38rem;
-    width: min(22rem, calc(100vw - 2rem));
-    padding: 0.75rem 0.85rem;
-    border-radius: 3px;
-    background: var(--color-accent);
-    color: #fff;
+    display: flex;
+    width: min(18rem, calc(100vw - 2rem));
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    color: #f4f0e8;
     pointer-events: none;
     opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale(0.96);
+    transform: translate3d(0, -50%, 0) scale(0.98);
     transition: opacity 0.24s ease, transform 0.34s var(--ease-out-expo);
   }
 
   .work-grid-reference__tooltip.is-active {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale(1);
+    transform: translate3d(0, -50%, 0) scale(1);
   }
 
-  .work-grid-reference__tooltip-kicker,
-  .work-grid-reference__tooltip-roles {
+  :global(.work-grid-reference__tooltip-action) {
+    display: inline-flex;
+    width: auto;
+    min-height: 2.1rem;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent);
+    padding: 0.58rem 0.7rem;
+    color: #fff;
     font-family: var(--font-mono);
     font-size: 0.62rem;
-    line-height: 1.25;
+    line-height: 1;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  .work-grid-reference__tooltip-description {
-    max-width: 18rem;
-    font-family: var(--font-serif);
-    font-size: 1.06rem;
-    line-height: 1.08;
+  :global(.work-grid-reference__tooltip-description) {
+    max-width: 16.75rem;
+    color: rgba(244, 240, 232, 0.78);
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.25;
     letter-spacing: 0;
   }
 
-  .work-grid-reference__tooltip-roles {
-    color: rgba(255, 255, 255, 0.68);
+  :global(.work-grid-reference__tooltip-roles) {
+    display: flex;
+    max-width: 17rem;
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
 
-  .work-grid-reference__tooltip svg {
-    position: absolute;
-    right: 0.75rem;
-    top: 0.75rem;
-    width: 0.72rem;
-    height: 0.72rem;
+  :global(.work-grid-reference__tooltip-role) {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(244, 240, 232, 0.24);
+    padding: 0.34rem 0.45rem;
+    color: rgba(244, 240, 232, 0.72);
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  :global(.work-grid-reference__tooltip-icon) {
+    width: 0.62rem;
+    height: 0.62rem;
+    flex: 0 0 auto;
+    position: static;
+    display: block;
   }
 
   @media (hover: none) {
@@ -593,10 +618,16 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     const createTooltipSvg = () => {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      svg.classList.add('work-grid-reference__tooltip-icon');
       svg.setAttribute('viewBox', '0 0 12 12');
+      svg.setAttribute('width', '10');
+      svg.setAttribute('height', '10');
       svg.setAttribute('fill', 'none');
       svg.setAttribute('stroke', 'currentColor');
       svg.setAttribute('stroke-width', '1.5');
+      svg.style.width = '0.62rem';
+      svg.style.height = '0.62rem';
+      svg.style.position = 'static';
       svg.setAttribute('aria-hidden', 'true');
       path.setAttribute('d', 'M1 11L11 1M11 1H3M11 1V9');
       svg.append(path);
@@ -604,40 +635,42 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     };
 
     const ensureTooltipContent = (tooltipEl: HTMLElement) => {
-      let kicker = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-kicker');
+      let action = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-action');
+      let actionText = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-action-text');
       let description = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-description');
       let roles = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-roles');
-      let svg = tooltipEl.querySelector<SVGSVGElement>('svg');
 
-      if (!kicker || !description || !roles || !svg) {
-        kicker = document.createElement('span');
+      if (!action || !actionText || !description || !roles) {
+        action = document.createElement('span');
+        actionText = document.createElement('span');
         description = document.createElement('span');
         roles = document.createElement('span');
-        svg = createTooltipSvg();
 
-        kicker.className = 'work-grid-reference__tooltip-kicker';
+        action.className = 'work-grid-reference__tooltip-action';
+        actionText.className = 'work-grid-reference__tooltip-action-text';
         description.className = 'work-grid-reference__tooltip-description';
         roles.className = 'work-grid-reference__tooltip-roles';
+        action.append(actionText, createTooltipSvg());
 
-        tooltipEl.replaceChildren(kicker, description, roles, svg);
+        tooltipEl.replaceChildren(action, description, roles);
       }
 
-      return { kicker, description, roles };
+      return { actionText, description, roles };
     };
 
     const setTooltipTarget = (event: PointerEvent | MouseEvent) => {
       if (!tooltip) return;
 
       const margin = 16;
-      const fallbackWidth = Math.min(352, window.innerWidth - margin * 2);
-      const fallbackHeight = 128;
+      const fallbackWidth = Math.min(288, window.innerWidth - margin * 2);
+      const fallbackHeight = 112;
       const width = tooltip.offsetWidth || fallbackWidth;
       const height = tooltip.offsetHeight || fallbackHeight;
-      const minX = margin + width / 2;
-      const maxX = window.innerWidth - margin - width / 2;
+      const minX = margin;
+      const maxX = window.innerWidth - margin - width;
       const minY = margin + height / 2;
       const maxY = window.innerHeight - margin - height / 2;
-      const rawX = event.clientX + 84;
+      const rawX = event.clientX + 24;
       const rawY = event.clientY - 18;
 
       tooltipState.tx = clamp(rawX, minX, Math.max(minX, maxX));
@@ -665,9 +698,19 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
         const description = card.dataset.tooltipDescription || '';
         const roles = card.dataset.tooltipRoles || '';
         const tooltipContent = ensureTooltipContent(tooltip);
-        tooltipContent.kicker.textContent = `${label} ${title}`;
+        tooltipContent.actionText.textContent = `${label} ${title}`;
         tooltipContent.description.textContent = description;
-        tooltipContent.roles.textContent = roles;
+        tooltipContent.roles.replaceChildren(
+          ...roles
+            .split(' · ')
+            .filter(Boolean)
+            .map((role) => {
+              const tag = document.createElement('span');
+              tag.className = 'work-grid-reference__tooltip-role';
+              tag.textContent = role;
+              return tag;
+            }),
+        );
         tooltip.classList.add('is-active');
         setTooltipTarget(event);
       }
