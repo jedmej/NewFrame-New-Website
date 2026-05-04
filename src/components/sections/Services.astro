@@ -367,8 +367,8 @@ const t = useTranslations(lang);
       if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     });
 
-    // Category headings fade in
-    const categories = section.querySelectorAll('.service-category');
+    // Category blocks fade in
+    const categories = section.querySelectorAll('.service-category-block');
     categories.forEach((cat, i) => {
       const tween = gsap.fromTo(
         cat,
