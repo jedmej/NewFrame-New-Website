@@ -14,11 +14,11 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
 <nav
   id="main-nav"
-  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-10 transition-transform duration-500 text-[var(--color-text)] glass"
+  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[minmax(13rem,23vw)_minmax(0,1fr)_minmax(19rem,28vw)] lg:px-0 lg:py-0 transition-transform duration-500 text-[var(--color-text)] glass"
   style="opacity: 0"
 >
   <!-- Left: Logo -->
-  <div class="flex items-center">
+  <div class="nav-section nav-section--brand flex items-center">
     <a
       href={`/${lang}/`}
       id="logo-link"
@@ -39,7 +39,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   </div>
 
   <!-- Center: Desktop Nav Links -->
-  <div class="hidden lg:flex items-center gap-10">
+  <div class="nav-section nav-section--links hidden lg:flex items-center">
     <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
       {t.nav.work}
     </a>
@@ -58,7 +58,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
   </div>
 
   <!-- Right: CTA + Mobile Menu -->
-  <div class="flex items-center justify-end gap-4">
+  <div class="nav-section nav-section--actions flex items-center justify-end gap-4">
     <!-- Language Selector -->
     <a
       href={altUrl}
@@ -114,6 +114,49 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     </a>
   </div>
 </div>
+
+<style>
+  @media (min-width: 1024px) {
+    #main-nav {
+      min-height: 5.875rem;
+    }
+
+    .nav-section {
+      min-height: 5.875rem;
+      height: 100%;
+      padding-inline: clamp(2rem, 3vw, 3.75rem);
+    }
+
+    .nav-section--brand {
+      justify-content: flex-start;
+    }
+
+    .nav-section--links {
+      justify-content: center;
+      gap: clamp(2rem, 3.5vw, 4rem);
+      border-left: 1px solid var(--color-glass-border);
+      border-right: 1px solid var(--color-glass-border);
+    }
+
+    .nav-section--actions {
+      gap: clamp(1rem, 1.8vw, 1.75rem);
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1180px) {
+    #main-nav {
+      grid-template-columns: minmax(12rem, 20vw) minmax(0, 1fr) minmax(17rem, 25vw);
+    }
+
+    .nav-section {
+      padding-inline: clamp(1.25rem, 2vw, 2rem);
+    }
+
+    .nav-section--links {
+      gap: clamp(1.25rem, 2.25vw, 2rem);
+    }
+  }
+</style>
 
 <script>
   import gsap from 'gsap';
