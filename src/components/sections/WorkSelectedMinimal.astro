@@ -19,23 +19,22 @@ type GridProject = {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-const placeholderProjects: GridProject[] = [
-  {
-    name: 'AMVIS',
-    category: 'COMING SOON',
-    url: '#',
-    placeholder: true,
-    tone: 'cool',
-  },
-  {
-    name: 'HUBERT',
-    image: '/images/work/hubert.jpg',
-    category: 'WEB',
-    url: 'https://hubertkesik.com/',
-  },
-];
+const hubertProject: GridProject = {
+  name: 'HUBERT',
+  image: '/images/work/hubert.jpg',
+  category: 'WEB',
+  url: 'https://hubertkesik.com/',
+};
 
-const gridProjects: GridProject[] = [...allProjects, ...placeholderProjects];
+const amvisProject: GridProject = {
+  name: 'AMVIS',
+  category: 'COMING SOON',
+  url: '#',
+  placeholder: true,
+  tone: 'cool',
+};
+
+const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject];
 ---
 
 <section id="work-minimal" class="work-grid-reference" aria-label={`${t.work.label} grid alternative`}>
