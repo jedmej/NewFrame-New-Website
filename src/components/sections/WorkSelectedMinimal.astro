@@ -392,7 +392,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
   .work-grid-reference__tooltip {
     position: fixed;
-    z-index: 80;
+    z-index: 120;
     left: 0;
     top: 0;
     display: flex;
@@ -400,7 +400,13 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     flex-direction: column;
     align-items: flex-start;
     gap: 0.55rem;
+    padding: 0.72rem;
+    border: 1px solid rgba(241, 237, 232, 0.1);
+    background: rgba(241, 237, 232, 0.05);
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.18);
     color: #f4f0e8;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     pointer-events: none;
     opacity: 0;
     transform: translate3d(0, -50%, 0) scale(0.98);
@@ -449,7 +455,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
   :global(.work-grid-reference__tooltip-role) {
     display: inline-flex;
     align-items: center;
-    border: 1px solid rgba(244, 240, 232, 0.24);
+    border: 1px solid rgba(244, 240, 232, 0.22);
     padding: 0.34rem 0.45rem;
     color: rgba(244, 240, 232, 0.72);
     font-family: var(--font-mono);
