@@ -39,6 +39,10 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
         {t.footer.cta}
       </h2>
 
+      <p class="footer-contact-prompt">
+        {t.contact.prompt}
+      </p>
+
       <!-- Email link -->
       <a
         href={`mailto:${email}?subject=Project%20Inquiry%20-%20New%20Frame%20Studio`}
@@ -164,6 +168,16 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
 
   .footer-marquee:hover {
     animation-play-state: paused;
+  }
+
+  .footer-contact-prompt {
+    max-width: 32rem;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.72);
   }
 </style>
 

@@ -27,6 +27,7 @@ const totalStr = String(items.length).padStart(2, '0');
       <div class="absolute top-0 left-0 right-0 px-6 md:px-10 pt-24 z-20">
         <div class="max-w-[1400px] mx-auto flex justify-between items-center">
           <h2 class="text-mono-xs text-[var(--color-text)]">{t.testimonials.label}</h2>
+          <p class="testimonial-lead hidden lg:block">{t.testimonials.lead}</p>
           <span class="text-mono-xs text-[var(--color-text-subtle)]">
             <span id="testimonial-counter-active" style="color: var(--color-accent);">01</span> / {totalStr}
           </span>
@@ -146,6 +147,16 @@ const totalStr = String(items.length).padStart(2, '0');
 
   .testimonial-panel {
     will-change: transform, clip-path;
+  }
+
+  .testimonial-lead {
+    max-width: 22rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: 0;
+    color: var(--color-text);
+    text-align: right;
   }
 
   .quote-word {
