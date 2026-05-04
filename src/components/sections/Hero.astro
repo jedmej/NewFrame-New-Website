@@ -8,6 +8,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const heroTitleWords = t.hero.title.split(/\s+/);
 ---
 
 <section
@@ -16,30 +17,33 @@ const t = useTranslations(lang);
   style="background-color: var(--color-bg);"
 >
   <!-- Main content -->
-  <div class="relative w-full min-h-[100svh] md:h-full px-6 py-24 md:px-10 md:py-0 flex flex-col justify-center max-w-[2000px] mx-auto">
+  <div class="hero-shell relative w-full min-h-[100svh] md:h-full max-w-[2000px] mx-auto">
+    <div class="hero-grid">
+      <!-- Title — split into a left editorial panel on desktop -->
+      <div class="hero-panel hero-panel--title">
+        <h1
+          id="hero-title"
+          class="hero-title text-display-xl text-[var(--color-text)] select-none"
+          aria-label={t.hero.title}
+        >
+          {heroTitleWords.map((word) => <span class="hero-title__word">{word}</span>)}
+        </h1>
+      </div>
 
-    <!-- Title — centered, dominant -->
-    <div class="flex flex-col items-center justify-center">
-      <h1
-        id="hero-title"
-        class="text-display-xl text-center text-[var(--color-text)] select-none"
-        aria-label={t.hero.title}
-      >
-        {t.hero.title}
-      </h1>
-
-      <div id="hero-offer" class="hero-offer mx-auto mt-8 md:mt-10 max-w-[760px] text-center">
-        <p class="hero-offer__statement">{t.hero.statement}</p>
-        <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
-        <div class="hero-offer__actions">
-          <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">{t.hero.primaryCta}</a>
-          <a href={`/${lang}/#work`} class="hero-offer__link" data-cursor="CLICK">{t.hero.secondaryCta}</a>
+      <div class="hero-panel hero-panel--offer">
+        <div id="hero-offer" class="hero-offer">
+          <p class="hero-offer__statement">{t.hero.statement}</p>
+          <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
+          <div class="hero-offer__actions">
+            <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">{t.hero.primaryCta}</a>
+            <a href={`/${lang}/#work`} class="hero-offer__link" data-cursor="CLICK">{t.hero.secondaryCta}</a>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Corner metadata: top -->
-    <div class="absolute top-[15%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-start">
+    <div class="hero-top-meta absolute top-[13%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-start">
       <!-- Top-left: availability -->
       <div id="hero-corner-tl" class="flex items-center gap-2 opacity-0">
         <span class="w-1.5 h-1.5 rounded-full bg-[#5a9a6a] animate-pulse"></span>
@@ -52,7 +56,7 @@ const t = useTranslations(lang);
     </div>
 
     <!-- Corner metadata: bottom -->
-    <div class="absolute bottom-[15%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-end">
+    <div class="hero-bottom-meta absolute bottom-0 left-0 right-0 flex flex-col items-center gap-2 border-t border-[var(--color-border-strong)] px-6 py-7 md:flex-row md:justify-between md:items-center md:px-[5.5vw] md:py-9">
       <!-- Bottom-left: descriptor -->
       <div id="hero-corner-bl" class="opacity-0">
         <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.descriptor}</span>
@@ -66,9 +70,46 @@ const t = useTranslations(lang);
 </section>
 
 <style>
+  .hero-shell {
+    padding: 6.25rem 1.5rem 6.5rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    min-height: calc(100svh - 12.75rem);
+    width: 100%;
+    align-items: center;
+  }
+
+  .hero-panel {
+    min-width: 0;
+  }
+
+  .hero-panel--title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-panel--offer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-title {
+    width: min(100%, 54rem);
+    text-align: center;
+  }
+
+  .hero-title__word {
+    display: block;
+  }
+
   .hero-offer {
     width: min(100%, 760px);
     color: var(--color-text);
+    text-align: center;
   }
 
   .hero-offer__statement {
@@ -137,7 +178,105 @@ const t = useTranslations(lang);
     color: var(--color-accent);
   }
 
+  @media (min-width: 1024px) {
+    .hero-shell {
+      padding: 5.875rem 0 6.75rem;
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: calc(100svh - 12.625rem);
+    }
+
+    .hero-panel {
+      min-height: calc(100svh - 12.625rem);
+      padding: 6vh clamp(1.75rem, 2vw, 3.25rem);
+    }
+
+    .hero-panel--title {
+      justify-content: flex-start;
+      padding-right: clamp(1rem, 1vw, 2rem);
+      padding-left: clamp(3rem, 4vw, 5.5rem);
+    }
+
+    .hero-panel--offer {
+      justify-content: flex-start;
+      border-left: 1px solid var(--color-border-strong);
+      padding-right: clamp(2rem, 3.25vw, 4rem);
+      padding-left: clamp(2.25rem, 3.75vw, 5rem);
+    }
+
+    .hero-title {
+      width: min(100%, 52rem);
+      font-size: clamp(7rem, 10.6vw, 14.5rem);
+      line-height: 0.78;
+      text-align: left;
+    }
+
+    .hero-offer {
+      width: min(100%, 48rem);
+      margin-top: -2vh;
+      text-align: left;
+    }
+
+    .hero-offer__statement {
+      max-width: 11em;
+      margin-right: 0;
+      margin-left: 0;
+      font-size: clamp(3.25rem, 5.65vw, 6.75rem);
+      line-height: 0.9;
+    }
+
+    .hero-offer__subcopy {
+      max-width: 36.5rem;
+      margin-right: 0;
+      margin-left: 0;
+      margin-top: 2rem;
+      font-size: clamp(0.8125rem, 1vw, 1rem);
+      line-height: 1.8;
+    }
+
+    .hero-offer__actions {
+      justify-content: flex-start;
+      margin-top: 3.5rem;
+    }
+
+    .hero-offer__link {
+      min-height: 3.75rem;
+      padding: 1.15rem 1.6rem;
+      font-size: 0.75rem;
+    }
+
+    .hero-bottom-meta {
+      min-height: 6.75rem;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .hero-panel--title {
+      padding-right: clamp(1.5rem, 1.25vw, 2.5rem);
+      padding-left: clamp(4.5rem, 4vw, 6rem);
+    }
+
+    .hero-panel--offer {
+      padding-right: clamp(3rem, 3vw, 4.5rem);
+      padding-left: clamp(4rem, 4vw, 6rem);
+    }
+  }
+
   @media (max-width: 767px) {
+    .hero-shell {
+      padding-top: 7rem;
+      padding-bottom: 7.5rem;
+    }
+
+    .hero-grid {
+      min-height: calc(100svh - 14.5rem);
+      gap: 1.75rem;
+    }
+
     #hero-title {
       font-size: clamp(3.4rem, 18vw, 7rem);
     }
@@ -160,6 +299,16 @@ const t = useTranslations(lang);
   }
 
   @media (max-height: 760px) {
+    .hero-shell {
+      padding-top: 5.75rem;
+      padding-bottom: 5.75rem;
+    }
+
+    .hero-grid,
+    .hero-panel {
+      min-height: calc(100svh - 11.5rem);
+    }
+
     .hero-offer {
       margin-top: 1.25rem;
     }
@@ -181,6 +330,21 @@ const t = useTranslations(lang);
     .hero-offer__link {
       min-height: 2.375rem;
       padding: 0.7rem 0.875rem;
+    }
+  }
+
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .hero-panel {
+      padding-top: 4vh;
+      padding-bottom: 4vh;
+    }
+
+    .hero-offer {
+      margin-top: 0;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1.5rem;
     }
   }
 
