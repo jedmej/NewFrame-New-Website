@@ -7,7 +7,11 @@ interface Props {
   lang: Lang;
 }
 
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
 type GridProject = {
+  key: keyof typeof t.work.projects;
   name: string;
   image?: string;
   category: string;
@@ -16,10 +20,8 @@ type GridProject = {
   tone?: 'warm' | 'cool';
 };
 
-const { lang } = Astro.props;
-const t = useTranslations(lang);
-
 const hubertProject: GridProject = {
+  key: 'hubert',
   name: 'HUBERT',
   image: '/images/work/hubert.jpg',
   category: 'WEB',
@@ -27,6 +29,7 @@ const hubertProject: GridProject = {
 };
 
 const amvisProject: GridProject = {
+  key: 'amvis',
   name: 'AMVIS',
   category: 'COMING SOON',
   url: '#',
@@ -34,7 +37,16 @@ const amvisProject: GridProject = {
   tone: 'cool',
 };
 
-const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject];
+const projectKeys = ['uroki', 'panenka', 'esthetic', 'adfidence'] as const;
+const keyedProjects: GridProject[] = allProjects.map((project, index) => {
+  const key = projectKeys[index];
+  if (!key) {
+    throw new Error(`Missing selected work project key for ${project.name}`);
+  }
+  return { ...project, key };
+});
+
+const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProject];
 ---
 
 <section id="work-minimal" class="work-grid-reference" aria-label={`${t.work.label} grid alternative`}>
@@ -56,6 +68,7 @@ const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject
   <div class="work-grid-reference__grid" role="list">
     {gridProjects.map((project, index) => {
       const href = project.placeholder ? undefined : project.url;
+      const meta = t.work.projects[project.key];
       return (
         <a
           href={href}
@@ -64,10 +77,12 @@ const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject
           role="listitem"
           class={`work-grid-reference__card${project.placeholder ? ' work-grid-reference__card--placeholder' : ''}${project.tone ? ` work-grid-reference__card--${project.tone}` : ''}`}
           data-work-grid-card
-          data-tooltip-label={href ? t.work.viewProject : 'Preview'}
+          data-tooltip-label={href ? t.work.viewProject : t.work.previewProject}
           data-tooltip-title={project.name}
+          data-tooltip-description={meta.description}
+          data-tooltip-roles={meta.roles.join(' · ')}
           style={`--index: ${index}; --base-rotate: ${[-2.2, 1.4, -1.1, 1.8, -1.5, 1.2][index]}deg; --current-rotate: ${[-2.2, 1.4, -1.1, 1.8, -1.5, 1.2][index]}deg;`}
-          aria-label={`${project.name} ${project.category}`}
+          aria-label={`${project.name}. ${project.category}. ${meta.description}`}
         >
           <span class="work-grid-reference__media">
             {project.image ? (
@@ -374,19 +389,13 @@ const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject
     z-index: 80;
     left: 0;
     top: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.56rem 0.72rem;
-    border-radius: 999px;
+    display: grid;
+    gap: 0.38rem;
+    width: min(22rem, calc(100vw - 2rem));
+    padding: 0.75rem 0.85rem;
+    border-radius: 3px;
     background: var(--color-accent);
     color: #fff;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    line-height: 1;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    white-space: nowrap;
     pointer-events: none;
     opacity: 0;
     transform: translate3d(-50%, -50%, 0) scale(0.96);
@@ -398,10 +407,39 @@ const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject
     transform: translate3d(-50%, -50%, 0) scale(1);
   }
 
+  .work-grid-reference__tooltip-kicker,
+  .work-grid-reference__tooltip-roles {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    line-height: 1.25;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .work-grid-reference__tooltip-description {
+    max-width: 18rem;
+    font-family: var(--font-serif);
+    font-size: 1.06rem;
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .work-grid-reference__tooltip-roles {
+    color: rgba(255, 255, 255, 0.68);
+  }
+
   .work-grid-reference__tooltip svg {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
     width: 0.72rem;
     height: 0.72rem;
-    flex: none;
+  }
+
+  @media (hover: none) {
+    .work-grid-reference__tooltip {
+      display: none;
+    }
   }
 
   @media (max-width: 1100px) {
@@ -562,7 +600,14 @@ const gridProjects: GridProject[] = [hubertProject, ...allProjects, amvisProject
       if (tooltip) {
         const label = card.dataset.tooltipLabel || 'View';
         const title = card.dataset.tooltipTitle || '';
-        tooltip.innerHTML = `<span>${label} ${title}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 11L11 1M11 1H3M11 1V9"/></svg>`;
+        const description = card.dataset.tooltipDescription || '';
+        const roles = card.dataset.tooltipRoles || '';
+        tooltip.innerHTML = `
+          <span class="work-grid-reference__tooltip-kicker">${label} ${title}</span>
+          <span class="work-grid-reference__tooltip-description">${description}</span>
+          <span class="work-grid-reference__tooltip-roles">${roles}</span>
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 11L11 1M11 1H3M11 1V9"/></svg>
+        `;
         tooltip.classList.add('is-active');
         tooltipState.tx = event.clientX + 84;
         tooltipState.ty = event.clientY - 18;
