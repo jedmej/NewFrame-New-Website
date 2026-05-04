@@ -312,7 +312,7 @@ export const translations = {
         },
         amvis: {
           description: 'Nowa obecność cyfrowa przygotowywana do publikacji.',
-          roles: ['Coming soon'],
+          roles: ['W przygotowaniu'],
         },
       },
     },
