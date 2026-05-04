@@ -13,12 +13,12 @@ const t = useTranslations(lang);
 <section id="ways-to-work" class="ways-to-work">
   <div class="ways-to-work__inner">
     <div class="ways-to-work__label-row">
-      <h2 class="text-mono-xs text-[var(--color-text)]">{t.waysToWork.label}</h2>
+      <p class="text-mono-xs text-[var(--color-text)]">{t.waysToWork.label}</p>
       <div class="ways-to-work__line"></div>
     </div>
 
     <div class="ways-to-work__intro">
-      <p class="ways-to-work__heading">{t.waysToWork.heading}</p>
+      <h2 class="ways-to-work__heading">{t.waysToWork.heading}</h2>
       <p class="ways-to-work__copy">{t.waysToWork.intro}</p>
     </div>
 
@@ -80,9 +80,9 @@ const t = useTranslations(lang);
     margin-bottom: clamp(3.5rem, 7vw, 6rem);
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .ways-to-work__intro {
-      grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 0.55fr);
+      grid-template-columns: minmax(0, 0.95fr) minmax(14rem, 0.5fr);
       align-items: end;
     }
   }
@@ -116,9 +116,9 @@ const t = useTranslations(lang);
     border-bottom: 1px solid var(--color-border-strong);
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .ways-to-work__item {
-      grid-template-columns: 8rem minmax(0, 1fr);
+      grid-template-columns: minmax(5rem, 8rem) minmax(0, 1fr);
     }
   }
 
@@ -132,9 +132,9 @@ const t = useTranslations(lang);
     gap: 1rem;
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1120px) {
     .ways-to-work__content {
-      grid-template-columns: minmax(14rem, 0.7fr) minmax(18rem, 1fr) minmax(15rem, 0.7fr);
+      grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr) minmax(12rem, 0.7fr);
       align-items: start;
     }
   }
