@@ -27,6 +27,15 @@ const t = useTranslations(lang);
       >
         {t.hero.title}
       </h1>
+
+      <div id="hero-offer" class="hero-offer mx-auto mt-8 md:mt-10 max-w-[760px] text-center opacity-0">
+        <p class="hero-offer__statement">{t.hero.statement}</p>
+        <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
+        <div class="hero-offer__actions">
+          <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">{t.hero.primaryCta}</a>
+          <a href={`/${lang}/#work`} class="hero-offer__link" data-cursor="CLICK">{t.hero.secondaryCta}</a>
+        </div>
+      </div>
     </div>
 
     <!-- Corner metadata: top -->
@@ -56,6 +65,98 @@ const t = useTranslations(lang);
   </div>
 </section>
 
+<style>
+  .hero-offer {
+    width: min(100%, 760px);
+    color: var(--color-text);
+    will-change: transform, opacity;
+  }
+
+  .hero-offer__statement {
+    max-width: 14em;
+    margin: 0 auto;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 400;
+    line-height: 0.95;
+  }
+
+  .hero-offer__subcopy {
+    max-width: 50rem;
+    margin: 1rem auto 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: clamp(0.75rem, 1.6vw, 0.875rem);
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-offer__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .hero-offer__link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-strong);
+    padding: 0.8rem 1rem;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition:
+      border-color var(--dur-fast) var(--ease-out-expo),
+      color var(--dur-fast) var(--ease-out-expo),
+      background-color var(--dur-fast) var(--ease-out-expo);
+  }
+
+  .hero-offer__link:hover,
+  .hero-offer__link:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .hero-offer__link--primary {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .hero-offer__link--primary:hover,
+  .hero-offer__link--primary:focus-visible {
+    background-color: transparent;
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 767px) {
+    .hero-offer {
+      margin-top: 1.75rem;
+    }
+
+    .hero-offer__statement {
+      max-width: 11em;
+    }
+
+    .hero-offer__subcopy {
+      margin-top: 0.875rem;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1.25rem;
+    }
+  }
+</style>
+
 <script>
   import gsap from 'gsap';
   import { SplitText } from 'gsap/SplitText';
@@ -72,6 +173,7 @@ const t = useTranslations(lang);
     const titleEl = document.getElementById('hero-title');
     if (!titleEl) return;
 
+    const offerEl = document.getElementById('hero-offer');
     const ac = new AbortController();
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
@@ -129,6 +231,20 @@ const t = useTranslations(lang);
         if (cornerTween.scrollTrigger) scrollTriggers.push(cornerTween.scrollTrigger);
       }
 
+      if (offerEl) {
+        const offerTween = gsap.to(offerEl, {
+          y: -18,
+          opacity: 0.45,
+          scrollTrigger: {
+            trigger: '#hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+        if (offerTween.scrollTrigger) scrollTriggers.push(offerTween.scrollTrigger);
+      }
+
       const skewTo = gsap.quickTo(titleEl, 'skewY', { duration: 0.6, ease: 'power3.out' });
       const clamp = gsap.utils.clamp(-6, 6);
       const skewTrigger = ScrollTrigger.create({
@@ -160,6 +276,7 @@ const t = useTranslations(lang);
       // View transition or revisit — show immediately, then set up scrub
       gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
       gsap.set(corners, { opacity: 1, y: 0 });
+      gsap.set(offerEl, { opacity: 1, y: 0 });
       setupScrollAnimations();
     } else {
       // Keep the hero hidden until the preloader split starts, otherwise
@@ -171,6 +288,7 @@ const t = useTranslations(lang);
         transformOrigin: '50% 100%',
       });
       gsap.set(corners, { opacity: 0, y: 18 });
+      gsap.set(offerEl, { opacity: 0, y: 20 });
 
       // First load — wait for preloader, then set up scrub on completion
       function playEntrance() {
@@ -180,6 +298,7 @@ const t = useTranslations(lang);
         if (prefersReducedMotion) {
           gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
           gsap.set(corners, { opacity: 1, y: 0 });
+          gsap.set(offerEl, { opacity: 1, y: 0 });
           setupScrollAnimations();
           return;
         }
@@ -202,6 +321,13 @@ const t = useTranslations(lang);
           stagger: 0.1,
           ease: 'power2.out',
         }, '-=0.3');
+
+        entranceTl.to(offerEl, {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+        }, '-=0.5');
       }
 
       document.addEventListener('preloader:split-start', playEntrance, { signal });
