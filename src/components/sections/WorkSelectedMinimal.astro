@@ -37,9 +37,15 @@ const amvisProject: GridProject = {
   tone: 'cool',
 };
 
-const projectKeys = ['uroki', 'panenka', 'esthetic', 'adfidence'] as const;
-const keyedProjects: GridProject[] = allProjects.map((project, index) => {
-  const key = projectKeys[index];
+const projectKeyByUrl = {
+  'https://urokitattoo.pl/': 'uroki',
+  'https://panenkacreatives.com/': 'panenka',
+  'https://esthetic.pl/': 'esthetic',
+  'https://adfidence.com/': 'adfidence',
+} satisfies Record<string, keyof typeof t.work.projects>;
+
+const keyedProjects: GridProject[] = allProjects.map((project) => {
+  const key = projectKeyByUrl[project.url];
   if (!key) {
     throw new Error(`Missing selected work project key for ${project.name}`);
   }
@@ -582,6 +588,62 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       return Number.parseFloat(value) || 0;
     };
 
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+    const createTooltipSvg = () => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      svg.setAttribute('viewBox', '0 0 12 12');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '1.5');
+      svg.setAttribute('aria-hidden', 'true');
+      path.setAttribute('d', 'M1 11L11 1M11 1H3M11 1V9');
+      svg.append(path);
+      return svg;
+    };
+
+    const ensureTooltipContent = (tooltipEl: HTMLElement) => {
+      let kicker = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-kicker');
+      let description = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-description');
+      let roles = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-roles');
+      let svg = tooltipEl.querySelector<SVGSVGElement>('svg');
+
+      if (!kicker || !description || !roles || !svg) {
+        kicker = document.createElement('span');
+        description = document.createElement('span');
+        roles = document.createElement('span');
+        svg = createTooltipSvg();
+
+        kicker.className = 'work-grid-reference__tooltip-kicker';
+        description.className = 'work-grid-reference__tooltip-description';
+        roles.className = 'work-grid-reference__tooltip-roles';
+
+        tooltipEl.replaceChildren(kicker, description, roles, svg);
+      }
+
+      return { kicker, description, roles };
+    };
+
+    const setTooltipTarget = (event: PointerEvent | MouseEvent) => {
+      if (!tooltip) return;
+
+      const margin = 16;
+      const fallbackWidth = Math.min(352, window.innerWidth - margin * 2);
+      const fallbackHeight = 128;
+      const width = tooltip.offsetWidth || fallbackWidth;
+      const height = tooltip.offsetHeight || fallbackHeight;
+      const minX = margin + width / 2;
+      const maxX = window.innerWidth - margin - width / 2;
+      const minY = margin + height / 2;
+      const maxY = window.innerHeight - margin - height / 2;
+      const rawX = event.clientX + 84;
+      const rawY = event.clientY - 18;
+
+      tooltipState.tx = clamp(rawX, minX, Math.max(minX, maxX));
+      tooltipState.ty = clamp(rawY, minY, Math.max(minY, maxY));
+    };
+
     const setTarget = (card: HTMLElement, event: PointerEvent | MouseEvent) => {
       const state = states.get(card);
       if (!state) return;
@@ -602,15 +664,12 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
         const title = card.dataset.tooltipTitle || '';
         const description = card.dataset.tooltipDescription || '';
         const roles = card.dataset.tooltipRoles || '';
-        tooltip.innerHTML = `
-          <span class="work-grid-reference__tooltip-kicker">${label} ${title}</span>
-          <span class="work-grid-reference__tooltip-description">${description}</span>
-          <span class="work-grid-reference__tooltip-roles">${roles}</span>
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 11L11 1M11 1H3M11 1V9"/></svg>
-        `;
+        const tooltipContent = ensureTooltipContent(tooltip);
+        tooltipContent.kicker.textContent = `${label} ${title}`;
+        tooltipContent.description.textContent = description;
+        tooltipContent.roles.textContent = roles;
         tooltip.classList.add('is-active');
-        tooltipState.tx = event.clientX + 84;
-        tooltipState.ty = event.clientY - 18;
+        setTooltipTarget(event);
       }
     };
 
