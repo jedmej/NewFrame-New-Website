@@ -12,11 +12,11 @@ const t = useTranslations(lang);
 
 <section
   id="hero"
-  class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden"
+  class="relative w-full min-h-[100svh] md:h-screen flex flex-col justify-center items-center overflow-hidden"
   style="background-color: var(--color-bg);"
 >
   <!-- Main content -->
-  <div class="relative w-full h-full px-6 md:px-10 flex flex-col justify-center max-w-[2000px] mx-auto">
+  <div class="relative w-full min-h-[100svh] md:h-full px-6 py-24 md:px-10 md:py-0 flex flex-col justify-center max-w-[2000px] mx-auto">
 
     <!-- Title — centered, dominant -->
     <div class="flex flex-col items-center justify-center">
@@ -28,7 +28,7 @@ const t = useTranslations(lang);
         {t.hero.title}
       </h1>
 
-      <div id="hero-offer" class="hero-offer mx-auto mt-8 md:mt-10 max-w-[760px] text-center opacity-0">
+      <div id="hero-offer" class="hero-offer mx-auto mt-8 md:mt-10 max-w-[760px] text-center">
         <p class="hero-offer__statement">{t.hero.statement}</p>
         <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
         <div class="hero-offer__actions">
@@ -69,7 +69,6 @@ const t = useTranslations(lang);
   .hero-offer {
     width: min(100%, 760px);
     color: var(--color-text);
-    will-change: transform, opacity;
   }
 
   .hero-offer__statement {
@@ -139,6 +138,10 @@ const t = useTranslations(lang);
   }
 
   @media (max-width: 767px) {
+    #hero-title {
+      font-size: clamp(3.4rem, 18vw, 7rem);
+    }
+
     .hero-offer {
       margin-top: 1.75rem;
     }
@@ -153,6 +156,59 @@ const t = useTranslations(lang);
 
     .hero-offer__actions {
       margin-top: 1.25rem;
+    }
+  }
+
+  @media (max-height: 760px) {
+    .hero-offer {
+      margin-top: 1.25rem;
+    }
+
+    .hero-offer__statement {
+      font-size: clamp(1.75rem, 4vh, 3rem);
+      line-height: 1;
+    }
+
+    .hero-offer__subcopy {
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1rem;
+    }
+
+    .hero-offer__link {
+      min-height: 2.375rem;
+      padding: 0.7rem 0.875rem;
+    }
+  }
+
+  @media (max-width: 767px) and (max-height: 700px) {
+    #hero-title {
+      font-size: clamp(3rem, 15vw, 5.75rem);
+    }
+
+    .hero-offer__statement {
+      max-width: 12em;
+      font-size: clamp(1.5rem, 4.4vh, 2.25rem);
+    }
+
+    .hero-offer__subcopy {
+      max-width: 30rem;
+      font-size: 0.6875rem;
+      line-height: 1.45;
+    }
+
+    .hero-offer__actions {
+      gap: 0.625rem;
+    }
+  }
+
+  @media (max-width: 767px) and (max-height: 620px) {
+    #hero-corner-bl,
+    #hero-corner-br {
+      display: none;
     }
   }
 </style>
@@ -276,7 +332,7 @@ const t = useTranslations(lang);
       // View transition or revisit — show immediately, then set up scrub
       gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
       gsap.set(corners, { opacity: 1, y: 0 });
-      gsap.set(offerEl, { opacity: 1, y: 0 });
+      gsap.set(offerEl, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
       setupScrollAnimations();
     } else {
       // Keep the hero hidden until the preloader split starts, otherwise
@@ -288,7 +344,7 @@ const t = useTranslations(lang);
         transformOrigin: '50% 100%',
       });
       gsap.set(corners, { opacity: 0, y: 18 });
-      gsap.set(offerEl, { opacity: 0, y: 20 });
+      gsap.set(offerEl, { autoAlpha: 0, y: 20 });
 
       // First load — wait for preloader, then set up scrub on completion
       function playEntrance() {
@@ -298,7 +354,7 @@ const t = useTranslations(lang);
         if (prefersReducedMotion) {
           gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
           gsap.set(corners, { opacity: 1, y: 0 });
-          gsap.set(offerEl, { opacity: 1, y: 0 });
+          gsap.set(offerEl, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
           setupScrollAnimations();
           return;
         }
@@ -323,7 +379,7 @@ const t = useTranslations(lang);
         }, '-=0.3');
 
         entranceTl.to(offerEl, {
-          opacity: 1,
+          autoAlpha: 1,
           y: 0,
           duration: 0.9,
           ease: 'power3.out',
@@ -338,6 +394,7 @@ const t = useTranslations(lang);
       ac.abort();
       entranceTl?.kill();
       scrollTriggers.forEach((st) => st.kill());
+      gsap.set(offerEl, { clearProps: 'opacity,visibility,transform' });
       split.revert();
     };
   }
