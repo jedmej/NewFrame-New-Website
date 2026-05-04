@@ -42,19 +42,6 @@ const heroTitleWords = t.hero.title.split(/\s+/);
       </div>
     </div>
 
-    <!-- Corner metadata: top -->
-    <div class="hero-top-meta absolute top-[13%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-start">
-      <!-- Top-left: availability -->
-      <div id="hero-corner-tl" class="flex items-center gap-2 opacity-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#5a9a6a] animate-pulse"></span>
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.available}</span>
-      </div>
-      <!-- Top-right: location -->
-      <div id="hero-corner-tr" class="opacity-0">
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.location}</span>
-      </div>
-    </div>
-
     <!-- Corner metadata: bottom -->
     <div class="hero-bottom-meta absolute bottom-0 left-0 right-0 flex flex-col items-center gap-2 border-t border-[var(--color-border-strong)] px-6 py-7 md:flex-row md:justify-between md:items-center md:px-[5.5vw] md:py-9">
       <!-- Bottom-left: descriptor -->
@@ -406,8 +393,6 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     });
 
     const corners = [
-      document.getElementById('hero-corner-tl'),
-      document.getElementById('hero-corner-tr'),
       document.getElementById('hero-corner-bl'),
       document.getElementById('hero-corner-br'),
     ].filter(Boolean);
