@@ -23,7 +23,7 @@
   /* Typography scale */
   --font-display: "General Sans", system-ui, sans-serif;
   --font-body: "General Sans", system-ui, sans-serif;
-  --font-mono: "Geist Mono", "SF Mono", "Fira Code", monospace;
+  --font-mono: "Geist", "Geist Sans", var(--font-body);
   --font-serif: "Instrument Serif", "Georgia", serif;
 
   /* Easing */
