@@ -110,7 +110,6 @@ export const translations = {
       carouselLabel: 'Interactive 3D carousel showcasing selected design projects',
       viewProject: 'View',
       previewProject: 'Preview',
-      tooltipHint: 'Open project',
       projects: {
         hubert: {
           description: 'A focused personal website built around presence, clarity and a sharp first impression.',
@@ -288,7 +287,6 @@ export const translations = {
       carouselLabel: 'Interaktywna karuzela 3D prezentująca wybrane projekty',
       viewProject: 'Zobacz',
       previewProject: 'Zapowiedź',
-      tooltipHint: 'Otwórz projekt',
       projects: {
         hubert: {
           description: 'Skupiona strona osobista zbudowana wokół obecności, klarowności i mocnego pierwszego wrażenia.',
