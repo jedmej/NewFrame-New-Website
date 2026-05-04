@@ -13,23 +13,23 @@ const t = useTranslations(lang);
 <section id="process" class="process-section">
   <div class="process-section__inner">
     <div class="process-section__label-row">
-      <h2 class="text-mono-xs text-[var(--color-text)]">{t.process.label}</h2>
+      <p class="text-mono-xs text-[var(--color-text)]">{t.process.label}</p>
       <div class="process-section__line"></div>
     </div>
 
     <div class="process-section__header">
-      <p>{t.process.heading}</p>
+      <h2>{t.process.heading}</h2>
     </div>
 
-    <div class="process-section__steps">
+    <ol class="process-section__steps">
       {t.process.steps.map((step, index) => (
-        <article class="process-section__step">
+        <li class="process-section__step">
           <span class="process-section__number text-mono-xs">{String(index + 1).padStart(2, '0')}</span>
           <h3>{step.title}</h3>
           <p>{step.description}</p>
-        </article>
+        </li>
       ))}
-    </div>
+    </ol>
 
     <p class="process-section__note text-mono-xs">{t.process.note}</p>
   </div>
@@ -77,6 +77,9 @@ const t = useTranslations(lang);
   .process-section__steps {
     display: grid;
     grid-template-columns: 1fr;
+    padding: 0;
+    margin: 0;
+    list-style: none;
     border-top: 1px solid var(--color-border-strong);
   }
 
