@@ -75,7 +75,7 @@ export const translations = {
       viewProject: 'View',
     },
     testimonials: {
-      label: 'WHAT THEY SAY',
+      label: 'TESTIMONIALS',
       items: [
         {
           quote: "Jed took our vision and turned it into something we're genuinely proud to show people. The site feels like us, not some generic template with our logo slapped on. We've had clients tell us the website sold them before they even walked in.",
