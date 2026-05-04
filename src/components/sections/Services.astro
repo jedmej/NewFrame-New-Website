@@ -29,7 +29,10 @@ const t = useTranslations(lang);
           <div class="service-group-inner">
             {/* Left: sticky category heading */}
             <div class="service-category-col">
-              <h3 class="service-category">{group.category}</h3>
+              <div class="service-category-block">
+                <h3 class="service-category">{group.category}</h3>
+                <p class="service-description">{group.description}</p>
+              </div>
             </div>
 
             {/* Right: service items */}
@@ -55,6 +58,8 @@ const t = useTranslations(lang);
         </div>
       ))}
     </div>
+
+    <p class="services-note text-mono-xs">{t.services.note}</p>
 
     <!-- CTA -->
     <div class="service-cta mt-20 md:mt-32">
@@ -131,6 +136,39 @@ const t = useTranslations(lang);
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--color-text);
+  }
+
+  .service-category-block {
+    display: grid;
+    gap: 1rem;
+    max-width: 26rem;
+  }
+
+  .service-description {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+  }
+
+  .services-note {
+    max-width: 38rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    color: var(--color-text-subtle);
+  }
+
+  @media (max-width: 767px) {
+    .service-group-inner {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .service-category-col {
+      width: 100%;
+      position: relative;
+      top: auto;
+    }
   }
 
   /* Right column: service items */
