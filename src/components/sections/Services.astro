@@ -13,13 +13,12 @@ const t = useTranslations(lang);
 <section
   id="services"
   class="relative py-32 md:py-48"
-  style="background-color: var(--color-bg);"
 >
   <div class="px-6 md:px-10 max-w-[1400px] mx-auto">
     <!-- Section label -->
     <div class="mb-12 md:mb-20">
       <h2 class="text-mono-xs text-[var(--color-text)]">{t.services.label}</h2>
-      <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
+      <div class="mt-4 w-full h-px bg-[var(--color-line)]" data-line></div>
     </div>
 
     <div class="services-header">
@@ -99,6 +98,12 @@ const t = useTranslations(lang);
     margin-bottom: clamp(4rem, 8vw, 7rem);
   }
 
+  #services {
+    background:
+      radial-gradient(circle at 92% 12%, rgba(20, 18, 15, 0.055), transparent 22rem),
+      linear-gradient(180deg, var(--color-bg), #eee7dc 52%, var(--color-bg));
+  }
+
   @media (min-width: 900px) {
     .services-header {
       grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.6fr);
@@ -124,6 +129,7 @@ const t = useTranslations(lang);
     line-height: 1.8;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
+    text-wrap: pretty;
   }
 
   /* ===== Group layout ===== */
@@ -137,7 +143,7 @@ const t = useTranslations(lang);
   .service-line-fill {
     width: 100%;
     height: 100%;
-    background-color: var(--color-text);
+    background-color: var(--color-line);
     transform: scaleX(0);
     transform-origin: left;
   }
@@ -146,6 +152,7 @@ const t = useTranslations(lang);
     display: flex;
     flex-direction: row;
     gap: 0;
+    padding-block: clamp(0.85rem, 2vw, 1.4rem);
   }
 
   /* Left column: sticky category heading */
@@ -180,6 +187,7 @@ const t = useTranslations(lang);
     display: grid;
     gap: 1rem;
     max-width: 26rem;
+    padding-right: clamp(1rem, 3vw, 3rem);
   }
 
   .service-description {
@@ -188,12 +196,22 @@ const t = useTranslations(lang);
     line-height: 1.65;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
+    text-wrap: pretty;
   }
 
   .services-note {
-    max-width: 38rem;
+    width: fit-content;
+    max-width: 100%;
     margin-top: clamp(3rem, 6vw, 5rem);
+    margin-inline: auto;
     color: var(--color-text-subtle);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .services-note {
+      white-space: nowrap;
+    }
   }
 
   @media (max-width: 767px) {
@@ -237,6 +255,7 @@ const t = useTranslations(lang);
     letter-spacing: -0.01em;
     color: var(--color-text);
     transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
+    text-wrap: balance;
   }
 
   .service-row:hover .service-title,
@@ -263,6 +282,11 @@ const t = useTranslations(lang);
     cursor: pointer;
     text-decoration: none;
     color: var(--color-text);
+    transition: transform 0.55s var(--ease-out-expo);
+  }
+
+  .services-cta-block:active {
+    transform: translateY(2px) scale(0.995);
   }
 
   @media (min-width: 768px) {

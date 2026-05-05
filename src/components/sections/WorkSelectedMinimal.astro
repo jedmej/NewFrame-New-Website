@@ -94,7 +94,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
         >
           <span class="work-grid-reference__media">
             {project.image ? (
-              <img src={project.image} alt="" loading="lazy" />
+              <img src={project.image} alt={`${project.name} project preview`} loading="lazy" />
             ) : (
               <span class="work-grid-reference__placeholder-mark">
                 <span>{project.name}</span>
@@ -126,9 +126,10 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     min-height: 120vh;
     padding: clamp(5rem, 8vw, 7.5rem) clamp(1.25rem, 4vw, 4rem) clamp(8.5rem, 14vw, 12rem);
     background:
-      radial-gradient(circle at 18% 20%, rgba(218, 56, 46, 0.045), transparent 26rem),
-      #0d0d0c;
-    color: #f4f0e8;
+      radial-gradient(circle at 18% 20%, rgba(201, 70, 57, 0.09), transparent 26rem),
+      radial-gradient(circle at 82% 54%, rgba(243, 234, 223, 0.045), transparent 24rem),
+      linear-gradient(180deg, var(--color-bg-dark), var(--color-bg-dark-soft));
+    color: var(--color-dark-text);
     isolation: isolate;
   }
 
@@ -162,6 +163,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
   .work-grid-reference__wipe--in {
     top: 0;
     height: 100vh;
+    clip-path: inset(0% 0% 100% 0%);
   }
 
   .work-grid-reference__wipe--out {
@@ -202,9 +204,9 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     --tilt-x: 0deg;
     --tilt-y: 0deg;
     --active: 0;
-    --reveal-opacity: 0;
-    --reveal-y: 24px;
-    --reveal-blur: 14px;
+    --reveal-opacity: 1;
+    --reveal-y: 0px;
+    --reveal-blur: 0px;
     position: relative;
     display: block;
     aspect-ratio: 3.5 / 4.55;
@@ -269,14 +271,14 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     overflow: hidden;
     border-radius: 3px;
     background: rgba(244, 240, 232, 0.06);
-    box-shadow: 0 1.2rem 3.4rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1.2rem 3.4rem rgba(42, 24, 17, 0.42);
     transition:
       box-shadow 0.65s var(--ease-out-expo),
       filter 0.55s ease;
   }
 
   .work-grid-reference__card.is-active .work-grid-reference__media {
-    box-shadow: 0 1.55rem 4.2rem rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1.55rem 4.2rem rgba(42, 24, 17, 0.52);
     filter: brightness(1.045) saturate(1.035);
   }
 
@@ -303,9 +305,10 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
   .work-grid-reference__card--cool .work-grid-reference__media {
     background:
-      radial-gradient(circle at 72% 22%, rgba(142, 174, 255, 0.24), transparent 11rem),
+      radial-gradient(circle at 72% 22%, rgba(243, 234, 223, 0.16), transparent 11rem),
+      radial-gradient(circle at 22% 82%, rgba(201, 70, 57, 0.16), transparent 9rem),
       linear-gradient(135deg, rgba(244, 240, 232, 0.07), rgba(244, 240, 232, 0.02)),
-      #111316;
+      #181511;
   }
 
   .work-grid-reference__card--warm .work-grid-reference__media {
@@ -357,7 +360,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     min-width: max-content;
     padding: 0.58rem 0.72rem;
     background: #f4f0e8;
-    color: #0a0a0a;
+    color: var(--color-text);
     font-family: var(--font-mono);
     font-size: 0.67rem;
     line-height: 1;
@@ -405,7 +408,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     padding: 0.72rem;
     border: 1px solid rgba(241, 237, 232, 0.1);
     background: rgba(13, 13, 12, 0.8);
-    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.18);
+    box-shadow: 0 1rem 2.5rem rgba(42, 24, 17, 0.26);
     color: #f4f0e8;
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);

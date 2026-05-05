@@ -15,7 +15,6 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 <nav
   id="main-nav"
   class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[minmax(19rem,24vw)_minmax(0,1fr)_minmax(19rem,24vw)] lg:px-0 lg:py-0 transition-transform duration-500 text-[var(--color-text)] glass"
-  style="opacity: 0"
 >
   <!-- Left: Logo -->
   <div class="nav-section nav-section--brand flex items-center">
@@ -116,6 +115,21 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 </div>
 
 <style>
+  #main-nav {
+    animation: nav-fade-in 0.65s var(--ease-out-expo) both;
+  }
+
+  @keyframes nav-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (min-width: 1024px) {
     #main-nav {
       min-height: 5.875rem;

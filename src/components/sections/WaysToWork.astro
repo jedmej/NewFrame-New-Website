@@ -47,7 +47,9 @@ const t = useTranslations(lang);
   .ways-to-work {
     position: relative;
     padding: clamp(7rem, 12vw, 11rem) 1.5rem;
-    background: var(--color-bg);
+    background:
+      radial-gradient(circle at 8% 18%, rgba(201, 70, 57, 0.075), transparent 22rem),
+      linear-gradient(180deg, var(--color-bg), var(--color-bg-warm));
     color: var(--color-text);
   }
 
@@ -70,7 +72,7 @@ const t = useTranslations(lang);
     width: 100%;
     height: 1px;
     margin-top: 1rem;
-    background: var(--color-text);
+    background: var(--color-line);
   }
 
   .ways-to-work__intro {
@@ -93,6 +95,7 @@ const t = useTranslations(lang);
     font-size: clamp(3rem, 7vw, 6.75rem);
     line-height: 0.9;
     letter-spacing: 0;
+    text-wrap: balance;
   }
 
   .ways-to-work__copy {
@@ -102,11 +105,12 @@ const t = useTranslations(lang);
     line-height: 1.7;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
+    text-wrap: pretty;
   }
 
   .ways-to-work__list {
-    border: 1px solid rgba(10, 10, 10, 0.18);
-    border-bottom: 0;
+    display: grid;
+    gap: 1rem;
   }
 
   .ways-to-work__item {
@@ -114,7 +118,20 @@ const t = useTranslations(lang);
     grid-template-columns: clamp(3.75rem, 10vw, 5.75rem) minmax(0, 1fr);
     gap: 0;
     min-height: clamp(13rem, 20vw, 17.5rem);
-    border-bottom: 1px solid rgba(10, 10, 10, 0.18);
+    border: 1px solid var(--color-border-strong);
+    background: rgba(247, 242, 233, 0.42);
+    box-shadow: 0 1.4rem 4rem rgba(86, 56, 39, 0.06);
+    transition:
+      border-color 0.45s var(--ease-out-expo),
+      background-color 0.45s var(--ease-out-expo),
+      transform 0.45s var(--ease-out-expo),
+      box-shadow 0.45s var(--ease-out-expo);
+  }
+
+  .ways-to-work__item:hover {
+    border-color: rgba(201, 70, 57, 0.32);
+    background: rgba(247, 242, 233, 0.68);
+    box-shadow: 0 1.8rem 4.6rem rgba(86, 56, 39, 0.1);
   }
 
   @media (min-width: 1024px) {
@@ -127,7 +144,7 @@ const t = useTranslations(lang);
     display: flex;
     align-items: center;
     padding: clamp(1.5rem, 3vw, 2.75rem) clamp(0.75rem, 2vw, 1.5rem);
-    border-right: 1px solid rgba(10, 10, 10, 0.18);
+    border-right: 1px solid var(--color-border-strong);
     color: var(--color-accent);
     font-size: 0.78rem;
     line-height: 1;
@@ -153,9 +170,9 @@ const t = useTranslations(lang);
   }
 
   @media (min-width: 1120px) {
-    .ways-to-work__content > p,
-    .ways-to-work__content > ul {
-      border-left: 1px solid rgba(10, 10, 10, 0.18);
+  .ways-to-work__content > p,
+  .ways-to-work__content > ul {
+      border-left: 1px solid var(--color-border-strong);
     }
   }
 
@@ -167,6 +184,7 @@ const t = useTranslations(lang);
     font-weight: 400;
     line-height: 1;
     letter-spacing: 0;
+    text-wrap: balance;
   }
 
   .ways-to-work__content p,
@@ -176,6 +194,7 @@ const t = useTranslations(lang);
     line-height: 1.65;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
+    text-wrap: pretty;
   }
 
   .ways-to-work__content ul {
@@ -201,7 +220,7 @@ const t = useTranslations(lang);
     align-items: center;
     min-height: 3.45rem;
     padding: 0.9rem clamp(1.25rem, 2.6vw, 2.35rem);
-    border-bottom: 1px solid rgba(10, 10, 10, 0.16);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .ways-to-work__content li:last-child {
@@ -209,14 +228,27 @@ const t = useTranslations(lang);
   }
 
   .ways-to-work__content li::before {
-    content: '-';
+    content: '';
+    width: 0.42rem;
+    height: 0.42rem;
+    flex: 0 0 auto;
     margin-right: 0.85rem;
-    color: var(--color-accent);
+    background: var(--color-accent);
+    transform: rotate(45deg);
   }
 
   .ways-to-work__pricing {
-    max-width: 36rem;
+    width: fit-content;
+    max-width: 100%;
     margin-top: 2rem;
+    margin-inline: auto;
     color: var(--color-text-subtle);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .ways-to-work__pricing {
+      white-space: nowrap;
+    }
   }
 </style>

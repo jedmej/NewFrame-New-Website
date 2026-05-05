@@ -151,12 +151,14 @@ export const translations = {
       lead: 'The website sold them before they even walked in.',
       items: [
         {
+          lead: 'The website sold them before they even walked in.',
           quote: "Jed took our vision and turned it into something we're genuinely proud to show people. The site feels like us, not some generic template with our logo slapped on. We've had clients tell us the website sold them before they even walked in.",
           highlights: ['genuinely', 'proud', 'sold'],
           name: 'Hubert K.',
           role: 'MANAGER, UROKI TATTOO',
         },
         {
+          lead: 'The new site works harder than the old one ever did.',
           quote: 'Working with Jed was refreshingly straightforward. No fluff, no endless revisions. He understood what we needed and delivered something that actually elevated our brand. The site works harder for us than our old one ever did.',
           highlights: ['straightforward', 'elevated', 'harder'],
           name: 'Igor M.',
@@ -337,12 +339,14 @@ export const translations = {
       lead: 'Strona przekonała ich, zanim jeszcze przyszli na miejsce.',
       items: [
         {
+          lead: 'Strona przekonała ich, zanim jeszcze przyszli na miejsce.',
           quote: 'Jed wziął naszą wizję i zamienił ją w coś, czym naprawdę chcemy się chwalić. Strona wygląda jak my, nie jak kolejny szablon z naszym logo. Klienci mówią nam, że strona przekonała ich do nas zanim w ogóle do nas przyszli.',
           highlights: ['chwalić', 'przekonała'],
           name: 'Hubert K.',
           role: 'MANAGER, UROKI TATTOO',
         },
         {
+          lead: 'Nowa strona pracuje lepiej niż stara kiedykolwiek.',
           quote: 'Współpraca z Jedem była odświeżająco prosta. Bez lania wody, bez niekończących się poprawek. Zrozumiał czego potrzebujemy i dostarczył coś, co naprawdę podniosło naszą markę. Nowa strona pracuje dla nas lepiej niż stara kiedykolwiek to robiła.',
           highlights: ['prosta', 'podniosło', 'pracuje'],
           name: 'Igor M.',

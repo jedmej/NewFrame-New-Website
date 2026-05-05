@@ -14,7 +14,6 @@ const heroTitleWords = t.hero.title.split(/\s+/);
 <section
   id="hero"
   class="relative w-full min-h-[100svh] md:h-screen flex flex-col justify-center items-center overflow-hidden"
-  style="background-color: var(--color-bg);"
 >
   <!-- Main content -->
   <div class="hero-shell relative w-full min-h-[100svh] md:h-full max-w-[2000px] mx-auto">
@@ -59,6 +58,24 @@ const heroTitleWords = t.hero.title.split(/\s+/);
 <style>
   .hero-shell {
     padding: 6.25rem 1.5rem 6.5rem;
+  }
+
+  #hero {
+    background:
+      radial-gradient(circle at 78% 44%, rgba(201, 70, 57, 0.12), transparent 24rem),
+      radial-gradient(circle at 16% 18%, rgba(20, 18, 15, 0.055), transparent 22rem),
+      linear-gradient(135deg, var(--color-bg), var(--color-bg-warm));
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 5.875rem 0 6.75rem;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent calc(50% - 1px), var(--color-line) 50%, transparent calc(50% + 1px)),
+      linear-gradient(180deg, rgba(20, 18, 15, 0.045), transparent 28%);
+    opacity: 0.72;
   }
 
   .hero-grid {
@@ -106,6 +123,7 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     font-size: clamp(2rem, 5vw, 4.5rem);
     font-weight: 400;
     line-height: 0.95;
+    text-wrap: balance;
   }
 
   .hero-offer__subcopy {
@@ -117,6 +135,7 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     font-weight: 400;
     line-height: 1.65;
     letter-spacing: 0.02em;
+    text-wrap: pretty;
   }
 
   .hero-offer__actions {
@@ -142,6 +161,7 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     line-height: 1;
     text-transform: uppercase;
     transition:
+      transform var(--dur-fast) var(--ease-out-expo),
       border-color var(--dur-fast) var(--ease-out-expo),
       color var(--dur-fast) var(--ease-out-expo),
       background-color var(--dur-fast) var(--ease-out-expo);
@@ -151,12 +171,18 @@ const heroTitleWords = t.hero.title.split(/\s+/);
   .hero-offer__link:focus-visible {
     border-color: var(--color-accent);
     color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-offer__link:active {
+    transform: translateY(0);
   }
 
   .hero-offer__link--primary {
     border-color: var(--color-accent);
     background-color: var(--color-accent);
     color: var(--color-bg);
+    box-shadow: 0 1rem 2.4rem rgba(138, 42, 33, 0.18);
   }
 
   .hero-offer__link--primary:hover,
