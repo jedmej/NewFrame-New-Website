@@ -13,7 +13,7 @@ export const translations = {
       ogImageAlt: 'NEWFRAME - Custom Websites & Digital Direction',
     },
     nav: {
-      scope: 'Scope',
+      scope: 'About',
       work: 'Work',
       services: 'Ways to Work',
       process: 'Process',
@@ -48,12 +48,12 @@ export const translations = {
       items: [
         {
           title: 'Website Sprint',
-          description: 'Custom marketing websites for businesses that need a sharper digital presence without a long agency process.',
+          description: 'A custom marketing website for businesses that need to look sharper, more credible and easier to understand online.',
           includes: ['Creative direction', 'Site structure', 'Interface design', 'Front-end development', 'Launch support'],
         },
         {
           title: 'Brand & Web Direction',
-          description: 'For founders and businesses that need their website, visual direction and brand feel to finally work together.',
+          description: 'Visual direction, structure and interface design for brands that need their website to feel more focused, premium and distinct.',
           includes: ['Visual direction', 'Design system foundations', 'Homepage and key page direction', 'Brand feel refinement'],
         },
         {
@@ -64,30 +64,32 @@ export const translations = {
       ],
     },
     services: {
-      label: 'SCOPE OF WORK',
+      label: 'PROCESS',
+      heading: 'How the work takes shape',
+      intro: 'Every project is shaped around a clear direction first — then designed, built and launched with enough structure to move fast without losing the craft.',
       groups: [
         {
-          category: 'Shape the direction',
-          description: 'Positioning, structure, UX and content direction — so the website has a clear point of view before it becomes a design.',
+          category: 'Direction',
+          description: 'We define what the website needs to communicate, how it should feel and what structure will make the business easier to understand.',
           items: [{ title: 'Positioning' }, { title: 'Structure' }, { title: 'UX direction' }, { title: 'Content direction' }],
         },
         {
-          category: 'Design the experience',
-          description: 'Art direction, interface design, visual systems and interaction — crafted to make the brand feel sharper and more memorable.',
-          items: [{ title: 'Art direction' }, { title: 'Interface design' }, { title: 'Visual systems' }, { title: 'Interaction' }],
+          category: 'Design',
+          description: 'The key screens, visual system and interactions are designed around the first impression and the feeling the brand should leave behind.',
+          items: [{ title: 'Art direction' }, { title: 'Interface design' }, { title: 'Visual system' }, { title: 'Motion' }],
         },
         {
-          category: 'Build and launch',
-          description: 'Custom front-end development, responsive implementation, hosting setup and launch support.',
-          items: [{ title: 'Front-end development' }, { title: 'Responsive implementation' }, { title: 'Hosting setup' }, { title: 'Launch support' }],
+          category: 'Build',
+          description: 'The website is built as a custom, responsive front-end experience — fast, structured and ready to be launched.',
+          items: [{ title: 'Custom front-end' }, { title: 'Responsive build' }, { title: 'Performance' }, { title: 'Search-ready structure' }],
         },
         {
-          category: 'Keep it running',
-          description: 'Optional ongoing care for updates, small changes, monitoring and technical support.',
-          items: [{ title: 'Updates' }, { title: 'Small changes' }, { title: 'Monitoring' }, { title: 'Technical support' }],
+          category: 'Launch & Care',
+          description: 'After review and polish, the site goes live. If needed, NEWFRAME can stay involved for updates, small changes and technical care.',
+          items: [{ title: 'Deployment' }, { title: 'Hosting' }, { title: 'Maintenance' }, { title: 'Updates' }],
         },
       ],
-      note: 'Content structured for people, search engines and modern AI assistants to understand.',
+      note: 'Projects begin after scope approval and an upfront payment.',
       cta: 'Send me your current site',
       ctaRight: "Let's talk",
     },
@@ -197,7 +199,7 @@ export const translations = {
       ogImageAlt: 'NEWFRAME - indywidualne strony i kierunek cyfrowy',
     },
     nav: {
-      scope: 'Zakres',
+      scope: 'O mnie',
       work: 'Projekty',
       services: 'Współpraca',
       process: 'Proces',
@@ -232,12 +234,12 @@ export const translations = {
       items: [
         {
           title: 'Website Sprint',
-          description: 'Indywidualne strony marketingowe dla firm, które potrzebują ostrzejszej obecności cyfrowej bez długiego agencyjnego procesu.',
+          description: 'Indywidualna strona marketingowa dla firm, które potrzebują wyglądać ostrzej, wiarygodniej i czytelniej online.',
           includes: ['Kierunek kreatywny', 'Struktura strony', 'Projekt interfejsu', 'Front-end development', 'Wsparcie przy publikacji'],
         },
         {
           title: 'Brand & Web Direction',
-          description: 'Dla founderów i firm, które potrzebują, żeby strona, kierunek wizualny i charakter marki zaczęły działać razem.',
+          description: 'Kierunek wizualny, struktura i projekt interfejsu dla marek, których strona ma być bardziej skupiona, premium i charakterystyczna.',
           includes: ['Kierunek wizualny', 'Podstawy design systemu', 'Kierunek strony głównej i kluczowych podstron', 'Dopracowanie charakteru marki'],
         },
         {
@@ -248,30 +250,32 @@ export const translations = {
       ],
     },
     services: {
-      label: 'ZAKRES PRAC',
+      label: 'PROCES',
+      heading: 'Jak praca nabiera kształtu',
+      intro: 'Każdy projekt najpierw układamy wokół jasnego kierunku — potem projektujemy, budujemy i publikujemy go z wystarczającą strukturą, żeby działać szybko bez gubienia jakości.',
       groups: [
         {
-          category: 'Ułożyć kierunek',
-          description: 'Pozycjonowanie, struktura, UX i kierunek treści — żeby strona miała wyraźny punkt widzenia zanim stanie się projektem.',
+          category: 'Kierunek',
+          description: 'Ustalamy, co strona ma komunikować, jak ma się czuć i jaka struktura pomoże lepiej zrozumieć biznes.',
           items: [{ title: 'Pozycjonowanie' }, { title: 'Struktura' }, { title: 'Kierunek UX' }, { title: 'Kierunek treści' }],
         },
         {
-          category: 'Zaprojektować doświadczenie',
-          description: 'Art direction, projekt interfejsu, system wizualny i interakcje — tak, żeby marka była ostrzejsza i bardziej zapamiętywalna.',
-          items: [{ title: 'Art direction' }, { title: 'Projekt interfejsu' }, { title: 'System wizualny' }, { title: 'Interakcje' }],
+          category: 'Projekt',
+          description: 'Kluczowe ekrany, system wizualny i interakcje powstają wokół pierwszego wrażenia i tego, co marka ma po sobie zostawić.',
+          items: [{ title: 'Art direction' }, { title: 'Projekt interfejsu' }, { title: 'System wizualny' }, { title: 'Motion' }],
         },
         {
-          category: 'Zbudować i opublikować',
-          description: 'Indywidualny front-end, responsywne wdrożenie, konfiguracja hostingu i wsparcie przy starcie.',
-          items: [{ title: 'Front-end development' }, { title: 'Responsywne wdrożenie' }, { title: 'Konfiguracja hostingu' }, { title: 'Wsparcie przy publikacji' }],
+          category: 'Budowa',
+          description: 'Strona powstaje jako indywidualne, responsywne doświadczenie front-endowe — szybkie, uporządkowane i gotowe do publikacji.',
+          items: [{ title: 'Indywidualny front-end' }, { title: 'Responsywne wdrożenie' }, { title: 'Performance' }, { title: 'Struktura pod wyszukiwanie' }],
         },
         {
-          category: 'Utrzymać po starcie',
-          description: 'Opcjonalna stała opieka nad aktualizacjami, małymi zmianami, monitoringiem i wsparciem technicznym.',
-          items: [{ title: 'Aktualizacje' }, { title: 'Małe zmiany' }, { title: 'Monitoring' }, { title: 'Wsparcie techniczne' }],
+          category: 'Publikacja i opieka',
+          description: 'Po wspólnym sprawdzeniu i dopracowaniu strona trafia online. Jeśli trzeba, NEWFRAME może zostać przy aktualizacjach, zmianach i opiece technicznej.',
+          items: [{ title: 'Publikacja' }, { title: 'Hosting' }, { title: 'Utrzymanie' }, { title: 'Aktualizacje' }],
         },
       ],
-      note: 'Treści ułożone tak, żeby były zrozumiałe dla ludzi, wyszukiwarek i nowoczesnych asystentów AI.',
+      note: 'Projekt startuje po zatwierdzeniu zakresu i wpłacie zaliczki.',
       cta: 'Wyślij mi obecną stronę',
       ctaRight: 'Porozmawiajmy',
     },

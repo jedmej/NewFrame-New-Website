@@ -22,6 +22,11 @@ const t = useTranslations(lang);
       <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
     </div>
 
+    <div class="services-header">
+      <h2 class="services-heading">{t.services.heading}</h2>
+      <p class="services-intro">{t.services.intro}</p>
+    </div>
+
     <!-- Services grouped by category -->
     <div class="services-list">
       {t.services.groups.map((group, gi) => (
@@ -88,6 +93,39 @@ const t = useTranslations(lang);
 </section>
 
 <style>
+  .services-header {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    margin-bottom: clamp(4rem, 8vw, 7rem);
+  }
+
+  @media (min-width: 900px) {
+    .services-header {
+      grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.6fr);
+      align-items: start;
+    }
+  }
+
+  .services-heading {
+    max-width: 54rem;
+    font-family: var(--font-serif);
+    font-size: clamp(3.25rem, 8vw, 8rem);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .services-intro {
+    max-width: 30rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+  }
+
   /* ===== Group layout ===== */
   .service-item-line {
     width: 100%;
