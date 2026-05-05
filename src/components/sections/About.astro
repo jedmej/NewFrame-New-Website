@@ -13,14 +13,13 @@ const t = useTranslations(lang);
 <section
   id="scope"
   class="relative min-h-screen"
-  style="background-color: var(--color-bg);"
 >
   <div class="w-full px-6 md:px-10 max-w-[1400px] mx-auto py-24 md:py-32 lg:py-40">
 
     <!-- Section label -->
     <div class="mb-8 md:mb-12">
       <h2 class="text-mono-xs text-[var(--color-text)]">{t.about.label}</h2>
-      <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
+      <div class="mt-4 w-full h-px bg-[var(--color-line)]" data-line></div>
     </div>
 
     <!-- Full-width manifesto text -->
@@ -83,6 +82,20 @@ const t = useTranslations(lang);
   .manifesto-word {
     display: inline-block;
     will-change: opacity;
+  }
+
+  #scope {
+    background:
+      radial-gradient(circle at 86% 76%, rgba(20, 18, 15, 0.055), transparent 24rem),
+      var(--color-bg);
+  }
+
+  #manifesto-text {
+    text-wrap: pretty;
+  }
+
+  .about-image-wrapper {
+    filter: drop-shadow(0 1.5rem 3.8rem rgba(86, 56, 39, 0.16));
   }
 
 </style>

@@ -8,42 +8,41 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const heroTitleWords = t.hero.title.split(/\s+/);
 ---
 
 <section
   id="hero"
-  class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden"
-  style="background-color: var(--color-bg);"
+  class="relative w-full min-h-[100svh] md:h-screen flex flex-col justify-center items-center overflow-hidden"
 >
   <!-- Main content -->
-  <div class="relative w-full h-full px-6 md:px-10 flex flex-col justify-center max-w-[2000px] mx-auto">
-
-    <!-- Title — centered, dominant -->
-    <div class="flex flex-col items-center justify-center">
-      <h1
-        id="hero-title"
-        class="text-display-xl text-center text-[var(--color-text)] select-none"
-        aria-label={t.hero.title}
-      >
-        {t.hero.title}
-      </h1>
-    </div>
-
-    <!-- Corner metadata: top -->
-    <div class="absolute top-[15%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-start">
-      <!-- Top-left: availability -->
-      <div id="hero-corner-tl" class="flex items-center gap-2 opacity-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#5a9a6a] animate-pulse"></span>
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.available}</span>
+  <div class="hero-shell relative w-full min-h-[100svh] md:h-full max-w-[2000px] mx-auto">
+    <div class="hero-grid">
+      <!-- Title — split into a left editorial panel on desktop -->
+      <div class="hero-panel hero-panel--title">
+        <h1
+          id="hero-title"
+          class="hero-title text-display-xl text-[var(--color-text)] select-none"
+          aria-label={t.hero.title}
+        >
+          {heroTitleWords.map((word) => <span class="hero-title__word">{word}</span>)}
+        </h1>
       </div>
-      <!-- Top-right: location -->
-      <div id="hero-corner-tr" class="opacity-0">
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.location}</span>
+
+      <div class="hero-panel hero-panel--offer">
+        <div id="hero-offer" class="hero-offer">
+          <p class="hero-offer__statement">{t.hero.statement}</p>
+          <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
+          <div class="hero-offer__actions">
+            <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">{t.hero.primaryCta}</a>
+            <a href={`/${lang}/#work`} class="hero-offer__link" data-cursor="CLICK">{t.hero.secondaryCta}</a>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Corner metadata: bottom -->
-    <div class="absolute bottom-[15%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-end">
+    <div class="hero-bottom-meta absolute bottom-0 left-0 right-0 flex flex-col items-center gap-2 border-t border-[var(--color-border-strong)] px-6 py-7 md:flex-row md:justify-between md:items-center md:px-[5.5vw] md:py-9">
       <!-- Bottom-left: descriptor -->
       <div id="hero-corner-bl" class="opacity-0">
         <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.descriptor}</span>
@@ -55,6 +54,341 @@ const t = useTranslations(lang);
     </div>
   </div>
 </section>
+
+<style>
+  .hero-shell {
+    padding: 6.25rem 1.5rem 6.5rem;
+  }
+
+  #hero {
+    background:
+      radial-gradient(circle at 78% 44%, rgba(201, 70, 57, 0.12), transparent 24rem),
+      radial-gradient(circle at 16% 18%, rgba(20, 18, 15, 0.055), transparent 22rem),
+      linear-gradient(135deg, var(--color-bg), var(--color-bg-warm));
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 5.875rem 0 6.75rem;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent calc(50% - 1px), var(--color-line) 50%, transparent calc(50% + 1px)),
+      linear-gradient(180deg, rgba(20, 18, 15, 0.045), transparent 28%);
+    opacity: 0.72;
+  }
+
+  .hero-grid {
+    display: grid;
+    min-height: calc(100svh - 12.75rem);
+    width: 100%;
+    align-items: center;
+  }
+
+  .hero-panel {
+    min-width: 0;
+  }
+
+  .hero-panel--title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-panel--offer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-title {
+    width: min(100%, 54rem);
+    text-align: center;
+  }
+
+  .hero-title__word {
+    display: block;
+  }
+
+  .hero-offer {
+    width: min(100%, 760px);
+    color: var(--color-text);
+    text-align: center;
+  }
+
+  .hero-offer__statement {
+    max-width: 14em;
+    margin: 0 auto;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+
+  .hero-offer__subcopy {
+    max-width: 50rem;
+    margin: 1rem auto 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: clamp(0.75rem, 1.6vw, 0.875rem);
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+    text-wrap: pretty;
+  }
+
+  .hero-offer__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .hero-offer__link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-strong);
+    padding: 0.8rem 1rem;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition:
+      transform var(--dur-fast) var(--ease-out-expo),
+      border-color var(--dur-fast) var(--ease-out-expo),
+      color var(--dur-fast) var(--ease-out-expo),
+      background-color var(--dur-fast) var(--ease-out-expo);
+  }
+
+  .hero-offer__link:hover,
+  .hero-offer__link:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-offer__link:active {
+    transform: translateY(0);
+  }
+
+  .hero-offer__link--primary {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow: 0 1rem 2.4rem rgba(138, 42, 33, 0.18);
+  }
+
+  .hero-offer__link--primary:hover,
+  .hero-offer__link--primary:focus-visible {
+    background-color: transparent;
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-shell {
+      padding: 5.875rem 0 6.75rem;
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: calc(100svh - 12.625rem);
+    }
+
+    .hero-panel {
+      min-height: calc(100svh - 12.625rem);
+      padding: 6vh clamp(1.75rem, 2vw, 3.25rem);
+    }
+
+    .hero-panel--title {
+      justify-content: flex-start;
+      padding-right: clamp(1rem, 1vw, 2rem);
+      padding-left: clamp(3rem, 4vw, 5.5rem);
+    }
+
+    .hero-panel--offer {
+      justify-content: flex-start;
+      border-left: 1px solid var(--color-border-strong);
+      padding-right: clamp(2rem, 3.25vw, 4rem);
+      padding-left: clamp(2.25rem, 3.75vw, 5rem);
+    }
+
+    .hero-title {
+      width: min(100%, 52rem);
+      font-size: clamp(7rem, 10.6vw, 14.5rem);
+      line-height: 0.78;
+      text-align: left;
+    }
+
+    .hero-offer {
+      width: min(100%, 48rem);
+      margin-top: -2vh;
+      text-align: left;
+    }
+
+    .hero-offer__statement {
+      max-width: 11em;
+      margin-right: 0;
+      margin-left: 0;
+      font-size: clamp(3.25rem, 5.65vw, 6.75rem);
+      line-height: 0.9;
+    }
+
+    .hero-offer__subcopy {
+      max-width: 36.5rem;
+      margin-right: 0;
+      margin-left: 0;
+      margin-top: 2rem;
+      font-size: clamp(0.8125rem, 1vw, 1rem);
+      line-height: 1.8;
+    }
+
+    .hero-offer__actions {
+      justify-content: flex-start;
+      margin-top: 3.5rem;
+    }
+
+    .hero-offer__link {
+      min-height: 3.75rem;
+      padding: 1.15rem 1.6rem;
+      font-size: 0.75rem;
+    }
+
+    .hero-bottom-meta {
+      min-height: 6.75rem;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .hero-panel--title {
+      padding-right: clamp(1.5rem, 1.25vw, 2.5rem);
+      padding-left: clamp(4.5rem, 4vw, 6rem);
+    }
+
+    .hero-panel--offer {
+      padding-right: clamp(3rem, 3vw, 4.5rem);
+      padding-left: clamp(4rem, 4vw, 6rem);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero-shell {
+      padding-top: 7rem;
+      padding-bottom: 7.5rem;
+    }
+
+    .hero-grid {
+      min-height: calc(100svh - 14.5rem);
+      gap: 1.75rem;
+    }
+
+    #hero-title {
+      font-size: clamp(3.4rem, 18vw, 7rem);
+    }
+
+    .hero-offer {
+      margin-top: 1.75rem;
+    }
+
+    .hero-offer__statement {
+      max-width: 11em;
+    }
+
+    .hero-offer__subcopy {
+      margin-top: 0.875rem;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1.25rem;
+    }
+  }
+
+  @media (max-height: 760px) {
+    .hero-shell {
+      padding-top: 5.75rem;
+      padding-bottom: 5.75rem;
+    }
+
+    .hero-grid,
+    .hero-panel {
+      min-height: calc(100svh - 11.5rem);
+    }
+
+    .hero-offer {
+      margin-top: 1.25rem;
+    }
+
+    .hero-offer__statement {
+      font-size: clamp(1.75rem, 4vh, 3rem);
+      line-height: 1;
+    }
+
+    .hero-offer__subcopy {
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1rem;
+    }
+
+    .hero-offer__link {
+      min-height: 2.375rem;
+      padding: 0.7rem 0.875rem;
+    }
+  }
+
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .hero-panel {
+      padding-top: 4vh;
+      padding-bottom: 4vh;
+    }
+
+    .hero-offer {
+      margin-top: 0;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1.5rem;
+    }
+  }
+
+  @media (max-width: 767px) and (max-height: 700px) {
+    #hero-title {
+      font-size: clamp(3rem, 15vw, 5.75rem);
+    }
+
+    .hero-offer__statement {
+      max-width: 12em;
+      font-size: clamp(1.5rem, 4.4vh, 2.25rem);
+    }
+
+    .hero-offer__subcopy {
+      max-width: 30rem;
+      font-size: 0.6875rem;
+      line-height: 1.45;
+    }
+
+    .hero-offer__actions {
+      gap: 0.625rem;
+    }
+  }
+
+  @media (max-width: 767px) and (max-height: 620px) {
+    #hero-corner-bl,
+    #hero-corner-br {
+      display: none;
+    }
+  }
+</style>
 
 <script>
   import gsap from 'gsap';
@@ -72,6 +406,7 @@ const t = useTranslations(lang);
     const titleEl = document.getElementById('hero-title');
     if (!titleEl) return;
 
+    const offerEl = document.getElementById('hero-offer');
     const ac = new AbortController();
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
@@ -84,8 +419,6 @@ const t = useTranslations(lang);
     });
 
     const corners = [
-      document.getElementById('hero-corner-tl'),
-      document.getElementById('hero-corner-tr'),
       document.getElementById('hero-corner-bl'),
       document.getElementById('hero-corner-br'),
     ].filter(Boolean);
@@ -129,6 +462,20 @@ const t = useTranslations(lang);
         if (cornerTween.scrollTrigger) scrollTriggers.push(cornerTween.scrollTrigger);
       }
 
+      if (offerEl) {
+        const offerTween = gsap.to(offerEl, {
+          y: -18,
+          opacity: 0.45,
+          scrollTrigger: {
+            trigger: '#hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+        if (offerTween.scrollTrigger) scrollTriggers.push(offerTween.scrollTrigger);
+      }
+
       const skewTo = gsap.quickTo(titleEl, 'skewY', { duration: 0.6, ease: 'power3.out' });
       const clamp = gsap.utils.clamp(-6, 6);
       const skewTrigger = ScrollTrigger.create({
@@ -160,6 +507,7 @@ const t = useTranslations(lang);
       // View transition or revisit — show immediately, then set up scrub
       gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
       gsap.set(corners, { opacity: 1, y: 0 });
+      gsap.set(offerEl, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
       setupScrollAnimations();
     } else {
       // Keep the hero hidden until the preloader split starts, otherwise
@@ -171,6 +519,7 @@ const t = useTranslations(lang);
         transformOrigin: '50% 100%',
       });
       gsap.set(corners, { opacity: 0, y: 18 });
+      gsap.set(offerEl, { autoAlpha: 0, y: 20 });
 
       // First load — wait for preloader, then set up scrub on completion
       function playEntrance() {
@@ -180,6 +529,7 @@ const t = useTranslations(lang);
         if (prefersReducedMotion) {
           gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
           gsap.set(corners, { opacity: 1, y: 0 });
+          gsap.set(offerEl, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
           setupScrollAnimations();
           return;
         }
@@ -202,6 +552,13 @@ const t = useTranslations(lang);
           stagger: 0.1,
           ease: 'power2.out',
         }, '-=0.3');
+
+        entranceTl.to(offerEl, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+        }, '-=0.5');
       }
 
       document.addEventListener('preloader:split-start', playEntrance, { signal });
@@ -212,6 +569,7 @@ const t = useTranslations(lang);
       ac.abort();
       entranceTl?.kill();
       scrollTriggers.forEach((st) => st.kill());
+      gsap.set(offerEl, { clearProps: 'opacity,visibility,transform' });
       split.revert();
     };
   }
