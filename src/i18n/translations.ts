@@ -9,7 +9,7 @@ export const translations = {
   en: {
     seo: {
       title: 'NEWFRAME — Custom Websites & Digital Direction',
-      description: 'NEWFRAME is a small design studio creating custom websites and digital experiences for founders, premium services and growing businesses.',
+      description: 'NEWFRAME is a small design studio creating custom websites and digital experiences for founders, premium services and ambitious businesses.',
       ogImageAlt: 'NEWFRAME - Custom Websites & Digital Direction',
     },
     nav: {
@@ -28,13 +28,13 @@ export const translations = {
       location: 'REMOTE',
       credit: 'JED MEJZNER \u00A926',
       statement: 'Websites for businesses whose online presence no longer matches the quality of their work.',
-      subcopy: 'NEWFRAME is a small design studio creating sharp, custom websites and digital experiences for founders, premium services and growing businesses.',
+      subcopy: 'NEWFRAME is a small design studio creating sharp, custom websites and digital experiences for founders, premium services and ambitious businesses.',
       primaryCta: 'Send me your current site',
       secondaryCta: 'View work',
     },
     about: {
       label: 'ABOUT',
-      manifesto: `I'm Jędrzej (Jed), the designer behind NEWFRAME. I help founders and growing businesses turn the quality of their work into a sharper digital presence — through creative direction, interface design and custom front-end development. The goal is not just to make a website look good. It is to make the first impression feel closer to the level of the business behind it.`,
+      manifesto: `I'm Jędrzej (Jed), the designer behind NEWFRAME. I help founders and ambitious businesses turn the quality of their work into a sharper digital presence — through creative direction, interface design and custom front-end development. The goal is not just to make a website look good. It is to make the first impression feel closer to the level of the business behind it.`,
       manifestoHighlights: ['NEWFRAME', 'quality', 'digital', 'presence'],
       body: `Based near Warsaw. Working locally and remotely with clients in Poland and abroad.`,
       founder: 'JED MEJZNER',
@@ -43,8 +43,8 @@ export const translations = {
     waysToWork: {
       label: 'WAYS TO WORK',
       heading: 'Ways to work together',
-      intro: 'Clear project shapes for businesses that need a sharper digital presence without a long agency process.',
-      pricing: 'Most projects are scoped individually, with website work usually starting from 5,000 PLN.',
+      intro: 'Clear project shapes for businesses that need a sharper digital presence — from focused websites to lightweight digital systems.',
+      pricing: 'Most website projects start from 5,000 PLN / around €1,200, depending on scope.',
       items: [
         {
           title: 'Website Sprint',
@@ -64,7 +64,7 @@ export const translations = {
       ],
     },
     services: {
-      label: 'OUTCOMES',
+      label: 'SCOPE OF WORK',
       groups: [
         {
           category: 'Shape the direction',
@@ -88,7 +88,7 @@ export const translations = {
         },
       ],
       note: 'Content structured for people, search engines and modern AI assistants to understand.',
-      cta: 'Start a project',
+      cta: 'Send me your current site',
       ctaRight: "Let's talk",
     },
     process: {
@@ -110,30 +110,37 @@ export const translations = {
       carouselLabel: 'Interactive 3D carousel showcasing selected design projects',
       viewProject: 'View',
       previewProject: 'Preview',
+      whyLabel: 'Why it worked',
       projects: {
         hubert: {
           description: 'A focused personal website built around presence, clarity and a sharp first impression.',
+          why: 'The site gives the personal brand a cleaner, more confident first impression without feeling overproduced.',
           roles: ['Web design', 'Development'],
         },
         uroki: {
           description: 'A visual website for a tattoo studio with a strong identity and client experience.',
+          why: 'The site helped the studio feel distinctive, atmospheric and far from a generic template.',
           roles: ['Creative direction', 'Web design', 'Development'],
         },
         panenka: {
           description: 'A digital presence for a creative studio built around personality, motion and visual confidence.',
+          why: 'The experience makes the studio feel expressive and memorable before a client even reads the offer.',
           roles: ['Web design', 'Development', 'Interaction'],
         },
         esthetic: {
           description: 'A clean, premium web experience for a dental and aesthetic practice.',
+          why: 'The interface creates trust quickly and keeps the service experience calm, polished and easy to understand.',
           roles: ['Web design', 'Development', 'Visual direction'],
         },
         adfidence: {
           description: 'A sharper digital presence for a performance and marketing-focused business.',
+          why: 'The site frames the offer with more structure, clarity and credibility for higher-intent conversations.',
           roles: ['Web design', 'Development', 'Interface system'],
         },
         amvis: {
-          description: 'A new digital presence currently being shaped for launch.',
-          roles: ['Coming soon'],
+          description: 'An accounting office website redesign currently being shaped for launch.',
+          why: 'The direction is being built to make a traditional service feel clearer, calmer and more current.',
+          roles: ['In progress'],
         },
       },
     },
@@ -186,7 +193,7 @@ export const translations = {
   pl: {
     seo: {
       title: 'NEWFRAME — indywidualne strony i kierunek cyfrowy',
-      description: 'NEWFRAME to małe studio projektowe tworzące indywidualne strony i doświadczenia cyfrowe dla founderów, usług premium i rozwijających się firm.',
+      description: 'NEWFRAME to małe studio projektowe tworzące indywidualne strony i doświadczenia cyfrowe dla founderów, usług premium i ambitnych firm.',
       ogImageAlt: 'NEWFRAME - indywidualne strony i kierunek cyfrowy',
     },
     nav: {
@@ -205,7 +212,7 @@ export const translations = {
       location: 'ZDALNIE',
       credit: 'JED MEJZNER \u00A926',
       statement: 'Strony dla firm, których obecność online nie oddaje już jakości ich pracy.',
-      subcopy: 'NEWFRAME to małe studio projektowe tworzące wyraziste, indywidualne strony i doświadczenia cyfrowe dla founderów, usług premium i rozwijających się firm.',
+      subcopy: 'NEWFRAME to małe studio projektowe tworzące wyraziste, indywidualne strony i doświadczenia cyfrowe dla founderów, usług premium i ambitnych firm.',
       primaryCta: 'Wyślij mi swoją obecną stronę',
       secondaryCta: 'Zobacz projekty',
     },
@@ -220,7 +227,7 @@ export const translations = {
     waysToWork: {
       label: 'FORMY WSPÓŁPRACY',
       heading: 'Jak możemy pracować',
-      intro: 'Konkretne formy współpracy dla firm, które potrzebują wyraźniejszej obecności online bez długiego agencyjnego procesu.',
+      intro: 'Konkretne formy współpracy dla firm, które potrzebują wyraźniejszej obecności online — od skupionych stron po lekkie systemy cyfrowe.',
       pricing: 'Większość projektów wyceniam indywidualnie, a prace nad stroną zwykle zaczynają się od 5 000 PLN.',
       items: [
         {
@@ -241,7 +248,7 @@ export const translations = {
       ],
     },
     services: {
-      label: 'REZULTATY',
+      label: 'ZAKRES PRAC',
       groups: [
         {
           category: 'Ułożyć kierunek',
@@ -265,7 +272,7 @@ export const translations = {
         },
       ],
       note: 'Treści ułożone tak, żeby były zrozumiałe dla ludzi, wyszukiwarek i nowoczesnych asystentów AI.',
-      cta: 'Rozpocznij projekt',
+      cta: 'Wyślij mi obecną stronę',
       ctaRight: 'Porozmawiajmy',
     },
     process: {
@@ -287,30 +294,37 @@ export const translations = {
       carouselLabel: 'Interaktywna karuzela 3D prezentująca wybrane projekty',
       viewProject: 'Zobacz',
       previewProject: 'Zapowiedź',
+      whyLabel: 'Dlaczego zadziałało',
       projects: {
         hubert: {
           description: 'Skupiona strona osobista zbudowana wokół obecności, klarowności i mocnego pierwszego wrażenia.',
+          why: 'Strona daje marce osobistej czystsze, pewniejsze pierwsze wrażenie bez wrażenia przesadzonej produkcji.',
           roles: ['Web design', 'Development'],
         },
         uroki: {
           description: 'Wizualna strona dla studia tatuażu z mocnym charakterem i dopracowanym doświadczeniem klienta.',
+          why: 'Strona pomogła studiu wyglądać charakterystycznie, atmosferycznie i daleko od generycznego szablonu.',
           roles: ['Kierunek kreatywny', 'Web design', 'Development'],
         },
         panenka: {
           description: 'Obecność cyfrowa dla studia kreatywnego oparta na osobowości, ruchu i pewności wizualnej.',
+          why: 'Doświadczenie pokazuje ekspresyjny charakter studia zanim klient przejdzie do szczegółów oferty.',
           roles: ['Web design', 'Development', 'Interakcje'],
         },
         esthetic: {
           description: 'Czyste, premium doświadczenie webowe dla praktyki dentalnej i estetycznej.',
+          why: 'Interfejs szybko buduje zaufanie i prowadzi przez ofertę w spokojny, dopracowany sposób.',
           roles: ['Web design', 'Development', 'Kierunek wizualny'],
         },
         adfidence: {
           description: 'Ostrzejsza obecność cyfrowa dla biznesu skupionego na performance i marketingu.',
+          why: 'Strona porządkuje ofertę i wzmacnia wiarygodność w rozmowach z bardziej zdecydowanymi klientami.',
           roles: ['Web design', 'Development', 'System interfejsu'],
         },
         amvis: {
-          description: 'Nowa obecność cyfrowa przygotowywana do publikacji.',
-          roles: ['W przygotowaniu'],
+          description: 'Redesign strony biura rachunkowego przygotowywany do publikacji.',
+          why: 'Kierunek ma pomóc tradycyjnej usłudze wyglądać czytelniej, spokojniej i bardziej współcześnie.',
+          roles: ['W toku'],
         },
       },
     },

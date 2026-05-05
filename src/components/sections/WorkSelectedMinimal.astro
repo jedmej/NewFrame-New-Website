@@ -31,7 +31,7 @@ const hubertProject: GridProject = {
 const amvisProject: GridProject = {
   key: 'amvis',
   name: 'AMVIS',
-  category: 'COMING SOON',
+  category: 'IN PROGRESS',
   url: '#',
   placeholder: true,
   tone: 'cool',
@@ -86,6 +86,8 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
           data-tooltip-label={href ? t.work.viewProject : t.work.previewProject}
           data-tooltip-title={project.name}
           data-tooltip-description={meta.description}
+          data-tooltip-why-label={t.work.whyLabel}
+          data-tooltip-why={meta.why}
           data-tooltip-roles={meta.roles.join(' · ')}
           style={`--index: ${index}; --base-rotate: ${[-2.2, 1.4, -1.1, 1.8, -1.5, 1.2][index]}deg; --current-rotate: ${[-2.2, 1.4, -1.1, 1.8, -1.5, 1.2][index]}deg;`}
           aria-label={`${project.name}. ${project.category}. ${meta.description}`}
@@ -445,6 +447,31 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     letter-spacing: 0;
   }
 
+  :global(.work-grid-reference__tooltip-why) {
+    max-width: 16.75rem;
+    color: rgba(244, 240, 232, 0.58);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.28;
+    letter-spacing: 0;
+  }
+
+  :global(.work-grid-reference__tooltip-why-label) {
+    display: block;
+    margin-bottom: 0.16rem;
+    color: rgba(244, 240, 232, 0.4);
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  :global(.work-grid-reference__tooltip-why-text) {
+    display: block;
+  }
+
   :global(.work-grid-reference__tooltip-roles) {
     display: flex;
     max-width: 17rem;
@@ -644,24 +671,34 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       let action = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-action');
       let actionText = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-action-text');
       let description = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-description');
+      let why = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-why');
+      let whyLabel = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-why-label');
+      let whyText = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-why-text');
       let roles = tooltipEl.querySelector<HTMLElement>('.work-grid-reference__tooltip-roles');
 
-      if (!action || !actionText || !description || !roles) {
+      if (!action || !actionText || !description || !why || !whyLabel || !whyText || !roles) {
         action = document.createElement('span');
         actionText = document.createElement('span');
         description = document.createElement('span');
+        why = document.createElement('span');
+        whyLabel = document.createElement('span');
+        whyText = document.createElement('span');
         roles = document.createElement('span');
 
         action.className = 'work-grid-reference__tooltip-action';
         actionText.className = 'work-grid-reference__tooltip-action-text';
         description.className = 'work-grid-reference__tooltip-description';
+        why.className = 'work-grid-reference__tooltip-why';
+        whyLabel.className = 'work-grid-reference__tooltip-why-label';
+        whyText.className = 'work-grid-reference__tooltip-why-text';
         roles.className = 'work-grid-reference__tooltip-roles';
         action.append(actionText, createTooltipSvg());
+        why.append(whyLabel, whyText);
 
-        tooltipEl.replaceChildren(action, description, roles);
+        tooltipEl.replaceChildren(action, description, why, roles);
       }
 
-      return { actionText, description, roles };
+      return { actionText, description, whyLabel, whyText, roles };
     };
 
     const setTooltipTarget = (event: PointerEvent | MouseEvent) => {
@@ -702,10 +739,14 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
         const label = card.dataset.tooltipLabel || 'View';
         const title = card.dataset.tooltipTitle || '';
         const description = card.dataset.tooltipDescription || '';
+        const whyLabel = card.dataset.tooltipWhyLabel || '';
+        const why = card.dataset.tooltipWhy || '';
         const roles = card.dataset.tooltipRoles || '';
         const tooltipContent = ensureTooltipContent(tooltip);
         tooltipContent.actionText.textContent = `${label} ${title}`;
         tooltipContent.description.textContent = description;
+        tooltipContent.whyLabel.textContent = whyLabel;
+        tooltipContent.whyText.textContent = why;
         tooltipContent.roles.replaceChildren(
           ...roles
             .split(' · ')
