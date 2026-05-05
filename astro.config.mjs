@@ -20,6 +20,9 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      allowedHosts: ['.trycloudflare.com'],
+    },
   },
   i18n: {
     defaultLocale: 'en',
