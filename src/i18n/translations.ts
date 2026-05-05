@@ -178,6 +178,8 @@ export const translations = {
       rights: 'All rights reserved',
       backToTop: 'Back to top',
       privacy: 'Privacy',
+      email: 'Email',
+      instagram: 'Instagram',
     },
     notFound: {
       title: 'Page not found',
@@ -366,6 +368,8 @@ export const translations = {
       rights: 'Wszelkie prawa zastrzeżone',
       backToTop: 'Powrót na górę',
       privacy: 'Prywatność',
+      email: 'Email',
+      instagram: 'Instagram',
     },
     notFound: {
       title: 'Nie znaleziono strony',
