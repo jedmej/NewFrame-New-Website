@@ -120,7 +120,6 @@ const footerLinks = [
     overflow: hidden;
     background:
       radial-gradient(circle at 78% 8%, rgba(201, 70, 57, 0.2), transparent 26rem),
-      radial-gradient(circle at 8% 88%, rgba(243, 234, 223, 0.08), transparent 24rem),
       linear-gradient(180deg, var(--color-bg-dark), #0f0d0b 68%, #0b0a09);
   }
 
@@ -600,33 +599,45 @@ const footerLinks = [
             },
           },
           {
-            type: 'Pixelate',
-            id: 'idmmbhss4cxdb5pyi6j',
+            type: 'GridDistortion',
+            id: 'idmmbj5gb3owu3efr8',
             props: {
-              gap: {
-                type: 'map',
-                curve: 0.35,
-                source: 'idmmbhthud5inxgebqc',
-                channel: 'alphaInverted',
-                inputMax: 1,
-                inputMin: 0,
-                outputMax: 1,
-                outputMin: 0.16,
-              },
-              scale: 74,
+              decay: 3.6,
+              gridSize: 26,
+              intensity: 1.25,
+              radius: 1.1,
             },
             children: [
               {
-                type: 'Plasma',
-                id: 'idmmbhsq0prs1cmevaa',
+                type: 'Pixelate',
+                id: 'idmmbhss4cxdb5pyi6j',
                 props: {
-                  balance: 57,
-                  colorA: '#C54538',
-                  contrast: 1.6,
-                  density: 3.3,
-                  intensity: 1.8,
-                  speed: 0.5,
+                  gap: {
+                    type: 'map',
+                    curve: 0.35,
+                    source: 'idmmbhthud5inxgebqc',
+                    channel: 'alphaInverted',
+                    inputMax: 1,
+                    inputMin: 0,
+                    outputMax: 1,
+                    outputMin: 0.16,
+                  },
+                  scale: 74,
                 },
+                children: [
+                  {
+                    type: 'Plasma',
+                    id: 'idmmbhsq0prs1cmevaa',
+                    props: {
+                      balance: 57,
+                      colorA: '#C54538',
+                      contrast: 1.6,
+                      density: 2,
+                      intensity: 1.8,
+                      speed: 2,
+                    },
+                  },
+                ],
               },
             ],
           },

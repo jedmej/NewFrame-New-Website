@@ -454,7 +454,6 @@ const heroTitleWords = t.hero.title.split(/\s+/);
               cutout: true,
               fresnel: 0.04,
               fresnelSoftness: 0.05,
-              highlight: 0.5,
               highlightSoftness: 0.21,
               innerZoom: 1.5,
               lightAngle: 237,
@@ -468,12 +467,26 @@ const heroTitleWords = t.hero.title.split(/\s+/);
             children: [
               {
                 type: 'Swirl',
+                id: 'idmouo591yxjs5zwypr',
+                props: {
+                  colorA: '#c545383d',
+                  colorB: '#C54538',
+                  speed: 0.5,
+                  transform: {
+                    scale: 0.17,
+                  },
+                  visible: true,
+                },
+              },
+              {
+                type: 'Swirl',
                 id: 'idmma0kqskuqg80nzka',
                 props: {
+                  blend: 73,
                   colorA: '#26262b',
                   colorB: '#000000',
                   detail: 5,
-                  speed: 0.2,
+                  speed: 0.3,
                   visible: true,
                 },
               },
@@ -481,10 +494,9 @@ const heroTitleWords = t.hero.title.split(/\s+/);
                 type: 'ChromaFlow',
                 id: 'idmm1jm91alweku2l8u',
                 props: {
-                  baseColor: '#ff002b',
+                  baseColor: '#C54538',
                   downColor: '#ffaa00',
                   leftColor: '#ff6600',
-                  momentum: 10,
                   radius: 2,
                   rightColor: '#ffb300',
                   transform: {

@@ -623,6 +623,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
+    const clickPulseFrames: number[] = [];
 
     if (shaderCanvas && !prefersReducedMotion) {
       import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
@@ -867,6 +868,33 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       tooltip?.classList.remove('is-active');
     };
 
+    const pulseShaderAt = (event: PointerEvent) => {
+      if (!shaderCanvas || prefersReducedMotion) return;
+
+      const radius = 18;
+      const points = [
+        [0, 0],
+        [radius, 0],
+        [0, radius],
+        [-radius, 0],
+        [0, -radius],
+        [0, 0],
+      ];
+
+      points.forEach(([x, y], index) => {
+        const frame = window.setTimeout(() => {
+          window.dispatchEvent(new MouseEvent('mousemove', {
+            bubbles: true,
+            clientX: event.clientX + x,
+            clientY: event.clientY + y,
+          }));
+        }, index * 18);
+        clickPulseFrames.push(frame);
+      });
+    };
+
+    section.addEventListener('pointerdown', pulseShaderAt, { signal });
+
     cards.forEach((card) => {
       card.addEventListener('pointerenter', (event) => setTarget(card, event), { signal });
       card.addEventListener('pointermove', (event) => setTarget(card, event), { signal });
@@ -982,6 +1010,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     cleanupWorkGrid = () => {
       shaderDisposed = true;
       shaderInstance?.destroy();
+      clickPulseFrames.forEach((frame) => window.clearTimeout(frame));
       cancelAnimationFrame(frame);
       revealTriggers.forEach((trigger) => trigger.kill());
       wipeInTrigger?.kill();
