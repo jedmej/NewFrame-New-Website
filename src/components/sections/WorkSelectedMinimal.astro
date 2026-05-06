@@ -57,6 +57,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
 <section id="work-minimal" class="work-grid-reference" aria-label={`${t.work.label} grid alternative`}>
   <span id="work" class="work-grid-reference__anchor" aria-hidden="true"></span>
+  <canvas id="work-minimal-shader-canvas" class="work-grid-reference__shader" aria-hidden="true"></canvas>
 
   <div
     class="work-grid-reference__wipe work-grid-reference__wipe--in"
@@ -140,6 +141,17 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     z-index: -2;
     pointer-events: none;
     background: linear-gradient(180deg, rgba(244, 240, 232, 0.035), transparent 22rem);
+  }
+
+  .work-grid-reference__shader {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.68;
+    pointer-events: none;
   }
 
   .work-grid-reference__anchor {
@@ -589,6 +601,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -604,9 +617,85 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     const tooltip = section.querySelector<HTMLElement>('[data-work-grid-tooltip]');
     const wipeIn = section.querySelector<HTMLElement>('[data-work-grid-wipe-in]');
     const wipeOut = section.querySelector<HTMLElement>('[data-work-grid-wipe-out]');
+    const shaderCanvas = section.querySelector<HTMLCanvasElement>('#work-minimal-shader-canvas');
     const ac = new AbortController();
     const { signal } = ac;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let shaderInstance: ShaderInstance | null = null;
+    let shaderDisposed = false;
+
+    if (shaderCanvas && !prefersReducedMotion) {
+      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
+        components: [
+          {
+            type: 'DotGrid',
+            id: 'idmlsai28917usa8l1j',
+            props: {
+              density: 200,
+              dotSize: {
+                type: 'map',
+                source: 'idmlsaoh7xdy8aayjbd',
+                channel: 'alpha',
+                inputMax: 1,
+                inputMin: 0,
+                outputMax: 1,
+                outputMin: 0,
+              },
+              twinkle: 0.9,
+              visible: false,
+            },
+          },
+          {
+            type: 'ChromaFlow',
+            id: 'idmlsaoh7xdy8aayjbd',
+            props: {
+              intensity: 1.4,
+              radius: 2.9,
+              visible: false,
+            },
+          },
+          {
+            type: 'LinearGradient',
+            id: 'idmlsajwtg0emiuod2i',
+            props: {
+              colorA: '#C54538',
+              colorB: '#C54538',
+              colorSpace: 'hsl',
+              end: {
+                x: 1,
+                y: 0,
+              },
+              maskSource: 'idmlsai28917usa8l1j',
+              start: {
+                x: 0,
+                y: 1,
+              },
+              visible: true,
+            },
+          },
+          {
+            type: 'CursorRipples',
+            id: 'idmlsgs6afobjsq7qem',
+            props: {
+              chromaticSplit: 3,
+              decay: 5.6,
+              intensity: 3,
+              radius: 0.4,
+            },
+          },
+        ],
+      })).then((shader) => {
+        if (shaderDisposed) {
+          shader.destroy();
+          return;
+        }
+
+        shaderInstance = shader;
+      }).catch((error) => {
+        console.warn('Selected work shader failed to initialize', error);
+      });
+    }
+
     const states = new Map<HTMLElement, {
       x: number;
       y: number;
@@ -891,6 +980,8 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     }
 
     cleanupWorkGrid = () => {
+      shaderDisposed = true;
+      shaderInstance?.destroy();
       cancelAnimationFrame(frame);
       revealTriggers.forEach((trigger) => trigger.kill());
       wipeInTrigger?.kill();

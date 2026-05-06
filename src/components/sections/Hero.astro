@@ -20,6 +20,7 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     <div class="hero-grid">
       <!-- Title — split into a left editorial panel on desktop -->
       <div class="hero-panel hero-panel--title">
+        <canvas id="hero-title-shader-canvas" class="hero-title-shader" aria-hidden="true"></canvas>
         <h1
           id="hero-title"
           class="hero-title text-display-xl text-[var(--color-text)] select-none"
@@ -90,9 +91,11 @@ const heroTitleWords = t.hero.title.split(/\s+/);
   }
 
   .hero-panel--title {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
   }
 
   .hero-panel--offer {
@@ -102,8 +105,25 @@ const heroTitleWords = t.hero.title.split(/\s+/);
   }
 
   .hero-title {
-    width: min(100%, 54rem);
-    text-align: center;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .hero-title-shader {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
   }
 
   .hero-title__word {
@@ -394,6 +414,7 @@ const heroTitleWords = t.hero.title.split(/\s+/);
   import gsap from 'gsap';
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(SplitText, ScrollTrigger);
 
@@ -407,10 +428,94 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     if (!titleEl) return;
 
     const offerEl = document.getElementById('hero-offer');
+    const shaderCanvas = document.getElementById('hero-title-shader-canvas') as HTMLCanvasElement | null;
     const ac = new AbortController();
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let shaderInstance: ShaderInstance | null = null;
+    let shaderDisposed = false;
+
+    if (shaderCanvas && !prefersReducedMotion) {
+      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
+        components: [
+          {
+            type: 'SolidColor',
+            id: 'idmm1ji0jwbo2w6dxps',
+            props: {
+              color: '#130f1a',
+              visible: false,
+            },
+          },
+          {
+            type: 'Glass',
+            id: 'idmm1jgbk0fnwzbqm77',
+            props: {
+              cutout: true,
+              fresnel: 0.04,
+              fresnelSoftness: 0.05,
+              highlight: 0.5,
+              highlightSoftness: 0.21,
+              innerZoom: 1.5,
+              lightAngle: 237,
+              refraction: 2,
+              scale: 0.65,
+              shapeSdfUrl: 'https://data.shaders.com/storage/v1/object/public/user-uploaded-images/user_3DLKqHT8k7i5jfwRZGrJetvEjim/w7t-kPRSeQXM_sdf.bin',
+              shapeType: 'svg',
+              thickness: 1,
+              visible: true,
+            },
+            children: [
+              {
+                type: 'Swirl',
+                id: 'idmma0kqskuqg80nzka',
+                props: {
+                  colorA: '#26262b',
+                  colorB: '#000000',
+                  detail: 5,
+                  speed: 0.2,
+                  visible: true,
+                },
+              },
+              {
+                type: 'ChromaFlow',
+                id: 'idmm1jm91alweku2l8u',
+                props: {
+                  baseColor: '#ff002b',
+                  downColor: '#ffaa00',
+                  leftColor: '#ff6600',
+                  momentum: 10,
+                  radius: 2,
+                  rightColor: '#ffb300',
+                  transform: {
+                    scale: 0.47,
+                  },
+                  upColor: '#ffdd00',
+                  visible: true,
+                },
+              },
+            ],
+          },
+          {
+            type: 'FilmGrain',
+            id: 'idmma0qc1cdzw7qzjw3',
+            props: {
+              opacity: 0.1,
+              visible: false,
+            },
+          },
+        ],
+      })).then((shader) => {
+        if (shaderDisposed) {
+          shader.destroy();
+          return;
+        }
+
+        shaderInstance = shader;
+      }).catch((error) => {
+        console.warn('Hero shader failed to initialize', error);
+      });
+    }
 
     // Split title into characters
     const split = new SplitText(titleEl, {
@@ -566,6 +671,8 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     }
 
     cleanupFn = () => {
+      shaderDisposed = true;
+      shaderInstance?.destroy();
       ac.abort();
       entranceTl?.kill();
       scrollTriggers.forEach((st) => st.kill());

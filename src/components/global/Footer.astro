@@ -29,6 +29,7 @@ const footerLinks = [
        style="background-color: var(--color-bg);"></div>
 
   <div class="footer-surface">
+    <canvas id="footer-shader-canvas" class="footer-shader" aria-hidden="true"></canvas>
     <div class="footer-inner">
       <div class="footer-availability">
         <span class="footer-status-dot" aria-hidden="true"></span>
@@ -123,6 +124,17 @@ const footerLinks = [
       linear-gradient(180deg, var(--color-bg-dark), #0f0d0b 68%, #0b0a09);
   }
 
+  .footer-shader {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
   .footer-inner {
     position: relative;
     z-index: 1;
@@ -162,7 +174,9 @@ const footerLinks = [
   .footer-grid {
     display: grid;
     border: 1px solid rgba(243, 234, 223, 0.12);
-    background: rgba(243, 234, 223, 0.025);
+    background: rgba(17, 24, 32, 0.42);
+    backdrop-filter: blur(10px) saturate(1.08);
+    -webkit-backdrop-filter: blur(10px) saturate(1.08);
   }
 
   @media (min-width: 1024px) {
@@ -555,6 +569,7 @@ const footerLinks = [
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
@@ -570,6 +585,77 @@ const footerLinks = [
     let splitInstance: any = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shaderCanvas = document.getElementById('footer-shader-canvas') as HTMLCanvasElement | null;
+    let shaderInstance: ShaderInstance | null = null;
+    let shaderDisposed = false;
+
+    if (shaderCanvas && !prefersReducedMotion) {
+      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
+        components: [
+          {
+            type: 'SolidColor',
+            id: 'idmmbht0k6sfod45zuq',
+            props: {
+              color: '#09060f00',
+            },
+          },
+          {
+            type: 'Pixelate',
+            id: 'idmmbhss4cxdb5pyi6j',
+            props: {
+              gap: {
+                type: 'map',
+                curve: 0.35,
+                source: 'idmmbhthud5inxgebqc',
+                channel: 'alphaInverted',
+                inputMax: 1,
+                inputMin: 0,
+                outputMax: 1,
+                outputMin: 0.16,
+              },
+              scale: 74,
+            },
+            children: [
+              {
+                type: 'Plasma',
+                id: 'idmmbhsq0prs1cmevaa',
+                props: {
+                  balance: 57,
+                  colorA: '#C54538',
+                  contrast: 1.6,
+                  density: 3.3,
+                  intensity: 1.8,
+                  speed: 0.5,
+                },
+              },
+            ],
+          },
+          {
+            type: 'SineWave',
+            id: 'idmmbhthud5inxgebqc',
+            props: {
+              amplitude: 0.1,
+              position: {
+                x: 0.5,
+                y: 1,
+              },
+              softness: 0.8,
+              thickness: 0.5,
+              visible: false,
+            },
+          },
+        ],
+      })).then((shader) => {
+        if (shaderDisposed) {
+          shader.destroy();
+          return;
+        }
+
+        shaderInstance = shader;
+      }).catch((error) => {
+        console.warn('Footer shader failed to initialize', error);
+      });
+    }
 
     // Entrance wipe — cream overlay clips away to reveal footer
     const footerWipe = document.getElementById('footer-wipe-in');
@@ -647,6 +733,8 @@ const footerLinks = [
     });
 
     cleanupFn = () => {
+      shaderDisposed = true;
+      shaderInstance?.destroy();
       ac.abort();
       scrollTriggers.forEach((st) => st.kill());
       if (splitInstance) splitInstance.revert();
