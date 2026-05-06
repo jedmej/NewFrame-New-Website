@@ -22,7 +22,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
   <div class="testimonial-scroll-height">
 
     <!-- Sticky viewport -->
-    <div class="sticky top-0 h-screen flex items-center overflow-hidden">
+    <div class="testimonial-sticky sticky top-0 h-screen flex items-center overflow-hidden">
 
       <!-- Top bar: label + counter -->
       <div class="absolute top-0 left-0 right-0 px-6 md:px-10 pt-32 md:pt-36 z-20">
@@ -122,9 +122,11 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
   }
 
   #testimonials {
-    background:
-      radial-gradient(circle at 84% 22%, rgba(201, 70, 57, 0.065), transparent 22rem),
-      linear-gradient(180deg, var(--color-bg), #eee6da);
+    background: var(--color-bg);
+  }
+
+  .testimonial-sticky {
+    background: var(--color-bg);
   }
 
   @media (min-width: 768px) {
