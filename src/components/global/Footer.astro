@@ -82,12 +82,7 @@ const footerLinks = [
         </nav>
 
         <div class="footer-mark-cell" aria-hidden="true">
-          <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
-            <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
-            <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
-            <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
-          </svg>
+          <span class="footer-mark-logo"></span>
         </div>
       </div>
 
@@ -321,7 +316,7 @@ const footerLinks = [
 
   @media (min-width: 1024px) {
     .footer-nav-cell {
-      grid-column: 1 / 11;
+      grid-column: 1 / 12;
       grid-row: 2;
       border-right: 1px solid rgba(243, 234, 223, 0.12);
       border-bottom: 0;
@@ -450,18 +445,18 @@ const footerLinks = [
 
   .footer-mark-cell {
     display: grid;
-    --footer-mark-size: clamp(4.75rem, 5.8vw, 5.75rem);
-    min-height: calc(var(--footer-mark-size) + 48px);
-    min-width: calc(var(--footer-mark-size) + 48px);
+    --footer-mark-size: clamp(3.5rem, 4vw, 4.5rem);
+    min-height: calc(var(--footer-mark-size) + 24px);
+    min-width: calc(var(--footer-mark-size) + 24px);
     place-items: center;
-    padding: 24px;
+    padding: 12px;
     border-bottom: 0;
     color: rgba(243, 234, 223, 0.9);
   }
 
   @media (min-width: 1024px) {
     .footer-mark-cell {
-      grid-column: 11 / 13;
+      grid-column: 12 / 13;
       grid-row: 2;
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -471,9 +466,13 @@ const footerLinks = [
     }
   }
 
-  .footer-mark-cell svg {
+  .footer-mark-logo {
+    display: block;
     width: var(--footer-mark-size);
     height: var(--footer-mark-size);
+    background: currentColor;
+    mask: url('/images/newframe-logo.svg') center / contain no-repeat;
+    -webkit-mask: url('/images/newframe-logo.svg') center / contain no-repeat;
   }
 
   .footer-bottom {
@@ -709,10 +708,10 @@ const footerLinks = [
                     channel: 'alphaInverted',
                     inputMax: 1,
                     inputMin: 0,
-                    outputMax: 1,
-                    outputMin: 0.16,
+                    outputMax: 0.82,
+                    outputMin: 0.1,
                   },
-                  scale: 74,
+                  scale: 104,
                 },
                 children: [
                   {
