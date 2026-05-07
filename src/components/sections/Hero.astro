@@ -300,14 +300,35 @@ const heroTitleWords = t.hero.title.split(/\s+/);
   }
 
   @media (max-width: 767px) {
+    #hero::before {
+      background: linear-gradient(180deg, rgba(20, 18, 15, 0.045), transparent 28%);
+    }
+
     .hero-shell {
-      padding-top: 7rem;
-      padding-bottom: 7.5rem;
+      padding-top: 3rem;
+      padding-bottom: 5.75rem;
     }
 
     .hero-grid {
-      min-height: calc(100svh - 14.5rem);
+      min-height: calc(100svh - 8.75rem);
+      grid-template-rows: auto auto;
+      align-content: center;
       gap: 1.75rem;
+      transform: translateY(-0.5svh);
+    }
+
+    .hero-panel--title {
+      height: clamp(16rem, 42svh, 23rem);
+      margin-inline: auto;
+      width: min(100%, 31rem);
+      overflow: visible;
+    }
+
+    .hero-title-shader {
+      inset: -22% -24% -18% -16%;
+      width: 124%;
+      height: 124%;
+      transform: translate(4%, 7%);
     }
 
     #hero-title {
@@ -315,19 +336,52 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     }
 
     .hero-offer {
-      margin-top: 1.75rem;
+      margin-top: 0.75rem;
     }
 
     .hero-offer__statement {
       max-width: 11em;
+      font-size: clamp(2.05rem, 9.2vw, 3.15rem);
+      line-height: 0.98;
     }
 
     .hero-offer__subcopy {
-      margin-top: 0.875rem;
+      max-width: 31rem;
+      margin-top: 0.85rem;
+      font-size: 0.69rem;
+      line-height: 1.55;
     }
 
     .hero-offer__actions {
-      margin-top: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 0.75rem;
+      margin-top: 1.15rem;
+    }
+
+    .hero-offer__link {
+      min-height: 3.25rem;
+      padding: 0.9rem 0.82rem;
+      font-size: 0.625rem;
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+
+    .hero-offer__link,
+    .hero-offer__link--primary {
+      width: 100%;
+    }
+
+    .hero-bottom-meta {
+      min-height: 5.5rem;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0 2rem;
+      text-align: left;
     }
   }
 

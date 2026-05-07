@@ -556,27 +556,53 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
   @media (max-width: 560px) {
     .work-grid-reference {
-      padding-inline: 1rem;
+      min-height: auto;
+      padding: 4.25rem 1rem 5.75rem;
+    }
+
+    .work-grid-reference__wipe {
+      display: none;
     }
 
     .work-grid-reference__chrome {
       align-items: flex-start;
+      margin-bottom: 2rem;
       font-size: 0.62rem;
+      line-height: 1.35;
+    }
+
+    .work-grid-reference__wordmark {
+      margin-bottom: 2.75rem;
+      font-size: clamp(3rem, 15vw, 3.7rem);
+      line-height: 0.86;
     }
 
     .work-grid-reference__grid {
       grid-template-columns: 1fr;
-      gap: 3rem;
+      gap: 2.65rem;
     }
 
     .work-grid-reference__card,
     .work-grid-reference__card:nth-child(even) {
+      aspect-ratio: 4 / 4.95;
       margin-top: 0;
+      transform: translate3d(0, var(--reveal-y), 0);
+    }
+
+    .work-grid-reference__media {
+      border-radius: 2px;
+      box-shadow: 0 1rem 2.35rem rgba(42, 24, 17, 0.34);
     }
 
     .work-grid-reference__caption {
+      bottom: -0.85rem;
+      min-width: min(12rem, calc(100vw - 3rem));
       opacity: 1;
-      transform: translate3d(-50%, 0, 28px) rotate(calc(var(--current-rotate, var(--base-rotate)) * -1));
+      transform: translate3d(-50%, 0, 28px);
+    }
+
+    .work-grid-reference__placeholder-mark span {
+      font-size: clamp(2.75rem, 16vw, 4.25rem);
     }
   }
 
@@ -621,11 +647,12 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     const ac = new AbortController();
     const { signal } = ac;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isCompactMobile = window.matchMedia('(max-width: 560px)').matches;
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
     const clickPulseFrames: number[] = [];
 
-    if (shaderCanvas && !prefersReducedMotion) {
+    if (shaderCanvas && !prefersReducedMotion && !isCompactMobile) {
       import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
         components: [
           {
@@ -937,7 +964,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       frame = requestAnimationFrame(render);
     };
 
-    if (!prefersReducedMotion) {
+    if (!prefersReducedMotion && !isCompactMobile) {
       frame = requestAnimationFrame(render);
 
       cards.forEach((card) => {
