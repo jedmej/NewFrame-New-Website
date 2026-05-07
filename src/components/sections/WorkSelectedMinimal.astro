@@ -650,9 +650,32 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     const isCompactMobile = window.matchMedia('(max-width: 560px)').matches;
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
+    let shaderResizeFrame = 0;
+    let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
+    let shaderResizeObserver: ResizeObserver | null = null;
     const clickPulseFrames: number[] = [];
 
+    const resizeShaderToCanvas = () => {
+      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
+
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      const rect = shaderCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
+      }
+    };
+
+    const scheduleShaderResize = () => {
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      shaderResizeTimer = window.setTimeout(() => {
+        shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
+      }, 120);
+    };
+
     if (shaderCanvas && !prefersReducedMotion && !isCompactMobile) {
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
       import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
         components: [
           {
@@ -719,6 +742,10 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
         }
 
         shaderInstance = shader;
+        resizeShaderToCanvas();
+        window.addEventListener('resize', scheduleShaderResize, { signal });
+        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
+        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
       }).catch((error) => {
         console.warn('Selected work shader failed to initialize', error);
       });
@@ -1036,6 +1063,9 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
     cleanupWorkGrid = () => {
       shaderDisposed = true;
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
       clickPulseFrames.forEach((frame) => window.clearTimeout(frame));
       cancelAnimationFrame(frame);

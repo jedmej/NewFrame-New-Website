@@ -654,8 +654,31 @@ const footerLinks = [
     const shaderCanvas = document.getElementById('footer-shader-canvas') as HTMLCanvasElement | null;
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
+    let shaderResizeFrame = 0;
+    let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
+    let shaderResizeObserver: ResizeObserver | null = null;
+
+    const resizeShaderToCanvas = () => {
+      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
+
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      const rect = shaderCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
+      }
+    };
+
+    const scheduleShaderResize = () => {
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      shaderResizeTimer = window.setTimeout(() => {
+        shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
+      }, 120);
+    };
 
     if (shaderCanvas && !prefersReducedMotion) {
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
       import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
         components: [
           {
@@ -730,6 +753,10 @@ const footerLinks = [
         }
 
         shaderInstance = shader;
+        resizeShaderToCanvas();
+        window.addEventListener('resize', scheduleShaderResize, { signal });
+        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
+        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
       }).catch((error) => {
         console.warn('Footer shader failed to initialize', error);
       });
@@ -812,6 +839,9 @@ const footerLinks = [
 
     cleanupFn = () => {
       shaderDisposed = true;
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
       ac.abort();
       scrollTriggers.forEach((st) => st.kill());

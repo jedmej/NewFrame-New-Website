@@ -230,6 +230,7 @@ const heroTitleWords = t.hero.title.split(/\s+/);
       justify-content: flex-start;
       padding-right: clamp(1rem, 1vw, 2rem);
       padding-left: clamp(3rem, 4vw, 5.5rem);
+      overflow: visible;
     }
 
     .hero-panel--offer {
@@ -244,6 +245,15 @@ const heroTitleWords = t.hero.title.split(/\s+/);
       font-size: clamp(7rem, 10.6vw, 14.5rem);
       line-height: 0.78;
       text-align: left;
+    }
+
+    .hero-title-shader {
+      inset: auto;
+      left: clamp(1.25rem, 3.6vw, 4.5rem);
+      top: 50%;
+      width: clamp(28rem, 45vw, 54rem);
+      height: clamp(28rem, 45vw, 54rem);
+      transform: translateY(-50%);
     }
 
     .hero-offer {
@@ -296,6 +306,63 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     .hero-panel--offer {
       padding-right: clamp(3rem, 3vw, 4.5rem);
       padding-left: clamp(4rem, 4vw, 6rem);
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .hero-shell {
+      padding-top: 5.875rem;
+      padding-bottom: 6.75rem;
+    }
+
+    .hero-grid {
+      min-height: calc(100svh - 12.625rem);
+      grid-template-rows: minmax(20rem, 42svh) auto;
+      align-content: center;
+      gap: clamp(2rem, 4svh, 3.25rem);
+      transform: translateY(-1svh);
+    }
+
+    .hero-panel--title {
+      width: min(100%, 38rem);
+      height: clamp(20rem, 42svh, 28rem);
+      margin-inline: auto;
+      overflow: visible;
+    }
+
+    .hero-title-shader {
+      inset: -18% -18% -16%;
+      width: 136%;
+      height: 132%;
+      transform: translate(-1%, 5%);
+    }
+
+    .hero-offer {
+      width: min(100%, 54rem);
+      margin-top: 0;
+    }
+
+    .hero-offer__statement {
+      max-width: 12em;
+      font-size: clamp(3.35rem, 7.2vw, 5.25rem);
+      line-height: 0.94;
+    }
+
+    .hero-offer__subcopy {
+      max-width: 46rem;
+      margin-top: 1.25rem;
+      font-size: clamp(0.75rem, 1.45vw, 0.9rem);
+      line-height: 1.7;
+    }
+
+    .hero-offer__actions {
+      margin-top: 2rem;
+    }
+
+    .hero-offer__link {
+      min-height: 3.25rem;
+      padding: 1rem 1.35rem;
+      font-size: 0.7rem;
     }
   }
 
@@ -489,8 +556,33 @@ const heroTitleWords = t.hero.title.split(/\s+/);
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
+    let shaderResizeFrame = 0;
+    let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
+    let shaderResizeObserver: ResizeObserver | null = null;
+
+    const resizeShaderToCanvas = () => {
+      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
+
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      const rect = shaderCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
+        shaderCanvas.style.width = '';
+        shaderCanvas.style.height = '';
+      }
+    };
+
+    const scheduleShaderResize = () => {
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      shaderResizeTimer = window.setTimeout(() => {
+        shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
+      }, 120);
+    };
 
     if (shaderCanvas && !prefersReducedMotion) {
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
       import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
         components: [
           {
@@ -578,6 +670,10 @@ const heroTitleWords = t.hero.title.split(/\s+/);
         }
 
         shaderInstance = shader;
+        resizeShaderToCanvas();
+        window.addEventListener('resize', scheduleShaderResize, { signal });
+        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
+        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
       }).catch((error) => {
         console.warn('Hero shader failed to initialize', error);
       });
@@ -738,6 +834,9 @@ const heroTitleWords = t.hero.title.split(/\s+/);
 
     cleanupFn = () => {
       shaderDisposed = true;
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
       ac.abort();
       entranceTl?.kill();
