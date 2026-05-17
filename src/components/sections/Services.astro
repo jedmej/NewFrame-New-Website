@@ -13,13 +13,17 @@ const t = useTranslations(lang);
 <section
   id="services"
   class="relative py-32 md:py-48"
-  style="background-color: var(--color-bg);"
 >
   <div class="px-6 md:px-10 max-w-[1400px] mx-auto">
     <!-- Section label -->
     <div class="mb-12 md:mb-20">
       <h2 class="text-mono-xs text-[var(--color-text)]">{t.services.label}</h2>
-      <div class="mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
+      <div class="mt-4 w-full h-px bg-[var(--color-line)]" data-line></div>
+    </div>
+
+    <div class="services-header">
+      <h2 class="services-heading">{t.services.heading}</h2>
+      <p class="services-intro">{t.services.intro}</p>
     </div>
 
     <!-- Services grouped by category -->
@@ -29,7 +33,10 @@ const t = useTranslations(lang);
           <div class="service-group-inner">
             {/* Left: sticky category heading */}
             <div class="service-category-col">
-              <h3 class="service-category">{group.category}</h3>
+              <div class="service-category-block">
+                <h3 class="service-category">{group.category}</h3>
+                <p class="service-description">{group.description}</p>
+              </div>
             </div>
 
             {/* Right: service items */}
@@ -55,6 +62,8 @@ const t = useTranslations(lang);
         </div>
       ))}
     </div>
+
+    <p class="services-note text-mono-xs">{t.services.note}</p>
 
     <!-- CTA -->
     <div class="service-cta mt-20 md:mt-32">
@@ -83,6 +92,46 @@ const t = useTranslations(lang);
 </section>
 
 <style>
+  .services-header {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    margin-bottom: clamp(4rem, 8vw, 7rem);
+  }
+
+  #services {
+    background:
+      radial-gradient(circle at 92% 12%, rgba(20, 18, 15, 0.055), transparent 22rem),
+      linear-gradient(180deg, var(--color-bg), #eee7dc 52%, var(--color-bg));
+  }
+
+  @media (min-width: 900px) {
+    .services-header {
+      grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.6fr);
+      align-items: start;
+    }
+  }
+
+  .services-heading {
+    max-width: 54rem;
+    font-family: var(--font-serif);
+    font-size: clamp(3.25rem, 8vw, 8rem);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .services-intro {
+    max-width: 30rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
   /* ===== Group layout ===== */
   .service-item-line {
     width: 100%;
@@ -94,7 +143,7 @@ const t = useTranslations(lang);
   .service-line-fill {
     width: 100%;
     height: 100%;
-    background-color: var(--color-text);
+    background-color: var(--color-line);
     transform: scaleX(0);
     transform-origin: left;
   }
@@ -103,6 +152,7 @@ const t = useTranslations(lang);
     display: flex;
     flex-direction: row;
     gap: 0;
+    padding-block: clamp(0.85rem, 2vw, 1.4rem);
   }
 
   /* Left column: sticky category heading */
@@ -133,6 +183,50 @@ const t = useTranslations(lang);
     color: var(--color-text);
   }
 
+  .service-category-block {
+    display: grid;
+    gap: 1rem;
+    max-width: 26rem;
+    padding-right: clamp(1rem, 3vw, 3rem);
+  }
+
+  .service-description {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .services-note {
+    width: fit-content;
+    max-width: 100%;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    margin-inline: auto;
+    color: var(--color-text-subtle);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .services-note {
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .service-group-inner {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .service-category-col {
+      width: 100%;
+      position: relative;
+      top: auto;
+    }
+  }
+
   /* Right column: service items */
   .service-items-col {
     flex: 1;
@@ -161,6 +255,7 @@ const t = useTranslations(lang);
     letter-spacing: -0.01em;
     color: var(--color-text);
     transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
+    text-wrap: balance;
   }
 
   .service-row:hover .service-title,
@@ -187,6 +282,11 @@ const t = useTranslations(lang);
     cursor: pointer;
     text-decoration: none;
     color: var(--color-text);
+    transition: transform 0.55s var(--ease-out-expo);
+  }
+
+  .services-cta-block:active {
+    transform: translateY(2px) scale(0.995);
   }
 
   @media (min-width: 768px) {
@@ -329,8 +429,8 @@ const t = useTranslations(lang);
       if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     });
 
-    // Category headings fade in
-    const categories = section.querySelectorAll('.service-category');
+    // Category blocks fade in
+    const categories = section.querySelectorAll('.service-category-block');
     categories.forEach((cat, i) => {
       const tween = gsap.fromTo(
         cat,

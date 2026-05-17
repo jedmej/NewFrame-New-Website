@@ -2,9 +2,10 @@
 import { getLangFromUrl } from '../../i18n/translations';
 
 const lang = getLangFromUrl(Astro.url);
+const shouldAutoStart = /^\/(en|pl)(\/|$)/.test(Astro.url.pathname);
 ---
 
-<div id="preloader" class="preloader" aria-hidden="true">
+<div id="preloader" class="preloader" aria-hidden="true" data-auto-start={shouldAutoStart ? 'true' : 'false'}>
   <!-- Content layer (logo, lang picker, counter) -->
   <div id="preloader-content" class="preloader-content">
     <!-- Logo -->
@@ -55,7 +56,7 @@ const lang = getLangFromUrl(Astro.url);
   <!-- Horizontal expanding line -->
   <div
     id="preloader-line"
-    class="absolute left-1/2 top-1/2 h-px bg-[var(--color-text-ghost)] -translate-x-1/2"
+    class="absolute left-1/2 top-1/2 h-px bg-[var(--color-line)] -translate-x-1/2"
     style="width: 0"
   ></div>
 
@@ -64,13 +65,77 @@ const lang = getLangFromUrl(Astro.url);
   <div id="preloader-bottom" class="preloader-half preloader-half--bottom"></div>
 </div>
 
+<script is:inline>
+  (() => {
+    const preloader = document.getElementById('preloader');
+    if (!preloader) return;
+
+    const finish = () => {
+      preloader.style.display = 'none';
+      document.body.style.overflow = '';
+      localStorage.setItem('preloaded', 'true');
+      localStorage.removeItem('lang-chosen');
+      document.dispatchEvent(new CustomEvent('preloader:complete'));
+    };
+
+    if (localStorage.getItem('preloaded')) {
+      finish();
+      return;
+    }
+
+    const startFallbackExit = () => {
+      if (preloader.dataset.fallbackExitStarted === 'true') return;
+      preloader.dataset.fallbackExitStarted = 'true';
+      document.body.style.overflow = 'hidden';
+      preloader.classList.add('preloader--fallback-exit');
+      window.setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('preloader:split-start', {
+          detail: { splitDuration: 0.35 },
+        }));
+      }, 120);
+      window.setTimeout(finish, 760);
+    };
+
+    const currentLang = document.documentElement.lang || 'en';
+    preloader.querySelectorAll('.preloader-lang-option').forEach((option) => {
+      option.addEventListener('click', (event) => {
+        const selectedLang = option.dataset.lang;
+        if (selectedLang) localStorage.setItem('preferred-lang', selectedLang);
+        if (selectedLang === currentLang) {
+          event.preventDefault();
+          startFallbackExit();
+        } else {
+          localStorage.setItem('lang-chosen', 'true');
+        }
+      });
+    });
+
+    if (preloader.dataset.autoStart === 'true') {
+      startFallbackExit();
+    }
+  })();
+</script>
+
 <script>
   import gsap from 'gsap';
 
   let cleanupFn: (() => void) | null = null;
   const timelines: gsap.core.Timeline[] = [];
+  let exitStarted = false;
+  let finishTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  function finishPreloader(preloader: HTMLElement) {
+    preloader.style.display = 'none';
+    document.body.style.overflow = '';
+    localStorage.setItem('preloaded', 'true');
+    localStorage.removeItem('lang-chosen');
+    document.dispatchEvent(new CustomEvent('preloader:complete'));
+  }
 
   function runExitAnimation() {
+    if (exitStarted) return;
+    exitStarted = true;
+
     const preloader = document.getElementById('preloader');
     const content = document.getElementById('preloader-content');
     const percentEl = document.getElementById('preloader-percent');
@@ -81,6 +146,12 @@ const lang = getLangFromUrl(Astro.url);
     const bottomHalf = document.getElementById('preloader-bottom');
 
     if (!preloader || !content || !percentEl || !bracketTL || !bracketBR || !lineEl || !topHalf || !bottomHalf) return;
+
+    // The preloader is critical path UI. If the GSAP timeline is interrupted
+    // by Astro lifecycle events or HMR, this fallback still releases the page.
+    finishTimeout = setTimeout(() => {
+      finishPreloader(preloader);
+    }, 3200);
 
     // Brackets start visible (already on screen from picker or entrance)
     gsap.set(bracketTL, { opacity: 1, scale: 1 });
@@ -145,9 +216,11 @@ const lang = getLangFromUrl(Astro.url);
 
     // 5. Clean up
     tl.call(() => {
-      preloader.style.display = 'none';
-      document.body.style.overflow = '';
-      document.dispatchEvent(new CustomEvent('preloader:complete'));
+      if (finishTimeout) {
+        clearTimeout(finishTimeout);
+        finishTimeout = null;
+      }
+      finishPreloader(preloader);
     });
   }
 
@@ -214,8 +287,6 @@ const lang = getLangFromUrl(Astro.url);
     Promise.race([document.fonts.ready, fontTimeout]).then(() => {
       if (ac.signal.aborted) return;
       runExitAnimation();
-      localStorage.setItem('preloaded', 'true');
-      localStorage.removeItem('lang-chosen');
     });
   }
 
@@ -225,8 +296,6 @@ const lang = getLangFromUrl(Astro.url);
     Promise.race([document.fonts.ready, fontTimeout]).then(() => {
       if (ac.signal.aborted) return;
       runEntranceAndExit();
-      localStorage.setItem('preloaded', 'true');
-      localStorage.removeItem('lang-chosen');
     });
   }
 
@@ -264,10 +333,16 @@ const lang = getLangFromUrl(Astro.url);
 
     if (!localStorage.getItem('preloaded')) {
       document.body.style.overflow = 'hidden';
+      const preloader = document.getElementById('preloader');
+      const shouldAutoStart = preloader?.dataset.autoStart === 'true';
 
       if (localStorage.getItem('lang-chosen')) {
         // Arrived after language switch — animate in, then out
         startEntranceAnimation(ac);
+      } else if (shouldAutoStart) {
+        // Direct /en/ or /pl/ visits already include a language,
+        // so do not trap the page behind the language picker.
+        startAnimation(ac);
       } else {
         // First visit — show language picker and wait for selection
         setupLangPicker(ac);
@@ -283,8 +358,16 @@ const lang = getLangFromUrl(Astro.url);
 
     cleanupFn = () => {
       ac.abort();
+      const preloader = document.getElementById('preloader');
+      if (exitStarted && preloader) {
+        finishPreloader(preloader);
+      }
       timelines.forEach(tl => tl.kill());
       timelines.length = 0;
+      if (finishTimeout) {
+        clearTimeout(finishTimeout);
+        finishTimeout = null;
+      }
     };
   }
 

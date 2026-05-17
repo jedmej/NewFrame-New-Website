@@ -10,160 +10,622 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const year = new Date().getFullYear();
 const email = 'jed.mejzner@gmail.com';
+const instagramUrl = 'https://www.instagram.com/jed.mejzner/';
+const instagramLabel = '@jed.mejzner';
 
-const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  ✦  STRATEGY  ✦  ';
+const footerLinks = [
+  { label: lang === 'pl' ? 'Start' : 'Home', href: `/${lang}/` },
+  { label: t.nav.work, href: `/${lang}/#work` },
+  { label: t.nav.scope, href: `/${lang}/#scope` },
+  { label: t.nav.services, href: `/${lang}/#ways-to-work` },
+  { label: t.nav.process, href: `/${lang}/#services` },
+  { label: t.nav.contact, href: `/${lang}/#contact` },
+  { label: t.footer.privacy, href: `/${lang}/privacy/` },
+];
 ---
 
-<footer id="contact" class="relative z-50 overflow-hidden" style="color: #ffffff;">
-
-  <!-- Entrance wipe: cream overlay clips away to reveal footer -->
+<footer id="contact" class="relative z-50 overflow-hidden footer-shell">
   <div id="footer-wipe-in" class="absolute top-0 left-0 right-0 h-screen z-30 pointer-events-none"
        style="background-color: var(--color-bg);"></div>
 
-  <!-- ===== 1. Giant CTA Block ===== -->
-  <div style="background-color: #DA382E;">
-  <div class="px-6 md:px-10 pt-24 md:pt-48 pb-8 md:pb-20">
-    <div class="max-w-[1400px] mx-auto">
-      <!-- Availability badge -->
-      <div class="flex items-center gap-2.5 mb-8 md:mb-12">
-        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-        <span class="text-mono-xs text-white/70">{t.footer.available}</span>
+  <div class="footer-surface">
+    <canvas id="footer-shader-canvas" class="footer-shader" aria-hidden="true"></canvas>
+    <div class="footer-inner">
+      <div class="footer-availability">
+        <span class="footer-status-dot" aria-hidden="true"></span>
+        <span>{t.footer.available}</span>
       </div>
 
-      <!-- Giant CTA text -->
-      <h2
-        id="footer-cta"
-        class="text-display-lg text-white uppercase"
-        style="line-height: 0.95; overflow-wrap: normal; word-break: keep-all;"
-      >
-        {t.footer.cta}
-      </h2>
-
-      <!-- Email link -->
-      <a
-        href={`mailto:${email}?subject=Project%20Inquiry%20-%20New%20Frame%20Studio`}
-        class="group inline-block mt-8 md:mt-12"
-        data-cursor="CLICK"
-      >
-        <span
-          class="block text-white/70 group-hover:text-white transition-colors duration-500"
-          style="font-family: var(--font-serif); font-size: clamp(2.25rem, 3.5vw, 3rem); font-style: italic; letter-spacing: -0.02em;"
-        >
-          {email}
-        </span>
-        <span class="block w-0 group-hover:w-full h-px bg-white transition-all duration-700 ease-out mt-2"></span>
-      </a>
-    </div>
-  </div>
-
-  <!-- ===== 2. Decorative Marquee Divider ===== -->
-  <div class="relative overflow-hidden py-6 border-t border-b border-white/15 hidden">
-    <div class="footer-marquee whitespace-nowrap">
-      <span class="text-mono-xs text-white/20 inline-block">{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}{marqueeText}</span>
-    </div>
-  </div>
-
-  <!-- ===== 3. Link Grid ===== -->
-  <div class="px-6 md:px-10 py-8 md:py-16">
-    <div class="max-w-[1400px] mx-auto">
-      <div class="grid grid-cols-1 gap-8">
-        <!-- Column 1: Navigation -->
-        <div>
-          <span class="text-mono-xs text-white/40 block pb-4 mb-6 border-b border-white/15">
-            {t.footer.navigation}
-          </span>
-          <ul class="grid grid-cols-3 gap-x-8 gap-y-3">
-            <li>
-              <a href={`/${lang}/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">Home</span>
-              </a>
-            </li>
-            <li>
-              <a href={`/${lang}/#work`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.nav.work}</span>
-              </a>
-            </li>
-            <li>
-              <a href={`/${lang}/#scope`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.nav.scope}</span>
-              </a>
-            </li>
-            <li>
-              <a href={`/${lang}/#services`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.nav.services}</span>
-              </a>
-            </li>
-            <li>
-              <a href={`/${lang}/#contact`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.nav.contact}</span>
-              </a>
-            </li>
-            <li>
-              <a href={`/${lang}/privacy/`} class="footer-link text-sm text-white/70 hover:text-white transition-all duration-300 inline-flex items-center gap-2 group">
-                <span class="w-0 group-hover:w-3 h-px bg-white transition-all duration-300"></span>
-                <span class="scramble-target">{t.footer.privacy}</span>
-              </a>
-            </li>
-          </ul>
+      <div class="footer-grid">
+        <div class="footer-cta-cell">
+          <h2 id="footer-cta" class="footer-cta">{t.footer.cta}</h2>
+          <p class="footer-contact-prompt">{t.contact.prompt}</p>
         </div>
 
+        <div class="footer-contact-stack footer-email-cell">
+          <a
+            href={`mailto:${email}?subject=Project%20Inquiry%20-%20New%20Frame%20Studio`}
+            class="footer-contact-link group"
+            data-cursor="CLICK"
+            aria-label={`Email ${email}`}
+          >
+            <span class="footer-cell-kicker">{t.footer.email}</span>
+            <span class="footer-email footer-email-address">jed.mejzner@<wbr />gmail.com</span>
+            <span class="footer-cell-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a
+            href={instagramUrl}
+            class="footer-contact-link group"
+            data-cursor="CLICK"
+            aria-label={`${t.footer.instagram} ${instagramLabel}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="footer-cell-kicker">{t.footer.instagram}</span>
+            <span class="footer-email footer-social-handle">{instagramLabel}</span>
+            <span class="footer-cell-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <nav class="footer-nav-cell" aria-label={t.footer.navigation}>
+          <ul class="footer-link-grid">
+            {footerLinks.map((link) => (
+              <li>
+                <a href={link.href} class="footer-link group">
+                  <span class="footer-link-index" aria-hidden="true"></span>
+                  <span class="scramble-target">{link.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="footer-mark-cell" aria-hidden="true">
+          <span class="footer-mark-logo"></span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-brand">
+          <span class="footer-brand-mark" aria-hidden="true"></span>
+          <span>NEW FRAME</span>
+        </div>
+
+        <p>&copy; {year} New Frame Studio · {t.footer.rights}</p>
+
+        <button id="back-to-top" class="footer-top-button group">
+          <span>{t.footer.backToTop}</span>
+          <svg aria-hidden="true" class="transition-transform duration-500 group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
-
-  <!-- ===== 4. Bottom Bar ===== -->
-  <div class="px-6 md:px-10 py-8 md:py-6">
-      <!-- Logo -->
-    <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-4">
-      <div class="flex items-center justify-center md:justify-start gap-2.5 text-white/40">
-        <svg class="w-4 h-4" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
-          <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
-          <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
-          <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
-        </svg>
-        <span class="text-mono-xs">NEW FRAME</span>
-      </div>
-
-      <!-- Copyright -->
-      <div class="text-center">
-        <p class="text-mono-xs text-white/40">&copy; {year} New Frame Studio &middot; {t.footer.rights}</p>
-      </div>
-
-      <!-- Back to top -->
-      <button
-        id="back-to-top"
-        class="group text-mono-xs text-white/40 hover:text-white/70 transition-colors duration-300 flex items-center justify-center md:justify-end gap-2"
-      >
-        <span>{t.footer.backToTop}</span>
-        <svg class="w-3.5 h-3.5 transition-transform duration-500 group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  </div><!-- close background wrapper -->
 </footer>
 
 <style>
-  .footer-marquee {
+  .footer-shell {
+    color: var(--color-dark-text);
+  }
+
+  .footer-surface {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 78% 8%, rgba(201, 70, 57, 0.2), transparent 26rem),
+      linear-gradient(180deg, var(--color-bg-dark), #0f0d0b 68%, #0b0a09);
+  }
+
+  .footer-shader {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .footer-inner {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 1400px);
+    margin: 0 auto;
+    padding: clamp(6.5rem, 10vw, 10rem) 1.5rem 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer-inner {
+      padding-inline: 2.5rem;
+      padding-bottom: 2rem;
+    }
+  }
+
+  .footer-availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    color: rgba(243, 234, 223, 0.66);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .footer-status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 0.45rem rgba(201, 70, 57, 0.12);
+  }
+
+  .footer-grid {
+    display: grid;
+    border: 1px solid rgba(243, 234, 223, 0.12);
+    background: rgba(17, 24, 32, 0.42);
+    backdrop-filter: blur(10px) saturate(1.08);
+    -webkit-backdrop-filter: blur(10px) saturate(1.08);
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+  }
+
+  .footer-cta-cell,
+  .footer-email-cell,
+  .footer-nav-cell,
+  .footer-mark-cell {
+    min-width: 0;
+    border-bottom: 1px solid rgba(243, 234, 223, 0.12);
+  }
+
+  .footer-cta-cell {
     display: flex;
-    animation: footer-scroll 60s linear infinite;
+    min-height: clamp(28rem, 43vw, 40rem);
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 5rem);
   }
 
-  @keyframes footer-scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+  @media (min-width: 1024px) {
+    .footer-cta-cell {
+      grid-column: 1 / 8;
+      grid-row: 1;
+      border-right: 1px solid rgba(243, 234, 223, 0.12);
+    }
   }
 
-  .footer-marquee:hover {
-    animation-play-state: paused;
+  .footer-cta {
+    max-width: 10.5em;
+    color: var(--color-dark-text);
+    font-family: var(--font-serif);
+    font-size: clamp(4rem, 8.2vw, 9.8rem);
+    font-weight: 400;
+    line-height: 0.86;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .footer-word {
+    display: inline-block;
+    white-space: nowrap;
+    will-change: transform, opacity;
+  }
+
+  .footer-contact-prompt {
+    max-width: 39rem;
+    margin-top: clamp(1.5rem, 3vw, 2.75rem);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+    color: rgba(243, 234, 223, 0.62);
+    text-wrap: pretty;
+  }
+
+  .footer-contact-stack {
+    position: relative;
+    display: grid;
+    min-height: clamp(22rem, 33vw, 34rem);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    color: var(--color-dark-text);
+  }
+
+  @media (min-width: 1024px) {
+    .footer-contact-stack {
+      grid-column: 8 / 13;
+      grid-row: 1;
+    }
+  }
+
+  .footer-contact-link {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    align-content: end;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(243, 234, 223, 0.12);
+    padding: clamp(1.5rem, 3vw, 3rem);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      background-color 0.45s var(--ease-out-expo),
+      color 0.45s var(--ease-out-expo);
+  }
+
+  .footer-contact-link:last-child {
+    border-bottom: 0;
+  }
+
+  .footer-contact-link:hover,
+  .footer-contact-link:focus-visible {
+    background: rgba(243, 234, 223, 0.075);
+    color: #fff;
+  }
+
+  .footer-cell-kicker {
+    color: rgba(243, 234, 223, 0.36);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .footer-email {
+    max-width: 100%;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 2.85vw, 3.4rem);
+    font-style: italic;
+    line-height: 0.95;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .footer-social-handle {
+    font-size: clamp(2rem, 2.7vw, 3.25rem);
+  }
+
+  .footer-cell-arrow {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    line-height: 1;
+    transition: transform 0.45s var(--ease-out-expo);
+  }
+
+  .footer-contact-link:hover .footer-cell-arrow,
+  .footer-contact-link:focus-visible .footer-cell-arrow {
+    transform: translate(0.25rem, -0.25rem);
+  }
+
+  .footer-nav-cell {
+    padding: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .footer-nav-cell {
+      grid-column: 1 / 12;
+      grid-row: 2;
+      border-right: 1px solid rgba(243, 234, 223, 0.12);
+      border-bottom: 0;
+    }
+  }
+
+  .footer-link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .footer-link-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-link-grid {
+      grid-template-columns: repeat(7, minmax(8rem, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .footer-link-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .footer-link-grid li {
+    display: flex;
+    min-width: 0;
+    border-right: 1px solid rgba(243, 234, 223, 0.12);
+  }
+
+  .footer-link-grid li:last-child {
+    border-right: 0;
+  }
+
+  .footer-link-grid li:nth-child(n + 3) {
+    border-top: 1px solid rgba(243, 234, 223, 0.12);
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .footer-link-grid li:nth-child(4n) {
+      border-right: 0;
+    }
+
+    .footer-link-grid li:nth-child(n + 3) {
+      border-top: 0;
+    }
+
+    .footer-link-grid li:nth-child(n + 5) {
+      border-top: 1px solid rgba(243, 234, 223, 0.12);
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .footer-link-grid li:nth-child(4n) {
+      border-right: 0;
+    }
+
+    .footer-link-grid li:nth-child(n + 3) {
+      border-top: 0;
+    }
+
+    .footer-link-grid li:nth-child(n + 5) {
+      border-top: 1px solid rgba(243, 234, 223, 0.12);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .footer-link-grid li:nth-child(n + 3) {
+      border-top: 0;
+    }
+  }
+
+  .footer-link {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: clamp(5.75rem, 7vw, 7.25rem);
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    color: rgba(243, 234, 223, 0.62);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      background-color 0.35s var(--ease-out-expo),
+      color 0.3s var(--ease-out-expo);
+  }
+
+  .footer-link:hover,
+  .footer-link:focus-visible {
+    background: rgba(243, 234, 223, 0.055);
+    color: var(--color-dark-text);
+  }
+
+  .footer-link-index {
+    width: 0.36rem;
+    height: 0.36rem;
+    flex: 0 0 auto;
+    background: var(--color-accent);
+    transform: rotate(45deg) scale(0.75);
+    opacity: 0.7;
+    transition:
+      transform 0.35s var(--ease-out-expo),
+      opacity 0.35s var(--ease-out-expo);
+  }
+
+  .footer-link:hover .footer-link-index,
+  .footer-link:focus-visible .footer-link-index {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+
+  .footer-mark-cell {
+    display: grid;
+    --footer-mark-size: clamp(3.5rem, 4vw, 4.5rem);
+    min-height: calc(var(--footer-mark-size) + 24px);
+    min-width: calc(var(--footer-mark-size) + 24px);
+    place-items: center;
+    padding: 12px;
+    border-bottom: 0;
+    color: rgba(243, 234, 223, 0.9);
+  }
+
+  @media (min-width: 1024px) {
+    .footer-mark-cell {
+      grid-column: 12 / 13;
+      grid-row: 2;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      min-height: 0;
+      justify-self: end;
+      align-self: stretch;
+    }
+  }
+
+  .footer-mark-logo {
+    display: block;
+    width: var(--footer-mark-size);
+    height: var(--footer-mark-size);
+    background: currentColor;
+    mask: url('/images/newframe-logo.svg') center / contain no-repeat;
+    -webkit-mask: url('/images/newframe-logo.svg') center / contain no-repeat;
+  }
+
+  .footer-bottom {
+    display: grid;
+    gap: 1.25rem;
+    align-items: center;
+    padding-top: 1.5rem;
+    color: rgba(243, 234, 223, 0.38);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.5;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .footer-bottom {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+  }
+
+  .footer-brand,
+  .footer-top-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer-brand-mark {
+    width: 0.82rem;
+    height: 0.82rem;
+    border: 2px solid currentColor;
+    box-shadow: 0.28rem 0.28rem 0 0 currentColor;
+  }
+
+  .footer-bottom p {
+    margin: 0;
+    text-align: center;
+  }
+
+  .footer-top-button {
+    justify-self: start;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    transition: color 0.3s var(--ease-out-expo);
+  }
+
+  .footer-top-button:hover,
+  .footer-top-button:focus-visible {
+    color: rgba(243, 234, 223, 0.78);
+  }
+
+  .footer-top-button svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer-top-button {
+      justify-self: end;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .footer-inner {
+      padding: 4.5rem 1rem 1.25rem;
+    }
+
+    .footer-availability {
+      margin-bottom: 2rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.14em;
+    }
+
+    .footer-cta-cell {
+      min-height: 18.5rem;
+      padding: 2rem 1.25rem;
+    }
+
+    .footer-cta {
+      max-width: 8.75em;
+      font-size: clamp(3rem, 16vw, 4.5rem);
+      line-height: 0.9;
+    }
+
+    .footer-contact-prompt {
+      margin-top: 1.25rem;
+      font-size: 0.74rem;
+      line-height: 1.6;
+    }
+
+    .footer-contact-stack {
+      min-height: 0;
+      grid-template-rows: none;
+    }
+
+    .footer-contact-link {
+      min-height: 9.5rem;
+      gap: 0.75rem;
+      padding: 1.25rem;
+    }
+
+    .footer-email {
+      padding-right: 1.8rem;
+      font-size: clamp(1.85rem, 10vw, 2.65rem);
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .footer-email-address {
+      font-size: clamp(1.55rem, 8.2vw, 2.05rem);
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+
+    .footer-cell-arrow {
+      top: 1.25rem;
+      right: 1.25rem;
+      font-size: 1.1rem;
+    }
+
+    .footer-link-grid li:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .footer-link {
+      min-height: 4.85rem;
+      padding: 0.85rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-mark-cell {
+      --footer-mark-size: 4.25rem;
+      min-height: 9.5rem;
+      padding: 1.25rem;
+    }
+
+    .footer-bottom {
+      gap: 0.85rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-bottom p {
+      text-align: left;
+    }
   }
 </style>
 
@@ -172,6 +634,7 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
@@ -187,6 +650,116 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
     let splitInstance: any = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shaderCanvas = document.getElementById('footer-shader-canvas') as HTMLCanvasElement | null;
+    let shaderInstance: ShaderInstance | null = null;
+    let shaderDisposed = false;
+    let shaderResizeFrame = 0;
+    let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
+    let shaderResizeObserver: ResizeObserver | null = null;
+
+    const resizeShaderToCanvas = () => {
+      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
+
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      const rect = shaderCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
+      }
+    };
+
+    const scheduleShaderResize = () => {
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      shaderResizeTimer = window.setTimeout(() => {
+        shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
+      }, 120);
+    };
+
+    if (shaderCanvas && !prefersReducedMotion) {
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
+        components: [
+          {
+            type: 'SolidColor',
+            id: 'idmmbht0k6sfod45zuq',
+            props: {
+              color: '#09060f00',
+            },
+          },
+          {
+            type: 'GridDistortion',
+            id: 'idmmbj5gb3owu3efr8',
+            props: {
+              decay: 3.6,
+              gridSize: 26,
+              intensity: 1.25,
+              radius: 1.1,
+            },
+            children: [
+              {
+                type: 'Pixelate',
+                id: 'idmmbhss4cxdb5pyi6j',
+                props: {
+                  gap: {
+                    type: 'map',
+                    curve: 0.35,
+                    source: 'idmmbhthud5inxgebqc',
+                    channel: 'alphaInverted',
+                    inputMax: 1,
+                    inputMin: 0,
+                    outputMax: 0.82,
+                    outputMin: 0.1,
+                  },
+                  scale: 104,
+                },
+                children: [
+                  {
+                    type: 'Plasma',
+                    id: 'idmmbhsq0prs1cmevaa',
+                    props: {
+                      balance: 57,
+                      colorA: '#C54538',
+                      contrast: 1.6,
+                      density: 2,
+                      intensity: 1.8,
+                      speed: 2,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'SineWave',
+            id: 'idmmbhthud5inxgebqc',
+            props: {
+              amplitude: 0.1,
+              position: {
+                x: 0.5,
+                y: 1,
+              },
+              softness: 0.8,
+              thickness: 0.5,
+              visible: false,
+            },
+          },
+        ],
+      })).then((shader) => {
+        if (shaderDisposed) {
+          shader.destroy();
+          return;
+        }
+
+        shaderInstance = shader;
+        resizeShaderToCanvas();
+        window.addEventListener('resize', scheduleShaderResize, { signal });
+        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
+        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
+      }).catch((error) => {
+        console.warn('Footer shader failed to initialize', error);
+      });
+    }
 
     // Entrance wipe — cream overlay clips away to reveal footer
     const footerWipe = document.getElementById('footer-wipe-in');
@@ -221,17 +794,17 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
       }
     }, { signal });
 
-    // SplitText character animation on giant CTA
+    // SplitText word animation on giant CTA
     const ctaEl = document.getElementById('footer-cta');
     if (ctaEl) {
       delete ctaEl.dataset.animated;
 
       splitInstance = new SplitText(ctaEl, {
-        type: 'chars',
-        charsClass: 'split-char',
+        type: 'words',
+        wordsClass: 'footer-word',
       });
 
-      const tween = gsap.fromTo(splitInstance.chars,
+      const tween = gsap.fromTo(splitInstance.words,
         { y: 60, opacity: 0, rotateX: -40 },
         {
           y: 0,
@@ -264,6 +837,11 @@ const marqueeText = 'NEW FRAME  ✦  DESIGN  ✦  DEVELOPMENT  ✦  BRANDING  �
     });
 
     cleanupFn = () => {
+      shaderDisposed = true;
+      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
+      cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeObserver?.disconnect();
+      shaderInstance?.destroy();
       ac.abort();
       scrollTriggers.forEach((st) => st.kill());
       if (splitInstance) splitInstance.revert();

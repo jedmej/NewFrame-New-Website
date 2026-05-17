@@ -12,56 +12,375 @@ const t = useTranslations(lang);
 
 <section
   id="hero"
-  class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden"
-  style="background-color: var(--color-bg);"
+  data-lang={lang}
+  class="relative w-full min-h-[100svh] flex flex-col overflow-hidden"
 >
-  <!-- Main content -->
-  <div class="relative w-full h-full px-6 md:px-10 flex flex-col justify-center max-w-[2000px] mx-auto">
+  <canvas id="hero-background-shader-canvas" class="hero-background-shader" aria-hidden="true"></canvas>
 
-    <!-- Title — centered, dominant -->
-    <div class="flex flex-col items-center justify-center">
-      <h1
-        id="hero-title"
-        class="text-display-xl text-center text-[var(--color-text)] select-none"
-        aria-label={t.hero.title}
-      >
-        {t.hero.title}
-      </h1>
-    </div>
-
-    <!-- Corner metadata: top -->
-    <div class="absolute top-[15%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-start">
-      <!-- Top-left: availability -->
-      <div id="hero-corner-tl" class="flex items-center gap-2 opacity-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#5a9a6a] animate-pulse"></span>
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.available}</span>
-      </div>
-      <!-- Top-right: location -->
-      <div id="hero-corner-tr" class="opacity-0">
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.location}</span>
-      </div>
-    </div>
-
-    <!-- Corner metadata: bottom -->
-    <div class="absolute bottom-[15%] left-[8%] right-[8%] flex flex-col items-center gap-2 md:flex-row md:justify-between md:items-end">
-      <!-- Bottom-left: descriptor -->
-      <div id="hero-corner-bl" class="opacity-0">
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.descriptor}</span>
-      </div>
-      <!-- Bottom-right: credit -->
-      <div id="hero-corner-br" class="opacity-0">
-        <span class="text-mono-xs text-[var(--color-text-subtle)]">{t.hero.credit}</span>
+  <div class="hero-shell relative flex w-full min-h-[100svh] flex-col">
+    <div class="hero-grid">
+      <div class="hero-panel hero-panel--title">
+        <div id="hero-offer" class="hero-offer">
+          <h1
+            id="hero-title"
+            class="hero-offer__statement"
+            aria-label={t.hero.statement}
+          >
+            {t.hero.statement}
+          </h1>
+          <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
+          <div class="hero-offer__actions">
+            <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <path d="M1 11L11 1M11 1H3M11 1V9" />
+              </svg>
+              <span>{t.hero.primaryCta}</span>
+            </a>
+            <span class="hero-offer__divider" aria-hidden="true"></span>
+            <a href={`/${lang}/#work`} class="hero-offer__link" data-cursor="CLICK">{t.hero.secondaryCta}</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<script>
-  import gsap from 'gsap';
-  import { SplitText } from 'gsap/SplitText';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+<style>
+  .hero-shell {
+    z-index: 2;
+    padding-top: 5rem;
+  }
 
-  gsap.registerPlugin(SplitText, ScrollTrigger);
+  #hero {
+    isolation: isolate;
+    background: var(--color-bg);
+  }
+
+  .hero-background-shader {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+  }
+
+  .hero-grid {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100svh - 10.5rem);
+  }
+
+  .hero-panel {
+    min-width: 0;
+  }
+
+  .hero-panel--title {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    align-items: center;
+    padding: clamp(2rem, 8svh, 4rem) 1.5rem clamp(2.75rem, 9svh, 4.75rem);
+  }
+
+  .hero-offer {
+    display: flex;
+    width: min(100%, 62rem);
+    flex-direction: column;
+    color: var(--color-text);
+    text-align: left;
+    text-shadow:
+      0 0.08em 0.34em rgba(239, 235, 226, 0.32),
+      0 1rem 3rem rgba(239, 235, 226, 0.22);
+  }
+
+  .hero-offer__statement {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(3.25rem, 15vw, 6.5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: 0;
+    text-wrap: pretty;
+  }
+
+  .hero-offer__statement span {
+    font-style: italic;
+  }
+
+  .hero-offer__subcopy {
+    max-width: 36rem;
+    margin: 1.5rem 0 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 4.4vw, 1.1875rem);
+    font-weight: 400;
+    line-height: 1.58;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .hero-offer__actions {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .hero-offer__link {
+    display: inline-flex;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid currentColor;
+    padding: 0 0 1rem;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .hero-offer__link svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex: 0 0 auto;
+    margin-right: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .hero-offer__divider {
+    display: none;
+  }
+
+  .hero-offer__link:hover,
+  .hero-offer__link:focus-visible {
+    color: var(--color-accent);
+  }
+
+  .hero-offer__link--primary {
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-shell {
+      padding-top: 5.875rem;
+    }
+
+    .hero-grid {
+      min-height: calc(100svh - 5.875rem);
+    }
+
+    .hero-panel {
+      min-height: calc(100svh - 5.875rem);
+    }
+
+    .hero-panel--title {
+      align-items: stretch;
+      border-left: 1px solid var(--color-border-strong);
+      padding: clamp(3rem, 5.2vw, 4rem) clamp(3rem, 4.8vw, 5.5rem) clamp(3rem, 5.6vh, 4.5rem);
+    }
+
+    .hero-offer {
+      display: grid;
+      width: 100%;
+      min-height: 100%;
+      grid-template-columns: minmax(0, 30rem) minmax(12rem, 1fr) minmax(0, 24rem);
+      grid-template-rows: auto 1fr auto;
+      column-gap: clamp(2rem, 5vw, 6rem);
+      align-items: start;
+    }
+
+    .hero-offer__statement {
+      grid-column: 1;
+      max-width: none;
+      font-size: clamp(2.95rem, 3.58vw, 4.85rem);
+      line-height: 0.94;
+      text-align: left;
+    }
+
+    #hero[data-lang='pl'] .hero-offer__statement {
+      max-width: none;
+      font-size: clamp(2.75rem, 3.35vw, 4.55rem);
+    }
+
+    .hero-offer__subcopy {
+      grid-column: 3;
+      max-width: none;
+      margin: clamp(0.25rem, 1.2vh, 1rem) 0 0;
+      font-size: clamp(0.875rem, 0.92vw, 1.05rem);
+      line-height: 1.52;
+      text-align: right;
+    }
+
+    .hero-offer__actions {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      gap: clamp(2.75rem, 4.8vw, 5.5rem);
+      width: min(100%, 72rem);
+      margin: auto auto 0;
+    }
+
+    .hero-offer__link {
+      min-height: 3.25rem;
+      padding-bottom: 1rem;
+      font-size: 0.8125rem;
+      white-space: nowrap;
+    }
+
+    .hero-offer__link--primary {
+      width: min(34vw, 32rem);
+      justify-content: center;
+    }
+
+    .hero-offer__link:not(.hero-offer__link--primary) {
+      width: min(34vw, 32rem);
+    }
+
+    .hero-offer__divider {
+      display: block;
+      width: 1px;
+      height: 3rem;
+      flex: 0 0 auto;
+      background-color: var(--color-border-strong);
+    }
+
+  }
+
+  @media (min-width: 1536px) {
+    .hero-panel--title {
+      padding-right: clamp(4.5rem, 5vw, 6rem);
+      padding-left: clamp(4.5rem, 5vw, 6rem);
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .hero-shell {
+      padding-top: 5rem;
+    }
+
+    .hero-grid {
+      min-height: auto;
+    }
+
+    .hero-panel--title {
+      padding: 3.75rem 3rem 4rem;
+    }
+
+    .hero-offer__statement {
+      font-size: clamp(4.75rem, 10vw, 6.8rem);
+    }
+
+    .hero-offer__subcopy {
+      max-width: 42rem;
+    }
+
+    .hero-offer__actions {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .hero-offer__link--primary {
+      width: min(60%, 26rem);
+      justify-content: flex-start;
+    }
+
+    .hero-offer__link:not(.hero-offer__link--primary) {
+      width: min(32%, 13rem);
+    }
+
+    .hero-offer__divider {
+      display: block;
+      width: 1px;
+      height: 3rem;
+      flex: 0 0 auto;
+      background-color: var(--color-border-strong);
+    }
+
+  }
+
+  @media (max-width: 767px) {
+    .hero-shell {
+      padding-top: 4.75rem;
+    }
+
+    .hero-grid {
+      min-height: calc(100svh - 4.75rem);
+    }
+
+    .hero-panel--title {
+      align-items: stretch;
+      padding: clamp(2rem, 7svh, 3.5rem) 1.5rem clamp(2.75rem, 8svh, 4.5rem);
+    }
+
+    .hero-offer {
+      min-height: calc(100svh - 4.75rem - clamp(4.75rem, 15svh, 8rem));
+      justify-content: flex-start;
+    }
+
+    .hero-offer__statement {
+      font-size: clamp(3rem, 15vw, 4.9rem);
+      max-width: 21rem;
+    }
+
+    .hero-offer__subcopy {
+      max-width: 25rem;
+      margin-top: clamp(12rem, 31svh, 18rem);
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .hero-offer__actions {
+      margin-top: 1.75rem;
+    }
+
+    .hero-offer__link {
+      font-size: 0.625rem;
+      letter-spacing: 0.14em;
+      line-height: 1.15;
+    }
+
+  }
+
+  @media (max-height: 760px) {
+    .hero-offer__subcopy {
+      margin-top: 1.25rem;
+    }
+
+    .hero-offer__actions {
+      margin-top: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) and (max-height: 760px) {
+    .hero-panel--title {
+      padding-top: 2.5rem;
+      padding-bottom: 2.5rem;
+    }
+
+    .hero-offer__statement {
+      font-size: clamp(4.25rem, 5.4vw, 5.8rem);
+    }
+  }
+
+</style>
+
+<script>
+  import type { ShaderInstance } from 'shaders/js';
 
   let cleanupFn: (() => void) | null = null;
 
@@ -69,150 +388,144 @@ const t = useTranslations(lang);
     cleanupFn?.();
     cleanupFn = null;
 
-    const titleEl = document.getElementById('hero-title');
-    if (!titleEl) return;
-
+    const shaderCanvas = document.getElementById('hero-background-shader-canvas') as HTMLCanvasElement | null;
     const ac = new AbortController();
     const { signal } = ac;
-    const scrollTriggers: ScrollTrigger[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let shaderInstance: ShaderInstance | null = null;
+    let shaderDisposed = false;
+    let shaderResizeFrame = 0;
+    let shaderResizeObserver: ResizeObserver | null = null;
 
-    // Split title into characters
-    const split = new SplitText(titleEl, {
-      type: 'chars',
-      charsClass: 'split-char',
-    });
+    const resizeShaderToCanvas = () => {
+      shaderResizeFrame = 0;
+      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
 
-    const corners = [
-      document.getElementById('hero-corner-tl'),
-      document.getElementById('hero-corner-tr'),
-      document.getElementById('hero-corner-bl'),
-      document.getElementById('hero-corner-br'),
-    ].filter(Boolean);
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      const rect = shaderCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
+      }
+    };
 
-    let entranceTl: gsap.core.Timeline | null = null;
-    let entrancePlayed = false;
+    const scheduleShaderResize = () => {
+      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
+    };
 
-    // Scroll-driven animations — created only after corners are visible
-    // so GSAP captures opacity:1 as the base state for correct reversal
-    function setupScrollAnimations() {
-      if (prefersReducedMotion) return;
-
-      if (split.chars && split.chars.length > 0) {
-        split.chars.forEach((char: HTMLElement, i: number) => {
-          const offset = (i - split.chars.length / 2) * 6;
-          const tween = gsap.to(char, {
-            x: offset,
-            opacity: 0.25,
-            scrollTrigger: {
-              trigger: '#hero',
-              start: 'top top',
-              end: 'bottom top',
-              scrub: 1,
+    if (shaderCanvas && !prefersReducedMotion) {
+      shaderCanvas.style.width = '';
+      shaderCanvas.style.height = '';
+      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
+        components: [
+          {
+            type: 'Swirl',
+            id: 'idmopuqc7pml2j3z58j',
+            props: {
+              colorA: '#EFEAE1',
+              colorB: '#dbd3c5',
+              detail: 1.7,
+              visible: true,
             },
-          });
-          if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
-        });
-      }
-
-      if (corners.length > 0) {
-        const cornerTween = gsap.to(corners, {
-          y: -24,
-          opacity: 0.6,
-          scrollTrigger: {
-            trigger: '#hero',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1,
           },
-        });
-        if (cornerTween.scrollTrigger) scrollTriggers.push(cornerTween.scrollTrigger);
-      }
-
-      const skewTo = gsap.quickTo(titleEl, 'skewY', { duration: 0.6, ease: 'power3.out' });
-      const clamp = gsap.utils.clamp(-6, 6);
-      const skewTrigger = ScrollTrigger.create({
-        trigger: '#hero',
-        start: 'top bottom',
-        end: 'bottom top',
-        onUpdate: (self) => {
-          skewTo(clamp(self.getVelocity() / -650));
-        },
-      });
-      scrollTriggers.push(skewTrigger);
-
-      const fadeTween = gsap.to('#hero', {
-        opacity: 0,
-        scale: 0.98,
-        scrollTrigger: {
-          trigger: '#hero',
-          start: '60% top',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      });
-      if (fadeTween.scrollTrigger) scrollTriggers.push(fadeTween.scrollTrigger);
-    }
-
-    const alreadyLoaded = localStorage.getItem('preloaded');
-
-    if (alreadyLoaded) {
-      // View transition or revisit — show immediately, then set up scrub
-      gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
-      gsap.set(corners, { opacity: 1, y: 0 });
-      setupScrollAnimations();
-    } else {
-      // Keep the hero hidden until the preloader split starts, otherwise
-      // the title flashes in its final position before the entrance plays.
-      gsap.set(split.chars, {
-        opacity: 0,
-        yPercent: 120,
-        rotateX: -80,
-        transformOrigin: '50% 100%',
-      });
-      gsap.set(corners, { opacity: 0, y: 18 });
-
-      // First load — wait for preloader, then set up scrub on completion
-      function playEntrance() {
-        if (entrancePlayed) return;
-        entrancePlayed = true;
-
-        if (prefersReducedMotion) {
-          gsap.set(split.chars, { opacity: 1, y: 0, rotateX: 0 });
-          gsap.set(corners, { opacity: 1, y: 0 });
-          setupScrollAnimations();
+          {
+            type: 'ImageTexture',
+            id: 'idmp8izvgso13bcjfkh',
+            props: {
+              objectFit: 'none',
+              url: 'https://data.shaders.com/storage/v1/object/public/user-uploaded-images/user_3DLKqHT8k7i5jfwRZGrJetvEjim/wlSbFaCM91uT.svg',
+              transform: {
+                scale: 0.5,
+              },
+            },
+          },
+          {
+            type: 'ChromaFlow',
+            id: 'idlr5w8x2qm9k3v7n2a',
+            props: {
+              baseColor: '#18181a',
+              downColor: '#6600ff',
+              leftColor: '#aa00ee',
+              momentum: 13,
+              rightColor: '#ff0066',
+              upColor: '#ff00aa',
+              visible: false,
+            },
+          },
+          {
+            type: 'FlutedGlass',
+            id: 'idmopubojpm8gm5raws',
+            props: {
+              angle: 0,
+              aberration: 0.5,
+              blendMode: 'normal',
+              edges: 'stretch',
+              frequency: 6,
+              highlight: 0.12,
+              highlightColor: '#ffffff',
+              highlightSoftness: 0,
+              lightAngle: 30,
+              maskType: 'alpha',
+              opacity: 1,
+              refraction: 1.5,
+              shape: 'waves',
+              softness: 0,
+              speed: 0.2,
+              transform: {
+                offsetX: 0,
+                offsetY: 0,
+                rotation: 0,
+                scale: 1,
+                anchorX: 0.5,
+                anchorY: 0.5,
+                edges: 'transparent',
+              },
+              waveAmplitude: 0.05,
+              waveFrequency: 1.8,
+              visible: true,
+            },
+          },
+          {
+            type: 'FilmGrain',
+            id: 'idmopv498snizgmx7xn',
+            props: {
+              strength: 0.05,
+              visible: true,
+            },
+          },
+          {
+            type: 'CursorRipples',
+            id: 'idmp8j8cmkjmxa4rvkv',
+            props: {
+              chromaticSplit: 3,
+              decay: 20,
+              intensity: 11.6,
+            },
+          },
+        ],
+      })).then((shader) => {
+        if (shaderDisposed) {
+          shader.destroy();
           return;
         }
-
-        entranceTl = gsap.timeline({ onComplete: setupScrollAnimations });
-
-        entranceTl.to(split.chars, {
-          yPercent: 0,
-          opacity: 1,
-          rotateX: 0,
-          stagger: { each: 0.025, from: 'center' },
-          duration: 1.1,
-          ease: 'power4.out',
-        });
-
-        entranceTl.to(corners, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power2.out',
-        }, '-=0.3');
-      }
-
-      document.addEventListener('preloader:split-start', playEntrance, { signal });
-      document.addEventListener('preloader:complete', playEntrance, { signal });
+        shaderInstance = shader;
+        resizeShaderToCanvas();
+        window.addEventListener('resize', scheduleShaderResize, { signal });
+        window.addEventListener('orientationchange', scheduleShaderResize, { signal });
+        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
+        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
+      }).catch((error) => {
+        console.warn('Hero shader failed to initialize', error);
+      });
     }
 
     cleanupFn = () => {
+      shaderDisposed = true;
+      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeObserver?.disconnect();
+      shaderInstance?.destroy();
       ac.abort();
-      entranceTl?.kill();
-      scrollTriggers.forEach((st) => st.kill());
-      split.revert();
     };
   }
 

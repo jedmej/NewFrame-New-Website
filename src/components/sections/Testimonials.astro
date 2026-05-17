@@ -10,28 +10,30 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const items = t.testimonials.items;
 const totalStr = String(items.length).padStart(2, '0');
+const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 ---
 
 <section
   id="testimonials"
-  class="relative border-t border-[var(--color-border)]"
-  style="background-color: var(--color-bg);"
+  class="relative"
+  data-testimonial-leads={JSON.stringify(testimonialLeads)}
 >
   <!-- Scroll height container — creates the scroll distance for panels -->
   <div class="testimonial-scroll-height">
 
     <!-- Sticky viewport -->
-    <div class="sticky top-0 h-screen flex items-center overflow-hidden">
+    <div class="testimonial-sticky sticky top-0 h-screen flex items-center overflow-hidden">
 
       <!-- Top bar: label + counter -->
-      <div class="absolute top-0 left-0 right-0 px-6 md:px-10 pt-24 z-20">
-        <div class="max-w-[1400px] mx-auto flex justify-between items-center">
+      <div class="absolute top-0 left-0 right-0 px-6 md:px-10 pt-32 md:pt-36 z-20">
+        <div class="testimonial-topbar max-w-[1400px] mx-auto">
           <h2 class="text-mono-xs text-[var(--color-text)]">{t.testimonials.label}</h2>
+          <p id="testimonial-lead" class="testimonial-lead hidden lg:block">{testimonialLeads[0]}</p>
           <span class="text-mono-xs text-[var(--color-text-subtle)]">
             <span id="testimonial-counter-active" style="color: var(--color-accent);">01</span> / {totalStr}
           </span>
         </div>
-        <div class="max-w-[1400px] mx-auto mt-4 w-full h-px bg-[var(--color-text)]" data-line></div>
+        <div class="max-w-[1400px] mx-auto mt-4 w-full h-px bg-[var(--color-line)]" data-line></div>
       </div>
 
       <!-- Decorative: Background panel index number -->
@@ -42,7 +44,7 @@ const totalStr = String(items.length).padStart(2, '0');
       >
         <span
           class="text-transparent font-bold leading-none"
-          style="font-family: var(--font-display); font-size: clamp(15rem, 30vw, 35rem); -webkit-text-stroke: 2px rgba(10,10,10,0.12); letter-spacing: -0.04em;"
+          style="font-family: var(--font-display); font-size: clamp(15rem, 30vw, 35rem); -webkit-text-stroke: 2px var(--color-line); letter-spacing: -0.04em;"
         >
           01
         </span>
@@ -119,6 +121,14 @@ const totalStr = String(items.length).padStart(2, '0');
     height: 250vh;
   }
 
+  #testimonials {
+    background: var(--color-bg);
+  }
+
+  .testimonial-sticky {
+    background: var(--color-bg);
+  }
+
   @media (min-width: 768px) {
     .testimonial-scroll-height {
       height: 300vh;
@@ -146,6 +156,33 @@ const totalStr = String(items.length).padStart(2, '0');
 
   .testimonial-panel {
     will-change: transform, clip-path;
+  }
+
+  .testimonial-topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .testimonial-topbar > span {
+    justify-self: end;
+  }
+
+  .testimonial-lead {
+    justify-self: center;
+    max-width: min(44rem, 58vw);
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: 0;
+    color: var(--color-text);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .testimonial-quote {
+    text-wrap: pretty;
   }
 
   .quote-word {
@@ -176,12 +213,14 @@ const totalStr = String(items.length).padStart(2, '0');
 
     const panels = section.querySelectorAll('.testimonial-panel');
     const counterActiveEl = document.getElementById('testimonial-counter-active');
+    const leadEl = document.getElementById('testimonial-lead');
     const progressEl = document.getElementById('testimonial-progress');
     const bgNumberEl = document.getElementById('testimonial-bg-number');
     const bgNumberSpan = bgNumberEl?.querySelector('span');
     const dots = section.querySelectorAll('.testimonial-dot');
     const line = section.querySelector('[data-line]');
     const totalPanels = panels.length;
+    const testimonialLeads = JSON.parse(section.dataset.testimonialLeads || '[]') as string[];
     const scrollTriggers: ScrollTrigger[] = [];
 
     if (totalPanels === 0) return;
@@ -258,6 +297,10 @@ const totalStr = String(items.length).padStart(2, '0');
         // Update counter
         if (counterActiveEl) {
           counterActiveEl.textContent = String(activePanelIndex + 1).padStart(2, '0');
+        }
+
+        if (leadEl && testimonialLeads[activePanelIndex] && leadEl.textContent !== testimonialLeads[activePanelIndex]) {
+          leadEl.textContent = testimonialLeads[activePanelIndex];
         }
 
         // Update background number
