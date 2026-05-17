@@ -73,8 +73,6 @@ const t = useTranslations(lang);
     flex-direction: column;
     width: 100%;
     min-height: calc(100svh - 10.5rem);
-    border-top: 1px solid var(--color-border-strong);
-    border-bottom: 1px solid var(--color-border-strong);
   }
 
   .hero-panel {
@@ -320,15 +318,28 @@ const t = useTranslations(lang);
       padding-top: 4.75rem;
     }
 
+    .hero-grid {
+      min-height: calc(100svh - 4.75rem);
+    }
+
     .hero-panel--title {
-      padding-top: clamp(2.25rem, 8svh, 4rem);
+      align-items: stretch;
+      padding: clamp(2rem, 7svh, 3.5rem) 1.5rem clamp(2.75rem, 8svh, 4.5rem);
+    }
+
+    .hero-offer {
+      min-height: calc(100svh - 4.75rem - clamp(4.75rem, 15svh, 8rem));
+      justify-content: flex-start;
     }
 
     .hero-offer__statement {
       font-size: clamp(3rem, 15vw, 4.9rem);
+      max-width: 21rem;
     }
 
     .hero-offer__subcopy {
+      max-width: 25rem;
+      margin-top: clamp(12rem, 31svh, 18rem);
       font-size: 1rem;
       line-height: 1.55;
     }
