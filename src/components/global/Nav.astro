@@ -119,6 +119,19 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     animation: nav-fade-in 0.65s var(--ease-out-expo) both;
   }
 
+  #mobile-menu-btn {
+    border: 1px solid transparent;
+    transition:
+      border-color 0.28s var(--ease-out-expo),
+      background-color 0.28s var(--ease-out-expo);
+  }
+
+  #mobile-menu-btn:focus-visible {
+    outline: none;
+    border-color: rgba(201, 70, 57, 0.58);
+    background: rgba(247, 242, 233, 0.34);
+  }
+
   @keyframes nav-fade-in {
     from {
       opacity: 0;

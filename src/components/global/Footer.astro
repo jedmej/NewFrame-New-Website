@@ -31,11 +31,6 @@ const footerLinks = [
   <div class="footer-surface">
     <canvas id="footer-shader-canvas" class="footer-shader" aria-hidden="true"></canvas>
     <div class="footer-inner">
-      <div class="footer-availability">
-        <span class="footer-status-dot" aria-hidden="true"></span>
-        <span>{t.footer.available}</span>
-      </div>
-
       <div class="footer-grid">
         <div class="footer-cta-cell">
           <h2 id="footer-cta" class="footer-cta">{t.footer.cta}</h2>
@@ -224,8 +219,8 @@ const footerLinks = [
     max-width: 39rem;
     margin-top: clamp(1.5rem, 3vw, 2.75rem);
     font-family: var(--font-mono);
-    font-size: 0.82rem;
-    line-height: 1.75;
+    font-size: clamp(1.08rem, 1.12vw, 1.28rem);
+    line-height: 1.64;
     letter-spacing: 0.02em;
     color: rgba(243, 234, 223, 0.62);
     text-wrap: pretty;
@@ -494,6 +489,28 @@ const footerLinks = [
     }
   }
 
+  @media (max-width: 1023px) {
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      justify-items: center;
+      text-align: center;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      letter-spacing: 0.12em;
+    }
+
+    .footer-brand,
+    .footer-top-button {
+      justify-content: center;
+    }
+
+    .footer-top-button {
+      justify-self: center;
+    }
+  }
+
   .footer-brand,
   .footer-top-button {
     display: inline-flex;
@@ -566,8 +583,8 @@ const footerLinks = [
 
     .footer-contact-prompt {
       margin-top: 1.25rem;
-      font-size: 0.74rem;
-      line-height: 1.6;
+      font-size: 1.08rem;
+      line-height: 1.62;
     }
 
     .footer-contact-stack {
@@ -619,12 +636,12 @@ const footerLinks = [
 
     .footer-bottom {
       gap: 0.85rem;
-      font-size: 0.58rem;
+      font-size: 0.64rem;
       letter-spacing: 0.1em;
     }
 
     .footer-bottom p {
-      text-align: left;
+      text-align: center;
     }
   }
 </style>
@@ -650,6 +667,7 @@ const footerLinks = [
     let splitInstance: any = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouchLayout = window.matchMedia('(max-width: 1023px)').matches;
     const shaderCanvas = document.getElementById('footer-shader-canvas') as HTMLCanvasElement | null;
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
@@ -764,7 +782,7 @@ const footerLinks = [
     // Entrance wipe — cream overlay clips away to reveal footer
     const footerWipe = document.getElementById('footer-wipe-in');
     const footer = document.getElementById('contact');
-    if (footerWipe && footer && !prefersReducedMotion) {
+    if (footerWipe && footer && !prefersReducedMotion && !isTouchLayout) {
       const wipeTween = gsap.fromTo(footerWipe,
         { clipPath: 'inset(0% 0% 0% 0%)' },
         {

@@ -125,8 +125,8 @@ const t = useTranslations(lang);
   .services-intro {
     max-width: 30rem;
     font-family: var(--font-mono);
-    font-size: 0.82rem;
-    line-height: 1.8;
+    font-size: clamp(1.08rem, 1.12vw, 1.28rem);
+    line-height: 1.64;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;
@@ -192,8 +192,8 @@ const t = useTranslations(lang);
 
   .service-description {
     font-family: var(--font-mono);
-    font-size: 0.76rem;
-    line-height: 1.65;
+    font-size: clamp(1rem, 0.9vw, 1.06rem);
+    line-height: 1.68;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;

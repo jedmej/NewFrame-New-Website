@@ -272,35 +272,49 @@ const t = useTranslations(lang);
     }
 
     .hero-grid {
-      min-height: auto;
+      min-height: calc(100svh - 5rem);
     }
 
     .hero-panel--title {
-      padding: 3.75rem 3rem 4rem;
+      align-items: stretch;
+      padding: clamp(3rem, 6svh, 4.25rem) 3rem clamp(3.75rem, 7svh, 5rem);
+    }
+
+    .hero-offer {
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      justify-content: stretch;
     }
 
     .hero-offer__statement {
-      font-size: clamp(4.75rem, 10vw, 6.8rem);
+      max-width: 42rem;
+      font-size: clamp(4rem, 8.6vw, 5.55rem);
+      line-height: 0.92;
     }
 
     .hero-offer__subcopy {
       max-width: 42rem;
+      align-self: end;
+      margin-top: clamp(13rem, 30svh, 19rem);
     }
 
     .hero-offer__actions {
       flex-direction: row;
       align-items: flex-start;
       gap: 1.5rem;
-      margin-top: 3rem;
+      margin-top: clamp(1.5rem, 3svh, 2.25rem);
     }
 
     .hero-offer__link--primary {
-      width: min(60%, 26rem);
+      flex: 1 1 0;
+      width: auto;
       justify-content: flex-start;
     }
 
     .hero-offer__link:not(.hero-offer__link--primary) {
-      width: min(32%, 13rem);
+      flex: 0 1 13rem;
+      width: auto;
     }
 
     .hero-offer__divider {
@@ -311,6 +325,18 @@ const t = useTranslations(lang);
       background-color: var(--color-border-strong);
     }
 
+  }
+
+  @media (min-width: 860px) and (max-width: 1023px) {
+    .hero-panel--title {
+      padding-top: clamp(1.5rem, 3svh, 2.25rem);
+    }
+
+    .hero-offer__statement {
+      max-width: 40rem;
+      font-size: clamp(4.4rem, 7.35vw, 4.85rem);
+      line-height: 0.88;
+    }
   }
 
   @media (max-width: 767px) {
@@ -324,28 +350,32 @@ const t = useTranslations(lang);
 
     .hero-panel--title {
       align-items: stretch;
-      padding: clamp(2rem, 7svh, 3.5rem) 1.5rem clamp(2.75rem, 8svh, 4.5rem);
+      padding: clamp(1.85rem, 5.6svh, 3rem) 1.5rem clamp(1.75rem, 5svh, 3rem);
     }
 
     .hero-offer {
-      min-height: calc(100svh - 4.75rem - clamp(4.75rem, 15svh, 8rem));
-      justify-content: flex-start;
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      justify-content: stretch;
     }
 
     .hero-offer__statement {
-      font-size: clamp(3rem, 15vw, 4.9rem);
-      max-width: 21rem;
+      font-size: clamp(3.25rem, 14.2vw, 4.65rem);
+      max-width: min(100%, 23rem);
+      line-height: 0.92;
     }
 
     .hero-offer__subcopy {
       max-width: 25rem;
-      margin-top: clamp(12rem, 31svh, 18rem);
+      align-self: end;
+      margin-top: clamp(7rem, 24svh, 13.5rem);
       font-size: 1rem;
       line-height: 1.55;
     }
 
     .hero-offer__actions {
-      margin-top: 1.75rem;
+      margin-top: 1.35rem;
     }
 
     .hero-offer__link {
@@ -358,11 +388,11 @@ const t = useTranslations(lang);
 
   @media (max-height: 760px) {
     .hero-offer__subcopy {
-      margin-top: 1.25rem;
+      margin-top: clamp(2rem, 9svh, 4rem);
     }
 
     .hero-offer__actions {
-      margin-top: 2rem;
+      margin-top: 1.25rem;
     }
   }
 

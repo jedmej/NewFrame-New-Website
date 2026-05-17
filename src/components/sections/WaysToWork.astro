@@ -101,8 +101,8 @@ const t = useTranslations(lang);
   .ways-to-work__copy {
     max-width: 29rem;
     font-family: var(--font-mono);
-    font-size: 0.82rem;
-    line-height: 1.7;
+    font-size: clamp(1.08rem, 1.12vw, 1.28rem);
+    line-height: 1.64;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;
@@ -192,8 +192,8 @@ const t = useTranslations(lang);
   .ways-to-work__content p,
   .ways-to-work__content li {
     font-family: var(--font-mono);
-    font-size: 0.76rem;
-    line-height: 1.65;
+    font-size: clamp(0.96rem, 0.9vw, 1.06rem);
+    line-height: 1.68;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;
@@ -246,9 +246,10 @@ const t = useTranslations(lang);
     margin-inline: auto;
     color: var(--color-text-subtle);
     text-align: center;
+    overflow-wrap: anywhere;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .ways-to-work__pricing {
       white-space: nowrap;
     }

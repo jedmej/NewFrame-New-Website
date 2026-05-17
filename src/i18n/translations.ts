@@ -29,7 +29,7 @@ export const translations = {
       credit: 'JED MEJZNER \u00A926',
       statement: 'Good work deserves a good frame.',
       subcopy: 'NEWFRAME designs websites for companies that want their online presence to reflect the quality of their work — clearly, thoughtfully, and without template thinking.',
-      primaryCta: 'Send me your current site',
+      primaryCta: 'Send your current site',
       secondaryCta: 'View work',
     },
     about: {
@@ -90,7 +90,7 @@ export const translations = {
         },
       ],
       note: 'Projects begin after scope approval and an upfront payment.',
-      cta: 'Send me your current site',
+      cta: 'Send your current site',
       ctaRight: "Let's talk",
     },
     process: {
@@ -168,7 +168,7 @@ export const translations = {
     },
     contact: {
       cta: "Let's Talk",
-      prompt: "Send me your current website, idea or problem. I'll tell you if I can help.",
+      prompt: 'Send your current website, idea or problem. NEWFRAME will reply with a clear next step.',
     },
     footer: {
       cta: "Let's work together",
@@ -219,7 +219,7 @@ export const translations = {
       credit: 'JED MEJZNER \u00A926',
       statement: 'Dobra praca zasługuje na dobrą oprawę.',
       subcopy: 'NEWFRAME projektuje strony dla firm, które chcą pokazać online jakość swojej pracy — prosto, wyraźnie i bez szablonowego myślenia.',
-      primaryCta: 'Wyślij mi swoją obecną stronę',
+      primaryCta: 'Wyślij swoją obecną stronę',
       secondaryCta: 'Zobacz projekty',
     },
     about: {
@@ -280,7 +280,7 @@ export const translations = {
         },
       ],
       note: 'Projekt startuje po zatwierdzeniu zakresu i wpłacie zaliczki.',
-      cta: 'Wyślij mi obecną stronę',
+      cta: 'Wyślij obecną stronę',
       ctaRight: 'Porozmawiajmy',
     },
     process: {
@@ -358,7 +358,7 @@ export const translations = {
     },
     contact: {
       cta: 'Porozmawiajmy',
-      prompt: 'Wyślij mi swoją obecną stronę, pomysł albo problem. Powiem Ci, czy mogę pomóc.',
+      prompt: 'Wyślij swoją obecną stronę, pomysł albo problem. NEWFRAME odpowie konkretnym następnym krokiem.',
     },
     footer: {
       cta: 'Pracujmy razem',
