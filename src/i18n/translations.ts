@@ -108,6 +108,10 @@ export const translations = {
     },
     work: {
       label: 'SELECTED WORK',
+      altShowcaseLabel: 'Selected work alternative showcase',
+      altEyebrow: 'Motion study',
+      altHeading: 'Selected Work',
+      altIntro: 'A horizontal strip of square project frames: the rail moves sideways, while the active image grows into focus.',
       counter: 'of',
       carouselLabel: 'Interactive 3D carousel showcasing selected design projects',
       viewProject: 'View',
@@ -298,6 +302,10 @@ export const translations = {
     },
     work: {
       label: 'WYBRANE PROJEKTY',
+      altShowcaseLabel: 'Alternatywna prezentacja wybranych projektów',
+      altEyebrow: 'Motion study',
+      altHeading: 'Wybrane projekty',
+      altIntro: 'Poziomy pas kwadratowych kadrów: rail jedzie bokiem, a aktywny projekt rośnie i wchodzi w fokus.',
       counter: 'z',
       carouselLabel: 'Interaktywna karuzela 3D prezentująca wybrane projekty',
       viewProject: 'Zobacz',
