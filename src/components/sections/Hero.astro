@@ -151,7 +151,7 @@ const t = useTranslations(lang);
     font-size: clamp(1rem, 4.4vw, 1.1875rem);
     font-weight: 400;
     line-height: 1.58;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     text-wrap: pretty;
   }
 
@@ -492,23 +492,18 @@ const t = useTranslations(lang);
 
     .hero-offer__statement {
       justify-self: center;
-      font-size: clamp(3.25rem, 14.2vw, 4.65rem);
-      max-width: min(100%, 23rem);
-      line-height: 0.92;
+      font-size: clamp(2.95rem, 12.6vw, 4.15rem);
+      max-width: min(100%, 21rem);
+      line-height: 0.94;
     }
 
     .hero-offer__subcopy {
-      justify-self: center;
-      max-width: 25rem;
-      align-self: end;
-      margin-top: clamp(7rem, 24svh, 13.5rem);
-      font-size: 1rem;
-      line-height: 1.55;
-      text-align: center;
+      display: none;
     }
 
     .hero-offer__actions {
-      margin-top: 1.35rem;
+      align-self: end;
+      margin-top: clamp(6rem, 22svh, 12rem);
     }
 
     .hero-offer__link {
@@ -523,11 +518,11 @@ const t = useTranslations(lang);
 
   @media (max-height: 760px) {
     .hero-offer__subcopy {
-      margin-top: clamp(2rem, 9svh, 4rem);
+      margin-top: clamp(1.75rem, 8svh, 3.75rem);
     }
 
     .hero-offer__actions {
-      margin-top: 1.25rem;
+      margin-top: 1.4rem;
     }
   }
 
@@ -713,7 +708,8 @@ const t = useTranslations(lang);
               objectFit: 'none',
               url: new URL('/images/newframe-logo.svg', window.location.origin).href,
               transform: {
-                scale: 0.5,
+                offsetY: 0.05,
+                scale: 0.78,
               },
             },
           },
@@ -759,7 +755,7 @@ const t = useTranslations(lang);
                 edges: 'transparent',
               },
               waveAmplitude: 0.05,
-              waveFrequency: 1.8,
+              waveFrequency: 2.4,
               visible: true,
             },
           },
