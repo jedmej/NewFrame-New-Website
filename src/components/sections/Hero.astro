@@ -595,6 +595,7 @@ const t = useTranslations(lang);
     let shaderDisposed = false;
     let shaderResizeFrame = 0;
     let shaderResizeObserver: ResizeObserver | null = null;
+    const isMobileShader = window.matchMedia('(max-width: 767px)').matches;
 
     const runIntro = () => {
       if (!hero || !title || prefersReducedMotion) {
@@ -708,8 +709,8 @@ const t = useTranslations(lang);
               objectFit: 'none',
               url: new URL('/images/newframe-logo.svg', window.location.origin).href,
               transform: {
-                offsetY: 0.05,
-                scale: 0.78,
+                offsetY: isMobileShader ? 0.05 : 0,
+                scale: isMobileShader ? 0.78 : 0.5,
               },
             },
           },
@@ -755,7 +756,7 @@ const t = useTranslations(lang);
                 edges: 'transparent',
               },
               waveAmplitude: 0.05,
-              waveFrequency: 2.4,
+              waveFrequency: isMobileShader ? 2.4 : 1.8,
               visible: true,
             },
           },
