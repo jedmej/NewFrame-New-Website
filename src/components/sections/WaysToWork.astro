@@ -165,6 +165,20 @@ const t = useTranslations(lang);
     }
   }
 
+  @media (min-width: 768px) and (max-width: 1119px) {
+    .ways-to-work__content > h3 {
+      border-bottom: 1px solid var(--color-border-strong);
+    }
+
+    .ways-to-work__content > p {
+      border-bottom: 1px solid var(--color-border-strong);
+    }
+
+    .ways-to-work__content > ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   .ways-to-work__content > h3,
   .ways-to-work__content > p,
   .ways-to-work__content > ul {
@@ -223,6 +237,26 @@ const t = useTranslations(lang);
     min-height: 3.45rem;
     padding: 0.9rem clamp(1.25rem, 2.6vw, 2.35rem);
     border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  @media (min-width: 768px) and (max-width: 1119px) {
+    .ways-to-work__content li:nth-child(odd) {
+      border-right: 1px solid var(--color-border-subtle);
+    }
+
+    .ways-to-work__content ul:not(:has(li:nth-child(odd):last-child)) li:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .ways-to-work__content ul:has(li:nth-child(odd):last-child) li:last-child {
+      border-bottom: 0;
+    }
+
+    .ways-to-work__content ul:has(li:nth-child(odd):last-child)::after {
+      display: block;
+      min-height: 3.45rem;
+      content: '';
+    }
   }
 
   .ways-to-work__content li:last-child {

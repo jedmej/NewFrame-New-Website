@@ -561,7 +561,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
   @media (max-width: 560px) {
     .work-grid-reference {
       min-height: auto;
-      padding: 4.25rem 1rem 5.75rem;
+      padding: 4.75rem 2rem 6.75rem;
     }
 
     .work-grid-reference__wipe {
@@ -583,11 +583,13 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
     .work-grid-reference__grid {
       grid-template-columns: 1fr;
-      gap: 2.65rem;
+      gap: 4.35rem;
+      justify-items: center;
     }
 
     .work-grid-reference__card,
     .work-grid-reference__card:nth-child(even) {
+      width: min(100%, 21rem);
       aspect-ratio: 4 / 4.95;
       margin-top: 0;
       transform: translate3d(0, var(--reveal-y), 0);

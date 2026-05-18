@@ -225,6 +225,15 @@ const t = useTranslations(lang);
       position: relative;
       top: auto;
     }
+
+    .service-row.is-active .service-title {
+      color: var(--color-text);
+      transform: none;
+    }
+
+    .service-row.is-active .service-item-line .service-line-fill {
+      background-color: var(--color-line);
+    }
   }
 
   /* Right column: service items */
@@ -453,7 +462,7 @@ const t = useTranslations(lang);
 
     const isTouch = window.matchMedia('(hover: none)').matches || window.innerWidth < 768;
 
-    if (isTouch) {
+    if (isTouch && window.innerWidth >= 768) {
       // Touch devices: scroll-triggered active state — only ONE row active at a time
       let activeIndex = -1;
 
@@ -508,11 +517,21 @@ const t = useTranslations(lang);
         onLeave: () => deactivateAll(),
         onLeaveBack: () => deactivateAll(),
       }));
-    } else {
+    } else if (!isTouch) {
+      const lockScrambleWidth = (el: Element) => {
+        const target = el as HTMLElement;
+        const width = Math.ceil(target.getBoundingClientRect().width);
+        if (width > 0) {
+          target.style.display = 'inline-block';
+          target.style.minWidth = `${width}px`;
+        }
+      };
+
       // Desktop: scramble text on hover
       rows.forEach((row) => {
         const title = row.querySelector('.service-title');
         const titleOriginal = title?.textContent || '';
+        if (title) lockScrambleWidth(title);
 
         row.addEventListener('mouseenter', () => {
           if (title) {

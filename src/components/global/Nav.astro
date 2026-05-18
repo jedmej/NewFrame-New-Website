@@ -210,9 +210,19 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     // Entrance animation on page load
     gsap.to(nav, { opacity: 1, duration: 1, ease: 'power2.out', delay: 0.3 });
 
+    const lockScrambleWidth = (el: Element) => {
+      const target = el as HTMLElement;
+      const width = Math.ceil(target.getBoundingClientRect().width);
+      if (width > 0) {
+        target.style.display = 'inline-block';
+        target.style.minWidth = `${width}px`;
+      }
+    };
+
     // Scramble text on hover for nav links
     nav.querySelectorAll('.nav-link, .nav-cta span').forEach((el) => {
       const original = el.textContent || '';
+      lockScrambleWidth(el);
       el.addEventListener('mouseenter', () => {
         gsap.to(el, {
           duration: 0.5,

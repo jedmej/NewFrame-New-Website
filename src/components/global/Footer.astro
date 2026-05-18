@@ -621,6 +621,11 @@ const footerLinks = [
       border-right: 0;
     }
 
+    .footer-link-grid li:last-child {
+      grid-column: 1 / -1;
+      border-right: 0;
+    }
+
     .footer-link {
       min-height: 4.85rem;
       padding: 0.85rem;
@@ -635,13 +640,22 @@ const footerLinks = [
     }
 
     .footer-bottom {
-      gap: 0.85rem;
-      font-size: 0.64rem;
-      letter-spacing: 0.1em;
+      width: 100%;
+      gap: 1.05rem;
+      font-size: clamp(0.72rem, 2.55vw, 0.82rem);
+      line-height: 1.5;
+      letter-spacing: 0.085em;
+    }
+
+    .footer-brand,
+    .footer-top-button,
+    .footer-bottom p {
+      width: 100%;
+      text-align: center;
     }
 
     .footer-bottom p {
-      text-align: center;
+      text-wrap: balance;
     }
   }
 </style>
@@ -841,11 +855,21 @@ const footerLinks = [
       if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     }
 
+    const lockScrambleWidth = (el: Element) => {
+      const target = el as HTMLElement;
+      const width = Math.ceil(target.getBoundingClientRect().width);
+      if (width > 0) {
+        target.style.display = 'inline-block';
+        target.style.minWidth = `${width}px`;
+      }
+    };
+
     // Scramble text on hover for footer links
     document.querySelectorAll('.footer-link').forEach((link) => {
       const target = link.querySelector('.scramble-target');
       if (!target) return;
       const original = target.textContent || '';
+      lockScrambleWidth(target);
       link.addEventListener('mouseenter', () => {
         gsap.to(target, {
           duration: 0.5,
