@@ -165,6 +165,14 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     gap: 2rem;
   }
 
+  .testimonial-topbar,
+  .testimonial-panels-container,
+  #testimonial-bg-number,
+  #testimonial-dots,
+  #testimonial-progress {
+    will-change: transform, opacity, filter;
+  }
+
   .testimonial-topbar > span {
     justify-self: end;
     font-variant-numeric: tabular-nums;
@@ -194,6 +202,16 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     display: inline-block;
     will-change: opacity;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-topbar,
+    .testimonial-panels-container,
+    #testimonial-bg-number,
+    #testimonial-dots,
+    #testimonial-progress {
+      will-change: auto;
+    }
+  }
 </style>
 
 <script>
@@ -220,9 +238,13 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     const bgNumberSpan = bgNumberEl?.querySelector('span');
     const dots = section.querySelectorAll('.testimonial-dot');
     const line = section.querySelector('[data-line]');
+    const topbar = section.querySelector('.testimonial-topbar');
+    const panelsContainer = section.querySelector('.testimonial-panels-container');
+    const dotsWrap = document.getElementById('testimonial-dots');
     const totalPanels = panels.length;
     const testimonialLeads = JSON.parse(section.dataset.testimonialLeads || '[]') as string[];
     const scrollTriggers: ScrollTrigger[] = [];
+    const timelines: gsap.core.Timeline[] = [];
 
     if (totalPanels === 0) return;
 
@@ -263,19 +285,44 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
       splits.push(split);
     });
 
-    if (!prefersReducedMotion && line) {
+    if (!prefersReducedMotion) {
       gsap.set(line, { scaleX: 0, transformOrigin: 'left' });
-      const lineTween = gsap.to(line, {
-        scaleX: 1,
-        duration: 0.8,
-        ease: 'power3.out',
+      gsap.set([topbar, panelsContainer, bgNumberEl, dotsWrap, progressEl].filter(Boolean), {
+        y: 30,
+        opacity: 0,
+        filter: 'blur(9px)',
+      });
+
+      const introTl = gsap.timeline({
+        defaults: { ease: 'expo.out' },
         scrollTrigger: {
           trigger: section,
-          start: 'top 85%',
+          start: 'top 78%',
           once: true,
         },
+        onComplete: () => {
+          gsap.set([topbar, panelsContainer, bgNumberEl, dotsWrap, progressEl].filter(Boolean), {
+            clearProps: 'willChange,filter,transform,opacity',
+          });
+        },
       });
-      if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
+      timelines.push(introTl);
+      if (introTl.scrollTrigger) scrollTriggers.push(introTl.scrollTrigger);
+
+      introTl
+        .to(topbar, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.85 }, 0)
+        .to(line, { scaleX: 1, duration: 1.05 }, 0.08)
+        .to(bgNumberEl, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.05 }, 0.2)
+        .to(panelsContainer, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1 }, 0.32)
+        .to([dotsWrap, progressEl].filter(Boolean), {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.75,
+          stagger: 0.06,
+        }, 0.48);
+    } else if (line) {
+      gsap.set(line, { scaleX: 1, transformOrigin: 'left' });
     }
 
     // ===== MAIN SCROLL TRIGGER =====
@@ -449,6 +496,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     }
 
     cleanupFn = () => {
+      timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
       splits.forEach((split) => split.revert());
     };

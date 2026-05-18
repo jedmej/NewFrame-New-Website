@@ -123,7 +123,20 @@ const t = useTranslations(lang);
     font-weight: 400;
     line-height: 0.95;
     letter-spacing: 0;
+    perspective: 900px;
     text-wrap: pretty;
+  }
+
+  .hero-offer__statement :global(.hero-line) {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  .hero-offer__statement :global(.hero-line-inner) {
+    display: block;
+    will-change: transform, opacity, filter;
   }
 
   .hero-offer__statement span {
@@ -530,6 +543,10 @@ const t = useTranslations(lang);
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .hero-offer__statement :global(.hero-line-inner) {
+      will-change: auto;
+    }
+
     .hero-offer__actions,
     .hero-offer__link,
     .hero-offer__link::before,
@@ -557,7 +574,11 @@ const t = useTranslations(lang);
 </style>
 
 <script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/SplitText';
   import type { ShaderInstance } from 'shaders/js';
+
+  gsap.registerPlugin(SplitText);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -565,14 +586,93 @@ const t = useTranslations(lang);
     cleanupFn?.();
     cleanupFn = null;
 
+    const hero = document.getElementById('hero');
+    const title = document.getElementById('hero-title');
+    const subcopy = hero?.querySelector('.hero-offer__subcopy');
+    const actions = hero?.querySelector('.hero-offer__actions');
     const shaderCanvas = document.getElementById('hero-background-shader-canvas') as HTMLCanvasElement | null;
     const ac = new AbortController();
     const { signal } = ac;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const splitInstances: SplitText[] = [];
+    const timelines: gsap.core.Timeline[] = [];
     let shaderInstance: ShaderInstance | null = null;
     let shaderDisposed = false;
     let shaderResizeFrame = 0;
     let shaderResizeObserver: ResizeObserver | null = null;
+
+    const runIntro = () => {
+      if (!hero || !title || prefersReducedMotion) {
+        gsap.set([title, subcopy, actions].filter(Boolean), { clearProps: 'all' });
+        return;
+      }
+
+      const split = new SplitText(title, {
+        type: 'lines',
+        linesClass: 'hero-line',
+        mask: 'lines',
+      });
+      splitInstances.push(split);
+
+      split.lines.forEach((line) => {
+        const inner = document.createElement('span');
+        inner.className = 'hero-line-inner';
+        while (line.firstChild) inner.appendChild(line.firstChild);
+        line.appendChild(inner);
+      });
+
+      const lineInners = split.lines
+        .map((line) => line.querySelector('.hero-line-inner'))
+        .filter((line): line is HTMLElement => line instanceof HTMLElement);
+
+      gsap.set(lineInners, {
+        yPercent: 116,
+        opacity: 0,
+        filter: 'blur(10px)',
+        rotateX: -18,
+        transformOrigin: '50% 100%',
+      });
+      gsap.set([subcopy, actions].filter(Boolean), {
+        y: 28,
+        opacity: 0,
+        filter: 'blur(8px)',
+      });
+      gsap.set(shaderCanvas, {
+        opacity: 0.72,
+        scale: 1.035,
+        transformOrigin: '50% 50%',
+      });
+
+      const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+      timelines.push(tl);
+
+      tl.to(shaderCanvas, {
+        opacity: 1,
+        scale: 1,
+        duration: 2.2,
+        ease: 'power3.out',
+      }, 0)
+        .to(lineInners, {
+          yPercent: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          rotateX: 0,
+          duration: 1.35,
+          stagger: 0.12,
+        }, 0.16)
+        .to(subcopy, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1.05,
+        }, 0.72)
+        .to(actions, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1,
+        }, 0.92);
+    };
 
     const resizeShaderToCanvas = () => {
       shaderResizeFrame = 0;
@@ -697,11 +797,16 @@ const t = useTranslations(lang);
       });
     }
 
+    runIntro();
+
     cleanupFn = () => {
       shaderDisposed = true;
+      timelines.forEach((tl) => tl.kill());
+      gsap.killTweensOf([title, subcopy, actions, shaderCanvas].filter(Boolean));
       if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
       shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
+      splitInstances.forEach((split) => split.revert());
       ac.abort();
     };
   }

@@ -149,10 +149,18 @@ const t = useTranslations(lang);
   }
 
   .service-group-inner {
+    --reveal-opacity: 1;
+    --reveal-y: 0px;
+    --reveal-blur: 0px;
+
     display: flex;
     flex-direction: row;
     gap: 0;
     padding-block: clamp(0.85rem, 2vw, 1.4rem);
+    opacity: var(--reveal-opacity);
+    filter: blur(var(--reveal-blur));
+    transform: translate3d(0, var(--reveal-y), 0);
+    will-change: transform, opacity, filter;
   }
 
   /* Left column: sticky category heading */
@@ -346,6 +354,19 @@ const t = useTranslations(lang);
     width: 100%;
     height: 100%;
   }
+
+  .service-group-inner.is-revealed {
+    will-change: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-group-inner {
+      --reveal-opacity: 1;
+      --reveal-y: 0px;
+      --reveal-blur: 0px;
+      will-change: auto;
+    }
+  }
 </style>
 
 <script>
@@ -368,11 +389,17 @@ const t = useTranslations(lang);
     const ac = new AbortController();
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
+    const timelines: gsap.core.Timeline[] = [];
 
     const rows = section.querySelectorAll('.service-row');
     const allLineFills = section.querySelectorAll('.service-line-fill');
     const cta = section.querySelector('.service-cta');
     const lines = section.querySelectorAll('[data-line]');
+    const labelBlock = section.querySelector('#services > div > div:first-child');
+    const heading = section.querySelector('.services-heading');
+    const intro = section.querySelector('.services-intro');
+    const groups = Array.from(section.querySelectorAll<HTMLElement>('.service-group-inner'));
+    const note = section.querySelector('.services-note');
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -380,9 +407,32 @@ const t = useTranslations(lang);
       allLineFills.forEach((line) => {
         (line as HTMLElement).style.transform = 'scaleX(1)';
       });
+      gsap.set([labelBlock, heading, intro, note, ...groups].filter(Boolean), { clearProps: 'all' });
       cleanupFn = () => ac.abort();
       return;
     }
+
+    gsap.set([labelBlock, heading, intro, note].filter(Boolean), {
+      y: 28,
+      opacity: 0,
+      filter: 'blur(8px)',
+    });
+
+    const introTl = gsap.timeline({
+      defaults: { ease: 'expo.out' },
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 78%',
+        once: true,
+      },
+    });
+    timelines.push(introTl);
+    if (introTl.scrollTrigger) scrollTriggers.push(introTl.scrollTrigger);
+
+    introTl
+      .to(labelBlock, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.8 }, 0)
+      .to(heading, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.05 }, 0.16)
+      .to(intro, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.95 }, 0.32);
 
     if (lines.length > 0) {
       gsap.set(lines, { scaleX: 0, transformOrigin: 'left' });
@@ -458,6 +508,30 @@ const t = useTranslations(lang);
         },
       );
       if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
+    });
+
+    groups.forEach((group, index) => {
+      const revealTrigger = ScrollTrigger.create({
+        trigger: group,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 0.45,
+        onUpdate: () => {
+          const rect = group.getBoundingClientRect();
+          const viewport = window.innerHeight;
+          const enter = Math.min(1, Math.max(0, (viewport - rect.top) / (viewport * 0.26)));
+          const exit = Math.min(1, Math.max(0, rect.bottom / (viewport * 0.26)));
+          const reveal = Math.min(enter, exit);
+          const y = enter < exit ? (1 - reveal) * (24 + index * 3) : (1 - reveal) * -16;
+
+          group.style.setProperty('--reveal-opacity', reveal.toFixed(3));
+          group.style.setProperty('--reveal-y', `${y.toFixed(2)}px`);
+          group.style.setProperty('--reveal-blur', `${((1 - reveal) * 13).toFixed(2)}px`);
+        },
+        onLeave: () => group.classList.add('is-revealed'),
+        onEnterBack: () => group.classList.remove('is-revealed'),
+      });
+      scrollTriggers.push(revealTrigger);
     });
 
     const isTouch = window.matchMedia('(hover: none)').matches || window.innerWidth < 768;
@@ -564,6 +638,22 @@ const t = useTranslations(lang);
         .fromTo(ctaTexts[1], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
     }
 
+    if (note) {
+      const noteTween = gsap.to(note, {
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.85,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: note,
+          start: 'top 88%',
+          once: true,
+        },
+      });
+      if (noteTween.scrollTrigger) scrollTriggers.push(noteTween.scrollTrigger);
+    }
+
     // MorphSVG: logo → arrow on hover
     const ctaLink = document.getElementById('services-cta-link');
     const logoPath = document.getElementById('cta-logo-path');
@@ -618,7 +708,9 @@ const t = useTranslations(lang);
 
     cleanupFn = () => {
       ac.abort();
+      timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
+      gsap.killTweensOf(section.querySelectorAll('*'));
     };
   }
 

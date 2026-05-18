@@ -678,6 +678,7 @@ const footerLinks = [
     const ac = new AbortController();
     const { signal } = ac;
     const scrollTriggers: ScrollTrigger[] = [];
+    const timelines: gsap.core.Timeline[] = [];
     let splitInstance: any = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -855,6 +856,45 @@ const footerLinks = [
       if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     }
 
+    const footerRevealItems = [
+      document.querySelector('.footer-contact-prompt'),
+      ...Array.from(document.querySelectorAll('.footer-contact-link')),
+      document.querySelector('.footer-nav-cell'),
+      document.querySelector('.footer-mark-cell'),
+      document.querySelector('.footer-bottom'),
+    ].filter((item): item is Element => item instanceof Element);
+
+    if (footerRevealItems.length > 0 && !prefersReducedMotion) {
+      gsap.set(footerRevealItems, {
+        y: 34,
+        opacity: 0,
+        filter: 'blur(9px)',
+        willChange: 'transform, opacity, filter',
+      });
+
+      const footerTl = gsap.timeline({
+        defaults: { ease: 'expo.out' },
+        scrollTrigger: {
+          trigger: document.getElementById('contact'),
+          start: 'top 66%',
+          once: true,
+        },
+        onComplete: () => {
+          gsap.set(footerRevealItems, { clearProps: 'willChange,filter,transform,opacity' });
+        },
+      });
+      timelines.push(footerTl);
+      if (footerTl.scrollTrigger) scrollTriggers.push(footerTl.scrollTrigger);
+
+      footerTl.to(footerRevealItems, {
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.95,
+        stagger: 0.07,
+      }, 0.18);
+    }
+
     const lockScrambleWidth = (el: Element) => {
       const target = el as HTMLElement;
       const width = Math.ceil(target.getBoundingClientRect().width);
@@ -885,7 +925,9 @@ const footerLinks = [
       shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
       ac.abort();
+      timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
+      gsap.killTweensOf(footerRevealItems);
       if (splitInstance) splitInstance.revert();
     };
   }
