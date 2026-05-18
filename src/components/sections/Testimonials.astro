@@ -92,7 +92,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
         <div class="flex items-center gap-2" id="testimonial-dots">
           {items.map((_, i) => (
             <span
-              class="testimonial-dot w-2 h-2 rounded-full transition-all duration-500"
+              class="testimonial-dot w-2 h-2 rounded-full transition-[background-color,transform,opacity] duration-500"
               data-dot-index={i}
               style={i === 0
                 ? 'background-color: var(--color-accent);'
@@ -167,6 +167,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 
   .testimonial-topbar > span {
     justify-self: end;
+    font-variant-numeric: tabular-nums;
   }
 
   .testimonial-lead {

@@ -242,7 +242,6 @@ body::-webkit-scrollbar {
   box-shadow: 0 0.8rem 2.6rem rgba(60, 42, 31, 0.055);
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: backdrop-filter;
 }
 
 @supports not ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
@@ -398,6 +397,7 @@ body::-webkit-scrollbar {
 .preloader-counter {
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.2em;
   color: var(--color-text-muted);
   margin-top: 2rem;

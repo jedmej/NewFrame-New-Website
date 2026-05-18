@@ -195,6 +195,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(244, 240, 232, 0.58);
+    font-variant-numeric: tabular-nums;
     pointer-events: none;
   }
 
@@ -299,6 +300,8 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     width: 100%;
     height: 100%;
     object-fit: cover;
+    outline: 1px solid rgba(255, 255, 255, 0.1);
+    outline-offset: -1px;
     filter: brightness(1.03) saturate(0.98);
     transform: scale(calc(1.006 + (var(--active) * 0.014)));
     transition: transform 0.9s var(--ease-out-expo), filter 0.75s ease;
@@ -380,6 +383,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     text-align: center;
     text-transform: uppercase;
     opacity: var(--active);
+    font-variant-numeric: tabular-nums;
     transform:
       translate3d(-50%, calc(0.38rem - (var(--active) * 0.38rem)), 28px)
       rotate(calc(var(--current-rotate, var(--base-rotate)) * -1));
@@ -438,12 +442,12 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
   :global(.work-grid-reference__tooltip-action) {
     display: inline-flex;
     width: auto;
-    min-height: 2.1rem;
+    min-height: 2.5rem;
     align-items: center;
     gap: 0.45rem;
     border: 1px solid var(--color-accent);
     background: var(--color-accent);
-    padding: 0.58rem 0.7rem;
+    padding: 0.58rem 0.82rem;
     color: #fff;
     font-family: var(--font-mono);
     font-size: 0.62rem;

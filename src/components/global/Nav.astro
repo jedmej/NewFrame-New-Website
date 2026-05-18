@@ -39,19 +39,19 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
   <!-- Center: Desktop Nav Links -->
   <div class="nav-section nav-section--links hidden lg:flex items-center">
-    <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+    <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
       {t.nav.work}
     </a>
-    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
       {t.nav.scope}
     </a>
-    <a href={`/${lang}/#ways-to-work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+    <a href={`/${lang}/#ways-to-work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
       {t.nav.services}
     </a>
-    <a href={`/${lang}/#services`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+    <a href={`/${lang}/#services`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
       {t.nav.process}
     </a>
-    <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300">
+    <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
       {t.nav.contact}
     </a>
   </div>
@@ -70,7 +70,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <!-- Let's Talk CTA -->
     <a
       href={`/${lang}/#contact`}
-      class="nav-cta hidden lg:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-all duration-300 group"
+      class="nav-cta hidden lg:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300 group"
       data-magnetic="0.35"
     >
       <span>{t.contact.cta}</span>
@@ -82,13 +82,13 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <!-- Mobile Menu Button -->
     <button
       id="mobile-menu-btn"
-      class="lg:hidden flex flex-col gap-1.5 p-2 -mr-2"
+      class="lg:hidden flex min-h-10 min-w-10 flex-col justify-center gap-1.5 p-2 -mr-2"
       aria-label="Open menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
-      <span class="menu-line w-6 h-px transition-all duration-300 bg-[var(--color-text)]" aria-hidden="true"></span>
-      <span class="menu-line w-4 h-px transition-all duration-300 ml-auto bg-[var(--color-text)]" aria-hidden="true"></span>
+      <span class="menu-line w-6 h-px transition-[background-color,transform,width] duration-300 bg-[var(--color-text)]" aria-hidden="true"></span>
+      <span class="menu-line w-4 h-px transition-[background-color,transform,width] duration-300 ml-auto bg-[var(--color-text)]" aria-hidden="true"></span>
     </button>
   </div>
 </nav>
