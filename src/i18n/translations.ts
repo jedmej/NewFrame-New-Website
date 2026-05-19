@@ -39,6 +39,7 @@ export const translations = {
       body: `Founded and led by Jędrzej “Jed” Mejzner. Based near Warsaw, working locally and remotely with clients in Poland and abroad.`,
       founder: 'JED MEJZNER',
       role: 'FOUNDER',
+      imageAlt: 'Portrait of Jed Mejzner',
     },
     waysToWork: {
       label: 'WAYS TO WORK',
@@ -179,7 +180,6 @@ export const translations = {
       backToTop: 'Back to top',
       privacy: 'Privacy',
       email: 'Email',
-      instagram: 'Instagram',
     },
     notFound: {
       title: 'Page not found',
@@ -191,7 +191,7 @@ export const translations = {
       heading: 'Privacy Policy',
       intro: 'We believe in complete transparency about data practices.',
       noCollection: 'We do not collect, store, or process any personal data. No cookies are set, no analytics are tracked, and no information is gathered about your visit.',
-      thirdParty: 'This website loads fonts from Google Fonts and a visual effects library from jsDelivr CDN. These services may log standard server access data (such as IP addresses) per their own privacy policies.',
+      thirdParty: 'This website loads fonts from Google Fonts. This service may log standard server access data (such as IP addresses) per its own privacy policy.',
       contact: 'If you have any questions about this policy, you can reach us at',
       lastUpdated: 'Last updated: February 2026',
     },
@@ -229,6 +229,7 @@ export const translations = {
       body: `Założone i prowadzone przez Jędrzeja “Jeda” Mejznera. Działa pod Warszawą, lokalnie i zdalnie z klientami w Polsce i za granicą.`,
       founder: 'JED MEJZNER',
       role: 'ZAŁOŻYCIEL',
+      imageAlt: 'Portret Jeda Mejznera',
     },
     waysToWork: {
       label: 'FORMY WSPÓŁPRACY',
@@ -369,7 +370,6 @@ export const translations = {
       backToTop: 'Powrót na górę',
       privacy: 'Prywatność',
       email: 'Email',
-      instagram: 'Instagram',
     },
     notFound: {
       title: 'Nie znaleziono strony',

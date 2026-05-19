@@ -81,7 +81,6 @@ const ogImageUrl = new URL(ogImage, Astro.site);
     <!-- DNS prefetch for third-party resources -->
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://hoirqrkdgbmvpwutwuwj.supabase.co" />
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 
     <!-- Google Fonts: Geist Sans + Instrument Serif (non-render-blocking) -->
     <link
@@ -96,9 +95,6 @@ const ogImageUrl = new URL(ogImage, Astro.site);
         rel="stylesheet"
       />
     </noscript>
-
-    <!-- Unicorn Studio SDK -->
-    <script is:inline defer src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js" integrity="sha384-1lLQq1gVm4jq4xkOwlLEylCkrhtY/15eum3dwQFjauuE6ZiI5/q/UH5yY2vS24dS" crossorigin="anonymous"></script>
 
     <!-- Hide preloader instantly if user has already seen it -->
     <script is:inline>

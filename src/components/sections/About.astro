@@ -42,14 +42,15 @@ const t = useTranslations(lang);
           class="relative overflow-hidden"
           style="aspect-ratio: 3/4; background: radial-gradient(ellipse at 30% 50%, rgba(218, 56, 46, 0.15), transparent 70%), var(--color-text);"
         >
-          <!-- Unicorn Studio WebGL scene -->
-          <div
-            id="unicorn-container"
-            data-us-project="ZDL0KUXvDVMNVAaFtwhX"
-            role="img"
-            aria-label="Decorative abstract visual"
-            style="position: absolute; inset: 0; width: 100%; height: 100%;"
-          ></div>
+          <img
+            src="/images/jed-mejzner-hero.webp"
+            alt={t.about.imageAlt}
+            width="848"
+            height="1149"
+            loading="lazy"
+            decoding="async"
+            class="about-founder-image"
+          />
 
           <!-- Bottom-left detail -->
           <div class="absolute bottom-5 left-5 flex items-center gap-3 z-10">
@@ -100,6 +101,16 @@ const t = useTranslations(lang);
     filter: drop-shadow(0 1.5rem 3.8rem rgba(86, 56, 39, 0.16));
   }
 
+  .about-founder-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 42%;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
 </style>
 
 <script>
@@ -114,7 +125,6 @@ const t = useTranslations(lang);
   function initAbout() {
     cleanupFn?.();
     cleanupFn = null;
-    unicornAborted = false;
 
     const section = document.getElementById('scope');
     const textEl = document.getElementById('manifesto-text');
@@ -247,55 +257,12 @@ const t = useTranslations(lang);
     cleanupFn = () => {
       scrollTriggers.forEach((st) => st.kill());
       split.revert();
-      unicornAborted = true;
-      destroyUnicorn();
     };
   }
 
-  // ===== Unicorn Studio WebGL scene =====
-  let unicornScene: any = null;
-  let unicornAborted = false;
-
-  function initUnicorn() {
-    const container = document.getElementById('unicorn-container');
-    if (!container || unicornScene) return;
-
-    const US = (window as any).UnicornStudio;
-    if (!US) return;
-
-    US.addScene({
-      elementId: 'unicorn-container',
-      projectId: 'ZDL0KUXvDVMNVAaFtwhX',
-      scale: 1,
-      dpi: 1.5,
-      fps: 60,
-      lazyLoad: true,
-      production: true,
-    }).then((scene: any) => {
-      if (unicornAborted) {
-        scene.destroy();
-        return;
-      }
-      unicornScene = scene;
-    }).catch((err: unknown) => {
-      if (!unicornAborted) {
-        console.warn('Unicorn Studio failed to load:', err);
-      }
-    });
-  }
-
-  function destroyUnicorn() {
-    if (unicornScene) {
-      unicornScene.destroy();
-      unicornScene = null;
-    }
-  }
-
   initAbout();
-  initUnicorn();
 
   document.addEventListener('astro:after-swap', () => {
     initAbout();
-    initUnicorn();
   });
 </script>

@@ -104,7 +104,6 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
           </span>
           <span class="work-grid-reference__caption">
             <span>{project.name}</span>
-            <span>{project.category}</span>
           </span>
         </a>
       );
@@ -391,10 +390,6 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     pointer-events: none;
   }
 
-  .work-grid-reference__caption span:last-child {
-    color: rgba(10, 10, 10, 0.52);
-  }
-
   .work-grid-reference__wordmark {
     position: relative;
     z-index: 3;
@@ -417,12 +412,12 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
     left: 0;
     top: 0;
     display: flex;
-    width: min(18rem, calc(100vw - 2rem));
+    width: min(25rem, calc(100vw - 2rem));
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.55rem;
-    padding: 0.72rem;
-    border: 1px solid rgba(241, 237, 232, 0.1);
+    gap: 0.8rem;
+    padding: clamp(0.95rem, 1.3vw, 1.25rem);
+    border: 0;
     background: rgba(13, 13, 12, 0.8);
     box-shadow: 0 1rem 2.5rem rgba(42, 24, 17, 0.26);
     color: #f4f0e8;
@@ -442,48 +437,48 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
   :global(.work-grid-reference__tooltip-action) {
     display: inline-flex;
     width: auto;
-    min-height: 2.5rem;
+    min-height: 3rem;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.6rem;
     border: 1px solid var(--color-accent);
     background: var(--color-accent);
-    padding: 0.58rem 0.82rem;
+    padding: 0.75rem 1rem;
     color: #fff;
     font-family: var(--font-mono);
-    font-size: 0.62rem;
+    font-size: clamp(0.7rem, 0.72vw, 0.82rem);
     line-height: 1;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
   :global(.work-grid-reference__tooltip-description) {
-    max-width: 16.75rem;
+    max-width: 22.5rem;
     color: rgba(244, 240, 232, 0.78);
     font-family: var(--font-body);
-    font-size: 0.86rem;
+    font-size: clamp(1.08rem, 1.18vw, 1.32rem);
     font-weight: 500;
-    line-height: 1.25;
+    line-height: 1.22;
     letter-spacing: 0;
   }
 
   :global(.work-grid-reference__tooltip-why) {
-    max-width: 16.75rem;
+    max-width: 22.5rem;
     color: rgba(244, 240, 232, 0.58);
     font-family: var(--font-body);
-    font-size: 0.72rem;
+    font-size: clamp(0.9rem, 0.96vw, 1.08rem);
     font-weight: 500;
-    line-height: 1.28;
+    line-height: 1.32;
     letter-spacing: 0;
   }
 
   :global(.work-grid-reference__tooltip-why-label) {
     display: block;
-    margin-bottom: 0.16rem;
+    margin-bottom: 0.26rem;
     color: rgba(244, 240, 232, 0.4);
     font-family: var(--font-mono);
-    font-size: 0.52rem;
+    font-size: 0.64rem;
     line-height: 1;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
@@ -493,27 +488,29 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
 
   :global(.work-grid-reference__tooltip-roles) {
     display: flex;
-    max-width: 17rem;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    gap: 0.45rem;
   }
 
   :global(.work-grid-reference__tooltip-role) {
     display: inline-flex;
+    min-height: 2.15rem;
     align-items: center;
     border: 1px solid rgba(244, 240, 232, 0.22);
-    padding: 0.34rem 0.45rem;
+    padding: 0.46rem 0.62rem;
     color: rgba(244, 240, 232, 0.72);
     font-family: var(--font-mono);
-    font-size: 0.56rem;
+    font-size: clamp(0.62rem, 0.64vw, 0.72rem);
     line-height: 1;
     letter-spacing: 0.08em;
+    white-space: nowrap;
     text-transform: uppercase;
   }
 
   :global(.work-grid-reference__tooltip-icon) {
-    width: 0.62rem;
-    height: 0.62rem;
+    width: 0.78rem;
+    height: 0.78rem;
     flex: 0 0 auto;
     position: static;
     display: block;
@@ -854,6 +851,36 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       return { actionText, description, whyLabel, whyText, roles };
     };
 
+    let activeTooltipCard: HTMLElement | null = null;
+    let tooltipRevealTween: gsap.core.Tween | null = null;
+
+    const revealTooltipContent = (tooltipEl: HTMLElement) => {
+      if (prefersReducedMotion) return;
+
+      const items = Array.from(tooltipEl.querySelectorAll<HTMLElement>(
+        '.work-grid-reference__tooltip-action, .work-grid-reference__tooltip-description, .work-grid-reference__tooltip-why, .work-grid-reference__tooltip-role',
+      ));
+
+      tooltipRevealTween?.kill();
+      tooltipRevealTween = gsap.fromTo(
+        items,
+        {
+          autoAlpha: 0,
+          y: 14,
+          filter: 'blur(6px)',
+        },
+        {
+          autoAlpha: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.52,
+          stagger: 0.055,
+          ease: 'power3.out',
+          overwrite: true,
+        },
+      );
+    };
+
     const setTooltipTarget = (event: PointerEvent | MouseEvent) => {
       if (!tooltip) return;
 
@@ -888,7 +915,8 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       state.targetActive = 1;
       card.classList.add('is-active');
 
-      if (tooltip) {
+      if (tooltip && activeTooltipCard !== card) {
+        activeTooltipCard = card;
         const label = card.dataset.tooltipLabel || 'View';
         const title = card.dataset.tooltipTitle || '';
         const description = card.dataset.tooltipDescription || '';
@@ -904,6 +932,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
           ...roles
             .split(' · ')
             .filter(Boolean)
+            .slice(0, 3)
             .map((role) => {
               const tag = document.createElement('span');
               tag.className = 'work-grid-reference__tooltip-role';
@@ -912,8 +941,9 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
             }),
         );
         tooltip.classList.add('is-active');
-        setTooltipTarget(event);
+        revealTooltipContent(tooltip);
       }
+      setTooltipTarget(event);
     };
 
     const release = (card: HTMLElement) => {
@@ -925,6 +955,8 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       state.try = 0;
       state.targetActive = 0;
       card.classList.remove('is-active');
+      activeTooltipCard = null;
+      tooltipRevealTween?.kill();
       tooltip?.classList.remove('is-active');
     };
 
@@ -1073,6 +1105,7 @@ const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProje
       cancelAnimationFrame(shaderResizeFrame);
       shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
+      tooltipRevealTween?.kill();
       clickPulseFrames.forEach((frame) => window.clearTimeout(frame));
       cancelAnimationFrame(frame);
       revealTriggers.forEach((trigger) => trigger.kill());
