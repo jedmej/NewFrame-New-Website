@@ -14,9 +14,14 @@ type ShowcaseProject = {
   key: keyof typeof t.work.projects;
   name: string;
   image?: string;
+  imageAlt?: string;
   category: string;
   url: string;
   placeholder?: boolean;
+};
+
+type RailProject = ShowcaseProject & {
+  displayIndex: number;
 };
 
 const projectKeyByUrl = {
@@ -29,7 +34,8 @@ const projectKeyByUrl = {
 const hubertProject: ShowcaseProject = {
   key: 'hubert',
   name: 'HUBERT',
-  image: '/images/work/hubert.jpg',
+  image: '/images/work/selected/hubert-1.webp',
+  imageAlt: '/images/work/selected/hubert-2.webp',
   category: 'WEB',
   url: 'https://hubertkesik.com/',
 };
@@ -42,15 +48,37 @@ const amvisProject: ShowcaseProject = {
   placeholder: true,
 };
 
+const selectedImages: Partial<Record<keyof typeof t.work.projects, { image: string; imageAlt?: string }>> = {
+  uroki: {
+    image: '/images/work/selected/uroki-1.avif',
+    imageAlt: '/images/work/selected/uroki-2.avif',
+  },
+  panenka: {
+    image: '/images/work/selected/panenka-1.png',
+  },
+  esthetic: {
+    image: '/images/work/selected/esthetic-1.webp',
+    imageAlt: '/images/work/selected/esthetic-2.avif',
+  },
+};
+
 const keyedProjects: ShowcaseProject[] = allProjects.map((project) => {
   const key = projectKeyByUrl[project.url];
   if (!key) {
     throw new Error(`Missing selected work project key for ${project.name}`);
   }
-  return { ...project, key };
+
+  return { ...project, ...selectedImages[key], key };
 });
 
 const showcaseProjects = [hubertProject, ...keyedProjects, amvisProject];
+const railProjects: RailProject[] = [0, 1].flatMap((rotationIndex) =>
+  showcaseProjects.map((project, displayIndex) => ({
+    ...project,
+    image: rotationIndex === 1 ? (project.imageAlt ?? project.image) : project.image,
+    displayIndex,
+  }))
+);
 ---
 
 <section id="work-detroit" class="work-detroit" aria-label={t.work.altShowcaseLabel}>
@@ -66,12 +94,12 @@ const showcaseProjects = [hubertProject, ...keyedProjects, amvisProject];
     </div>
 
     <div class="work-detroit__stage" data-work-detroit-stage>
-      {showcaseProjects.map((project, index) => {
+      {railProjects.map((project, index) => {
         const href = project.placeholder ? undefined : project.url;
         const meta = t.work.projects[project.key];
         return (
           <a
-            class={`work-detroit__tile work-detroit__tile--${index + 1}${project.placeholder ? ' work-detroit__tile--placeholder' : ''}`}
+            class={`work-detroit__tile work-detroit__tile--${project.displayIndex + 1}${project.placeholder ? ' work-detroit__tile--placeholder' : ''}`}
             href={href}
             target={href ? '_blank' : undefined}
             rel={href ? 'noopener noreferrer' : undefined}
@@ -81,13 +109,19 @@ const showcaseProjects = [hubertProject, ...keyedProjects, amvisProject];
           >
             <span class="work-detroit__media">
               {project.image ? (
-                <img src={project.image} alt={`${project.name} project preview`} loading="lazy" />
+                <img
+                  class="work-detroit__image"
+                  src={project.image}
+                  alt={`${project.name} project preview`}
+                  loading="eager"
+                  decoding="async"
+                />
               ) : (
                 <span class="work-detroit__placeholder">{project.name}</span>
               )}
             </span>
             <span class="work-detroit__caption">
-              <span>{String(index + 1).padStart(2, '0')}</span>
+              <span>{String(project.displayIndex + 1).padStart(2, '0')}</span>
               <span>{project.name}</span>
               <span>{project.category}</span>
             </span>
@@ -205,7 +239,7 @@ const showcaseProjects = [hubertProject, ...keyedProjects, amvisProject];
     background: #111;
   }
 
-  .work-detroit__media img {
+  .work-detroit__image {
     display: block;
     width: 100%;
     height: 100%;
@@ -216,8 +250,8 @@ const showcaseProjects = [hubertProject, ...keyedProjects, amvisProject];
     transition: filter 0.5s ease, transform 0.75s var(--ease-out-expo);
   }
 
-  .work-detroit__tile:hover .work-detroit__media img,
-  .work-detroit__tile:focus-visible .work-detroit__media img {
+  .work-detroit__tile:hover .work-detroit__image,
+  .work-detroit__tile:focus-visible .work-detroit__image {
     filter: saturate(1.04) contrast(1.04);
     transform: scale(1.025);
   }
