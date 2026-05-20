@@ -43,20 +43,14 @@ const t = useTranslations(lang);
             <div class="service-items-col">
               {group.items.map((service, si) => (
                 <div class="service-row group" data-group-index={gi} data-item-index={si}>
-                  {si > 0 && (
-                    <div class="service-item-line">
-                      <div class="service-line-fill"></div>
-                    </div>
-                  )}
                   <div class="service-row-inner">
                     <h4 class="service-title">{service.title}</h4>
                   </div>
+                  <div class="service-item-line" aria-hidden="true">
+                    <div class="service-line-fill"></div>
+                  </div>
                 </div>
               ))}
-              {/* Bottom line after last item */}
-              <div class="service-item-line">
-                <div class="service-line-fill"></div>
-              </div>
             </div>
           </div>
         </div>
@@ -64,30 +58,6 @@ const t = useTranslations(lang);
     </div>
 
     <p class="services-note text-mono-xs">{t.services.note}</p>
-
-    <!-- CTA -->
-    <div class="service-cta mt-20 md:mt-32">
-      <a
-        href={`/${lang}/#contact`}
-        id="services-cta-link"
-        class="services-cta-block group"
-        data-cursor="CLICK"
-        data-magnetic="0.4"
-      >
-        <div class="services-cta-inner">
-          <h3 class="services-cta-text">{t.services.cta}</h3>
-        </div>
-        <div class="services-cta-icon">
-          <svg id="cta-morph-svg" viewBox="0 0 566 566" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path id="cta-logo-path" d="M113,0 L453,0 L453,113 L113,113 Z M453,113 L566,113 L566,566 L453,566 Z M113,453 L453,453 L453,566 L113,566 Z M0,0 L113,0 L113,453 L0,453 Z" fill="currentColor" />
-            <path id="cta-arrow-path" d="M478.297,337.073 L78.297,337.073 L78.297,238.073 L478.297,238.073 Z M212.132,70.711 L282.843,0 L564.978,282.136 L282.136,564.978 L212.132,494.975 L424.264,282.843 Z" fill="currentColor" style="visibility:hidden;position:absolute;" />
-          </svg>
-        </div>
-        <div class="services-cta-inner">
-          <h3 class="services-cta-text">{t.services.ctaRight}</h3>
-        </div>
-      </a>
-    </div>
   </div>
 </section>
 
@@ -136,7 +106,6 @@ const t = useTranslations(lang);
   .service-item-line {
     width: 100%;
     height: 1px;
-    background-color: var(--color-border-subtle);
     overflow: hidden;
   }
 
@@ -145,7 +114,7 @@ const t = useTranslations(lang);
     height: 100%;
     background-color: var(--color-line);
     transform: scaleX(0);
-    transform-origin: left;
+    transform-origin: right center;
   }
 
   .service-group-inner {
@@ -288,73 +257,6 @@ const t = useTranslations(lang);
     transition: transform 0.6s var(--ease-out-expo), background-color 0.3s;
   }
 
-  /* ===== Giant CTA Block ===== */
-  .services-cta-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 2rem 0;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--color-text);
-    transition: transform 0.55s var(--ease-out-expo);
-  }
-
-  .services-cta-block:active {
-    transform: scale(0.96);
-  }
-
-  @media (min-width: 768px) {
-    .services-cta-block {
-      flex-direction: row;
-      gap: 24px;
-      padding: 2.5rem 0;
-    }
-  }
-
-  .services-cta-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .services-cta-text {
-    font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    font-style: italic;
-    font-weight: 400;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-    transition: color 0.5s var(--ease-out-expo);
-  }
-
-  .services-cta-block:hover .services-cta-text,
-  .services-cta-block.is-active .services-cta-text {
-    color: var(--color-accent);
-  }
-
-  .services-cta-icon {
-    flex-shrink: 0;
-    width: clamp(84px, 15vw, 210px);
-    height: clamp(84px, 15vw, 210px);
-    color: var(--color-text);
-    transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
-  }
-
-  .services-cta-block:hover .services-cta-icon,
-  .services-cta-block.is-active .services-cta-icon {
-    color: var(--color-accent);
-    transform: scale(1.1);
-  }
-
-  .services-cta-icon svg {
-    width: 100%;
-    height: 100%;
-  }
-
   .service-group-inner.is-revealed {
     will-change: auto;
   }
@@ -373,9 +275,8 @@ const t = useTranslations(lang);
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-  import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 
-  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, MorphSVGPlugin);
+  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -393,7 +294,6 @@ const t = useTranslations(lang);
 
     const rows = section.querySelectorAll('.service-row');
     const allLineFills = section.querySelectorAll('.service-line-fill');
-    const cta = section.querySelector('.service-cta');
     const lines = section.querySelectorAll('[data-line]');
     const labelBlock = section.querySelector('#services > div > div:first-child');
     const heading = section.querySelector('.services-heading');
@@ -402,6 +302,7 @@ const t = useTranslations(lang);
     const note = section.querySelector('.services-note');
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
 
     if (prefersReducedMotion) {
       allLineFills.forEach((line) => {
@@ -449,26 +350,26 @@ const t = useTranslations(lang);
       if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
     }
 
-    // Lines draw in
-    const linesTween = gsap.to(allLineFills, {
-      scaleX: 1,
-      duration: 1,
-      stagger: 0.08,
-      ease: 'power3.inOut',
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 75%',
-        once: true,
-      },
-    });
-    if (linesTween.scrollTrigger) scrollTriggers.push(linesTween.scrollTrigger);
+    gsap.set(allLineFills, { scaleX: 0, transformOrigin: 'right center' });
 
-    // Rows stagger in — slide from right to match right-aligned layout
+    // Rows and their bottom rules stagger in together.
     rows.forEach((row, i) => {
       const inner = row.querySelector('.service-row-inner');
+      const lineFill = row.querySelector('.service-line-fill');
       if (!inner) return;
 
-      const tween = gsap.fromTo(
+      const rowTl = gsap.timeline({
+        delay: mobileQuery.matches ? 0 : Math.min(i * 0.035, 0.18),
+        scrollTrigger: {
+          trigger: row,
+          start: mobileQuery.matches ? 'top 88%' : 'top 86%',
+          once: true,
+        },
+      });
+      timelines.push(rowTl);
+      if (rowTl.scrollTrigger) scrollTriggers.push(rowTl.scrollTrigger);
+
+      rowTl.fromTo(
         inner,
         { opacity: 0, y: 40, x: 20 },
         {
@@ -477,15 +378,22 @@ const t = useTranslations(lang);
           x: 0,
           duration: 0.9,
           ease: 'power3.out',
-          delay: 0.3 + i * 0.08,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 75%',
-            once: true,
-          },
         },
+        0,
       );
-      if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
+
+      if (lineFill) {
+        rowTl.fromTo(
+          lineFill,
+          { scaleX: 0, transformOrigin: 'right center' },
+          {
+            scaleX: 1,
+            duration: mobileQuery.matches ? 0.74 : 0.95,
+            ease: 'power3.inOut',
+          },
+          mobileQuery.matches ? 0.08 : 0.16,
+        );
+      }
     });
 
     // Category blocks fade in
@@ -618,26 +526,6 @@ const t = useTranslations(lang);
       });
     }
 
-    // CTA entrance animation
-    if (cta) {
-      const ctaTexts = cta.querySelectorAll('.services-cta-text');
-      const ctaIcon = cta.querySelector('.services-cta-icon');
-
-      const ctaTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: cta,
-          start: 'top 85%',
-          once: true,
-        },
-      });
-      if (ctaTl.scrollTrigger) scrollTriggers.push(ctaTl.scrollTrigger);
-
-      ctaTl
-        .fromTo(ctaTexts[0], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
-        .fromTo(ctaIcon, { opacity: 0, scale: 0.6, rotation: -20 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.7, ease: 'back.out(1.5)' }, '-=0.5')
-        .fromTo(ctaTexts[1], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
-    }
-
     if (note) {
       const noteTween = gsap.to(note, {
         y: 0,
@@ -652,58 +540,6 @@ const t = useTranslations(lang);
         },
       });
       if (noteTween.scrollTrigger) scrollTriggers.push(noteTween.scrollTrigger);
-    }
-
-    // MorphSVG: logo → arrow on hover
-    const ctaLink = document.getElementById('services-cta-link');
-    const logoPath = document.getElementById('cta-logo-path');
-    const arrowPath = document.getElementById('cta-arrow-path');
-
-    if (ctaLink && logoPath && arrowPath) {
-      const arrowD = arrowPath.getAttribute('d')!;
-      const logoD = logoPath.getAttribute('d')!;
-
-      // Desktop: hover morph
-      ctaLink.addEventListener('mouseenter', () => {
-        gsap.to(logoPath, {
-          morphSVG: arrowD,
-          duration: 0.6,
-          ease: 'expo.inOut',
-        });
-      }, { signal });
-
-      ctaLink.addEventListener('mouseleave', () => {
-        gsap.to(logoPath, {
-          morphSVG: logoD,
-          duration: 0.6,
-          ease: 'expo.inOut',
-        });
-      }, { signal });
-
-      // Touch: scroll-triggered hover state when CTA is in viewport center
-      if (isTouch) {
-        scrollTriggers.push(ScrollTrigger.create({
-          trigger: ctaLink,
-          start: 'top 65%',
-          end: 'bottom 35%',
-          onEnter: () => {
-            ctaLink.classList.add('is-active');
-            gsap.to(logoPath, { morphSVG: arrowD, duration: 0.6, ease: 'expo.inOut' });
-          },
-          onLeave: () => {
-            ctaLink.classList.remove('is-active');
-            gsap.to(logoPath, { morphSVG: logoD, duration: 0.6, ease: 'expo.inOut' });
-          },
-          onEnterBack: () => {
-            ctaLink.classList.add('is-active');
-            gsap.to(logoPath, { morphSVG: arrowD, duration: 0.6, ease: 'expo.inOut' });
-          },
-          onLeaveBack: () => {
-            ctaLink.classList.remove('is-active');
-            gsap.to(logoPath, { morphSVG: logoD, duration: 0.6, ease: 'expo.inOut' });
-          },
-        }));
-      }
     }
 
     cleanupFn = () => {

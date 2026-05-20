@@ -91,8 +91,6 @@ export const translations = {
         },
       ],
       note: 'Projects begin after scope approval and an upfront payment.',
-      cta: 'Send your current site',
-      ctaRight: "Let's talk",
     },
     process: {
       label: 'PROCESS',
@@ -281,8 +279,6 @@ export const translations = {
         },
       ],
       note: 'Projekt startuje po zatwierdzeniu zakresu i wpłacie zaliczki.',
-      cta: 'Wyślij obecną stronę',
-      ctaRight: 'Porozmawiajmy',
     },
     process: {
       label: 'PROCES',
