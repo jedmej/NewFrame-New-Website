@@ -453,7 +453,7 @@ const firstMeta = t.work.projects[firstProject.key];
       height: auto;
       min-height: auto;
       overflow: hidden;
-      padding: 5.5rem 1.25rem 7rem;
+      padding: 5.5rem 0 7rem;
       background: var(--color-bg-dark);
     }
 
@@ -473,7 +473,9 @@ const firstMeta = t.work.projects[firstProject.key];
       top: auto;
       right: auto;
       left: auto;
+      padding-inline: 1.25rem;
       margin-bottom: 3.25rem;
+      text-align: center;
     }
 
     .work-grid-reference__shader {
@@ -495,6 +497,7 @@ const firstMeta = t.work.projects[firstProject.key];
       display: grid;
       gap: 4rem;
       justify-items: center;
+      text-align: center;
       pointer-events: auto;
     }
 
@@ -502,23 +505,21 @@ const firstMeta = t.work.projects[firstProject.key];
       position: relative;
       top: auto;
       left: auto;
-      width: min(calc(100vw - 4rem), 21rem);
+      width: 100vw;
       margin-inline: 0;
       opacity: 1;
       filter: none;
       --card-blur: 0px;
-      --image-parallax-x: 0px;
-      --image-parallax-y: 0px;
       transform: none;
       will-change: auto;
     }
 
     .work-grid-reference__card:nth-child(even) {
-      transform: translateX(min(4vw, 1rem));
+      transform: none;
     }
 
     .work-grid-reference__card:nth-child(odd):not(:first-child) {
-      transform: translateX(max(-4vw, -1rem));
+      transform: none;
     }
 
     .work-grid-reference__media {
@@ -531,6 +532,8 @@ const firstMeta = t.work.projects[firstProject.key];
       display: grid;
       gap: 0.65rem;
       margin-top: 1rem;
+      padding-inline: 1.25rem;
+      justify-items: center;
     }
 
     .work-grid-reference__mobile-copy span:first-child {
@@ -558,7 +561,7 @@ const firstMeta = t.work.projects[firstProject.key];
       font-weight: 500;
       line-height: 1.35;
       letter-spacing: 0;
-      max-width: 100%;
+      max-width: 24rem;
       text-wrap: pretty;
     }
   }
@@ -665,6 +668,12 @@ const firstMeta = t.work.projects[firstProject.key];
       const nextProgress = clamp(value, 0, 1);
       section.style.setProperty('--work-dark-progress', nextProgress.toFixed(3));
       section.style.setProperty('--work-shader-opacity', (0.68 * nextProgress).toFixed(3));
+    };
+
+    const resetToneGlobals = () => {
+      document.body.style.setProperty('--page-dark-mix', '0%');
+      document.documentElement.style.setProperty('--work-transition-progress', '0');
+      document.documentElement.style.setProperty('--work-exit-transition-progress', '0');
     };
 
     const measureToneProgress = () => {
@@ -1003,7 +1012,12 @@ const firstMeta = t.work.projects[firstProject.key];
 
     setActiveIndex(0, true);
     setProgress(0);
-    measureToneProgress();
+    if (!prefersReducedMotion && desktopQuery.matches) {
+      measureToneProgress();
+    } else {
+      setToneProgress(1);
+      resetToneGlobals();
+    }
 
     if (!prefersReducedMotion && desktopQuery.matches && cards.length > 1) {
       frame = requestAnimationFrame(renderVelocity);
@@ -1052,6 +1066,35 @@ const firstMeta = t.work.projects[firstProject.key];
         card.removeAttribute('aria-hidden');
         card.removeAttribute('tabindex');
       });
+
+      if (!prefersReducedMotion && !desktopQuery.matches) {
+        cards.forEach((card) => {
+          const mobileParallax = ScrollTrigger.create({
+            trigger: card,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const imageProgress = self.progress * 2 - 1;
+              const parallaxY = clamp(imageProgress * -24, -24, 24);
+              card.style.setProperty('--image-parallax-x', '0px');
+              card.style.setProperty('--image-parallax-y', `${parallaxY.toFixed(2)}px`);
+              card.style.setProperty('--image-scale', '1.12');
+            },
+            onRefresh: (self) => {
+              const imageProgress = self.progress * 2 - 1;
+              const parallaxY = clamp(imageProgress * -24, -24, 24);
+              card.style.setProperty('--image-parallax-x', '0px');
+              card.style.setProperty('--image-parallax-y', `${parallaxY.toFixed(2)}px`);
+              card.style.setProperty('--image-scale', '1.12');
+            },
+          });
+          triggers.push(mobileParallax);
+        });
+
+        desktopQuery.addEventListener('change', () => ScrollTrigger.refresh(), { signal });
+      }
     }
 
     cleanupWorkGrid = () => {

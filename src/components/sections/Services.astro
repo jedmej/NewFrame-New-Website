@@ -420,6 +420,7 @@ const t = useTranslations(lang);
     const note = section.querySelector('.services-note');
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
 
     if (prefersReducedMotion) {
       allLineFills.forEach((line) => {
@@ -481,24 +482,30 @@ const t = useTranslations(lang);
     });
     if (linesTween.scrollTrigger) scrollTriggers.push(linesTween.scrollTrigger);
 
-    // Rows stagger in — slide from right to match right-aligned layout
+    // Rows stagger in. Mobile reveals each row as it enters the viewport.
     rows.forEach((row, i) => {
       const inner = row.querySelector('.service-row-inner');
       if (!inner) return;
 
       const tween = gsap.fromTo(
         inner,
-        { opacity: 0, y: 40, x: 20 },
+        {
+          opacity: 0,
+          y: mobileQuery.matches ? 22 : 40,
+          x: mobileQuery.matches ? 0 : 20,
+          filter: 'blur(8px)',
+        },
         {
           opacity: 1,
           y: 0,
           x: 0,
-          duration: 0.9,
+          filter: 'blur(0px)',
+          duration: mobileQuery.matches ? 0.72 : 0.9,
           ease: 'power3.out',
-          delay: 0.3 + i * 0.08,
+          delay: mobileQuery.matches ? 0 : 0.3 + i * 0.08,
           scrollTrigger: {
-            trigger: section,
-            start: 'top 75%',
+            trigger: mobileQuery.matches ? row : section,
+            start: mobileQuery.matches ? 'top 88%' : 'top 75%',
             once: true,
           },
         },
@@ -511,16 +518,17 @@ const t = useTranslations(lang);
     categories.forEach((cat, i) => {
       const tween = gsap.fromTo(
         cat,
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: mobileQuery.matches ? 22 : 30, filter: 'blur(8px)' },
         {
           opacity: 1,
           y: 0,
+          filter: 'blur(0px)',
           duration: 0.8,
           ease: 'power3.out',
-          delay: 0.2 + i * 0.15,
+          delay: mobileQuery.matches ? 0 : 0.2 + i * 0.15,
           scrollTrigger: {
             trigger: cat,
-            start: 'top 85%',
+            start: mobileQuery.matches ? 'top 88%' : 'top 85%',
             once: true,
           },
         },
