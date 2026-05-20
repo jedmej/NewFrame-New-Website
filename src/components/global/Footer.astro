@@ -12,10 +12,11 @@ const year = new Date().getFullYear();
 const email = 'hello@newframe.studio';
 const footerMeta = [
   'NEWFRAME ©26',
-  'INDEPENDENT DIGITAL STUDIO',
-  lang === 'pl' ? 'DOSTĘPNI DLA WYBRANYCH PROJEKTÓW' : 'AVAILABLE FOR SELECT PROJECTS',
-  lang === 'pl' ? 'ZDALNIE / WARSZAWA / CAŁY ŚWIAT' : 'REMOTE / WARSAW / WORLDWIDE',
+  lang === 'pl' ? 'NIEZALEŻNE STUDIO CYFROWE' : 'INDEPENDENT DIGITAL STUDIO',
+  lang === 'pl' ? 'OKOLICE WARSZAWY / POLSKA / ZAGRANICA' : 'NEAR WARSAW / POLAND / ABROAD',
 ];
+
+const emailSubject = lang === 'pl' ? 'Zapytanie o projekt, New Frame Studio' : 'Project inquiry, New Frame Studio';
 
 const footerLinks = [
   { label: lang === 'pl' ? 'Start' : 'Home', href: `/${lang}/` },
@@ -43,7 +44,7 @@ const footerLinks = [
 
         <div class="footer-contact-stack footer-email-cell">
           <a
-            href={`mailto:${email}?subject=Project%20Inquiry%20-%20New%20Frame%20Studio`}
+            href={`mailto:${email}?subject=${encodeURIComponent(emailSubject)}`}
             class="footer-contact-link group"
             data-cursor="CLICK"
             aria-label={`Email ${email}`}
@@ -107,9 +108,7 @@ const footerLinks = [
   .footer-surface {
     position: relative;
     overflow: hidden;
-    background:
-      radial-gradient(circle at 78% 8%, rgba(201, 70, 57, 0.2), transparent 26rem),
-      linear-gradient(180deg, var(--color-bg-dark), #0f0d0b 68%, #0b0a09);
+    background: var(--color-bg-dark);
   }
 
   .footer-shader {

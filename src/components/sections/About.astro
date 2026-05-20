@@ -40,7 +40,7 @@ const t = useTranslations(lang);
         <div
           id="about-image-block"
           class="relative overflow-hidden"
-          style="aspect-ratio: 3/4; background: radial-gradient(ellipse at 30% 50%, rgba(218, 56, 46, 0.15), transparent 70%), var(--color-text);"
+          style="aspect-ratio: 3/4; background: var(--color-text);"
         >
           <img
             src="/images/jed-mejzner-hero.webp"
@@ -86,11 +86,12 @@ const t = useTranslations(lang);
   }
 
   #scope {
-    background:
-      linear-gradient(180deg, rgba(239, 235, 226, 0.72) 0%, rgba(239, 235, 226, 0.96) 9rem, rgba(239, 235, 226, 0) 18rem),
-      radial-gradient(ellipse at 22% 0%, rgba(230, 222, 210, 0.72), transparent 28rem),
-      radial-gradient(circle at 86% 76%, rgba(20, 18, 15, 0.055), transparent 24rem),
-      var(--color-bg);
+    background: var(--color-bg);
+  }
+
+  #scope > div {
+    position: relative;
+    z-index: 1;
   }
 
   #manifesto-text {

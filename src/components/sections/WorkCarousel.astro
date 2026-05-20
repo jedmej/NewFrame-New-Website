@@ -40,8 +40,7 @@ const projects = allProjects.map((p) => ({
   <div id="carousel-section" class="relative h-[350vh]">
     <!-- Sticky container -->
     <div class="sticky top-0 h-screen overflow-hidden">
-      <!-- Progressive blur top -->
-      <div class="absolute top-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to bottom, var(--color-bg-dark), transparent);"></div>
+      <div class="absolute top-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: var(--color-bg-dark);"></div>
 
       <!-- Three.js canvas -->
       <canvas
@@ -87,8 +86,7 @@ const projects = allProjects.map((p) => ({
         </h2>
       </div>
 
-      <!-- Bottom gradient -->
-      <div class="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: linear-gradient(to top, var(--color-bg-dark), transparent);"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none" style="background: var(--color-bg-dark);"></div>
 
       <!-- Exit wipe: cream overlay clips in from top to cover dark section on exit -->
       <div id="work-wipe-out" class="absolute inset-0 z-30 pointer-events-none"
