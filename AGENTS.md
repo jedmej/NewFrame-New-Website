@@ -1,4 +1,4 @@
-# CLAUDE.md — Newframe Studio
+# AGENTS.md — Newframe Studio
 
 ## Project Overview
 Newframe is Jed Mejzner's portfolio/agency website for a web design studio. Single-page site with animated sections, bilingual (EN/PL), heavy use of scroll-driven animations and WebGL effects.

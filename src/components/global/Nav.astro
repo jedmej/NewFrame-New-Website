@@ -10,6 +10,7 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const altLang = lang === 'en' ? 'pl' : 'en';
 const altUrl = getAlternateUrl(Astro.url, altLang);
+const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
 ---
 
 <nav
@@ -83,7 +84,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     <button
       id="mobile-menu-btn"
       class="lg:hidden flex min-h-10 min-w-10 flex-col justify-center gap-1.5 p-2 -mr-2"
-      aria-label="Open menu"
+      aria-label={mobileMenuButtonLabel}
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
@@ -357,6 +358,9 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
     const mobileMenu = document.getElementById('mobile-menu');
     const menuLines = menuBtn?.querySelectorAll('.menu-line');
     const menuLinks = mobileMenu?.querySelectorAll('.mobile-menu-link');
+    const isPolish = document.documentElement.lang === 'pl';
+    const openMenuLabel = isPolish ? 'Otwórz menu' : 'Open menu';
+    const closeMenuLabel = isPolish ? 'Zamknij menu' : 'Close menu';
     let menuOpen = false;
 
     function openMenu() {
@@ -366,7 +370,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
       // Update aria states
       menuBtn!.setAttribute('aria-expanded', 'true');
-      menuBtn!.setAttribute('aria-label', 'Close menu');
+      menuBtn!.setAttribute('aria-label', closeMenuLabel);
       mobileMenu!.setAttribute('aria-hidden', 'false');
 
       // Animate lines to X
@@ -414,7 +418,7 @@ const altUrl = getAlternateUrl(Astro.url, altLang);
 
       // Update aria states
       menuBtn!.setAttribute('aria-expanded', 'false');
-      menuBtn!.setAttribute('aria-label', 'Open menu');
+      menuBtn!.setAttribute('aria-label', openMenuLabel);
       mobileMenu!.setAttribute('aria-hidden', 'true');
     }
 

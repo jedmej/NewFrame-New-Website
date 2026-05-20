@@ -23,9 +23,8 @@ const t = useTranslations(lang);
     </div>
 
     <div class="ways-to-work__list">
-      {t.waysToWork.items.map((item, index) => (
+      {t.waysToWork.items.map((item) => (
         <article class="ways-to-work__item">
-          <div class="ways-to-work__index text-mono-xs">{String(index + 1).padStart(2, '0')}</div>
           <div class="ways-to-work__content">
             <h3>{item.title}</h3>
             <p>{item.description}</p>
@@ -47,10 +46,27 @@ const t = useTranslations(lang);
   .ways-to-work {
     position: relative;
     padding: clamp(7rem, 12vw, 11rem) 1.5rem;
-    background:
-      radial-gradient(circle at 8% 18%, rgba(201, 70, 57, 0.075), transparent 22rem),
-      linear-gradient(180deg, var(--color-bg), var(--color-bg-warm));
+    background: #E4DBD0;
     color: var(--color-text);
+  }
+
+  .ways-to-work::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: 0;
+    left: 0;
+    z-index: 0;
+    height: min(72svh, 46rem);
+    pointer-events: none;
+    background: var(--color-bg-dark);
+    opacity: var(--work-exit-transition-progress, 0);
+    will-change: opacity;
+  }
+
+  .ways-to-work__inner {
+    position: relative;
+    z-index: 1;
   }
 
   @media (min-width: 768px) {
@@ -103,7 +119,7 @@ const t = useTranslations(lang);
     max-width: 29rem;
     font-family: var(--font-mono);
     font-size: clamp(1.08rem, 1.12vw, 1.28rem);
-    line-height: 1.64;
+    line-height: 1.15;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;
@@ -111,7 +127,7 @@ const t = useTranslations(lang);
 
   .ways-to-work__list {
     display: grid;
-    gap: 1rem;
+    gap: clamp(1.5rem, 2.25vw, 2.5rem);
   }
 
   .ways-to-work__item {
@@ -120,9 +136,9 @@ const t = useTranslations(lang);
     --reveal-blur: 0px;
 
     display: grid;
-    grid-template-columns: clamp(3.75rem, 10vw, 5.75rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
-    min-height: clamp(13rem, 20vw, 17.5rem);
+    min-height: clamp(11.5rem, 16vw, 14.75rem);
     border: 1px solid var(--color-border-strong);
     background: rgba(247, 242, 233, 0.42);
     box-shadow: 0 1.4rem 4rem rgba(86, 56, 39, 0.06);
@@ -145,24 +161,6 @@ const t = useTranslations(lang);
 
   .ways-to-work__item.is-revealed {
     will-change: auto;
-  }
-
-  @media (min-width: 1024px) {
-    .ways-to-work__item {
-      grid-template-columns: clamp(5.25rem, 7vw, 6.75rem) minmax(0, 1fr);
-    }
-  }
-
-  .ways-to-work__index {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: clamp(1.5rem, 3vw, 2.75rem) clamp(0.75rem, 2vw, 1.5rem);
-    border-right: 1px solid var(--color-border-strong);
-    color: var(--color-accent);
-    font-size: 0.78rem;
-    line-height: 1;
-    text-align: center;
   }
 
   .ways-to-work__content {
@@ -195,7 +193,14 @@ const t = useTranslations(lang);
   .ways-to-work__content > h3,
   .ways-to-work__content > p,
   .ways-to-work__content > ul {
-    padding: clamp(1.5rem, 4vw, 4.75rem) clamp(1.25rem, 3.4vw, 3.4rem);
+    padding: clamp(1.25rem, 3vw, 3.4rem) clamp(1.25rem, 3.4vw, 3.4rem);
+  }
+
+  @media (max-width: 767px) {
+    .ways-to-work__content > h3,
+    .ways-to-work__content > p {
+      border-bottom: 1px solid var(--color-border-strong);
+    }
   }
 
   @media (min-width: 1120px) {
@@ -209,11 +214,18 @@ const t = useTranslations(lang);
     display: flex;
     align-items: center;
     font-family: var(--font-serif);
-    font-size: clamp(2rem, 3.6vw, 3.35rem);
+    font-size: clamp(1.9rem, 3.25vw, 3rem);
     font-weight: 400;
-    line-height: 1;
+    line-height: 0.98;
     letter-spacing: 0;
     text-wrap: balance;
+  }
+
+  @media (max-width: 767px) {
+    .ways-to-work__content h3 {
+      font-size: clamp(2.05rem, 8.6vw, 2.55rem);
+      line-height: 1;
+    }
   }
 
   .ways-to-work__content p,
@@ -373,7 +385,6 @@ const t = useTranslations(lang);
 
       items.forEach((item, index) => {
         const itemParts = [
-          item.querySelector('.ways-to-work__index'),
           item.querySelector('.ways-to-work__content > h3'),
           item.querySelector('.ways-to-work__content > p'),
           ...Array.from(item.querySelectorAll('.ways-to-work__content li')),

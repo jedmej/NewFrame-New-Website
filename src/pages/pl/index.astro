@@ -4,19 +4,16 @@ import { useTranslations } from '../../i18n/translations';
 import Hero from '../../components/sections/Hero.astro';
 import About from '../../components/sections/About.astro';
 import Services from '../../components/sections/Services.astro';
-import WorkCarousel from '../../components/sections/WorkCarousel.astro';
 import WorkSelectedMinimal from '../../components/sections/WorkSelectedMinimal.astro';
 import WaysToWork from '../../components/sections/WaysToWork.astro';
 import Testimonials from '../../components/sections/Testimonials.astro';
 
 const t = useTranslations('pl');
-const showLegacyWork = false;
 ---
 
 <Page lang="pl" title={t.seo.title} description={t.seo.description}>
   <Hero lang="pl" />
   <About lang="pl" />
-  {showLegacyWork && <WorkCarousel lang="pl" />}
   <WorkSelectedMinimal lang="pl" />
   <WaysToWork lang="pl" />
   <Services lang="pl" />
