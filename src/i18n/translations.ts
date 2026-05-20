@@ -94,55 +94,34 @@ export const translations = {
       cta: 'Send your current site',
       ctaRight: "Let's talk",
     },
-    process: {
-      label: 'PROCESS',
-      heading: 'How projects usually work',
-      note: 'Projects begin after scope approval and an upfront payment.',
-      steps: [
-        { title: 'Send your current site or idea', description: 'You share what exists, what feels off and where you want the brand to go.' },
-        { title: 'Direction', description: 'We define the structure, creative direction and scope.' },
-        { title: 'Design', description: 'The key screens and visual system are designed around the first impression and user flow.' },
-        { title: 'Build', description: 'The website is built as a custom, responsive frontend.' },
-        { title: 'Launch', description: 'We review, polish and publish the site.' },
-        { title: 'Care', description: 'If needed, NEWFRAME can stay involved for updates, changes and maintenance.' },
-      ],
-    },
     work: {
       label: 'SELECTED WORK',
-      counter: 'of',
       carouselLabel: 'Interactive showcase of selected projects',
       viewProject: 'View',
       previewProject: 'Preview',
-      whyLabel: 'Why it worked',
       projects: {
         hubert: {
           description: 'A focused personal website built around presence, clarity and a sharp first impression.',
-          why: 'The site gives the personal brand a cleaner, more confident first impression without feeling overproduced.',
           roles: ['Web design', 'Development'],
         },
         uroki: {
           description: 'A visual website for a tattoo studio with a strong identity and client experience.',
-          why: 'The site helped the studio feel distinctive, atmospheric and far from a generic template.',
           roles: ['Creative direction', 'Web design', 'Development'],
         },
         panenka: {
           description: 'A website for a creative studio that brings personality, motion and visual confidence to the front.',
-          why: 'The experience makes the studio feel expressive and memorable before a client even reads the offer.',
           roles: ['Web design', 'Development', 'Interaction'],
         },
         esthetic: {
           description: 'A calm, elegant website for a dental and aesthetic practice.',
-          why: 'The interface creates trust quickly and keeps the service experience calm, polished and easy to understand.',
           roles: ['Web design', 'Development', 'Visual direction'],
         },
         adfidence: {
           description: 'A sharper digital presence for a performance and marketing-focused business.',
-          why: 'The site frames the offer with more structure, clarity and credibility for higher-intent conversations.',
           roles: ['Web design', 'Development', 'Interface system'],
         },
         amvis: {
           description: 'A website redesign for an accounting office, currently being prepared for launch.',
-          why: 'The direction is being built to make a traditional service feel clearer, calmer and more current.',
           roles: ['In progress'],
         },
       },
@@ -284,55 +263,34 @@ export const translations = {
       cta: 'Wyślij obecną stronę',
       ctaRight: 'Porozmawiajmy',
     },
-    process: {
-      label: 'PROCES',
-      heading: 'Jak zwykle wygląda projekt',
-      note: 'Projekt startuje po zatwierdzeniu zakresu i wpłacie zaliczki.',
-      steps: [
-        { title: 'Wysyłasz obecną stronę albo pomysł', description: 'Pokazujesz, co już istnieje, co nie działa i w którą stronę ma pójść marka.' },
-        { title: 'Kierunek', description: 'Ustalamy strukturę, kierunek kreatywny i zakres prac.' },
-        { title: 'Projekt', description: 'Kluczowe ekrany i system wizualny powstają wokół pierwszego wrażenia i ścieżki użytkownika.' },
-        { title: 'Budowa', description: 'Strona powstaje jako indywidualne, responsywne wdrożenie frontendowe.' },
-        { title: 'Publikacja', description: 'Wspólnie sprawdzamy, dopracowujemy i publikujemy stronę.' },
-        { title: 'Opieka', description: 'Jeśli trzeba, NEWFRAME może zostać przy projekcie na aktualizacje, zmiany i utrzymanie.' },
-      ],
-    },
     work: {
       label: 'WYBRANE PRACE',
-      counter: 'z',
       carouselLabel: 'Interaktywna prezentacja wybranych projektów',
       viewProject: 'Zobacz',
       previewProject: 'Zapowiedź',
-      whyLabel: 'Dlaczego zadziałało',
       projects: {
         hubert: {
           description: 'Strona osobista zbudowana wokół obecności, prostoty i mocnego pierwszego wrażenia.',
-          why: 'Strona daje marce osobistej czystsze, pewniejsze pierwsze wrażenie bez wrażenia przesadzonej produkcji.',
           roles: ['Web design', 'Development'],
         },
         uroki: {
           description: 'Wizualna strona dla studia tatuażu z mocnym charakterem i dopracowaną ścieżką klienta.',
-          why: 'Strona pomogła studiu wyglądać charakterystycznie, atmosferycznie i daleko od generycznego szablonu.',
           roles: ['Kierunek kreatywny', 'Web design', 'Development'],
         },
         panenka: {
           description: 'Strona dla studia kreatywnego, która od razu pokazuje charakter, ruch i pewność wizualną.',
-          why: 'Doświadczenie pokazuje ekspresyjny charakter studia zanim klient przejdzie do szczegółów oferty.',
           roles: ['Web design', 'Development', 'Interakcje'],
         },
         esthetic: {
           description: 'Spokojna, elegancka strona dla praktyki dentalnej i estetycznej.',
-          why: 'Interfejs szybko buduje zaufanie i prowadzi przez ofertę w spokojny, dopracowany sposób.',
           roles: ['Web design', 'Development', 'Kierunek wizualny'],
         },
         adfidence: {
           description: 'Nowocześniejsza strona dla firmy skupionej na performance i marketingu.',
-          why: 'Strona porządkuje ofertę i wzmacnia wiarygodność w rozmowach z bardziej zdecydowanymi klientami.',
           roles: ['Web design', 'Development', 'System interfejsu'],
         },
         amvis: {
           description: 'Redesign strony biura rachunkowego przygotowywany do startu.',
-          why: 'Kierunek ma pomóc tradycyjnej usłudze wyglądać czytelniej, spokojniej i bardziej współcześnie.',
           roles: ['W toku'],
         },
       },

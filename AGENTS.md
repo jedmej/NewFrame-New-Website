@@ -24,7 +24,7 @@ npm run preview  # Preview production build
 src/
 ├── components/
 │   ├── global/        # Nav, Footer, CustomCursor, Preloader
-│   └── sections/      # Hero, Services, About, WorkCarousel, Testimonials
+│   └── sections/      # Hero, About, WorkSelectedMinimal, WaysToWork, Services, Testimonials
 ├── i18n/
 │   └── translations.ts  # All EN/PL strings, getLangFromUrl(), useTranslations()
 ├── layouts/
