@@ -886,12 +886,19 @@ const footerLinks = [
       if (tween.scrollTrigger) scrollTriggers.push(tween.scrollTrigger);
     }
 
+    const footerPrompt = document.querySelector('.footer-contact-prompt');
+    const footerContactLink = document.querySelector('.footer-contact-link');
+    const footerMetaCard = document.querySelector('.footer-meta-card');
+    const footerNavItems = Array.from(document.querySelectorAll('.footer-link-grid li'));
+    const footerMarkCell = document.querySelector('.footer-mark-cell');
+    const footerBottomItems = Array.from(document.querySelectorAll('.footer-bottom > *'));
     const footerRevealItems = [
-      document.querySelector('.footer-contact-prompt'),
-      ...Array.from(document.querySelectorAll('.footer-contact-link')),
-      document.querySelector('.footer-nav-cell'),
-      document.querySelector('.footer-mark-cell'),
-      document.querySelector('.footer-bottom'),
+      footerPrompt,
+      footerContactLink,
+      footerMetaCard,
+      ...footerNavItems,
+      footerMarkCell,
+      ...footerBottomItems,
     ].filter((item): item is Element => item instanceof Element);
 
     if (footerRevealItems.length > 0 && !prefersReducedMotion) {
@@ -916,13 +923,41 @@ const footerLinks = [
       timelines.push(footerTl);
       if (footerTl.scrollTrigger) scrollTriggers.push(footerTl.scrollTrigger);
 
-      footerTl.to(footerRevealItems, {
-        y: 0,
-        opacity: 1,
-        filter: 'blur(0px)',
-        duration: 0.95,
-        stagger: 0.07,
-      }, 0.18);
+      if (footerPrompt) {
+        footerTl.to(footerPrompt, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.82 }, 0.14);
+      }
+
+      if (footerContactLink) {
+        footerTl.to(footerContactLink, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9 }, 0.28);
+      }
+
+      if (footerMetaCard) {
+        footerTl.to(footerMetaCard, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9 }, 0.42);
+      }
+
+      if (footerNavItems.length > 0) {
+        footerTl.to(footerNavItems, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.78,
+          stagger: 0.055,
+        }, 0.58);
+      }
+
+      if (footerMarkCell) {
+        footerTl.to(footerMarkCell, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.82 }, 0.76);
+      }
+
+      if (footerBottomItems.length > 0) {
+        footerTl.to(footerBottomItems, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.72,
+          stagger: 0.06,
+        }, 0.92);
+      }
     }
 
     const lockScrambleWidth = (el: Element) => {

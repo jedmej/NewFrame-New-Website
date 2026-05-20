@@ -82,7 +82,11 @@ const t = useTranslations(lang);
 <style>
   .manifesto-word {
     display: inline-block;
-    will-change: opacity;
+  }
+
+  .manifesto-char {
+    display: inline-block;
+    will-change: opacity, filter;
   }
 
   #scope {
@@ -151,22 +155,29 @@ const t = useTranslations(lang);
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
 
-    // ===== Word-by-word manifesto reveal =====
+    // ===== Character-by-character manifesto reveal =====
 
     const split = new SplitText(textEl, {
-      type: 'words',
+      type: 'words,chars',
       wordsClass: 'manifesto-word',
+      charsClass: 'manifesto-char',
     });
 
     split.words.forEach((word: HTMLElement) => {
-      word.style.opacity = prefersReducedMotion ? '1' : '0.08';
       word.style.transition = 'none';
       word.style.display = 'inline-block';
 
       const text = word.textContent?.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, '') || '';
       if (highlights.some((h: string) => text.toLowerCase() === h.toLowerCase())) {
         word.dataset.highlight = 'true';
+        word.style.color = 'var(--color-accent)';
       }
+    });
+
+    split.chars.forEach((char: HTMLElement) => {
+      char.style.opacity = prefersReducedMotion ? '1' : '0.06';
+      char.style.filter = prefersReducedMotion ? 'none' : 'blur(5px)';
+      char.style.transition = 'none';
     });
 
     if (!prefersReducedMotion) {
@@ -185,27 +196,27 @@ const t = useTranslations(lang);
         if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
       }
 
-      // Word reveal on scroll
-      const wordTween = gsap.to(split.words, {
-        opacity: 1,
-        stagger: 0.02,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: textEl,
-          start: 'top 80%',
-          end: 'bottom 40%',
-          scrub: 1,
-          onUpdate: (self) => {
-            const revealed = Math.floor(self.progress * split.words.length);
-            split.words.forEach((word: HTMLElement, i: number) => {
-              if (i <= revealed && word.dataset.highlight === 'true') {
-                word.style.color = 'var(--color-accent)';
-              }
-            });
-          },
+      // Character reveal on scroll — same smooth frontier as testimonials
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: textEl,
+        start: 'top 80%',
+        end: 'bottom 40%',
+        scrub: 1,
+        onUpdate: (self) => {
+          const totalChars = split.chars.length;
+          const revealCenter = self.progress * totalChars;
+          const spread = 8;
+
+          split.chars.forEach((char: HTMLElement, ci: number) => {
+            const t = (revealCenter - ci + spread) / spread;
+            const clamped = Math.min(1, Math.max(0, t));
+            const opacity = 0.06 + clamped * 0.94;
+            const blur = (1 - clamped) * 5;
+            char.style.opacity = String(opacity);
+            char.style.filter = `blur(${blur.toFixed(2)}px)`;
+          });
         },
-      });
-      if (wordTween.scrollTrigger) scrollTriggers.push(wordTween.scrollTrigger);
+      }));
 
       // Image block reveal + parallax — slightly different rate than text for organic feel
       if (imageBlock) {

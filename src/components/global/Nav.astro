@@ -204,6 +204,14 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
     let menuCloseTimeout: ReturnType<typeof setTimeout>;
     let lastScrollY = window.scrollY;
     let navHidden = false;
+    let pointerNearTop = false;
+    const navRevealHotZone = 96;
+
+    const showNav = () => {
+      if (!navHidden) return;
+      navHidden = false;
+      nav.classList.remove('nav-hidden');
+    };
 
     const runIntro = () => {
       const logoLink = document.getElementById('logo-link');
@@ -332,24 +340,30 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
       const currentY = window.scrollY;
       const delta = currentY - lastScrollY;
 
-      if (currentY < 24) {
-        if (navHidden) {
-          navHidden = false;
-          nav.classList.remove('nav-hidden');
-        }
+      if (currentY < 24 || pointerNearTop) {
+        showNav();
       } else if (delta > 8 && !navHidden) {
         navHidden = true;
         nav.classList.add('nav-hidden');
       } else if (delta < -8 && navHidden) {
-        navHidden = false;
-        nav.classList.remove('nav-hidden');
+        showNav();
       }
 
       lastScrollY = currentY;
     };
 
+    const handlePointerMove = (event: PointerEvent) => {
+      if (window.innerWidth < 1024 || event.pointerType === 'touch') return;
+
+      pointerNearTop = event.clientY <= navRevealHotZone;
+      if (pointerNearTop) {
+        showNav();
+      }
+    };
+
     if (window.innerWidth >= 1024) {
       window.addEventListener('scroll', handleScroll, { signal, passive: true });
+      window.addEventListener('pointermove', handlePointerMove, { signal, passive: true });
       handleScroll();
     }
 
