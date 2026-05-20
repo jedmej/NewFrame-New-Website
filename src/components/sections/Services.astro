@@ -146,7 +146,7 @@ const t = useTranslations(lang);
     height: 100%;
     background-color: var(--color-line);
     transform: scaleX(0);
-    transform-origin: left;
+    transform-origin: right center;
   }
 
   .service-group-inner {
@@ -245,6 +245,15 @@ const t = useTranslations(lang);
       top: auto;
     }
 
+    .service-category {
+      font-size: clamp(2.05rem, 8.8vw, 2.65rem);
+      line-height: 1;
+    }
+
+    .service-category-index {
+      font-size: 0.9rem;
+    }
+
     .service-row.is-active .service-title {
       color: var(--color-text);
       transform: none;
@@ -291,6 +300,13 @@ const t = useTranslations(lang);
     color: var(--color-text);
     transition: transform 0.6s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
     text-wrap: balance;
+  }
+
+  @media (max-width: 767px) {
+    .service-title {
+      font-size: clamp(1.75rem, 7.5vw, 2.35rem);
+      line-height: 1.08;
+    }
   }
 
   .service-row:hover .service-title,
@@ -468,19 +484,24 @@ const t = useTranslations(lang);
       if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
     }
 
-    // Lines draw in
-    const linesTween = gsap.to(allLineFills, {
-      scaleX: 1,
-      duration: 1,
-      stagger: 0.08,
-      ease: 'power3.inOut',
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 75%',
-        once: true,
-      },
+    // Service lines draw from right to left as each row enters the viewport.
+    allLineFills.forEach((line) => {
+      const lineEl = line as HTMLElement;
+      const lineWrap = lineEl.closest('.service-item-line') || lineEl;
+      gsap.set(lineEl, { scaleX: 0, transformOrigin: 'right center' });
+
+      const lineTween = gsap.to(lineEl, {
+        scaleX: 1,
+        duration: 0.95,
+        ease: 'power3.inOut',
+        scrollTrigger: {
+          trigger: lineWrap,
+          start: 'top 92%',
+          once: true,
+        },
+      });
+      if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
     });
-    if (linesTween.scrollTrigger) scrollTriggers.push(linesTween.scrollTrigger);
 
     // Rows stagger in. Mobile reveals each row as it enters the viewport.
     rows.forEach((row, i) => {

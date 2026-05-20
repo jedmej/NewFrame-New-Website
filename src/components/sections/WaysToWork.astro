@@ -221,6 +221,13 @@ const t = useTranslations(lang);
     text-wrap: balance;
   }
 
+  @media (max-width: 767px) {
+    .ways-to-work__content h3 {
+      font-size: clamp(2.05rem, 8.6vw, 2.55rem);
+      line-height: 1;
+    }
+  }
+
   .ways-to-work__content p,
   .ways-to-work__content li {
     font-family: var(--font-mono);
