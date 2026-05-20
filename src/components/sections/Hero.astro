@@ -28,7 +28,6 @@ const t = useTranslations(lang);
           >
             {t.hero.statement}
           </h1>
-          <p class="hero-offer__subcopy">{t.hero.subcopy}</p>
           <div class="hero-offer__actions">
             <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">
               <span>{t.hero.primaryCta}</span>
@@ -141,18 +140,6 @@ const t = useTranslations(lang);
 
   .hero-offer__statement span {
     font-style: italic;
-  }
-
-  .hero-offer__subcopy {
-    max-width: 36rem;
-    margin: 1.5rem 0 0;
-    color: var(--color-text-muted);
-    font-family: var(--font-body);
-    font-size: clamp(1rem, 4.4vw, 1.1875rem);
-    font-weight: 400;
-    line-height: 1.58;
-    letter-spacing: 0;
-    text-wrap: pretty;
   }
 
   .hero-offer__actions {
@@ -340,25 +327,18 @@ const t = useTranslations(lang);
     }
 
     .hero-offer__statement {
-      grid-column: 1;
+      grid-column: 1 / -1;
+      justify-self: center;
       max-width: none;
-      font-size: clamp(2.95rem, 3.58vw, 4.85rem);
+      font-size: clamp(3.565rem, 4.8875vw, 5.98rem);
       line-height: 0.94;
-      text-align: left;
+      text-align: center;
+      white-space: nowrap;
     }
 
     #hero[data-lang='pl'] .hero-offer__statement {
       max-width: none;
-      font-size: clamp(2.75rem, 3.35vw, 4.55rem);
-    }
-
-    .hero-offer__subcopy {
-      grid-column: 3;
-      max-width: none;
-      margin: clamp(0.25rem, 1.2vh, 1rem) 0 0;
-      font-size: clamp(0.875rem, 0.92vw, 1.05rem);
-      line-height: 1.52;
-      text-align: right;
+      font-size: clamp(3.5075rem, 4.7725vw, 5.8075rem);
     }
 
     .hero-offer__actions {
@@ -428,12 +408,6 @@ const t = useTranslations(lang);
       line-height: 0.92;
     }
 
-    .hero-offer__subcopy {
-      max-width: 42rem;
-      align-self: end;
-      margin-top: clamp(13rem, 30svh, 19rem);
-    }
-
     .hero-offer__actions {
       flex-direction: row;
       align-items: stretch;
@@ -497,10 +471,6 @@ const t = useTranslations(lang);
       line-height: 0.94;
     }
 
-    .hero-offer__subcopy {
-      display: none;
-    }
-
     .hero-offer__actions {
       align-self: end;
       margin-top: clamp(6rem, 22svh, 12rem);
@@ -517,10 +487,6 @@ const t = useTranslations(lang);
   }
 
   @media (max-height: 760px) {
-    .hero-offer__subcopy {
-      margin-top: clamp(1.75rem, 8svh, 3.75rem);
-    }
-
     .hero-offer__actions {
       margin-top: 1.4rem;
     }
@@ -533,7 +499,7 @@ const t = useTranslations(lang);
     }
 
     .hero-offer__statement {
-      font-size: clamp(4.25rem, 5.4vw, 5.8rem);
+      font-size: clamp(3.5075rem, 4.715vw, 5.4625rem);
     }
   }
 
@@ -583,7 +549,6 @@ const t = useTranslations(lang);
 
     const hero = document.getElementById('hero');
     const title = document.getElementById('hero-title');
-    const subcopy = hero?.querySelector('.hero-offer__subcopy');
     const actions = hero?.querySelector('.hero-offer__actions');
     const shaderCanvas = document.getElementById('hero-background-shader-canvas') as HTMLCanvasElement | null;
     const ac = new AbortController();
@@ -599,7 +564,7 @@ const t = useTranslations(lang);
 
     const runIntro = () => {
       if (!hero || !title || prefersReducedMotion) {
-        gsap.set([title, subcopy, actions].filter(Boolean), { clearProps: 'all' });
+        gsap.set([title, actions].filter(Boolean), { clearProps: 'all' });
         return;
       }
 
@@ -628,7 +593,7 @@ const t = useTranslations(lang);
         rotateX: -18,
         transformOrigin: '50% 100%',
       });
-      gsap.set([subcopy, actions].filter(Boolean), {
+      gsap.set(actions, {
         y: 28,
         opacity: 0,
         filter: 'blur(8px)',
@@ -656,18 +621,12 @@ const t = useTranslations(lang);
           duration: 1.35,
           stagger: 0.12,
         }, 0.16)
-        .to(subcopy, {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 1.05,
-        }, 0.72)
         .to(actions, {
           y: 0,
           opacity: 1,
           filter: 'blur(0px)',
           duration: 1,
-        }, 0.92);
+        }, 0.72);
     };
 
     const resizeShaderToCanvas = () => {
@@ -709,7 +668,7 @@ const t = useTranslations(lang);
               objectFit: 'none',
               url: new URL('/images/newframe-logo.svg', window.location.origin).href,
               transform: {
-                offsetY: isMobileShader ? 0.05 : 0,
+                offsetY: 0.05,
                 scale: isMobileShader ? 0.78 : 0.5,
               },
             },
@@ -799,7 +758,7 @@ const t = useTranslations(lang);
     cleanupFn = () => {
       shaderDisposed = true;
       timelines.forEach((tl) => tl.kill());
-      gsap.killTweensOf([title, subcopy, actions, shaderCanvas].filter(Boolean));
+      gsap.killTweensOf([title, actions, shaderCanvas].filter(Boolean));
       if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
       shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
