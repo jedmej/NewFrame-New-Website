@@ -34,7 +34,10 @@ const t = useTranslations(lang);
             {/* Left: sticky category heading */}
             <div class="service-category-col">
               <div class="service-category-block">
-                <h3 class="service-category">{group.category}</h3>
+                <h3 class="service-category">
+                  <span class="service-category-index">{String(gi + 1).padStart(2, '0')}.</span>
+                  <span>{group.category}</span>
+                </h3>
                 <p class="service-description">{group.description}</p>
               </div>
             </div>
@@ -124,7 +127,7 @@ const t = useTranslations(lang);
     max-width: 30rem;
     font-family: var(--font-mono);
     font-size: clamp(1.08rem, 1.12vw, 1.28rem);
-    line-height: 1.64;
+    line-height: 1.16;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;
@@ -181,12 +184,22 @@ const t = useTranslations(lang);
   }
 
   .service-category {
+    display: grid;
+    gap: 0.65rem;
     font-family: var(--font-serif);
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 400;
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--color-text);
+  }
+
+  .service-category-index {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
   }
 
   .service-category-block {
@@ -199,7 +212,7 @@ const t = useTranslations(lang);
   .service-description {
     font-family: var(--font-mono);
     font-size: clamp(1rem, 0.9vw, 1.06rem);
-    line-height: 1.68;
+    line-height: 1.18;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;
@@ -245,6 +258,13 @@ const t = useTranslations(lang);
   /* Right column: service items */
   .service-items-col {
     flex: 1;
+  }
+
+  @media (min-width: 768px) {
+    .service-items-col {
+      max-width: 50vh;
+      margin-left: auto;
+    }
   }
 
   .service-row-inner {

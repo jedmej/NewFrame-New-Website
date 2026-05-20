@@ -48,19 +48,19 @@ export const translations = {
       pricing: 'Most projects are scoped individually. Website projects usually start from 5,000 PLN, depending on scope.',
       items: [
         {
-          title: 'Website Sprint',
+          title: 'Websites & Landing Pages',
           description: 'A custom website for a business that wants to look sharper, more credible and easier to understand online.',
-          includes: ['Creative direction', 'Site structure', 'Interface design', 'Frontend development', 'Launch support'],
+          includes: ['Offer architecture', 'Conversion sections', 'Interface design', 'Frontend development', 'Mobile performance', 'Launch setup'],
         },
         {
-          title: 'Brand & Web Direction',
+          title: 'Brand & Design Direction',
           description: 'We shape the visual direction, structure and website language so the brand feels more focused, premium and distinct.',
-          includes: ['Visual direction', 'Design system foundations', 'Homepage and key page direction', 'Brand feel refinement'],
+          includes: ['Visual audit', 'Reference boards', 'Art direction', 'Homepage concept', 'Design system basics', 'Motion and interaction style'],
         },
         {
-          title: 'Digital Systems',
+          title: 'Full Digital Systems',
           description: 'For projects where a website alone is not enough: booking flows, forms, content systems or simple automations.',
-          includes: ['Booking and reservation flows', 'Forms', 'Simple CMS', 'Integrations', 'Operational tools'],
+          includes: ['User flows', 'Booking or intake flows', 'Lead capture forms', 'CMS content model', 'Integrations', 'Operational handoff'],
         },
       ],
     },
@@ -238,19 +238,19 @@ export const translations = {
       pricing: 'Większość projektów wyceniamy indywidualnie. Strony najczęściej startują od 5 000 PLN, zależnie od zakresu.',
       items: [
         {
-          title: 'Website Sprint',
+          title: 'Strony i landing pages',
           description: 'Indywidualna strona dla firmy, która chce wyglądać nowocześniej, bardziej wiarygodnie i łatwiej opowiadać o swojej ofercie.',
-          includes: ['Kierunek kreatywny', 'Struktura strony', 'Projekt interfejsu', 'Wdrożenie frontendowe', 'Wsparcie przy publikacji'],
+          includes: ['Architektura oferty', 'Sekcje sprzedażowe', 'Projekt interfejsu', 'Wdrożenie frontendowe', 'Mobile i performance', 'Konfiguracja publikacji'],
         },
         {
-          title: 'Brand & Web Direction',
+          title: 'Kierunek marki i designu',
           description: 'Pomagamy uporządkować wygląd, strukturę i język strony, żeby marka była bardziej wyrazista, spójna i premium.',
-          includes: ['Kierunek wizualny', 'Podstawy systemu wizualnego', 'Strona główna i kluczowe podstrony', 'Dopracowanie charakteru marki'],
+          includes: ['Audyt wizualny', 'Moodboard i referencje', 'Art direction', 'Koncepcja strony głównej', 'Podstawy systemu designu', 'Styl ruchu i interakcji'],
         },
         {
-          title: 'Digital Systems',
+          title: 'Pełne systemy cyfrowe',
           description: 'Dla projektów, w których sama strona to za mało: rezerwacje, formularze, system treści albo proste automatyzacje.',
-          includes: ['Rezerwacje i zapisy', 'Formularze', 'Prosty CMS', 'Integracje', 'Narzędzia operacyjne'],
+          includes: ['Ścieżki użytkownika', 'Rezerwacje albo zgłoszenia', 'Formularze leadowe', 'Model treści i CMS', 'Integracje', 'Przekazanie operacyjne'],
         },
       ],
     },

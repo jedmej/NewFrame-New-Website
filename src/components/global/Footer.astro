@@ -12,8 +12,8 @@ const year = new Date().getFullYear();
 const email = 'hello@newframe.studio';
 const footerMeta = [
   'NEWFRAME ©26',
-  lang === 'pl' ? 'NIEZALEŻNE STUDIO CYFROWE' : 'INDEPENDENT DIGITAL STUDIO',
-  lang === 'pl' ? 'OKOLICE WARSZAWY / POLSKA / ZAGRANICA' : 'NEAR WARSAW / POLAND / ABROAD',
+  'DESIGN STUDIO',
+  'WARSAW BASED',
 ];
 
 const emailSubject = lang === 'pl' ? 'Zapytanie o projekt, New Frame Studio' : 'Project inquiry, New Frame Studio';
@@ -107,6 +107,7 @@ const footerLinks = [
 
   .footer-surface {
     position: relative;
+    min-height: 100svh;
     overflow: hidden;
     background: var(--color-bg-dark);
   }
@@ -125,15 +126,18 @@ const footerLinks = [
   .footer-inner {
     position: relative;
     z-index: 1;
+    display: grid;
+    min-height: 100svh;
+    align-content: center;
+    gap: 1.5rem;
     width: min(100%, 1400px);
     margin: 0 auto;
-    padding: clamp(6.5rem, 10vw, 10rem) 1.5rem 1.5rem;
+    padding: clamp(4.5rem, 7svh, 6.5rem) 1.5rem clamp(2rem, 4svh, 3rem);
   }
 
   @media (min-width: 768px) {
     .footer-inner {
       padding-inline: 2.5rem;
-      padding-bottom: 2rem;
     }
   }
 

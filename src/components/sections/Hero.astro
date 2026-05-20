@@ -138,6 +138,11 @@ const t = useTranslations(lang);
     will-change: transform, opacity, filter;
   }
 
+  .hero-offer__statement :global(.hero-char) {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+  }
+
   .hero-offer__statement span {
     font-style: italic;
   }
@@ -569,8 +574,9 @@ const t = useTranslations(lang);
       }
 
       const split = new SplitText(title, {
-        type: 'lines',
+        type: 'lines, chars',
         linesClass: 'hero-line',
+        charsClass: 'hero-char',
         mask: 'lines',
       });
       splitInstances.push(split);
@@ -585,8 +591,14 @@ const t = useTranslations(lang);
       const lineInners = split.lines
         .map((line) => line.querySelector('.hero-line-inner'))
         .filter((line): line is HTMLElement => line instanceof HTMLElement);
+      const chars = split.chars.filter((char): char is HTMLElement => char instanceof HTMLElement);
 
       gsap.set(lineInners, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        rotateX: 0,
+      });
+      gsap.set(chars, {
         yPercent: 116,
         opacity: 0,
         filter: 'blur(10px)',
@@ -613,13 +625,13 @@ const t = useTranslations(lang);
         duration: 2.2,
         ease: 'power3.out',
       }, 0)
-        .to(lineInners, {
+        .to(chars, {
           yPercent: 0,
           opacity: 1,
           filter: 'blur(0px)',
           rotateX: 0,
-          duration: 1.35,
-          stagger: 0.12,
+          duration: 0.95,
+          stagger: 0.018,
         }, 0.16)
         .to(actions, {
           y: 0,

@@ -22,8 +22,8 @@ type GridProject = {
 
 const hubertProject: GridProject = {
   key: 'hubert',
-  name: 'HUBERT',
-  image: '/images/work/hubert.jpg',
+  name: 'HUBERT PHOTOGRAPHY',
+  image: '/images/work/hubert.webp',
   category: 'WEB',
   url: 'https://hubertkesik.com/',
 };
@@ -31,6 +31,7 @@ const hubertProject: GridProject = {
 const amvisProject: GridProject = {
   key: 'amvis',
   name: 'AMVIS',
+  image: '/images/work/amvis.webp',
   category: 'IN PROGRESS',
   url: '#',
   placeholder: true,
@@ -52,7 +53,18 @@ const keyedProjects: GridProject[] = allProjects.map((project) => {
   return { ...project, key };
 });
 
-const gridProjects: GridProject[] = [hubertProject, ...keyedProjects, amvisProject];
+const projectsByKey = Object.fromEntries(
+  [...keyedProjects, hubertProject, amvisProject].map((project) => [project.key, project])
+) as Record<GridProject['key'], GridProject>;
+
+const gridProjects: GridProject[] = [
+  projectsByKey.uroki,
+  projectsByKey.hubert,
+  projectsByKey.panenka,
+  projectsByKey.esthetic,
+  projectsByKey.amvis,
+  projectsByKey.adfidence,
+];
 const firstProject = gridProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
 ---
