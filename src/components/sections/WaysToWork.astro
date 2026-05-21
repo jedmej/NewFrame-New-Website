@@ -46,22 +46,13 @@ const t = useTranslations(lang);
   .ways-to-work {
     position: relative;
     padding: clamp(7rem, 12vw, 11rem) 1.5rem;
-    background: #E4DBD0;
+    background: color-mix(
+      in srgb,
+      #E4DBD0 calc(100% - (var(--work-exit-transition-progress, 0) * 100%)),
+      var(--color-bg-dark) calc(var(--work-exit-transition-progress, 0) * 100%)
+    );
     color: var(--color-text);
-  }
-
-  .ways-to-work::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    right: 0;
-    left: 0;
-    z-index: 0;
-    height: min(72svh, 46rem);
-    pointer-events: none;
-    background: var(--color-bg-dark);
-    opacity: var(--work-exit-transition-progress, 0);
-    will-change: opacity;
+    will-change: background;
   }
 
   .ways-to-work__inner {
@@ -119,7 +110,7 @@ const t = useTranslations(lang);
     max-width: 29rem;
     font-family: var(--font-mono);
     font-size: clamp(1.08rem, 1.12vw, 1.28rem);
-    line-height: 1.15;
+    line-height: 1.5;
     letter-spacing: 0.02em;
     color: var(--color-text-muted);
     text-wrap: pretty;

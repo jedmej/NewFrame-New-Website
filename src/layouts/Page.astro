@@ -15,6 +15,7 @@ interface Props {
 
 const { title, description, lang } = Astro.props;
 const t = useTranslations(lang);
+const RetuneOverlay = import.meta.env.DEV ? (await import('../components/global/RetuneOverlay.astro')).default : null;
 ---
 
 <Base title={title} description={description} lang={lang}>
@@ -28,6 +29,7 @@ const t = useTranslations(lang);
   </main>
 
   <Footer lang={lang} />
+  {RetuneOverlay && <RetuneOverlay />}
 
   <!-- Initialize Lenis smooth scroll -->
   <script>
