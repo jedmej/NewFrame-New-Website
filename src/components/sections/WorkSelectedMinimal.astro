@@ -127,6 +127,8 @@ const firstMeta = t.work.projects[firstProject.key];
       })}
     </div>
 
+    <span class="work-grid-reference__cursor-label" data-work-cursor-label aria-hidden="true"></span>
+
     <div class="work-grid-reference__details" aria-live="polite">
       <h2 data-work-title>{firstProject.name}</h2>
       <p data-work-description>{firstMeta.description}</p>
@@ -244,6 +246,7 @@ const firstMeta = t.work.projects[firstProject.key];
     --velocity-shift: 0px;
     --card-opacity: 1;
     --card-blur: 0px;
+    --card-hover-scale: 1;
     --card-brightness: 1;
     --card-saturation: 1;
     --card-grayscale: 0%;
@@ -269,12 +272,22 @@ const firstMeta = t.work.projects[firstProject.key];
         calc(-50% + var(--card-x) + var(--velocity-shift)),
         calc(-50% + var(--card-y) + var(--velocity-shift)),
         0
-      );
+      )
+      scale(var(--card-hover-scale));
+    transform-origin: center;
     transition:
       opacity 0.42s var(--ease-out-quart),
       filter 0.42s var(--ease-out-quart);
     will-change: transform, opacity, filter;
     pointer-events: auto;
+  }
+
+  .work-grid-reference__card.is-work-hovering,
+  .work-grid-reference__card.is-work-hover-returning {
+    transition:
+      opacity 0.42s var(--ease-out-quart),
+      filter 0.42s var(--ease-out-quart),
+      transform 0.64s var(--ease-out-quart);
   }
 
   .work-grid-reference__media {
@@ -285,6 +298,51 @@ const firstMeta = t.work.projects[firstProject.key];
     border-radius: 2px;
     background: rgba(243, 234, 223, 0.08);
     box-shadow: 0 1rem 2.25rem rgba(0, 0, 0, 0.28);
+  }
+
+  .work-grid-reference__cursor-label {
+    position: fixed;
+    z-index: 7;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.45rem;
+    max-width: min(22rem, calc(100vw - 2rem));
+    padding: 0.82rem 0.92rem;
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgba(243, 234, 223, 0.92);
+    color: var(--color-bg-dark);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0;
+    transform:
+      translate3d(
+        calc(var(--cursor-label-x, -100px) + 0.85rem),
+        calc(var(--cursor-label-y, -100px) + 0.85rem),
+        0
+      );
+    transform-origin: left top;
+    transition: opacity 0.16s var(--ease-out-quart);
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  .work-grid-reference__cursor-label.is-visible {
+    opacity: 1;
+    transform:
+      translate3d(
+        calc(var(--cursor-label-x, -100px) + 0.85rem),
+        calc(var(--cursor-label-y, -100px) + 0.85rem),
+        0
+      );
   }
 
   .work-grid-reference__media img {
@@ -496,7 +554,8 @@ const firstMeta = t.work.projects[firstProject.key];
 
     .work-grid-reference__stage::before,
     .work-grid-reference__details,
-    .work-grid-reference__counter {
+    .work-grid-reference__counter,
+    .work-grid-reference__cursor-label {
       display: none;
     }
 
@@ -584,7 +643,8 @@ const firstMeta = t.work.projects[firstProject.key];
     }
 
     .work-grid-reference__details,
-    .work-grid-reference__counter {
+    .work-grid-reference__counter,
+    .work-grid-reference__cursor-label {
       display: none;
     }
 
@@ -646,6 +706,7 @@ const firstMeta = t.work.projects[firstProject.key];
     const titleEl = section.querySelector<HTMLElement>('[data-work-title]');
     const descriptionEl = section.querySelector<HTMLElement>('[data-work-description]');
     const rolesEl = section.querySelector<HTMLElement>('[data-work-roles]');
+    const cursorLabelEl = section.querySelector<HTMLElement>('[data-work-cursor-label]');
     const shaderCanvas = section.querySelector<HTMLCanvasElement>('#work-minimal-shader-canvas');
     const detailEls = [titleEl, descriptionEl, rolesEl].filter(Boolean) as HTMLElement[];
     const ac = new AbortController();
@@ -654,6 +715,9 @@ const firstMeta = t.work.projects[firstProject.key];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 841px)');
     let activeIndex = -1;
+    let hoveredIndex = -1;
+    let hoverTransitioning = false;
+    let hoverTransitionTimer: ReturnType<typeof setTimeout> | null = null;
     let progress = 0;
     let targetVelocity = 0;
     let velocity = 0;
@@ -902,6 +966,7 @@ const firstMeta = t.work.projects[firstProject.key];
       if (nextIndex === activeIndex) return;
 
       activeIndex = nextIndex;
+      if (hoveredIndex !== -1 && hoveredIndex !== activeIndex) hoveredIndex = -1;
 
       if (immediate || prefersReducedMotion || detailEls.length === 0) {
         applyActiveContent(nextIndex, true);
@@ -958,23 +1023,64 @@ const firstMeta = t.work.projects[firstProject.key];
       });
     };
 
+    const updateCursorLabel = (event: MouseEvent | PointerEvent, card: HTMLElement) => {
+      if (!cursorLabelEl) return;
+
+      cursorLabelEl.textContent = `${card.dataset.label || ''} ${card.dataset.title || ''}`.trim();
+      cursorLabelEl.style.setProperty('--cursor-label-x', `${event.clientX.toFixed(1)}px`);
+      cursorLabelEl.style.setProperty('--cursor-label-y', `${event.clientY.toFixed(1)}px`);
+    };
+
+    const setHoveredIndex = (index: number, event?: MouseEvent | PointerEvent) => {
+      if (hoverTransitionTimer) {
+        window.clearTimeout(hoverTransitionTimer);
+        hoverTransitionTimer = null;
+      }
+
+      const nextIndex = index === activeIndex ? index : -1;
+      const nextCard = nextIndex >= 0 ? cards[nextIndex] : null;
+      hoveredIndex = nextIndex;
+      hoverTransitioning = true;
+
+      if (nextCard) {
+        if (event) updateCursorLabel(event, nextCard);
+        cursorLabelEl?.classList.add('is-visible');
+      } else {
+        cursorLabelEl?.classList.remove('is-visible');
+        hoverTransitionTimer = window.setTimeout(() => {
+          hoverTransitioning = false;
+          setProgress(progress);
+        }, 680);
+      }
+
+      setProgress(progress);
+    };
+
     const setProgress = (nextProgress: number) => {
       progress = clamp(nextProgress, 0, 1);
       const lastIndex = Math.max(cards.length - 1, 1);
       const { stepX, stepY } = geometry();
       const active = Math.round(progress * lastIndex);
+      const cardSize = cards[0]?.getBoundingClientRect().width || stepX;
 
       setActiveIndex(active);
+      const activeHoverIndex = hoveredIndex === activeIndex ? hoveredIndex : -1;
+      const hoverPush = activeHoverIndex >= 0 ? cardSize * 0.34 : 0;
 
       cards.forEach((card, index) => {
         const rel = index - progress * lastIndex;
         const distance = Math.abs(rel);
         const focus = clamp(1 - distance * 0.78, 0, 1);
-        const x = rel * stepX;
-        const y = rel * stepY;
+        const hoverDirection = activeHoverIndex >= 0 && index !== activeHoverIndex
+          ? Math.sign(index - activeHoverIndex)
+          : 0;
+        const x = rel * stepX + hoverDirection * hoverPush;
+        const y = rel * stepY + hoverDirection * hoverPush;
+        const isHoverActive = activeHoverIndex === index;
 
         card.style.setProperty('--card-x', `${x.toFixed(2)}px`);
         card.style.setProperty('--card-y', `${y.toFixed(2)}px`);
+        card.style.setProperty('--card-hover-scale', isHoverActive ? '1.16' : '1');
         card.style.setProperty('--card-opacity', (0.18 + focus * 0.82).toFixed(3));
         card.style.setProperty('--card-brightness', (0.46 + focus * 0.58).toFixed(3));
         card.style.setProperty('--card-saturation', (0.68 + focus * 0.42).toFixed(3));
@@ -986,7 +1092,10 @@ const firstMeta = t.work.projects[firstProject.key];
         card.style.setProperty('--image-parallax-x', `${parallaxX.toFixed(2)}px`);
         card.style.setProperty('--image-parallax-y', `${parallaxY.toFixed(2)}px`);
         card.style.setProperty('--image-scale', (1.112 - focus * 0.042).toFixed(3));
-        card.style.zIndex = String(80 - Math.round(distance * 10));
+        card.style.zIndex = String(isHoverActive ? 120 : 80 - Math.round(distance * 10));
+        card.classList.toggle('is-work-hovering', activeHoverIndex >= 0);
+        card.classList.toggle('is-work-hover-returning', activeHoverIndex < 0 && hoverTransitioning);
+        card.classList.toggle('is-work-hover-active', isHoverActive);
         card.style.pointerEvents = distance < 0.58 ? 'auto' : 'none';
         card.setAttribute('aria-hidden', distance < 1.35 ? 'false' : 'true');
         if (distance < 0.58) {
@@ -996,6 +1105,32 @@ const firstMeta = t.work.projects[firstProject.key];
         }
       });
     };
+
+    cards.forEach((card, index) => {
+      const handleHoverEnter = (event: MouseEvent | PointerEvent) => setHoveredIndex(index, event);
+      const handleHoverMove = (event: MouseEvent | PointerEvent) => {
+        if (hoveredIndex === index) updateCursorLabel(event, card);
+      };
+      const handleHoverLeave = () => setHoveredIndex(-1);
+
+      card.addEventListener('pointerenter', handleHoverEnter, { signal });
+      card.addEventListener('pointermove', handleHoverMove, { signal });
+      card.addEventListener('pointerleave', handleHoverLeave, { signal });
+      card.addEventListener('mouseenter', handleHoverEnter, { signal });
+      card.addEventListener('mousemove', handleHoverMove, { signal });
+      card.addEventListener('mouseleave', handleHoverLeave, { signal });
+      card.addEventListener('focus', () => {
+        const rect = card.getBoundingClientRect();
+        if (cursorLabelEl) {
+          cursorLabelEl.textContent = `${card.dataset.label || ''} ${card.dataset.title || ''}`.trim();
+          cursorLabelEl.style.setProperty('--cursor-label-x', `${(rect.left + rect.width * 0.5).toFixed(1)}px`);
+          cursorLabelEl.style.setProperty('--cursor-label-y', `${(rect.top + rect.height * 0.5).toFixed(1)}px`);
+          cursorLabelEl.classList.add('is-visible');
+        }
+        setHoveredIndex(index);
+      }, { signal });
+      card.addEventListener('blur', () => setHoveredIndex(-1), { signal });
+    });
 
     const renderVelocity = () => {
       velocity += (targetVelocity - velocity) * 0.12;
@@ -1108,6 +1243,7 @@ const firstMeta = t.work.projects[firstProject.key];
       shaderDisposed = true;
       textTween?.kill();
       numberTween?.kill();
+      if (hoverTransitionTimer) window.clearTimeout(hoverTransitionTimer);
       if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
       if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
       shaderResizeObserver?.disconnect();

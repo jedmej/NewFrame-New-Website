@@ -95,7 +95,7 @@ export const translations = {
     work: {
       label: 'SELECTED WORK',
       carouselLabel: 'Interactive showcase of selected projects',
-      viewProject: 'View',
+      viewProject: 'Visit',
       previewProject: 'Preview',
       projects: {
         hubert: {
@@ -262,7 +262,7 @@ export const translations = {
     work: {
       label: 'WYBRANE PRACE',
       carouselLabel: 'Interaktywna prezentacja wybranych projektów',
-      viewProject: 'Zobacz',
+      viewProject: 'Odwiedź',
       previewProject: 'Zapowiedź',
       projects: {
         hubert: {
