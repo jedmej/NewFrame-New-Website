@@ -141,6 +141,9 @@ const firstMeta = t.work.projects[firstProject.key];
   .work-grid-reference {
     --work-dark-progress: 1;
     --work-shader-opacity: 0.68;
+    --work-card-size: clamp(18rem, 27vw, 32rem);
+    --work-card-half: clamp(9rem, 13.5vw, 16rem);
+    --work-detail-right: clamp(2.5rem, 5vw, 5rem);
     position: relative;
     height: calc(var(--work-items) * 100svh);
     min-height: 360svh;
@@ -251,7 +254,7 @@ const firstMeta = t.work.projects[firstProject.key];
     top: 50%;
     left: 50%;
     display: block;
-    width: clamp(18rem, 28vw, 34rem);
+    width: var(--work-card-size);
     aspect-ratio: 1;
     color: inherit;
     text-decoration: none;
@@ -345,8 +348,8 @@ const firstMeta = t.work.projects[firstProject.key];
     position: absolute;
     z-index: 5;
     top: clamp(6.5rem, 14svh, 8rem);
-    right: clamp(2.5rem, 5vw, 5rem);
-    width: min(34rem, 36vw);
+    right: var(--work-detail-right);
+    width: min(38rem, 31vw, calc(50vw - var(--work-card-half) - var(--work-detail-right) - 5rem));
     pointer-events: none;
   }
 
@@ -431,14 +434,20 @@ const firstMeta = t.work.projects[firstProject.key];
   }
 
   @media (max-width: 1180px) {
+    .work-grid-reference {
+      --work-card-size: clamp(15rem, 32vw, 24rem);
+      --work-card-half: clamp(7.5rem, 16vw, 12rem);
+      --work-detail-right: clamp(2rem, 5vw, 4rem);
+    }
+
     .work-grid-reference__card {
-      width: clamp(16rem, 38vw, 27rem);
+      width: var(--work-card-size);
     }
 
     .work-grid-reference__details {
-      top: clamp(6rem, 13svh, 7.5rem);
-      right: clamp(2rem, 5vw, 4rem);
-      width: min(30rem, 42vw);
+      top: clamp(4.5rem, 10svh, 6rem);
+      right: var(--work-detail-right);
+      width: min(21rem, 27vw, calc(50vw - var(--work-card-half) - var(--work-detail-right) - 6.5rem));
     }
 
     .work-grid-reference__counter {
