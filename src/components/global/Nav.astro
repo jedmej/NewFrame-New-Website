@@ -98,7 +98,7 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
 <div
   id="mobile-menu"
   class="fixed inset-0 z-[99] bg-[var(--color-bg)] flex flex-col items-end justify-end px-4 pb-12 pointer-events-none"
-  style="clip-path: ellipse(150% 0% at 50% 0%);"
+  style="clip-path: inset(0 0 100% 0);"
   aria-hidden="true"
 >
   <div class="flex flex-col items-end gap-2">
@@ -118,6 +118,112 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
 <style>
   #main-nav {
     opacity: 0;
+  }
+
+  @media (max-width: 1023px) {
+    #main-nav {
+      top: max(0.875rem, env(safe-area-inset-top));
+      right: clamp(0.75rem, 4vw, 1.25rem);
+      left: clamp(0.75rem, 4vw, 1.25rem);
+      width: auto;
+      min-height: 4.25rem;
+      padding: 0.875rem 1rem 0.875rem 1.125rem;
+      border: 1px solid rgba(20, 18, 15, 0.12);
+      border-radius: 0.125rem;
+      background: rgba(239, 235, 226, 0.68);
+      box-shadow:
+        0 1.2rem 3.4rem rgba(60, 42, 31, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.22) inset;
+      -webkit-backdrop-filter: blur(34px) saturate(1.18);
+      backdrop-filter: blur(34px) saturate(1.18);
+    }
+
+    #main-nav.nav-menu-open {
+      border-bottom-color: rgba(20, 18, 15, 0.08);
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      box-shadow:
+        0 0.9rem 2.8rem rgba(60, 42, 31, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+    }
+
+    #mobile-menu {
+      top: calc(max(0.875rem, env(safe-area-inset-top)) + 4.25rem - 1px);
+      right: clamp(0.75rem, 4vw, 1.25rem);
+      bottom: auto;
+      left: clamp(0.75rem, 4vw, 1.25rem);
+      z-index: 100;
+      align-items: stretch;
+      justify-content: flex-start;
+      max-height: calc(100svh - max(0.875rem, env(safe-area-inset-top)) - 5.25rem);
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(20, 18, 15, 0.12);
+      border-top: 0;
+      border-radius: 0 0 0.125rem 0.125rem;
+      background: rgba(239, 235, 226, 0.72);
+      box-shadow:
+        0 1.8rem 4.2rem rgba(60, 42, 31, 0.16),
+        0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+      -webkit-backdrop-filter: blur(34px) saturate(1.18);
+      backdrop-filter: blur(34px) saturate(1.18);
+    }
+
+    #mobile-menu > div:first-child {
+      align-items: stretch;
+      gap: 0;
+      width: 100%;
+    }
+
+    #mobile-menu > div:last-child {
+      margin-top: 0;
+      padding: 1rem 1.125rem 1.125rem;
+      border-top: 1px solid rgba(20, 18, 15, 0.1);
+    }
+
+    .mobile-menu-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 3.65rem;
+      padding: 0 1.125rem;
+      border-top: 1px solid rgba(20, 18, 15, 0.1);
+      font-family: var(--font-mono);
+      font-size: clamp(0.82rem, 3.25vw, 1rem);
+      line-height: 1;
+      letter-spacing: 0.14em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .mobile-menu-link:first-child {
+      border-top: 0;
+    }
+
+    .mobile-menu-link::after {
+      width: 0.38rem;
+      height: 0.38rem;
+      flex: 0 0 auto;
+      margin-left: 1rem;
+      background: var(--color-accent);
+      content: '';
+      transform: rotate(45deg);
+    }
+
+    #mobile-menu > .mobile-menu-link {
+      min-height: auto;
+      padding: 0;
+      border-top: 0;
+      color: var(--color-text-muted);
+    }
+
+    #mobile-menu > .mobile-menu-link::after {
+      content: none;
+    }
+
+    #mobile-menu-btn {
+      margin-right: -0.5rem;
+    }
   }
 
   #mobile-menu-btn {
@@ -379,6 +485,7 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
 
     function openMenu() {
       menuOpen = true;
+      nav.classList.add('nav-menu-open');
       mobileMenu!.style.pointerEvents = 'all';
       document.body.style.overflow = 'hidden';
 
@@ -391,21 +498,21 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
       gsap.to(menuLines![0], { rotation: 45, y: 4, width: 24, duration: 0.3 });
       gsap.to(menuLines![1], { rotation: -45, y: -4, width: 24, marginLeft: 0, duration: 0.3 });
 
-      // Wipe open from top to bottom with curved edge
+      // Expand as an attached panel below the floating nav
       gsap.to(mobileMenu!, {
-        clipPath: 'ellipse(150% 110% at 50% 0%)',
-        duration: 0.9,
-        ease: 'power4.inOut',
+        clipPath: 'inset(0 0 0% 0)',
+        duration: 0.62,
+        ease: 'expo.inOut',
       });
 
-      // Stagger links in after wipe starts
+      // Stagger links in once the panel starts expanding
       gsap.to(menuLinks!, {
         opacity: 1,
         y: 0,
-        duration: 0.7,
+        duration: 0.42,
         stagger: 0.06,
         ease: 'power2.out',
-        delay: 0.35,
+        delay: 0.12,
       });
     }
 
@@ -416,12 +523,13 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
       gsap.to(menuLines![0], { rotation: 0, y: 0, duration: 0.3 });
       gsap.to(menuLines![1], { rotation: 0, y: 0, width: 16, marginLeft: 'auto', duration: 0.3 });
 
-      // Wipe close from bottom to top with curved edge
+      // Collapse back into the floating nav
       gsap.to(mobileMenu!, {
-        clipPath: 'ellipse(150% 0% at 50% 0%)',
-        duration: 0.75,
-        ease: 'power4.inOut',
+        clipPath: 'inset(0 0 100% 0)',
+        duration: 0.48,
+        ease: 'expo.inOut',
         onComplete: () => {
+          nav.classList.remove('nav-menu-open');
           mobileMenu!.style.pointerEvents = 'none';
           document.body.style.overflow = '';
 
@@ -494,7 +602,13 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
     cleanupFn = () => {
       timelines.forEach((tl) => tl.kill());
       gsap.killTweensOf(nav);
-      gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-cta, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line, .mobile-menu-link'));
+      gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-cta, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line'));
+      gsap.killTweensOf(mobileMenu?.querySelectorAll('.mobile-menu-link') || []);
+      if (mobileMenu) {
+        gsap.killTweensOf(mobileMenu);
+      }
+      nav.classList.remove('nav-menu-open');
+      document.body.style.overflow = '';
       ac.abort();
       clearTimeout(menuCloseTimeout);
     };

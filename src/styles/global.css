@@ -75,6 +75,7 @@
 /* ===== BASE STYLES ===== */
 
 html {
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
