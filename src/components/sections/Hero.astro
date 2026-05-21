@@ -348,6 +348,8 @@ const t = useTranslations(lang);
 
     .hero-offer__actions {
       grid-column: 1 / -1;
+      grid-row: 3;
+      align-self: end;
       flex-direction: row;
       align-items: stretch;
       justify-content: stretch;
@@ -414,6 +416,8 @@ const t = useTranslations(lang);
     }
 
     .hero-offer__actions {
+      grid-row: 3;
+      align-self: end;
       flex-direction: row;
       align-items: stretch;
       margin-top: clamp(1.5rem, 3svh, 2.25rem);
@@ -566,6 +570,38 @@ const t = useTranslations(lang);
     let shaderResizeFrame = 0;
     let shaderResizeObserver: ResizeObserver | null = null;
     const isMobileShader = window.matchMedia('(max-width: 767px)').matches;
+    const logoTextureId = 'idmp8izvgso13bcjfkh';
+    const getLogoTransform = () => {
+      if (!shaderCanvas) {
+        return {
+          offsetX: 0,
+          offsetY: 0.05,
+          rotation: 0,
+          scale: isMobileShader ? 0.86 : 0.5,
+          anchorX: 0.5,
+          anchorY: 0.5,
+          edges: 'transparent',
+        };
+      }
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const aspect = width / height;
+      const shortSide = Math.min(width, height);
+      const baseDesktopScale = Math.min(0.58, Math.max(0.46, (shortSide / 1080) * 0.52));
+      const ultrawideReduction = Math.min(0.085, Math.max(0, (aspect - 1.85) * 0.13));
+      const desktopScale = baseDesktopScale - ultrawideReduction;
+
+      return {
+        offsetX: 0,
+        offsetY: isMobileShader ? 0.05 : 0.04,
+        rotation: 0,
+        scale: isMobileShader ? 0.86 : desktopScale,
+        anchorX: 0.5,
+        anchorY: 0.5,
+        edges: 'transparent',
+      };
+    };
 
     const runIntro = () => {
       if (!hero || !title || prefersReducedMotion) {
@@ -650,6 +686,9 @@ const t = useTranslations(lang);
       const rect = shaderCanvas.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
         shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
+        shaderInstance.update(logoTextureId, {
+          transform: getLogoTransform(),
+        });
       }
     };
 
@@ -675,14 +714,11 @@ const t = useTranslations(lang);
           },
           {
             type: 'ImageTexture',
-            id: 'idmp8izvgso13bcjfkh',
+            id: logoTextureId,
             props: {
-              objectFit: 'none',
+              objectFit: 'contain',
               url: new URL('/images/newframe-logo.svg', window.location.origin).href,
-              transform: {
-                offsetY: 0.05,
-                scale: isMobileShader ? 0.78 : 0.5,
-              },
+              transform: getLogoTransform(),
             },
           },
           {
