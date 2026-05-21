@@ -223,7 +223,13 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 
   .quote-char {
     display: inline-block;
-    will-change: opacity, filter;
+    will-change: opacity;
+  }
+
+  @media (min-width: 1024px) {
+    .quote-char {
+      will-change: opacity, filter;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -273,6 +279,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 
     // Check reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const usesDesktopRevealBlur = window.matchMedia('(min-width: 1024px)').matches;
 
     // Split each panel's quote into words and chars
     const splits: any[] = [];
@@ -303,7 +310,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
           char.style.filter = 'none';
         } else {
           char.style.opacity = '0.06';
-          char.style.filter = 'blur(5px)';
+          char.style.filter = usesDesktopRevealBlur ? 'blur(5px)' : 'none';
         }
       });
 
@@ -417,7 +424,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
             if (split && !prefersReducedMotion) {
               split.chars.forEach((char: HTMLElement) => {
                 char.style.opacity = '1';
-                char.style.filter = 'blur(0px)';
+                char.style.filter = usesDesktopRevealBlur ? 'blur(0px)' : 'none';
               });
               split.words.forEach((word: HTMLElement) => {
                 if (word.dataset.highlight === 'true') {
@@ -459,7 +466,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
                 const opacity = 0.06 + clamped * 0.94; // 0.06 → 1
                 const blur = (1 - clamped) * 5; // 5px → 0px
                 char.style.opacity = String(opacity);
-                char.style.filter = `blur(${blur.toFixed(2)}px)`;
+                char.style.filter = usesDesktopRevealBlur ? `blur(${blur.toFixed(2)}px)` : 'none';
               });
 
               // Apply highlight color — always on so it reveals with opacity
@@ -488,7 +495,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
             if (split && !prefersReducedMotion) {
               split.chars.forEach((char: HTMLElement) => {
                 char.style.opacity = '0.06';
-                char.style.filter = 'blur(5px)';
+                char.style.filter = usesDesktopRevealBlur ? 'blur(5px)' : 'none';
               });
             }
           } else {
@@ -503,7 +510,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
             if (split && !prefersReducedMotion) {
               split.chars.forEach((char: HTMLElement) => {
                 char.style.opacity = '0.06';
-                char.style.filter = 'blur(5px)';
+                char.style.filter = usesDesktopRevealBlur ? 'blur(5px)' : 'none';
               });
             }
           }

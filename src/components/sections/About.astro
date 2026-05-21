@@ -86,7 +86,13 @@ const t = useTranslations(lang);
 
   .manifesto-char {
     display: inline-block;
-    will-change: opacity, filter;
+    will-change: opacity;
+  }
+
+  @media (min-width: 1024px) {
+    .manifesto-char {
+      will-change: opacity, filter;
+    }
   }
 
   #scope {
@@ -153,6 +159,7 @@ const t = useTranslations(lang);
 
     const scrollTriggers: ScrollTrigger[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const usesDesktopRevealBlur = window.matchMedia('(min-width: 1024px)').matches;
     const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
 
     // ===== Character-by-character manifesto reveal =====
@@ -176,7 +183,7 @@ const t = useTranslations(lang);
 
     split.chars.forEach((char: HTMLElement) => {
       char.style.opacity = prefersReducedMotion ? '1' : '0.06';
-      char.style.filter = prefersReducedMotion ? 'none' : 'blur(5px)';
+      char.style.filter = !prefersReducedMotion && usesDesktopRevealBlur ? 'blur(5px)' : 'none';
       char.style.transition = 'none';
     });
 
@@ -213,7 +220,7 @@ const t = useTranslations(lang);
             const opacity = 0.06 + clamped * 0.94;
             const blur = (1 - clamped) * 5;
             char.style.opacity = String(opacity);
-            char.style.filter = `blur(${blur.toFixed(2)}px)`;
+            char.style.filter = usesDesktopRevealBlur ? `blur(${blur.toFixed(2)}px)` : 'none';
           });
         },
       }));
