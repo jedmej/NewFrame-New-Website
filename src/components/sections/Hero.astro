@@ -55,22 +55,7 @@ const t = useTranslations(lang);
 
   #hero {
     isolation: isolate;
-    background: var(--color-bg);
-  }
-
-  #hero::after {
-    position: absolute;
-    right: 0;
-    bottom: -1px;
-    left: 0;
-    z-index: 1;
-    height: clamp(13rem, 24svh, 21rem);
-    pointer-events: none;
-    background:
-      linear-gradient(180deg, rgba(239, 235, 226, 0) 0%, rgba(239, 235, 226, 0.72) 54%, var(--color-bg) 100%),
-      radial-gradient(ellipse at 28% 100%, rgba(230, 222, 210, 0.78), transparent 54%),
-      radial-gradient(ellipse at 76% 100%, rgba(201, 70, 57, 0.08), transparent 42%);
-    content: '';
+    background: transparent;
   }
 
   .hero-background-shader {

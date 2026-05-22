@@ -10,8 +10,10 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+type ProjectKey = keyof typeof t.work.projects;
+
 type GridProject = {
-  key: keyof typeof t.work.projects;
+  key: ProjectKey;
   name: string;
   image?: string;
   category: string;
@@ -43,7 +45,7 @@ const projectKeyByUrl = {
   'https://panenkacreatives.com/': 'panenka',
   'https://esthetic.pl/': 'esthetic',
   'https://adfidence.com/': 'adfidence',
-} satisfies Record<string, keyof typeof t.work.projects>;
+} satisfies Record<string, ProjectKey>;
 
 const keyedProjects: GridProject[] = allProjects.map((project) => {
   const key = projectKeyByUrl[project.url];
@@ -55,106 +57,124 @@ const keyedProjects: GridProject[] = allProjects.map((project) => {
 
 const projectsByKey = Object.fromEntries(
   [...keyedProjects, hubertProject, amvisProject].map((project) => [project.key, project])
-) as Record<GridProject['key'], GridProject>;
+) as Record<ProjectKey, GridProject>;
 
-const gridProjects: GridProject[] = [
-  projectsByKey.uroki,
-  projectsByKey.hubert,
-  projectsByKey.panenka,
-  projectsByKey.esthetic,
-  projectsByKey.amvis,
-  projectsByKey.adfidence,
-];
-const firstProject = gridProjects[0];
+const displayNameByKey = {
+  hubert: 'Hubert Photography',
+  uroki: 'Uroki Tattoo',
+  panenka: 'Panenka Creatives',
+  esthetic: 'Esthetic',
+  adfidence: 'Adfidence',
+  amvis: 'Amvis',
+} satisfies Record<ProjectKey, string>;
+
+const caseKeys = ['hubert', 'adfidence', 'esthetic', 'panenka', 'uroki'] as const;
+const caseProjects = caseKeys.map((key) => projectsByKey[key]);
+const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
+const scrollSpan = 100 + (caseProjects.length - 1) * 62;
 ---
 
 <section
   id="work-minimal"
-  class="work-grid-reference"
+  class="work-selected-flat"
   aria-label={t.work.label}
-  style={`--work-items: ${gridProjects.length};`}
+  style={`--work-scroll-span: ${scrollSpan}svh;`}
 >
-  <span id="work" class="work-grid-reference__anchor" aria-hidden="true"></span>
+  <span id="work" class="work-selected-flat__anchor" aria-hidden="true"></span>
 
-  <div class="work-grid-reference__stage">
-    <div class="work-grid-reference__tone" aria-hidden="true"></div>
-    <canvas id="work-minimal-shader-canvas" class="work-grid-reference__shader" aria-hidden="true"></canvas>
+  <div class="work-selected-flat__stage">
+    <div class="work-selected-flat__layout">
+      <header class="work-selected-flat__title-area">
+        <p class="work-selected-flat__label text-mono-xs">{t.work.label}</p>
 
-    <div class="work-grid-reference__label-row">
-      <h2 class="text-mono-xs">{t.work.label}</h2>
-      <div class="work-grid-reference__label-line" data-work-label-line></div>
+        <nav class="work-selected-flat__titles" aria-label={t.work.carouselLabel}>
+          {caseProjects.map((project, index) => {
+            const href = project.placeholder ? undefined : project.url;
+            const meta = t.work.projects[project.key];
+
+            return (
+              <a
+                href={href}
+                target={href ? '_blank' : undefined}
+                rel={href ? 'noopener noreferrer' : undefined}
+                class={`work-selected-flat__title-link${index === 0 ? ' is-active' : ''}`}
+                aria-label={`${displayNameByKey[project.key]}. ${meta.description}`}
+                aria-current={index === 0 ? 'true' : undefined}
+                data-work-title-item
+                data-index={index}
+                data-title={displayNameByKey[project.key]}
+                data-category={project.category}
+                data-description={meta.description}
+                data-roles={meta.roles.join(' / ')}
+                data-meta={meta.roles.join(' / ')}
+              >
+                {displayNameByKey[project.key]}
+              </a>
+            );
+          })}
+        </nav>
+      </header>
+
+      <div class="work-selected-flat__meta" aria-label={`${displayNameByKey[firstProject.key]} ${firstProject.category}`}>
+        <p data-work-meta>{firstMeta.roles.join(' / ')}</p>
+      </div>
+
+      <div class="work-selected-flat__reel" role="list" aria-label={t.work.carouselLabel} data-work-reel>
+        {caseProjects.map((project, index) => {
+          const href = project.placeholder ? undefined : project.url;
+          const meta = t.work.projects[project.key];
+
+          return (
+            <a
+              href={href}
+              target={href ? '_blank' : undefined}
+              rel={href ? 'noopener noreferrer' : undefined}
+              class={`work-selected-flat__reel-item work-selected-flat__reel-item--${index + 1}${index === 0 ? ' is-active' : ''}`}
+              role="listitem"
+              aria-label={`${displayNameByKey[project.key]}. ${project.category}. ${meta.description}`}
+              aria-current={index === 0 ? 'true' : undefined}
+              data-work-reel-item
+              data-index={index}
+            >
+              <img
+                src={project.image}
+                alt={`${displayNameByKey[project.key]} ${project.category}`}
+                loading={index < 2 ? 'eager' : 'lazy'}
+              />
+            </a>
+          );
+        })}
+      </div>
+
+      <aside class="work-selected-flat__note" aria-live="polite">
+        <p data-work-description>{firstMeta.description}</p>
+      </aside>
     </div>
-
-    <div class="work-grid-reference__cards" role="list" aria-label={t.work.carouselLabel}>
-      {gridProjects.map((project, index) => {
-        const href = project.placeholder ? undefined : project.url;
-        const meta = t.work.projects[project.key];
-
-        return (
-          <a
-            href={href}
-            target={href ? '_blank' : undefined}
-            rel={href ? 'noopener noreferrer' : undefined}
-            role="listitem"
-            class={`work-grid-reference__card${project.placeholder ? ' work-grid-reference__card--placeholder' : ''}${project.tone ? ` work-grid-reference__card--${project.tone}` : ''}`}
-            data-work-card
-            data-index={index}
-            data-title={project.name}
-            data-category={project.category}
-            data-description={meta.description}
-            data-roles={meta.roles.join(' / ')}
-            data-label={href ? t.work.viewProject : t.work.previewProject}
-            style={`--card-index: ${index};`}
-            aria-label={`${project.name}. ${project.category}. ${meta.description}`}
-          >
-            <span class="work-grid-reference__media">
-              {project.image ? (
-                <img src={project.image} alt={`${project.name} ${project.category}`} loading={index < 2 ? 'eager' : 'lazy'} />
-              ) : (
-                <span class="work-grid-reference__placeholder-mark">
-                  <span>{project.name}</span>
-                </span>
-              )}
-            </span>
-            <span class="work-grid-reference__mobile-copy">
-              <span>{String(index + 1).padStart(2, '0')} / {project.category}</span>
-              <strong>{project.name}</strong>
-              <span>{meta.description}</span>
-            </span>
-          </a>
-        );
-      })}
-    </div>
-
-    <span class="work-grid-reference__cursor-label" data-work-cursor-label aria-hidden="true"></span>
-
-    <div class="work-grid-reference__details" aria-live="polite">
-      <h2 data-work-title>{firstProject.name}</h2>
-      <p data-work-description>{firstMeta.description}</p>
-      <p class="work-grid-reference__roles" data-work-roles>{firstMeta.roles.join(' / ')}</p>
-    </div>
-
-    <div class="work-grid-reference__counter" aria-hidden="true"><span class="work-grid-reference__counter-zero">0</span><span class="work-grid-reference__counter-digit" data-work-number>1</span></div>
   </div>
 </section>
 
 <style>
-  .work-grid-reference {
-    --work-dark-progress: 1;
-    --work-shader-opacity: 0.68;
-    --work-card-size: clamp(18rem, 27vw, 32rem);
-    --work-card-half: clamp(9rem, 13.5vw, 16rem);
-    --work-detail-right: clamp(2.5rem, 5vw, 5rem);
+  .work-selected-flat {
     position: relative;
-    height: calc(var(--work-items) * 100svh);
-    min-height: 360svh;
-    background: var(--color-bg-dark);
-    color: var(--color-dark-text);
+    min-height: var(--work-scroll-span);
+    background: var(--color-surface);
+    color: var(--color-text);
     isolation: isolate;
   }
 
-  .work-grid-reference__anchor {
+  .work-selected-flat__stage {
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    height: 100svh;
+    padding:
+      clamp(3.25rem, 5vw, 5.5rem)
+      clamp(1.5rem, 3.75vw, 4.5rem);
+    background: var(--color-surface);
+  }
+
+  .work-selected-flat__anchor {
     position: absolute;
     top: 0;
     left: 0;
@@ -163,525 +183,321 @@ const firstMeta = t.work.projects[firstProject.key];
     pointer-events: none;
   }
 
-  .work-grid-reference__stage {
-    position: sticky;
-    top: 0;
-    left: 0;
+  .work-selected-flat__layout {
+    display: grid;
+    grid-template-columns:
+      minmax(18rem, 1fr)
+      minmax(7rem, 0.45fr)
+      clamp(13.25rem, 15.65vw, 18.75rem)
+      minmax(17rem, 0.9fr);
+    gap: clamp(2rem, 4vw, 5rem);
+    align-items: center;
     width: 100%;
-    height: 100svh;
-    overflow: hidden;
-    background: var(--color-bg-dark);
+    height: 100%;
+    min-height: 0;
   }
 
-  .work-grid-reference__tone {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: var(--color-bg);
-    opacity: calc(1 - var(--work-dark-progress));
-    will-change: opacity;
+  .work-selected-flat__title-area {
+    display: grid;
+    gap: clamp(3rem, 7vw, 9.5rem);
+    align-self: center;
+    min-width: 0;
+    transform: translate3d(0, var(--work-title-shift, 0px), 0);
+    will-change: transform;
   }
 
-  .work-grid-reference__stage::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 .11'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 180px 180px;
-    opacity: var(--work-dark-progress);
-    will-change: opacity;
-  }
-
-  .work-grid-reference__shader {
-    position: absolute;
-    inset: -10%;
-    z-index: 1;
-    display: block;
-    width: 120%;
-    height: 120%;
-    opacity: var(--work-shader-opacity);
-    filter: saturate(1.02) brightness(0.9);
-    pointer-events: none;
-  }
-
-  .work-grid-reference__label-row {
-    position: absolute;
-    z-index: 6;
-    top: clamp(2rem, 4vw, 3.5rem);
-    right: clamp(1.5rem, 4vw, 4rem);
-    left: clamp(1.5rem, 4vw, 4rem);
-    color: var(--color-dark-text);
-    pointer-events: none;
-  }
-
-  .work-grid-reference__label-row h2 {
+  .work-selected-flat__label {
     margin: 0;
-    color: rgba(243, 234, 223, 0.82);
-    mix-blend-mode: difference;
+    color: rgba(20, 18, 15, 0.48);
   }
 
-  .work-grid-reference__label-line {
-    width: 100%;
-    height: 1px;
-    margin-top: 1rem;
-    background: rgba(243, 234, 223, 0.18);
-    transform-origin: left center;
-    mix-blend-mode: difference;
+  .work-selected-flat__titles {
+    display: grid;
+    gap: clamp(1.7rem, 2.85vw, 4rem);
+    align-content: center;
+    min-width: 0;
   }
 
-  .work-grid-reference__cards {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-  }
-
-  .work-grid-reference__card {
-    --card-x: 0px;
-    --card-y: 0px;
-    --velocity-shift: 0px;
-    --card-opacity: 1;
-    --card-blur: 0px;
-    --card-hover-scale: 1;
-    --card-brightness: 1;
-    --card-saturation: 1;
-    --card-grayscale: 0%;
-    --image-parallax-x: 0px;
-    --image-parallax-y: 0px;
-    --image-scale: 1.06;
-    position: absolute;
-    top: 50%;
-    left: 50%;
+  .work-selected-flat__title-link {
+    --work-title-opacity: 0.76;
+    --work-title-blur: 5px;
+    --work-title-x: 0px;
     display: block;
-    width: var(--work-card-size);
-    aspect-ratio: 1;
+    width: fit-content;
+    max-width: 100%;
+    color: rgba(20, 18, 15, 0.36);
+    font-family: var(--font-serif);
+    font-size: clamp(2.75rem, 2.85vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.03;
+    letter-spacing: 0;
+    text-decoration: none;
+    text-wrap: balance;
+    opacity: var(--work-title-opacity);
+    filter: blur(var(--work-title-blur));
+    transform: translate3d(var(--work-title-x), 0, 0);
+    transition:
+      color 0.45s var(--ease-out-quart),
+      filter 0.45s var(--ease-out-quart),
+      opacity 0.45s var(--ease-out-quart),
+      transform 0.45s var(--ease-out-quart);
+  }
+
+  .work-selected-flat__title-link.is-active {
+    color: var(--color-text);
+  }
+
+  .work-selected-flat__title-link:hover,
+  .work-selected-flat__title-link:focus-visible {
+    color: var(--color-text);
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0.08em);
+  }
+
+  .work-selected-flat__title-link:focus-visible,
+  .work-selected-flat__reel-item:focus-visible {
+    outline: 1px solid var(--color-text);
+    outline-offset: 0.45rem;
+  }
+
+  .work-selected-flat__meta {
+    align-self: center;
+    justify-self: center;
+    width: min(12rem, 100%);
+    color: rgba(20, 18, 15, 0.42);
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .work-selected-flat__meta p,
+  .work-selected-flat__note p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .work-selected-flat__reel {
+    --reel-width: clamp(13.25rem, 15.65vw, 18.75rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: var(--reel-width);
+    height: min(100%, clamp(39rem, 58vw, 58rem));
+    justify-self: center;
+    transform: translate3d(0, var(--work-reel-shift, 0px), 0);
+    will-change: transform;
+  }
+
+  .work-selected-flat__reel-item {
+    --work-item-opacity: 0.82;
+    --work-item-grayscale: 100%;
+    --work-item-y: 0px;
+    --work-item-scale: 1;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    flex: 0 0 auto;
+    border-radius: 2px;
+    background: rgba(20, 18, 15, 0.06);
     color: inherit;
     text-decoration: none;
-    opacity: var(--card-opacity);
-    filter:
-      blur(var(--card-blur))
-      grayscale(var(--card-grayscale))
-      brightness(var(--card-brightness))
-      saturate(var(--card-saturation));
-    transform:
-      translate3d(
-        calc(-50% + var(--card-x) + var(--velocity-shift)),
-        calc(-50% + var(--card-y) + var(--velocity-shift)),
-        0
-      )
-      scale(var(--card-hover-scale));
-    transform-origin: center;
-    transition:
-      opacity 0.42s var(--ease-out-quart),
-      filter 0.42s var(--ease-out-quart);
-    will-change: transform, opacity, filter;
-    pointer-events: auto;
-  }
-
-  .work-grid-reference__card.is-work-hovering,
-  .work-grid-reference__card.is-work-hover-returning {
+    opacity: var(--work-item-opacity);
+    filter: grayscale(var(--work-item-grayscale));
+    transform: translate3d(0, var(--work-item-y), 0) scale(var(--work-item-scale));
+    z-index: 1;
     transition:
       opacity 0.42s var(--ease-out-quart),
       filter 0.42s var(--ease-out-quart),
-      transform 0.64s var(--ease-out-quart);
+      transform 0.42s var(--ease-out-quart);
   }
 
-  .work-grid-reference__media {
-    position: absolute;
-    inset: 0;
-    display: block;
-    overflow: hidden;
-    border-radius: 2px;
-    background: rgba(243, 234, 223, 0.08);
-    box-shadow: 0 1rem 2.25rem rgba(0, 0, 0, 0.28);
-  }
-
-  .work-grid-reference__cursor-label {
-    position: fixed;
-    z-index: 7;
-    top: 0;
-    left: 0;
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.45rem;
-    max-width: min(22rem, calc(100vw - 2rem));
-    padding: 0.82rem 0.92rem;
-    overflow: hidden;
-    border-radius: 2px;
-    background: rgba(243, 234, 223, 0.92);
-    color: var(--color-bg-dark);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    opacity: 0;
-    transform:
-      translate3d(
-        calc(var(--cursor-label-x, -100px) + 0.85rem),
-        calc(var(--cursor-label-y, -100px) + 0.85rem),
-        0
-      );
-    transform-origin: left top;
-    transition: opacity 0.16s var(--ease-out-quart);
-    pointer-events: none;
-    will-change: transform, opacity;
-  }
-
-  .work-grid-reference__cursor-label.is-visible {
+  .work-selected-flat__reel-item:hover,
+  .work-selected-flat__reel-item:focus-visible {
     opacity: 1;
-    transform:
-      translate3d(
-        calc(var(--cursor-label-x, -100px) + 0.85rem),
-        calc(var(--cursor-label-y, -100px) + 0.85rem),
-        0
-      );
+    filter: grayscale(0%);
+    transform: translate3d(0, -0.35rem, 0) scale(1.035);
   }
 
-  .work-grid-reference__media img {
+  .work-selected-flat__reel-item.is-active {
+    z-index: 2;
+  }
+
+  .work-selected-flat__reel-item--1 {
+    width: calc(var(--reel-width) * 0.88);
+    height: clamp(10rem, 12.5vw, 15.5rem);
+  }
+
+  .work-selected-flat__reel-item--2 {
+    width: calc(var(--reel-width) * 0.7);
+    height: clamp(9.5rem, 11vw, 13.5rem);
+  }
+
+  .work-selected-flat__reel-item--3 {
+    width: var(--reel-width);
+    height: clamp(7.5rem, 8.7vw, 10.8rem);
+  }
+
+  .work-selected-flat__reel-item--4 {
+    width: calc(var(--reel-width) * 0.65);
+    aspect-ratio: 1;
+  }
+
+  .work-selected-flat__reel-item--5 {
+    width: calc(var(--reel-width) * 0.87);
+    height: clamp(11.5rem, 13.4vw, 16.5rem);
+  }
+
+  .work-selected-flat__reel-item img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    outline: 1px solid rgba(255, 255, 255, 0.1);
+    outline: 1px solid rgba(0, 0, 0, 0.1);
     outline-offset: -1px;
-    transform:
-      translate3d(var(--image-parallax-x), var(--image-parallax-y), 0)
-      scale(var(--image-scale));
-    transition: transform 0.7s var(--ease-out-quart);
-    will-change: transform;
+    transform: scale(1.02);
+    transition: transform 0.6s var(--ease-out-quart);
   }
 
-  .work-grid-reference__card:focus-visible .work-grid-reference__media {
-    outline: 1px solid var(--color-dark-text);
-    outline-offset: 0.45rem;
+  .work-selected-flat__reel-item:hover img,
+  .work-selected-flat__reel-item:focus-visible img {
+    transform: scale(1.06);
   }
 
-  .work-grid-reference__card--placeholder .work-grid-reference__media,
-  .work-grid-reference__card--cool .work-grid-reference__media {
-    background: var(--color-bg-dark);
-  }
-
-  .work-grid-reference__placeholder-mark {
-    position: absolute;
-    inset: 1px;
+  .work-selected-flat__note {
     display: grid;
-    place-items: center;
-    border: 1px solid rgba(243, 234, 223, 0.12);
-  }
-
-  .work-grid-reference__placeholder-mark::before,
-  .work-grid-reference__placeholder-mark::after {
-    content: '';
-    position: absolute;
-    inset: 14%;
-    border: 1px solid rgba(243, 234, 223, 0.11);
-    transform: rotate(-8deg);
-  }
-
-  .work-grid-reference__placeholder-mark::after {
-    inset: 23%;
-    transform: rotate(7deg);
-  }
-
-  .work-grid-reference__placeholder-mark span {
-    position: relative;
-    z-index: 1;
-    font-family: var(--font-display);
-    font-size: clamp(3.5rem, 7vw, 6.5rem);
-    font-weight: 700;
-    line-height: 0.85;
-    letter-spacing: 0;
-    color: var(--color-dark-text);
-  }
-
-  .work-grid-reference__details {
-    position: absolute;
-    z-index: 5;
-    top: clamp(6.5rem, 14svh, 8rem);
-    right: var(--work-detail-right);
-    width: min(38rem, 31vw, calc(50vw - var(--work-card-half) - var(--work-detail-right) - 5rem));
-    pointer-events: none;
-  }
-
-  .work-grid-reference__roles {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 0.67rem;
-    line-height: 1;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(243, 234, 223, 0.5);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .work-grid-reference__details h2 {
-    margin: 0 0 1rem;
-    font-family: var(--font-serif);
-    font-size: clamp(3.15rem, 5.2vw, 6.4rem);
-    font-weight: 400;
-    line-height: 0.82;
-    letter-spacing: 0;
-    color: var(--color-dark-text);
-    text-wrap: balance;
-  }
-
-  :global(.work-grid-reference__title-word) {
-    display: inline-block;
-    white-space: nowrap;
-  }
-
-  :global(.work-grid-reference__title-char) {
-    display: inline-block;
-    will-change: transform, opacity, filter;
-  }
-
-  .work-grid-reference__details p[data-work-description] {
-    margin: 0;
-    color: rgba(243, 234, 223, 0.76);
+    gap: 1.1rem;
+    justify-self: end;
+    width: min(22.5rem, 100%);
+    color: rgba(20, 18, 15, 0.66);
     font-family: var(--font-body);
-    font-size: clamp(1.05rem, 1.18vw, 1.32rem);
+    font-size: clamp(0.88rem, 0.78vw, 0.95rem);
     font-weight: 500;
-    line-height: 1.5;
+    line-height: 1.16;
     letter-spacing: 0;
-    text-wrap: pretty;
-  }
-
-  .work-grid-reference__roles {
-    margin-top: 1.2rem;
-    color: rgba(243, 234, 223, 0.42);
-    line-height: 1.35;
-  }
-
-  .work-grid-reference__counter {
-    position: absolute;
-    z-index: 5;
-    left: clamp(1.25rem, 8vw, 9rem);
-    bottom: clamp(1.5rem, 4.8vw, 5rem);
-    font-family: var(--font-serif);
-    font-size: clamp(8.5rem, 18vw, 19rem);
-    font-style: italic;
-    font-weight: 400;
-    line-height: 0.72;
-    letter-spacing: 0;
-    color: var(--color-dark-text);
-    font-variant-numeric: tabular-nums;
-    pointer-events: none;
-    display: inline-flex;
-    align-items: baseline;
-  }
-
-  .work-grid-reference__counter-zero,
-  .work-grid-reference__counter-digit {
-    display: inline-block;
-  }
-
-  .work-grid-reference__counter-digit {
-    will-change: transform, opacity, filter;
-  }
-
-  .work-grid-reference__mobile-copy {
-    display: none;
   }
 
   @media (max-width: 1180px) {
-    .work-grid-reference {
-      --work-card-size: clamp(15rem, 32vw, 24rem);
-      --work-card-half: clamp(7.5rem, 16vw, 12rem);
-      --work-detail-right: clamp(2rem, 5vw, 4rem);
+    .work-selected-flat__layout {
+      grid-template-columns:
+        minmax(16rem, 1fr)
+        minmax(10rem, 0.5fr)
+        clamp(11.5rem, 17vw, 14.5rem)
+        minmax(13rem, 0.8fr);
+      gap: clamp(1.35rem, 2.8vw, 3rem);
     }
 
-    .work-grid-reference__card {
-      width: var(--work-card-size);
-    }
-
-    .work-grid-reference__details {
-      top: clamp(4.5rem, 10svh, 6rem);
-      right: var(--work-detail-right);
-      width: min(21rem, 27vw, calc(50vw - var(--work-card-half) - var(--work-detail-right) - 6.5rem));
-    }
-
-    .work-grid-reference__counter {
-      font-size: clamp(6rem, 18vw, 11rem);
+    .work-selected-flat__reel {
+      --reel-width: clamp(11.5rem, 17vw, 14.5rem);
+      min-height: clamp(38rem, 60vw, 52rem);
     }
   }
 
-  @media (max-width: 840px) {
-    .work-grid-reference {
-      --work-dark-progress: 1;
-      --work-shader-opacity: 0.42;
-      height: auto;
+  @media (max-width: 900px) {
+    .work-selected-flat {
       min-height: auto;
-      overflow: hidden;
-      padding: 5.5rem 0 7rem;
-      background: var(--color-bg-dark);
     }
 
-    .work-grid-reference__stage {
+    .work-selected-flat__stage {
       position: relative;
       height: auto;
-      overflow: visible;
-      background: transparent;
+      overflow: clip;
+      padding: 6rem 1.25rem 7rem;
     }
 
-    .work-grid-reference__tone {
-      display: none;
-    }
-
-    .work-grid-reference__label-row {
-      position: relative;
-      top: auto;
-      right: auto;
-      left: auto;
-      padding-inline: 1.25rem;
-      margin-bottom: 3.25rem;
-      text-align: center;
-    }
-
-    .work-grid-reference__shader {
-      inset: -5rem -35%;
-      width: 170%;
-      height: 26rem;
-      opacity: 0.42;
-    }
-
-    .work-grid-reference__stage::before,
-    .work-grid-reference__details,
-    .work-grid-reference__counter,
-    .work-grid-reference__cursor-label {
-      display: none;
-    }
-
-    .work-grid-reference__cards {
-      position: relative;
-      inset: auto;
+    .work-selected-flat__layout {
       display: grid;
-      gap: 4rem;
-      justify-items: center;
-      text-align: center;
-      pointer-events: auto;
+      grid-template-columns: 1fr;
+      gap: 3.5rem;
+      min-height: auto;
     }
 
-    .work-grid-reference__card {
-      position: relative;
-      top: auto;
-      left: auto;
-      width: 100vw;
-      margin-inline: 0;
-      opacity: 1;
-      filter: none;
-      --card-blur: 0px;
+    .work-selected-flat__title-area {
+      gap: 3.75rem;
+    }
+
+    .work-selected-flat__titles {
+      gap: 1.85rem;
+    }
+
+    .work-selected-flat__title-area {
       transform: none;
       will-change: auto;
     }
 
-    .work-grid-reference__card:nth-child(even) {
-      transform: none;
+    .work-selected-flat__title-link {
+      width: 100%;
+      font-size: clamp(3rem, 14vw, 4.75rem);
+      line-height: 0.94;
+      filter: blur(3px);
     }
 
-    .work-grid-reference__card:nth-child(odd):not(:first-child) {
-      transform: none;
+    .work-selected-flat__meta {
+      justify-self: start;
+      width: min(16rem, 80vw);
     }
 
-    .work-grid-reference__media {
-      position: relative;
-      aspect-ratio: 1;
-      box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.28);
-    }
-
-    .work-grid-reference__mobile-copy {
+    .work-selected-flat__reel {
+      --reel-width: 100%;
       display: grid;
-      gap: 0.65rem;
-      margin-top: 1rem;
-      padding-inline: 1.25rem;
-      justify-items: center;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      width: 100%;
+      min-height: auto;
+      align-items: stretch;
+      transform: none;
+      will-change: auto;
     }
 
-    .work-grid-reference__mobile-copy span:first-child {
-      display: none;
+    .work-selected-flat__reel-item,
+    .work-selected-flat__reel-item--1,
+    .work-selected-flat__reel-item--2,
+    .work-selected-flat__reel-item--3,
+    .work-selected-flat__reel-item--4,
+    .work-selected-flat__reel-item--5 {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 0.86;
     }
 
-    .work-grid-reference__mobile-copy strong {
-      font-family: var(--font-serif);
-      font-size: clamp(2.6rem, 13vw, 4.1rem);
-      font-weight: 400;
-      line-height: 0.88;
-      letter-spacing: 0;
-      color: var(--color-dark-text);
+    .work-selected-flat__reel-item--3 {
+      grid-column: 1 / -1;
+      aspect-ratio: 1.72;
     }
 
-    .work-grid-reference__mobile-copy span:last-child {
-      color: rgba(243, 234, 223, 0.72);
-      font-family: var(--font-body);
-      font-size: 1rem;
-      font-weight: 500;
-      line-height: 1.35;
-      letter-spacing: 0;
-      max-width: 24rem;
-      text-wrap: pretty;
+    .work-selected-flat__reel-item--5 {
+      grid-column: 2;
+      grid-row: 4 / span 2;
+    }
+
+    .work-selected-flat__note {
+      justify-self: start;
+      width: min(26rem, 100%);
+      font-size: 0.95rem;
+      line-height: 1.32;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .work-grid-reference {
-      height: auto;
+    .work-selected-flat {
       min-height: auto;
-      padding: 6rem 1.25rem 7rem;
     }
 
-    .work-grid-reference__stage {
+    .work-selected-flat__stage {
       position: relative;
       height: auto;
-      overflow: visible;
     }
 
-    .work-grid-reference__details,
-    .work-grid-reference__counter,
-    .work-grid-reference__cursor-label {
-      display: none;
-    }
-
-    .work-grid-reference__cards {
-      position: relative;
-      inset: auto;
-    }
-
-    .work-grid-reference__cards {
-      display: grid;
-      gap: 4rem;
-    }
-
-    .work-grid-reference__card {
-      position: relative;
-      top: auto;
-      left: auto;
-      width: min(100%, 28rem);
-      margin-inline: auto;
-      opacity: 1;
-      filter: none;
-      --card-blur: 0px;
-      --image-parallax-x: 0px;
-      --image-parallax-y: 0px;
-      transform: none;
-      will-change: auto;
-    }
-
-    .work-grid-reference__media {
-      position: relative;
-      aspect-ratio: 1;
-    }
-
-    .work-grid-reference__mobile-copy {
-      display: grid;
-      gap: 0.65rem;
-      margin-top: 1rem;
+    .work-selected-flat__title-link,
+    .work-selected-flat__reel-item,
+    .work-selected-flat__reel-item img {
+      transition: none;
     }
   }
 </style>
@@ -689,259 +505,133 @@ const firstMeta = t.work.projects[firstProject.key];
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(ScrollTrigger);
 
-  let cleanupWorkGrid: (() => void) | null = null;
+  let cleanupWorkSelectedFlat: (() => void) | null = null;
 
-  function initWorkGrid() {
-    cleanupWorkGrid?.();
+  function initWorkSelectedFlat() {
+    cleanupWorkSelectedFlat?.();
 
     const section = document.getElementById('work-minimal');
     if (!section) return;
 
-    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-work-card]'));
-    const numberEl = section.querySelector<HTMLElement>('[data-work-number]');
-    const titleEl = section.querySelector<HTMLElement>('[data-work-title]');
+    const titleItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-title-item]'));
+    const reelItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-reel-item]'));
+    const stage = section.querySelector<HTMLElement>('.work-selected-flat__stage');
+    const titleArea = section.querySelector<HTMLElement>('.work-selected-flat__title-area');
+    const reel = section.querySelector<HTMLElement>('[data-work-reel]');
+    const metaEl = section.querySelector<HTMLElement>('[data-work-meta]');
     const descriptionEl = section.querySelector<HTMLElement>('[data-work-description]');
-    const rolesEl = section.querySelector<HTMLElement>('[data-work-roles]');
-    const cursorLabelEl = section.querySelector<HTMLElement>('[data-work-cursor-label]');
-    const shaderCanvas = section.querySelector<HTMLCanvasElement>('#work-minimal-shader-canvas');
-    const detailEls = [titleEl, descriptionEl, rolesEl].filter(Boolean) as HTMLElement[];
     const ac = new AbortController();
     const { signal } = ac;
     const triggers: ScrollTrigger[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const desktopQuery = window.matchMedia('(min-width: 841px)');
+    const desktopQuery = window.matchMedia('(min-width: 901px)');
     let activeIndex = -1;
-    let hoveredIndex = -1;
-    let hoverTransitioning = false;
-    let hoverTransitionTimer: ReturnType<typeof setTimeout> | null = null;
     let progress = 0;
-    let targetVelocity = 0;
-    let velocity = 0;
-    let frame = 0;
-    let textTween: gsap.core.Tween | gsap.core.Timeline | null = null;
-    let numberTween: gsap.core.Tween | null = null;
-    let shaderInstance: ShaderInstance | null = null;
-    let shaderDisposed = false;
-    let shaderResizeFrame = 0;
-    let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
-    let shaderResizeObserver: ResizeObserver | null = null;
+    let syncFrame = 0;
+    const syncTimers: ReturnType<typeof setTimeout>[] = [];
+    let copyTween: gsap.core.Tween | gsap.core.Timeline | null = null;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+    const lerp = (start: number, end: number, amount: number) => start + (end - start) * amount;
+    const smoothstep = (value: number) => value * value * (3 - 2 * value);
 
-    const setToneProgress = (value: number) => {
-      const nextProgress = clamp(value, 0, 1);
-      section.style.setProperty('--work-dark-progress', nextProgress.toFixed(3));
-      section.style.setProperty('--work-shader-opacity', (0.68 * nextProgress).toFixed(3));
+    const itemCenter = (item: HTMLElement) => item.offsetTop + item.offsetHeight / 2;
+
+    const interpolatedCenter = (items: HTMLElement[], virtualIndex: number) => {
+      const lowerIndex = clamp(Math.floor(virtualIndex), 0, Math.max(items.length - 1, 0));
+      const upperIndex = clamp(Math.ceil(virtualIndex), 0, Math.max(items.length - 1, 0));
+      const lowerItem = items[lowerIndex];
+      const upperItem = items[upperIndex] || lowerItem;
+      if (!lowerItem || !upperItem) return 0;
+
+      return lerp(itemCenter(lowerItem), itemCenter(upperItem), virtualIndex - lowerIndex);
     };
 
-    const resetToneGlobals = () => {
-      document.body.style.setProperty('--page-dark-mix', '0%');
-      document.documentElement.style.setProperty('--work-transition-progress', '0');
-      document.documentElement.style.setProperty('--work-exit-transition-progress', '0');
-    };
-
-    const measureToneProgress = () => {
-      const rect = section.getBoundingClientRect();
-      const viewportHeight = Math.max(window.innerHeight, 1);
-      const entryDistance = viewportHeight * 0.95;
-      const exitDistance = viewportHeight * 0.95;
-      const entryProgress = clamp((viewportHeight - rect.top) / entryDistance, 0, 1);
-      const exitProgress = clamp(rect.bottom / exitDistance, 0, 1);
-      const smoothEntryProgress = entryProgress * entryProgress * (3 - 2 * entryProgress);
-      const smoothExitProgress = exitProgress * exitProgress * (3 - 2 * exitProgress);
-
-      setToneProgress(Math.min(smoothEntryProgress, smoothExitProgress));
-      document.body.style.setProperty('--page-dark-mix', `${(Math.min(smoothEntryProgress, smoothExitProgress) * 100).toFixed(1)}%`);
-      document.documentElement.style.setProperty('--work-transition-progress', smoothEntryProgress.toFixed(3));
-      document.documentElement.style.setProperty('--work-exit-transition-progress', smoothExitProgress.toFixed(3));
-    };
-
-    const resizeShaderToCanvas = () => {
-      shaderResizeFrame = 0;
-      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
-
-      shaderCanvas.style.width = '';
-      shaderCanvas.style.height = '';
-      const rect = shaderCanvas.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
-      }
-    };
-
-    const scheduleShaderResize = () => {
-      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
-      shaderResizeTimer = window.setTimeout(() => {
-        if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
-        shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
-      }, 120);
-    };
-
-    if (shaderCanvas && !prefersReducedMotion && desktopQuery.matches) {
-      shaderCanvas.style.width = '';
-      shaderCanvas.style.height = '';
-      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
-        components: [
-          {
-            type: 'DotGrid',
-            id: 'idmlsai28917usa8l1j',
-            props: {
-              density: 200,
-              dotSize: {
-                type: 'map',
-                source: 'idmlsaoh7xdy8aayjbd',
-                channel: 'alpha',
-                inputMax: 1,
-                inputMin: 0,
-                outputMax: 1,
-                outputMin: 0,
-              },
-              twinkle: 0.9,
-              visible: false,
-            },
-          },
-          {
-            type: 'ChromaFlow',
-            id: 'idmlsaoh7xdy8aayjbd',
-            props: {
-              intensity: 1.4,
-              radius: 2.9,
-              visible: false,
-            },
-          },
-          {
-            type: 'LinearGradient',
-            id: 'idmlsajwtg0emiuod2i',
-            props: {
-              colorA: '#C54538',
-              colorB: '#C54538',
-              colorSpace: 'hsl',
-              end: {
-                x: 1,
-                y: 0,
-              },
-              maskSource: 'idmlsai28917usa8l1j',
-              start: {
-                x: 0,
-                y: 1,
-              },
-              visible: true,
-            },
-          },
-          {
-            type: 'CursorRipples',
-            id: 'idmlsgs6afobjsq7qem',
-            props: {
-              chromaticSplit: 3,
-              decay: 5.6,
-              intensity: 3,
-              radius: 0.4,
-            },
-          },
-        ],
-      })).then((shader) => {
-        if (shaderDisposed) {
-          shader.destroy();
-          return;
-        }
-
-        shaderInstance = shader;
-        resizeShaderToCanvas();
-        window.addEventListener('resize', scheduleShaderResize, { signal });
-        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
-        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
-      }).catch((error) => {
-        console.warn('Selected work shader failed to initialize', error);
-      });
-    }
-
-    const geometry = () => {
-      const fallbackSize = clamp(window.innerWidth * 0.28, 288, 544);
-      const cardSize = cards[0]?.getBoundingClientRect().width || fallbackSize;
-      const vertexGap = clamp(window.innerWidth * 0.02, 16, 32);
-      const step = cardSize + vertexGap;
-
-      // Step from card bounds, not viewport, so diagonal neighbors never overlap.
-      return {
-        stepX: step,
-        stepY: step,
-      };
-    };
-
-    const projectData = (index: number) => {
-      const card = cards[index];
-      return {
-        description: card?.dataset.description || '',
-        roles: card?.dataset.roles || '',
-        title: card?.dataset.title || '',
-      };
-    };
-
-    const renderTitle = (title: string) => {
-      if (!titleEl) return [];
-
-      const chars: HTMLElement[] = [];
-      titleEl.setAttribute('aria-label', title);
-      titleEl.replaceChildren();
-
-      title.split(' ').forEach((word, wordIndex) => {
-        if (wordIndex > 0) titleEl.append(document.createTextNode(' '));
-
-        const wordEl = document.createElement('span');
-        wordEl.className = 'work-grid-reference__title-word';
-        wordEl.setAttribute('aria-hidden', 'true');
-
-        Array.from(word).forEach((char) => {
-          const charEl = document.createElement('span');
-          charEl.className = 'work-grid-reference__title-char';
-          charEl.textContent = char;
-          wordEl.append(charEl);
-          chars.push(charEl);
-        });
-
-        titleEl.append(wordEl);
-      });
-
-      return chars;
-    };
-
-    const setCounterDigit = (index: number, immediate = false) => {
-      if (!numberEl) return;
-
-      const nextDigit = String(index + 1);
-      numberTween?.kill();
-
-      if (immediate || prefersReducedMotion) {
-        numberEl.textContent = nextDigit;
-        gsap.set(numberEl, { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)' });
+    const centerTitleAt = (virtualIndex = activeIndex) => {
+      if (!titleArea || !desktopQuery.matches || prefersReducedMotion) {
+        titleArea?.style.removeProperty('--work-title-shift');
         return;
       }
 
-      if (numberEl.textContent === nextDigit) {
-        gsap.set(numberEl, { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)' });
+      const stageRect = stage?.getBoundingClientRect();
+      const stageIsPinned = Boolean(stageRect && stageRect.top <= 0 && stageRect.bottom >= window.innerHeight);
+      if (!stageIsPinned) {
+        titleArea.style.setProperty('--work-title-shift', '0px');
         return;
       }
 
-      numberTween = gsap.to(numberEl, {
+      const titleAreaRect = titleArea.getBoundingClientRect();
+      const currentShift = Number.parseFloat(titleArea.style.getPropertyValue('--work-title-shift')) || 0;
+      const targetCenterInArea = window.innerHeight / 2 - (titleAreaRect.top - currentShift);
+      const shift = targetCenterInArea - interpolatedCenter(titleItems, virtualIndex);
+      titleArea.style.setProperty('--work-title-shift', `${shift.toFixed(2)}px`);
+    };
+
+    const centerReelAt = (virtualIndex = activeIndex) => {
+      if (!reel || !desktopQuery.matches || prefersReducedMotion) {
+        reel?.style.removeProperty('--work-reel-shift');
+        return;
+      }
+
+      const reelCenter = reel.clientHeight / 2;
+      const shift = reelCenter - interpolatedCenter(reelItems, virtualIndex);
+      reel.style.setProperty('--work-reel-shift', `${shift.toFixed(2)}px`);
+    };
+
+    const applyContinuousFocus = (virtualIndex: number) => {
+      titleItems.forEach((item, index) => {
+        const distance = Math.abs(index - virtualIndex);
+        const focus = smoothstep(clamp(1 - distance, 0, 1));
+        item.style.setProperty('--work-title-opacity', (0.28 + focus * 0.72).toFixed(3));
+        item.style.setProperty('--work-title-blur', `${((1 - focus) * 6.5).toFixed(2)}px`);
+        item.style.setProperty('--work-title-x', `${(focus * 5).toFixed(2)}px`);
+      });
+
+      reelItems.forEach((item, index) => {
+        const distance = Math.abs(index - virtualIndex);
+        const focus = smoothstep(clamp(1 - distance, 0, 1));
+        item.style.setProperty('--work-item-opacity', (0.34 + focus * 0.66).toFixed(3));
+        item.style.setProperty('--work-item-grayscale', `${((1 - focus) * 100).toFixed(2)}%`);
+        item.style.setProperty('--work-item-y', `${(-5.5 * focus).toFixed(2)}px`);
+        item.style.setProperty('--work-item-scale', (1 + focus * 0.035).toFixed(3));
+        item.style.zIndex = String(1 + Math.round(focus * 10));
+      });
+    };
+
+    const setActiveCopy = (activeTitle: HTMLElement | undefined) => {
+      const meta = activeTitle?.dataset.meta || '';
+      const description = activeTitle?.dataset.description || '';
+      const copyEls = [metaEl, descriptionEl].filter(Boolean) as HTMLElement[];
+
+      copyTween?.kill();
+
+      if (copyEls.length === 0 || prefersReducedMotion) {
+        if (metaEl) metaEl.textContent = meta;
+        if (descriptionEl) descriptionEl.textContent = description;
+        return;
+      }
+
+      copyTween = gsap.to(copyEls, {
         autoAlpha: 0,
-        yPercent: -28,
-        filter: 'blur(3px)',
-        duration: 0.12,
+        y: -4,
+        filter: 'blur(2px)',
+        duration: 0.13,
         ease: 'power2.out',
         overwrite: true,
         onComplete: () => {
-          numberEl.textContent = nextDigit;
-          numberTween = gsap.fromTo(
-            numberEl,
-            { autoAlpha: 0, yPercent: 34, filter: 'blur(4px)' },
+          if (metaEl) metaEl.textContent = meta;
+          if (descriptionEl) descriptionEl.textContent = description;
+          copyTween = gsap.fromTo(
+            copyEls,
+            { autoAlpha: 0, y: 6, filter: 'blur(3px)' },
             {
               autoAlpha: 1,
-              yPercent: 0,
+              y: 0,
               filter: 'blur(0px)',
-              duration: 0.3,
+              duration: 0.32,
               ease: 'power3.out',
               overwrite: true,
             },
@@ -950,310 +640,105 @@ const firstMeta = t.work.projects[firstProject.key];
       });
     };
 
-    const applyActiveContent = (index: number, immediate = false) => {
-      const data = projectData(index);
-
-      setCounterDigit(index, immediate);
-      const titleChars = renderTitle(data.title);
-      if (descriptionEl) descriptionEl.textContent = data.description;
-      if (rolesEl) rolesEl.textContent = data.roles;
-
-      return titleChars;
-    };
-
-    const setActiveIndex = (index: number, immediate = false) => {
-      const nextIndex = clamp(index, 0, cards.length - 1);
+    const setActiveIndex = (index: number) => {
+      const nextIndex = clamp(index, 0, Math.max(titleItems.length - 1, 0));
       if (nextIndex === activeIndex) return;
 
       activeIndex = nextIndex;
-      if (hoveredIndex !== -1 && hoveredIndex !== activeIndex) hoveredIndex = -1;
+      const activeTitle = titleItems[nextIndex];
 
-      if (immediate || prefersReducedMotion || detailEls.length === 0) {
-        applyActiveContent(nextIndex, true);
-        gsap.set(detailEls, { autoAlpha: 1, y: 0, filter: 'blur(0px)' });
-        if (titleEl) {
-          gsap.set(titleEl.querySelectorAll<HTMLElement>('.work-grid-reference__title-char'), {
-            autoAlpha: 1,
-            yPercent: 0,
-            filter: 'blur(0px)',
-          });
+      titleItems.forEach((item, itemIndex) => {
+        const isActive = itemIndex === nextIndex;
+        item.classList.toggle('is-active', isActive);
+        if (isActive) {
+          item.setAttribute('aria-current', 'true');
+        } else {
+          item.removeAttribute('aria-current');
         }
-        return;
-      }
-
-      textTween?.kill();
-      textTween = gsap.to(detailEls, {
-        autoAlpha: 0,
-        y: -5,
-        filter: 'blur(2px)',
-        duration: 0.12,
-        ease: 'power2.out',
-        overwrite: true,
-        onComplete: () => {
-          const titleChars = applyActiveContent(nextIndex);
-          const supportingEls = [descriptionEl, rolesEl].filter(Boolean) as HTMLElement[];
-          if (titleEl) gsap.set(titleEl, { autoAlpha: 1, y: 0, filter: 'blur(0px)' });
-
-          const tl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: true } });
-          textTween = tl;
-          tl.fromTo(
-            supportingEls,
-            { autoAlpha: 0, y: 7, filter: 'blur(3px)' },
-            {
-              autoAlpha: 1,
-              y: 0,
-              filter: 'blur(0px)',
-              duration: 0.28,
-              stagger: 0.035,
-            },
-            0,
-          ).fromTo(
-            titleChars,
-            { autoAlpha: 0, yPercent: 72, filter: 'blur(6px)' },
-            {
-              autoAlpha: 1,
-              yPercent: 0,
-              filter: 'blur(0px)',
-              duration: 0.42,
-              stagger: 0.018,
-            },
-            0.04,
-          );
-        },
       });
-    };
 
-    const updateCursorLabel = (event: MouseEvent | PointerEvent, card: HTMLElement) => {
-      if (!cursorLabelEl) return;
+      reelItems.forEach((item, itemIndex) => {
+        const isActive = itemIndex === nextIndex;
+        item.classList.toggle('is-active', isActive);
+        if (isActive) {
+          item.setAttribute('aria-current', 'true');
+        } else {
+          item.removeAttribute('aria-current');
+        }
+      });
 
-      cursorLabelEl.textContent = `${card.dataset.label || ''} ${card.dataset.title || ''}`.trim();
-      cursorLabelEl.style.setProperty('--cursor-label-x', `${event.clientX.toFixed(1)}px`);
-      cursorLabelEl.style.setProperty('--cursor-label-y', `${event.clientY.toFixed(1)}px`);
-    };
-
-    const setHoveredIndex = (index: number, event?: MouseEvent | PointerEvent) => {
-      if (hoverTransitionTimer) {
-        window.clearTimeout(hoverTransitionTimer);
-        hoverTransitionTimer = null;
-      }
-
-      const nextIndex = index === activeIndex ? index : -1;
-      const nextCard = nextIndex >= 0 ? cards[nextIndex] : null;
-      hoveredIndex = nextIndex;
-      hoverTransitioning = true;
-
-      if (nextCard) {
-        if (event) updateCursorLabel(event, nextCard);
-        cursorLabelEl?.classList.add('is-visible');
-      } else {
-        cursorLabelEl?.classList.remove('is-visible');
-        hoverTransitionTimer = window.setTimeout(() => {
-          hoverTransitioning = false;
-          setProgress(progress);
-        }, 680);
-      }
-
-      setProgress(progress);
+      setActiveCopy(activeTitle);
     };
 
     const setProgress = (nextProgress: number) => {
       progress = clamp(nextProgress, 0, 1);
-      const lastIndex = Math.max(cards.length - 1, 1);
-      const { stepX, stepY } = geometry();
-      const active = Math.round(progress * lastIndex);
-      const cardSize = cards[0]?.getBoundingClientRect().width || stepX;
+      const lastIndex = Math.max(titleItems.length - 1, 1);
+      const virtualIndex = progress * lastIndex;
+      applyContinuousFocus(virtualIndex);
+      centerTitleAt(virtualIndex);
+      centerReelAt(virtualIndex);
+      setActiveIndex(Math.round(virtualIndex));
+    };
 
-      setActiveIndex(active);
-      const activeHoverIndex = hoveredIndex === activeIndex ? hoveredIndex : -1;
-      const hoverPush = activeHoverIndex >= 0 ? cardSize * 0.34 : 0;
+    const syncToCurrentScroll = () => {
+      const start = section.offsetTop;
+      const end = section.offsetTop + section.offsetHeight - window.innerHeight;
+      const distance = Math.max(end - start, 1);
+      setProgress((window.scrollY - start) / distance);
+    };
 
-      cards.forEach((card, index) => {
-        const rel = index - progress * lastIndex;
-        const distance = Math.abs(rel);
-        const focus = clamp(1 - distance * 0.78, 0, 1);
-        const hoverDirection = activeHoverIndex >= 0 && index !== activeHoverIndex
-          ? Math.sign(index - activeHoverIndex)
-          : 0;
-        const x = rel * stepX + hoverDirection * hoverPush;
-        const y = rel * stepY + hoverDirection * hoverPush;
-        const isHoverActive = activeHoverIndex === index;
-
-        card.style.setProperty('--card-x', `${x.toFixed(2)}px`);
-        card.style.setProperty('--card-y', `${y.toFixed(2)}px`);
-        card.style.setProperty('--card-hover-scale', isHoverActive ? '1.16' : '1');
-        card.style.setProperty('--card-opacity', (0.18 + focus * 0.82).toFixed(3));
-        card.style.setProperty('--card-brightness', (0.46 + focus * 0.58).toFixed(3));
-        card.style.setProperty('--card-saturation', (0.68 + focus * 0.42).toFixed(3));
-        card.style.setProperty('--card-grayscale', `${((1 - focus) * 92).toFixed(2)}%`);
-        const blurDistance = clamp((distance - 0.28) / 0.85, 0, 1);
-        const parallaxX = clamp(rel * -13, -16, 16);
-        const parallaxY = clamp(rel * -10, -12, 12);
-        card.style.setProperty('--card-blur', `${(Math.pow(blurDistance, 1.08) * 16).toFixed(2)}px`);
-        card.style.setProperty('--image-parallax-x', `${parallaxX.toFixed(2)}px`);
-        card.style.setProperty('--image-parallax-y', `${parallaxY.toFixed(2)}px`);
-        card.style.setProperty('--image-scale', (1.112 - focus * 0.042).toFixed(3));
-        card.style.zIndex = String(isHoverActive ? 120 : 80 - Math.round(distance * 10));
-        card.classList.toggle('is-work-hovering', activeHoverIndex >= 0);
-        card.classList.toggle('is-work-hover-returning', activeHoverIndex < 0 && hoverTransitioning);
-        card.classList.toggle('is-work-hover-active', isHoverActive);
-        card.style.pointerEvents = distance < 0.58 ? 'auto' : 'none';
-        card.setAttribute('aria-hidden', distance < 1.35 ? 'false' : 'true');
-        if (distance < 0.58) {
-          card.removeAttribute('tabindex');
-        } else {
-          card.setAttribute('tabindex', '-1');
-        }
+    const scheduleSync = () => {
+      if (syncFrame) window.cancelAnimationFrame(syncFrame);
+      syncFrame = window.requestAnimationFrame(() => {
+        syncToCurrentScroll();
+        syncFrame = 0;
       });
     };
 
-    cards.forEach((card, index) => {
-      const handleHoverEnter = (event: MouseEvent | PointerEvent) => setHoveredIndex(index, event);
-      const handleHoverMove = (event: MouseEvent | PointerEvent) => {
-        if (hoveredIndex === index) updateCursorLabel(event, card);
-      };
-      const handleHoverLeave = () => setHoveredIndex(-1);
-
-      card.addEventListener('pointerenter', handleHoverEnter, { signal });
-      card.addEventListener('pointermove', handleHoverMove, { signal });
-      card.addEventListener('pointerleave', handleHoverLeave, { signal });
-      card.addEventListener('mouseenter', handleHoverEnter, { signal });
-      card.addEventListener('mousemove', handleHoverMove, { signal });
-      card.addEventListener('mouseleave', handleHoverLeave, { signal });
-      card.addEventListener('focus', () => {
-        const rect = card.getBoundingClientRect();
-        if (cursorLabelEl) {
-          cursorLabelEl.textContent = `${card.dataset.label || ''} ${card.dataset.title || ''}`.trim();
-          cursorLabelEl.style.setProperty('--cursor-label-x', `${(rect.left + rect.width * 0.5).toFixed(1)}px`);
-          cursorLabelEl.style.setProperty('--cursor-label-y', `${(rect.top + rect.height * 0.5).toFixed(1)}px`);
-          cursorLabelEl.classList.add('is-visible');
-        }
-        setHoveredIndex(index);
-      }, { signal });
-      card.addEventListener('blur', () => setHoveredIndex(-1), { signal });
+    titleItems.forEach((item, index) => {
+      item.addEventListener('mouseenter', () => setActiveIndex(index), { signal });
+      item.addEventListener('focus', () => setActiveIndex(index), { signal });
     });
 
-    const renderVelocity = () => {
-      velocity += (targetVelocity - velocity) * 0.12;
-      targetVelocity *= 0.9;
+    reelItems.forEach((item, index) => {
+      item.addEventListener('mouseenter', () => setActiveIndex(index), { signal });
+      item.addEventListener('focus', () => setActiveIndex(index), { signal });
+    });
 
-      const shift = clamp(velocity * 0.012, -18, 18);
-      cards.forEach((card) => {
-        card.style.setProperty('--velocity-shift', `${shift.toFixed(2)}px`);
-      });
-
-      if (Math.abs(velocity) < 0.01 && Math.abs(targetVelocity) < 0.01) {
-        velocity = 0;
-        targetVelocity = 0;
-      }
-
-      frame = requestAnimationFrame(renderVelocity);
-    };
-
-    setActiveIndex(0, true);
     setProgress(0);
-    if (!prefersReducedMotion && desktopQuery.matches) {
-      measureToneProgress();
-    } else {
-      setToneProgress(1);
-      resetToneGlobals();
-    }
+    scheduleSync();
+    syncTimers.push(
+      window.setTimeout(scheduleSync, 260),
+      window.setTimeout(scheduleSync, 800),
+      window.setTimeout(scheduleSync, 1400),
+    );
 
-    if (!prefersReducedMotion && desktopQuery.matches && cards.length > 1) {
-      frame = requestAnimationFrame(renderVelocity);
-
-      const toneTrigger = ScrollTrigger.create({
-        trigger: section,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true,
-        invalidateOnRefresh: true,
-        onUpdate: measureToneProgress,
-        onRefresh: measureToneProgress,
-        onEnter: measureToneProgress,
-        onEnterBack: measureToneProgress,
-        onLeave: () => {
-          setToneProgress(0);
-          document.body.style.setProperty('--page-dark-mix', '0%');
-          document.documentElement.style.setProperty('--work-exit-transition-progress', '0');
-        },
-        onLeaveBack: () => {
-          setToneProgress(0);
-          document.body.style.setProperty('--page-dark-mix', '0%');
-          document.documentElement.style.setProperty('--work-transition-progress', '0');
-        },
-      });
-      triggers.push(toneTrigger);
-
+    if (!prefersReducedMotion && desktopQuery.matches && titleItems.length > 1) {
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
         end: 'bottom bottom',
         scrub: true,
         invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          targetVelocity = clamp(self.getVelocity(), -1600, 1600);
-          setProgress(self.progress);
-        },
+        onUpdate: (self) => setProgress(self.progress),
+        onRefresh: (self) => setProgress(self.progress),
       });
       triggers.push(trigger);
 
+      window.addEventListener('scroll', scheduleSync, { signal, passive: true });
       window.addEventListener('resize', () => setProgress(progress), { signal });
       desktopQuery.addEventListener('change', () => ScrollTrigger.refresh(), { signal });
-    } else {
-      cards.forEach((card) => {
-        card.style.pointerEvents = '';
-        card.removeAttribute('aria-hidden');
-        card.removeAttribute('tabindex');
-      });
-
-      if (!prefersReducedMotion && !desktopQuery.matches) {
-        cards.forEach((card) => {
-          const mobileParallax = ScrollTrigger.create({
-            trigger: card,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const imageProgress = self.progress * 2 - 1;
-              const parallaxY = clamp(imageProgress * -24, -24, 24);
-              card.style.setProperty('--image-parallax-x', '0px');
-              card.style.setProperty('--image-parallax-y', `${parallaxY.toFixed(2)}px`);
-              card.style.setProperty('--image-scale', '1.12');
-            },
-            onRefresh: (self) => {
-              const imageProgress = self.progress * 2 - 1;
-              const parallaxY = clamp(imageProgress * -24, -24, 24);
-              card.style.setProperty('--image-parallax-x', '0px');
-              card.style.setProperty('--image-parallax-y', `${parallaxY.toFixed(2)}px`);
-              card.style.setProperty('--image-scale', '1.12');
-            },
-          });
-          triggers.push(mobileParallax);
-        });
-
-        desktopQuery.addEventListener('change', () => ScrollTrigger.refresh(), { signal });
-      }
     }
 
-    cleanupWorkGrid = () => {
-      document.body.style.removeProperty('--page-dark-mix');
-      document.documentElement.style.removeProperty('--work-transition-progress');
-      document.documentElement.style.removeProperty('--work-exit-transition-progress');
-      shaderDisposed = true;
-      textTween?.kill();
-      numberTween?.kill();
-      if (hoverTransitionTimer) window.clearTimeout(hoverTransitionTimer);
-      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
-      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
-      shaderResizeObserver?.disconnect();
-      shaderInstance?.destroy();
-      cancelAnimationFrame(frame);
+    cleanupWorkSelectedFlat = () => {
       triggers.forEach((trigger) => trigger.kill());
+      if (syncFrame) window.cancelAnimationFrame(syncFrame);
+      syncTimers.forEach((timer) => window.clearTimeout(timer));
+      copyTween?.kill();
       ac.abort();
     };
   }
 
-  initWorkGrid();
-  document.addEventListener('astro:after-swap', initWorkGrid);
+  initWorkSelectedFlat();
+  document.addEventListener('astro:after-swap', initWorkSelectedFlat);
 </script>

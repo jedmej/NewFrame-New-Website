@@ -1,0 +1,439 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const offers = t.waysToWork.items;
+---
+
+<section id="ways-to-work-grid" class="ways-grid" aria-labelledby="ways-grid-title" data-offer-count={offers.length}>
+  <div class="ways-grid__noise" aria-hidden="true"></div>
+
+  <header class="ways-grid__top">
+    <p id="ways-grid-title" class="ways-grid__label">{t.waysToWork.label}</p>
+  </header>
+
+  <div class="ways-grid__main">
+    <div class="ways-grid__categories" role="tablist" aria-label={t.waysToWork.heading}>
+      {offers.map((offer, index) => (
+        <button
+          id={`ways-grid-tab-${index}`}
+          class:list={['ways-grid__category', { 'is-active': index === 0 }]}
+          type="button"
+          role="tab"
+          aria-selected={index === 0 ? 'true' : 'false'}
+          aria-controls={`ways-grid-panel-${index}`}
+          data-offer-tab
+          data-offer-index={index}
+        >
+          <span class="ways-grid__category-title">{offer.title}</span>
+          <span class="ways-grid__category-copy">{offer.description}</span>
+        </button>
+      ))}
+    </div>
+
+    <div class="ways-grid__details">
+      {offers.map((offer, index) => (
+        <article
+          id={`ways-grid-panel-${index}`}
+          class:list={['ways-grid__panel', { 'is-active': index === 0 }]}
+          role="tabpanel"
+          aria-labelledby={`ways-grid-tab-${index}`}
+          data-offer-panel
+          data-offer-index={index}
+          hidden={index !== 0}
+        >
+          {offer.includes.map((entry) => (
+            <div class="ways-grid__row">
+              <span>{entry}</span>
+            </div>
+          ))}
+        </article>
+      ))}
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .ways-grid {
+    position: relative;
+    display: flex;
+    height: 100svh;
+    min-height: 42rem;
+    flex-direction: column;
+    overflow: clip;
+    border-block: 1px solid var(--color-line);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 82%, white 18%) 0%, var(--color-bg) 100%);
+    color: var(--color-text);
+    isolation: isolate;
+  }
+
+  .ways-grid__noise {
+    position: absolute;
+    inset: -8% 0 auto;
+    z-index: -1;
+    height: 115%;
+    pointer-events: none;
+    opacity: 0.62;
+    background:
+      radial-gradient(circle at 62% 18%, rgba(255, 255, 255, 0.68), transparent 34rem),
+      radial-gradient(circle at 15% 86%, color-mix(in srgb, var(--color-surface) 62%, white 38%), transparent 28rem),
+      linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.38) 46%, transparent 72%);
+    filter: saturate(0.82);
+  }
+
+  .ways-grid__top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: clamp(5.5rem, 10vh, 6.5rem);
+    flex: 0 0 auto;
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-surface) 84%, white 16%);
+  }
+
+  .ways-grid__label {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 1.38vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  .ways-grid__main {
+    display: grid;
+    grid-template-columns: minmax(20rem, 34.9vw) minmax(0, 1fr);
+    min-height: 0;
+    flex: 1 1 auto;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .ways-grid__categories {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.7rem, 5.4vh, 4.75rem);
+    justify-content: center;
+    padding: clamp(2.5rem, 3.2vw, 2.9rem) clamp(1.5rem, 2.15vw, 1.9rem);
+    border-right: 1px solid var(--color-line);
+  }
+
+  .ways-grid__category {
+    display: flex;
+    min-height: 6.25rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+    text-align: left;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .ways-grid__category:focus-visible {
+    outline: 1px solid var(--color-accent);
+    outline-offset: 0.45rem;
+  }
+
+  .ways-grid__category-title {
+    display: block;
+    max-width: 10.6ch;
+    font-family: var(--font-serif);
+    font-size: clamp(2.7rem, 4.75vw, 4rem);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.055em;
+    text-wrap: balance;
+    transition:
+      opacity 0.55s var(--ease-out-expo),
+      filter 0.55s var(--ease-out-expo),
+      transform 0.55s var(--ease-out-expo);
+  }
+
+  .ways-grid__category-copy {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .ways-grid__category:not(.is-active) .ways-grid__category-title {
+    opacity: 0.44;
+    filter: blur(4px);
+    transform: translate3d(0, 0.25rem, 0);
+  }
+
+  .ways-grid__category:nth-child(3):not(.is-active) .ways-grid__category-title {
+    opacity: 0.24;
+    filter: blur(7px);
+  }
+
+  .ways-grid__details {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .ways-grid__panel {
+    display: flex;
+    min-height: 100%;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .ways-grid__panel[hidden] {
+    display: none;
+  }
+
+  .ways-grid__row {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    align-items: center;
+    padding: 0 clamp(1.5rem, 2.65vw, 2.4rem);
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-display);
+    font-size: clamp(2.7rem, 4.75vw, 4rem);
+    font-weight: 500;
+    line-height: 0.96;
+    letter-spacing: -0.055em;
+    color: color-mix(in srgb, var(--color-text) 58%, transparent);
+    text-wrap: balance;
+  }
+
+  .ways-grid__row:first-child {
+    color: var(--color-text);
+  }
+
+  .ways-grid__row:last-child {
+    border-bottom: 0;
+  }
+
+  @media (hover: hover) {
+    .ways-grid__category:hover .ways-grid__category-title {
+      opacity: 1;
+      filter: blur(0px);
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .ways-grid {
+      min-height: 42rem;
+    }
+
+    .ways-grid__main {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .ways-grid__categories {
+      gap: 0;
+      justify-content: flex-start;
+      padding: 0;
+      border-right: 0;
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .ways-grid__category {
+      min-height: clamp(4rem, 10.5vh, 5.25rem);
+      align-items: center;
+      padding: 0.85rem 1.5rem;
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .ways-grid__category:last-child {
+      border-bottom: 0;
+    }
+
+    .ways-grid__category-title {
+      max-width: 100%;
+      font-size: clamp(1.75rem, 8.4vw, 3.25rem);
+      line-height: 0.98;
+    }
+
+    .ways-grid__category:not(.is-active) .ways-grid__category-title,
+    .ways-grid__category:nth-child(3):not(.is-active) .ways-grid__category-title {
+      opacity: 0.42;
+      filter: blur(2px);
+    }
+
+    .ways-grid__row {
+      min-height: 0;
+      font-size: clamp(1.75rem, 8.4vw, 3.25rem);
+      line-height: 0.98;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ways-grid__top {
+      height: clamp(5.25rem, 10.5vh, 7.5rem);
+      justify-content: flex-start;
+      padding-bottom: 1rem;
+    }
+
+    .ways-grid__label {
+      text-align: left;
+    }
+
+    .ways-grid__category,
+    .ways-grid__row {
+      padding-inline: 1.25rem;
+    }
+
+    .ways-grid__row {
+      align-items: flex-start;
+      padding-block: 0.78rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ways-grid__category-title {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let cleanupFn: (() => void) | null = null;
+
+  function initWaysGrid() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const section = document.getElementById('ways-to-work-grid');
+    if (!section) return;
+
+    const ac = new AbortController();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollTriggers: ScrollTrigger[] = [];
+    const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-offer-tab]'));
+    const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-offer-panel]'));
+    let activeIndex = 0;
+    let scrollScene: ScrollTrigger | null = null;
+    let isManualSelection = false;
+    let manualSelectionScrollY = 0;
+
+    function setActiveOffer(nextIndex: number, animateRows = true) {
+      if (!tabs[nextIndex] || activeIndex === nextIndex) return;
+      activeIndex = nextIndex;
+
+      tabs.forEach((tab, index) => {
+        const isActive = index === nextIndex;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      panels.forEach((panel, index) => {
+        const isActive = index === nextIndex;
+        panel.hidden = !isActive;
+        panel.classList.toggle('is-active', isActive);
+      });
+
+      if (!prefersReducedMotion && animateRows) {
+        const activePanel = panels[nextIndex];
+        if (activePanel) {
+          const rows = Array.from(activePanel.querySelectorAll('.ways-grid__row'));
+          gsap.fromTo(
+            rows,
+            { y: 18, opacity: 0, filter: 'blur(6px)' },
+            {
+              y: 0,
+              opacity: 1,
+              filter: 'blur(0px)',
+              duration: 0.7,
+              stagger: 0.035,
+              ease: 'expo.out',
+              overwrite: true,
+            }
+          );
+        }
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener(
+        'click',
+        () => {
+          const nextIndex = Number(tab.dataset.offerIndex ?? 0);
+          isManualSelection = true;
+          manualSelectionScrollY = window.scrollY;
+          setActiveOffer(nextIndex);
+
+          if (!prefersReducedMotion && scrollScene) {
+            const steps = Math.max(tabs.length - 1, 1);
+            const progress = nextIndex / steps;
+            const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
+            const lenis = (window as any).lenis;
+            if (lenis?.scrollTo) {
+              lenis.scrollTo(targetY, { immediate: true });
+            } else {
+              window.scrollTo({ top: targetY, behavior: 'auto' });
+            }
+            ScrollTrigger.update();
+            setActiveOffer(nextIndex);
+          }
+        },
+        { signal: ac.signal }
+      );
+      tab.addEventListener(
+        'focus',
+        () => {
+          isManualSelection = true;
+          manualSelectionScrollY = window.scrollY;
+          setActiveOffer(Number(tab.dataset.offerIndex ?? 0));
+        },
+        { signal: ac.signal }
+      );
+    });
+
+    if (!prefersReducedMotion) {
+      scrollScene = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${window.innerHeight * Math.max(tabs.length - 1, 1)}`,
+        pin: true,
+        scrub: 0.2,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (isManualSelection) {
+            const hasScrolledAfterSelection = Math.abs(window.scrollY - manualSelectionScrollY) > 8;
+            if (!hasScrolledAfterSelection) return;
+            isManualSelection = false;
+          }
+
+          const steps = Math.max(tabs.length - 1, 1);
+          const nextIndex = Math.min(tabs.length - 1, Math.round(self.progress * steps));
+          setActiveOffer(nextIndex);
+        },
+      });
+      scrollTriggers.push(scrollScene);
+    }
+
+    cleanupFn = () => {
+      scrollTriggers.forEach((trigger) => trigger.kill());
+      gsap.killTweensOf(section.querySelectorAll('*'));
+      ac.abort();
+    };
+  }
+
+  initWaysGrid();
+  document.addEventListener('astro:after-swap', initWaysGrid);
+</script>

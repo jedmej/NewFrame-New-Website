@@ -67,6 +67,10 @@ export const translations = {
     services: {
       label: 'PROCESS',
       heading: 'How the work comes together',
+      altHeading: 'How the work comes together?',
+      altAriaLabel: 'Alternative process section',
+      altMenuLabel: 'Process deliverables by stage',
+      stepLabel: 'STAGE',
       intro: 'We start by shaping the direction, then design, build and launch with enough structure to move quickly without losing the craft.',
       groups: [
         {
@@ -234,6 +238,10 @@ export const translations = {
     services: {
       label: 'PROCES',
       heading: 'Jak powstaje projekt',
+      altHeading: 'Jak powstaje projekt?',
+      altAriaLabel: 'Alternatywna sekcja procesu',
+      altMenuLabel: 'Elementy procesu według etapu',
+      stepLabel: 'ETAP',
       intro: 'Najpierw układamy kierunek, potem projektujemy, budujemy i publikujemy stronę z takim procesem, żeby działać sprawnie bez gubienia jakości.',
       groups: [
         {
