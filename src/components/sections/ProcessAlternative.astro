@@ -13,9 +13,6 @@ const totalSteps = t.services.groups.length;
 
 <section id="process-alternative" class="process-alt" aria-label={t.services.altAriaLabel}>
   <div class="process-alt__stage">
-    <div class="process-alt__paper-shader" aria-hidden="true"></div>
-    <div class="process-alt__noise" aria-hidden="true"></div>
-
     <h2 class="process-alt__heading">{t.services.altHeading}</h2>
 
     <div class="process-alt__body">
@@ -85,7 +82,7 @@ const totalSteps = t.services.groups.length;
 
     position: relative;
     min-height: calc(100svh + 220vh);
-    background: #172825;
+    background: transparent;
     color: #f3efe5;
   }
 
@@ -100,53 +97,6 @@ const totalSteps = t.services.groups.length;
     justify-content: space-between;
     padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
     isolation: isolate;
-  }
-
-  .process-alt__noise {
-    position: absolute;
-    inset: -22% -12%;
-    z-index: 1;
-    background:
-      radial-gradient(circle at 18% 12%, rgba(243, 239, 229, 0.46), transparent 24%),
-      radial-gradient(circle at 72% 8%, rgba(243, 239, 229, 0.2), transparent 28%),
-      radial-gradient(circle at 46% 48%, rgba(243, 239, 229, 0.38), transparent 32%),
-      radial-gradient(circle at 82% 78%, rgba(243, 239, 229, 0.24), transparent 28%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.2));
-    filter: blur(54px) saturate(0.9);
-    opacity: 0.52;
-    transform: translate3d(calc(var(--process-step) * -2.5%), calc(var(--process-step) * -3%), 0) scale(1.08);
-    transition: transform 0.16s var(--ease-out-quart);
-    pointer-events: none;
-  }
-
-  .process-alt__paper-shader {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    display: block;
-    overflow: hidden;
-    filter: saturate(0.92) contrast(0.98) brightness(0.88);
-    opacity: 0.86;
-    pointer-events: none;
-  }
-
-  .process-alt__paper-shader > :global(*) {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate3d(-50%, -50%, 0) !important;
-  }
-
-  .process-alt__noise::after {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(243, 239, 229, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(243, 239, 229, 0.06) 1px, transparent 1px);
-    background-size: 4px 4px;
-    content: '';
-    mix-blend-mode: overlay;
-    opacity: 0.24;
   }
 
   .process-alt__heading {
@@ -420,7 +370,6 @@ const totalSteps = t.services.groups.length;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .process-alt__noise,
     .process-alt__phase,
     .process-alt__panel,
     .process-alt__items,
@@ -431,9 +380,6 @@ const totalSteps = t.services.groups.length;
 </style>
 
 <script>
-  import { createElement } from 'react';
-  import { createRoot, type Root } from 'react-dom/client';
-  import { NeuroNoise } from '@paper-design/shaders-react';
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -455,14 +401,12 @@ const totalSteps = t.services.groups.length;
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
 
     const heading = section.querySelector('.process-alt__heading');
-    const shaderMount = section.querySelector<HTMLElement>('.process-alt__paper-shader');
     const phases = Array.from(section.querySelectorAll<HTMLElement>('.process-alt__phase'));
     const panels = Array.from(section.querySelectorAll<HTMLElement>('.process-alt__panel'));
     const itemLists = Array.from(section.querySelectorAll<HTMLElement>('.process-alt__items'));
     const rail = section.querySelector('.process-alt__rail');
     const currentStep = section.querySelector<HTMLElement>('[data-current-step]');
     const totalSteps = Math.max(1, panels.length);
-    let shaderRoot: Root | null = null;
 
     const setProcessState = (step: number, progress: number) => {
       const clampedStep = Math.max(0, Math.min(totalSteps - 1, step));
@@ -483,28 +427,9 @@ const totalSteps = t.services.groups.length;
 
     setProcessState(0, 0);
 
-    if (!prefersReducedMotion && shaderMount) {
-      shaderRoot = createRoot(shaderMount);
-      shaderRoot.render(createElement(NeuroNoise, {
-        scale: 1.59,
-        speed: 1,
-        contrast: 0.96,
-        brightness: 0,
-        frame: 275882.22300004814,
-        colorBack: '#00000000',
-        colorMid: '#FFFDFB',
-        colorFront: '#FFFFFF',
-        style: {
-          height: '1995px',
-          width: '1440px',
-        },
-      }));
-    }
-
     if (prefersReducedMotion || !desktopQuery.matches) {
       gsap.set([heading, rail, ...phases, ...panels, ...itemLists].filter(Boolean), { clearProps: 'all' });
       cleanupFn = () => {
-        shaderRoot?.unmount();
         ac.abort();
       };
       return;
@@ -543,7 +468,6 @@ const totalSteps = t.services.groups.length;
     }));
 
     cleanupFn = () => {
-      shaderRoot?.unmount();
       ac.abort();
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((trigger) => trigger.kill());

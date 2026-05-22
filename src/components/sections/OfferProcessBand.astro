@@ -1,0 +1,130 @@
+---
+import type { Lang } from '../../i18n/translations';
+import WaysToWorkProductGrid from './WaysToWorkProductGrid.astro';
+import ProcessAlternative from './ProcessAlternative.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<div class="offer-process-band" data-offer-process-band>
+  <div class="offer-process-band__background" aria-hidden="true">
+    <div class="offer-process-band__shader" data-offer-process-shader></div>
+  </div>
+
+  <div class="offer-process-band__content">
+    <WaysToWorkProductGrid lang={lang} />
+    <ProcessAlternative lang={lang} />
+  </div>
+</div>
+
+<style>
+  .offer-process-band {
+    --offer-process-bg: #1a1b64;
+
+    position: relative;
+    background: var(--offer-process-bg);
+    isolation: isolate;
+  }
+
+  .offer-process-band__background {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+    height: 100svh;
+    margin-bottom: -100svh;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .offer-process-band__shader {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .offer-process-band__shader > :global(*) {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    transform: translate3d(-50%, -50%, 0) !important;
+  }
+
+  .offer-process-band__content {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { mountNeuroSectionShader } from '../../scripts/neuroSectionShader';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let cleanupFn: (() => void) | null = null;
+
+  function initOfferProcessBand() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const band = document.querySelector<HTMLElement>('[data-offer-process-band]');
+    if (!band) return;
+
+    const ac = new AbortController();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shaderMount = band.querySelector<HTMLElement>('[data-offer-process-shader]');
+    const processSection = band.querySelector<HTMLElement>('#process-alternative');
+    const scrollTriggers: ScrollTrigger[] = [];
+    let shader: ReturnType<typeof mountNeuroSectionShader> | null = null;
+    let lastProgress = -1;
+
+    if (!prefersReducedMotion && shaderMount) {
+      shader = mountNeuroSectionShader(shaderMount, {
+        colorMid: '#FFFDFB',
+        colorFront: '#FFFFFF80',
+      });
+    }
+
+    const updateWaysToProcess = (progress: number) => {
+      const easedProgress = gsap.parseEase('power2.inOut')(Math.max(0, Math.min(1, progress)));
+      band.style.setProperty('--offer-process-bg', gsap.utils.interpolate('#1a1b64', '#172825', easedProgress));
+
+      if (!shader || Math.abs(easedProgress - lastProgress) <= 0.025) return;
+
+      lastProgress = easedProgress;
+      shader.update({
+        colorMid: gsap.utils.interpolate('#FFFDFB', '#EAF2E8', easedProgress),
+        colorFront: gsap.utils.interpolate('#FFFFFF80', '#FFFFFFB0', easedProgress),
+      });
+    };
+
+    updateWaysToProcess(0);
+
+    if (!prefersReducedMotion && processSection) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: processSection,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => updateWaysToProcess(self.progress),
+      }));
+    }
+
+    cleanupFn = () => {
+      scrollTriggers.forEach((trigger) => trigger.kill());
+      shader?.destroy();
+      ac.abort();
+    };
+  }
+
+  initOfferProcessBand();
+  document.addEventListener('astro:after-swap', initOfferProcessBand);
+</script>
