@@ -3,7 +3,6 @@ import Page from '../../layouts/Page.astro';
 import { useTranslations } from '../../i18n/translations';
 import Hero from '../../components/sections/Hero.astro';
 import About from '../../components/sections/About.astro';
-import WorkSelectedMinimal from '../../components/sections/WorkSelectedMinimal.astro';
 import OfferProcessBand from '../../components/sections/OfferProcessBand.astro';
 import Testimonials from '../../components/sections/Testimonials.astro';
 
@@ -13,7 +12,6 @@ const t = useTranslations('en');
 <Page lang="en" title={t.seo.title} description={t.seo.description}>
   <Hero lang="en" />
   <About lang="en" />
-  <WorkSelectedMinimal lang="en" />
   <OfferProcessBand lang="en" />
   <Testimonials lang="en" />
 </Page>

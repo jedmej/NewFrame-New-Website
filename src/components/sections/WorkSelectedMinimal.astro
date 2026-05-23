@@ -72,7 +72,7 @@ const caseKeys = ['hubert', 'adfidence', 'esthetic', 'panenka', 'uroki'] as cons
 const caseProjects = caseKeys.map((key) => projectsByKey[key]);
 const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
-const scrollSpan = 100 + (caseProjects.length - 1) * 62;
+const scrollSpan = 88 + (caseProjects.length - 1) * 46;
 ---
 
 <section
@@ -156,10 +156,17 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
 
 <style>
   .work-selected-flat {
+    --work-ink: var(--offer-work-ink, var(--color-text));
+    --work-ink-muted: var(--offer-work-ink-muted, rgba(20, 18, 15, 0.58));
+    --work-ink-soft: var(--offer-work-ink-soft, rgba(20, 18, 15, 0.42));
+    --work-ink-faint: var(--offer-work-ink-faint, rgba(20, 18, 15, 0.26));
+    --work-panel: var(--offer-work-panel, rgba(20, 18, 15, 0.06));
+    --work-panel-line: var(--offer-work-panel-line, rgba(20, 18, 15, 0.1));
+
     position: relative;
     min-height: var(--work-scroll-span);
-    background: var(--color-surface);
-    color: var(--color-text);
+    background: transparent;
+    color: var(--work-ink);
     isolation: isolate;
   }
 
@@ -168,10 +175,8 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     top: 0;
     overflow: hidden;
     height: 100svh;
-    padding:
-      clamp(3.25rem, 5vw, 5.5rem)
-      clamp(1.5rem, 3.75vw, 4.5rem);
-    background: var(--color-surface);
+    padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
+    background: transparent;
   }
 
   .work-selected-flat__anchor {
@@ -208,56 +213,59 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
 
   .work-selected-flat__label {
     margin: 0;
-    color: rgba(20, 18, 15, 0.48);
+    color: var(--work-ink-muted);
   }
 
   .work-selected-flat__titles {
-    display: grid;
-    gap: clamp(1.7rem, 2.85vw, 4rem);
-    align-content: center;
+    --work-title-gap: clamp(11.5rem, 13vw, 15rem);
+
+    position: relative;
+    height: clamp(34rem, 42vw, 42rem);
+    overflow: visible;
     min-width: 0;
   }
 
   .work-selected-flat__title-link {
-    --work-title-opacity: 0.76;
-    --work-title-blur: 5px;
+    --work-title-distance: 0;
+    --work-title-opacity: 0.95;
+    --work-title-blur: 0px;
     --work-title-x: 0px;
+    position: absolute;
+    top: 50%;
+    left: 0;
     display: block;
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
-    color: rgba(20, 18, 15, 0.36);
+    color: var(--work-ink);
     font-family: var(--font-serif);
-    font-size: clamp(2.75rem, 2.85vw, 3.5rem);
+    font-size: clamp(3.05rem, 4.3vw, 3.875rem);
     font-weight: 400;
-    line-height: 1.03;
+    line-height: 1.06;
     letter-spacing: 0;
     text-decoration: none;
     text-wrap: balance;
     opacity: var(--work-title-opacity);
     filter: blur(var(--work-title-blur));
-    transform: translate3d(var(--work-title-x), 0, 0);
-    transition:
-      color 0.45s var(--ease-out-quart),
-      filter 0.45s var(--ease-out-quart),
-      opacity 0.45s var(--ease-out-quart),
-      transform 0.45s var(--ease-out-quart);
+    transform: translate3d(var(--work-title-x), calc((var(--work-title-distance) * var(--work-title-gap)) - 50%), 0);
+    transition: color 0.28s var(--ease-out-quart);
+    will-change: transform, opacity, filter;
   }
 
   .work-selected-flat__title-link.is-active {
-    color: var(--color-text);
+    color: var(--work-ink);
   }
 
   .work-selected-flat__title-link:hover,
   .work-selected-flat__title-link:focus-visible {
-    color: var(--color-text);
+    color: var(--work-ink);
     opacity: 1;
     filter: blur(0);
-    transform: translateX(0.08em);
+    transform: translate3d(0.08em, calc((var(--work-title-distance) * var(--work-title-gap)) - 50%), 0);
   }
 
   .work-selected-flat__title-link:focus-visible,
   .work-selected-flat__reel-item:focus-visible {
-    outline: 1px solid var(--color-text);
+    outline: 1px solid rgba(243, 234, 223, 0.76);
     outline-offset: 0.45rem;
   }
 
@@ -265,7 +273,7 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     align-self: center;
     justify-self: center;
     width: min(12rem, 100%);
-    color: rgba(20, 18, 15, 0.42);
+    color: var(--work-ink-soft);
     font-family: var(--font-mono);
     font-size: 0.67rem;
     font-weight: 500;
@@ -305,17 +313,14 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     overflow: hidden;
     flex: 0 0 auto;
     border-radius: 2px;
-    background: rgba(20, 18, 15, 0.06);
+    background: var(--work-panel);
     color: inherit;
     text-decoration: none;
     opacity: var(--work-item-opacity);
     filter: grayscale(var(--work-item-grayscale));
     transform: translate3d(0, var(--work-item-y), 0) scale(var(--work-item-scale));
     z-index: 1;
-    transition:
-      opacity 0.42s var(--ease-out-quart),
-      filter 0.42s var(--ease-out-quart),
-      transform 0.42s var(--ease-out-quart);
+    will-change: transform, opacity, filter;
   }
 
   .work-selected-flat__reel-item:hover,
@@ -359,7 +364,7 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    outline: 1px solid rgba(0, 0, 0, 0.1);
+    outline: 1px solid var(--work-panel-line);
     outline-offset: -1px;
     transform: scale(1.02);
     transition: transform 0.6s var(--ease-out-quart);
@@ -375,7 +380,7 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     gap: 1.1rem;
     justify-self: end;
     width: min(22.5rem, 100%);
-    color: rgba(20, 18, 15, 0.66);
+    color: var(--work-ink-muted);
     font-family: var(--font-body);
     font-size: clamp(0.88rem, 0.78vw, 0.95rem);
     font-weight: 500;
@@ -423,7 +428,10 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     }
 
     .work-selected-flat__titles {
+      display: grid;
       gap: 1.85rem;
+      height: auto;
+      overflow: visible;
     }
 
     .work-selected-flat__title-area {
@@ -432,10 +440,14 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     }
 
     .work-selected-flat__title-link {
+      position: relative;
+      top: auto;
+      left: auto;
       width: 100%;
       font-size: clamp(3rem, 14vw, 4.75rem);
       line-height: 0.94;
       filter: blur(3px);
+      transform: translate3d(var(--work-title-x), 0, 0);
     }
 
     .work-selected-flat__meta {
@@ -508,18 +520,19 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
 
   gsap.registerPlugin(ScrollTrigger);
 
-  let cleanupWorkSelectedFlat: (() => void) | null = null;
+  let cleanupFn: (() => void) | null = null;
 
   function initWorkSelectedFlat() {
-    cleanupWorkSelectedFlat?.();
+    cleanupFn?.();
+    cleanupFn = null;
 
     const section = document.getElementById('work-minimal');
     if (!section) return;
 
     const titleItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-title-item]'));
     const reelItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-reel-item]'));
-    const stage = section.querySelector<HTMLElement>('.work-selected-flat__stage');
     const titleArea = section.querySelector<HTMLElement>('.work-selected-flat__title-area');
+    const titleStack = section.querySelector<HTMLElement>('.work-selected-flat__titles');
     const reel = section.querySelector<HTMLElement>('[data-work-reel]');
     const metaEl = section.querySelector<HTMLElement>('[data-work-meta]');
     const descriptionEl = section.querySelector<HTMLElement>('[data-work-description]');
@@ -530,63 +543,61 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
     const desktopQuery = window.matchMedia('(min-width: 901px)');
     let activeIndex = -1;
     let progress = 0;
-    let syncFrame = 0;
-    const syncTimers: ReturnType<typeof setTimeout>[] = [];
+    let measureFrame = 0;
+    const measureTimers: ReturnType<typeof setTimeout>[] = [];
+    let reelCenter = 0;
+    let reelItemCenters: number[] = [];
     let copyTween: gsap.core.Tween | gsap.core.Timeline | null = null;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const lerp = (start: number, end: number, amount: number) => start + (end - start) * amount;
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
 
-    const itemCenter = (item: HTMLElement) => item.offsetTop + item.offsetHeight / 2;
+    const interpolatedValue = (values: number[], virtualIndex: number) => {
+      const lowerIndex = clamp(Math.floor(virtualIndex), 0, Math.max(values.length - 1, 0));
+      const upperIndex = clamp(Math.ceil(virtualIndex), 0, Math.max(values.length - 1, 0));
+      const lowerValue = values[lowerIndex] ?? 0;
+      const upperValue = values[upperIndex] ?? lowerValue;
 
-    const interpolatedCenter = (items: HTMLElement[], virtualIndex: number) => {
-      const lowerIndex = clamp(Math.floor(virtualIndex), 0, Math.max(items.length - 1, 0));
-      const upperIndex = clamp(Math.ceil(virtualIndex), 0, Math.max(items.length - 1, 0));
-      const lowerItem = items[lowerIndex];
-      const upperItem = items[upperIndex] || lowerItem;
-      if (!lowerItem || !upperItem) return 0;
-
-      return lerp(itemCenter(lowerItem), itemCenter(upperItem), virtualIndex - lowerIndex);
+      return lerp(lowerValue, upperValue, virtualIndex - lowerIndex);
     };
 
-    const centerTitleAt = (virtualIndex = activeIndex) => {
-      if (!titleArea || !desktopQuery.matches || prefersReducedMotion) {
+    const syncTitleStackPosition = () => {
+      if (!titleArea || !titleStack || !desktopQuery.matches || prefersReducedMotion) {
         titleArea?.style.removeProperty('--work-title-shift');
         return;
       }
 
-      const stageRect = stage?.getBoundingClientRect();
-      const stageIsPinned = Boolean(stageRect && stageRect.top <= 0 && stageRect.bottom >= window.innerHeight);
-      if (!stageIsPinned) {
-        titleArea.style.setProperty('--work-title-shift', '0px');
-        return;
-      }
-
       const titleAreaRect = titleArea.getBoundingClientRect();
-      const currentShift = Number.parseFloat(titleArea.style.getPropertyValue('--work-title-shift')) || 0;
-      const targetCenterInArea = window.innerHeight / 2 - (titleAreaRect.top - currentShift);
-      const shift = targetCenterInArea - interpolatedCenter(titleItems, virtualIndex);
+      const titleStackRect = titleStack.getBoundingClientRect();
+      const shift = (titleAreaRect.top + titleAreaRect.height / 2) - (titleStackRect.top + titleStackRect.height / 2);
       titleArea.style.setProperty('--work-title-shift', `${shift.toFixed(2)}px`);
     };
 
+    const measureGeometry = () => {
+      reelCenter = reel?.clientHeight ? reel.clientHeight / 2 : 0;
+      reelItemCenters = reelItems.map((item) => item.offsetTop + item.offsetHeight / 2);
+      syncTitleStackPosition();
+    };
+
     const centerReelAt = (virtualIndex = activeIndex) => {
-      if (!reel || !desktopQuery.matches || prefersReducedMotion) {
+      if (!reel || !desktopQuery.matches || prefersReducedMotion || reelItemCenters.length === 0) {
         reel?.style.removeProperty('--work-reel-shift');
         return;
       }
 
-      const reelCenter = reel.clientHeight / 2;
-      const shift = reelCenter - interpolatedCenter(reelItems, virtualIndex);
+      const shift = reelCenter - interpolatedValue(reelItemCenters, virtualIndex);
       reel.style.setProperty('--work-reel-shift', `${shift.toFixed(2)}px`);
     };
 
     const applyContinuousFocus = (virtualIndex: number) => {
       titleItems.forEach((item, index) => {
-        const distance = Math.abs(index - virtualIndex);
-        const focus = smoothstep(clamp(1 - distance, 0, 1));
-        item.style.setProperty('--work-title-opacity', (0.28 + focus * 0.72).toFixed(3));
-        item.style.setProperty('--work-title-blur', `${((1 - focus) * 6.5).toFixed(2)}px`);
+        const distance = index - virtualIndex;
+        const absDistance = Math.min(3, Math.abs(distance));
+        const focus = smoothstep(clamp(1 - Math.abs(distance), 0, 1));
+        item.style.setProperty('--work-title-distance', distance.toFixed(3));
+        item.style.setProperty('--work-title-opacity', (0.95 - absDistance * 0.19).toFixed(3));
+        item.style.setProperty('--work-title-blur', `${(absDistance * 2.2).toFixed(2)}px`);
         item.style.setProperty('--work-title-x', `${(focus * 5).toFixed(2)}px`);
       });
 
@@ -597,7 +608,6 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
         item.style.setProperty('--work-item-grayscale', `${((1 - focus) * 100).toFixed(2)}%`);
         item.style.setProperty('--work-item-y', `${(-5.5 * focus).toFixed(2)}px`);
         item.style.setProperty('--work-item-scale', (1 + focus * 0.035).toFixed(3));
-        item.style.zIndex = String(1 + Math.round(focus * 10));
       });
     };
 
@@ -675,23 +685,16 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
       const lastIndex = Math.max(titleItems.length - 1, 1);
       const virtualIndex = progress * lastIndex;
       applyContinuousFocus(virtualIndex);
-      centerTitleAt(virtualIndex);
       centerReelAt(virtualIndex);
       setActiveIndex(Math.round(virtualIndex));
     };
 
-    const syncToCurrentScroll = () => {
-      const start = section.offsetTop;
-      const end = section.offsetTop + section.offsetHeight - window.innerHeight;
-      const distance = Math.max(end - start, 1);
-      setProgress((window.scrollY - start) / distance);
-    };
-
-    const scheduleSync = () => {
-      if (syncFrame) window.cancelAnimationFrame(syncFrame);
-      syncFrame = window.requestAnimationFrame(() => {
-        syncToCurrentScroll();
-        syncFrame = 0;
+    const scheduleMeasure = () => {
+      if (measureFrame) window.cancelAnimationFrame(measureFrame);
+      measureFrame = window.requestAnimationFrame(() => {
+        measureGeometry();
+        setProgress(progress);
+        measureFrame = 0;
       });
     };
 
@@ -705,12 +708,13 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
       item.addEventListener('focus', () => setActiveIndex(index), { signal });
     });
 
+    measureGeometry();
     setProgress(0);
-    scheduleSync();
-    syncTimers.push(
-      window.setTimeout(scheduleSync, 260),
-      window.setTimeout(scheduleSync, 800),
-      window.setTimeout(scheduleSync, 1400),
+    scheduleMeasure();
+    measureTimers.push(
+      window.setTimeout(scheduleMeasure, 260),
+      window.setTimeout(scheduleMeasure, 800),
+      window.setTimeout(scheduleMeasure, 1400),
     );
 
     if (!prefersReducedMotion && desktopQuery.matches && titleItems.length > 1) {
@@ -721,19 +725,25 @@ const scrollSpan = 100 + (caseProjects.length - 1) * 62;
         scrub: true,
         invalidateOnRefresh: true,
         onUpdate: (self) => setProgress(self.progress),
-        onRefresh: (self) => setProgress(self.progress),
+        onRefresh: (self) => {
+          measureGeometry();
+          setProgress(self.progress);
+        },
       });
       triggers.push(trigger);
+      setProgress(trigger.progress);
 
-      window.addEventListener('scroll', scheduleSync, { signal, passive: true });
-      window.addEventListener('resize', () => setProgress(progress), { signal });
-      desktopQuery.addEventListener('change', () => ScrollTrigger.refresh(), { signal });
+      window.addEventListener('resize', scheduleMeasure, { signal });
+      desktopQuery.addEventListener('change', () => {
+        scheduleMeasure();
+        ScrollTrigger.refresh();
+      }, { signal });
     }
 
-    cleanupWorkSelectedFlat = () => {
+    cleanupFn = () => {
       triggers.forEach((trigger) => trigger.kill());
-      if (syncFrame) window.cancelAnimationFrame(syncFrame);
-      syncTimers.forEach((timer) => window.clearTimeout(timer));
+      if (measureFrame) window.cancelAnimationFrame(measureFrame);
+      measureTimers.forEach((timer) => window.clearTimeout(timer));
       copyTween?.kill();
       ac.abort();
     };

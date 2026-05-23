@@ -1,5 +1,6 @@
 ---
 import type { Lang } from '../../i18n/translations';
+import WorkSelectedMinimal from './WorkSelectedMinimal.astro';
 import WaysToWorkProductGrid from './WaysToWorkProductGrid.astro';
 import ProcessAlternative from './ProcessAlternative.astro';
 
@@ -16,6 +17,7 @@ const { lang } = Astro.props;
   </div>
 
   <div class="offer-process-band__content">
+    <WorkSelectedMinimal lang={lang} />
     <WaysToWorkProductGrid lang={lang} />
     <ProcessAlternative lang={lang} />
   </div>
@@ -23,11 +25,53 @@ const { lang } = Astro.props;
 
 <style>
   .offer-process-band {
-    --offer-process-bg: #1a1b64;
+    --offer-process-bg: #F4F4F4;
+    --offer-process-fade-size: clamp(9rem, 22svh, 20rem);
+    --offer-process-shader-opacity: 0.26;
+    --offer-work-to-blue-progress: 0;
+    --offer-work-ink: var(--color-text);
+    --offer-work-ink-muted: rgba(20, 18, 15, 0.58);
+    --offer-work-ink-soft: rgba(20, 18, 15, 0.42);
+    --offer-work-ink-faint: rgba(20, 18, 15, 0.26);
+    --offer-work-panel: rgba(20, 18, 15, 0.06);
+    --offer-work-panel-line: rgba(20, 18, 15, 0.1);
 
     position: relative;
     background: var(--offer-process-bg);
     isolation: isolate;
+  }
+
+  .offer-process-band::before,
+  .offer-process-band::after {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: var(--offer-process-fade-size);
+    pointer-events: none;
+    content: '';
+  }
+
+  .offer-process-band::before {
+    top: calc(var(--offer-process-fade-size) * -1);
+    background:
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        color-mix(in srgb, var(--offer-process-bg) 18%, transparent) 34%,
+        var(--offer-process-bg) 100%
+      );
+  }
+
+  .offer-process-band::after {
+    bottom: calc(var(--offer-process-fade-size) * -1);
+    background:
+      linear-gradient(
+        180deg,
+        var(--offer-process-bg) 0%,
+        color-mix(in srgb, var(--offer-process-bg) 18%, transparent) 58%,
+        transparent 100%
+      );
   }
 
   .offer-process-band__background {
@@ -44,6 +88,8 @@ const { lang } = Astro.props;
     position: absolute;
     inset: 0;
     overflow: hidden;
+    opacity: var(--offer-process-shader-opacity);
+    will-change: opacity;
   }
 
   .offer-process-band__shader > :global(*) {
@@ -57,7 +103,7 @@ const { lang } = Astro.props;
 
   .offer-process-band__content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
   }
 </style>
 
@@ -80,41 +126,107 @@ const { lang } = Astro.props;
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const shaderMount = band.querySelector<HTMLElement>('[data-offer-process-shader]');
+    const waysSection = band.querySelector<HTMLElement>('#ways-to-work-grid');
     const processSection = band.querySelector<HTMLElement>('#process-alternative');
     const scrollTriggers: ScrollTrigger[] = [];
     let shader: ReturnType<typeof mountNeuroSectionShader> | null = null;
-    let lastProgress = -1;
+    let workToWaysProgress = 0;
+    let waysToProcessProgress = 0;
+    let lastShaderSurfaceProgress = -1;
+    let lastShaderSpeed = -1;
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    const easeSurface = gsap.parseEase('power2.inOut');
+    const shaderBaseSpeed = 0.5;
+    const shaderTransitionSpeed = 3;
+    const transitionPulse = (progress: number) => Math.sin(clamp(progress) * Math.PI);
 
     if (!prefersReducedMotion && shaderMount) {
       shader = mountNeuroSectionShader(shaderMount, {
         colorMid: '#FFFDFB',
-        colorFront: '#FFFFFF80',
+        colorFront: '#00000080',
+        contrast: 0,
+        speed: shaderBaseSpeed,
       });
     }
 
-    const updateWaysToProcess = (progress: number) => {
-      const easedProgress = gsap.parseEase('power2.inOut')(Math.max(0, Math.min(1, progress)));
-      band.style.setProperty('--offer-process-bg', gsap.utils.interpolate('#1a1b64', '#172825', easedProgress));
+    const updateBandSurface = () => {
+      const workProgress = easeSurface(clamp(workToWaysProgress));
+      const processProgress = easeSurface(clamp(waysToProcessProgress));
+      const blueBg = gsap.utils.interpolate('#F4F4F4', '#1a1b64', workProgress);
+      const bg = gsap.utils.interpolate(blueBg, '#172825', processProgress);
+      const shaderOpacity = 0.26 + workProgress * 0.74;
+      const workShaderMid = gsap.utils.interpolate('#D4C9BF', '#FFFDFB', workProgress);
+      const workShaderFront = gsap.utils.interpolate('#00000080', 'rgba(255, 255, 255, 0.5)', workProgress);
+      const shaderContrast = gsap.utils.interpolate(0, 1, workProgress);
 
-      if (!shader || Math.abs(easedProgress - lastProgress) <= 0.025) return;
+      band.style.setProperty('--offer-work-to-blue-progress', workProgress.toFixed(3));
+      band.style.setProperty('--offer-process-bg', bg);
+      band.style.setProperty('--offer-process-shader-opacity', shaderOpacity.toFixed(3));
+      band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', workProgress));
+      band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', workProgress));
+      band.style.setProperty('--offer-work-ink-soft', gsap.utils.interpolate('rgba(20, 18, 15, 0.42)', 'rgba(243, 234, 223, 0.42)', workProgress));
+      band.style.setProperty('--offer-work-ink-faint', gsap.utils.interpolate('rgba(20, 18, 15, 0.26)', 'rgba(243, 234, 223, 0.26)', workProgress));
+      band.style.setProperty('--offer-work-panel', gsap.utils.interpolate('rgba(20, 18, 15, 0.06)', 'rgba(243, 234, 223, 0.08)', workProgress));
+      band.style.setProperty('--offer-work-panel-line', gsap.utils.interpolate('rgba(20, 18, 15, 0.1)', 'rgba(255, 255, 255, 0.14)', workProgress));
 
-      lastProgress = easedProgress;
+      if (!shader) return;
+
+      const shaderSurfaceProgress = Math.max(workProgress, processProgress);
+      const shaderPulse = Math.max(
+        transitionPulse(workToWaysProgress),
+        transitionPulse(waysToProcessProgress),
+      );
+      const shaderSpeed = shaderBaseSpeed + shaderPulse * (shaderTransitionSpeed - shaderBaseSpeed);
+      const shouldUpdateSurface = Math.abs(shaderSurfaceProgress - lastShaderSurfaceProgress) > 0.025;
+      const shouldUpdateSpeed = Math.abs(shaderSpeed - lastShaderSpeed) > 0.04;
+
+      if (!shouldUpdateSurface && !shouldUpdateSpeed) return;
+
+      lastShaderSurfaceProgress = shaderSurfaceProgress;
+      lastShaderSpeed = shaderSpeed;
       shader.update({
-        colorMid: gsap.utils.interpolate('#FFFDFB', '#EAF2E8', easedProgress),
-        colorFront: gsap.utils.interpolate('#FFFFFF80', '#FFFFFFB0', easedProgress),
+        colorMid: gsap.utils.interpolate(workShaderMid, '#EAF2E8', processProgress),
+        colorFront: gsap.utils.interpolate(workShaderFront, 'rgba(255, 255, 255, 0.69)', processProgress),
+        contrast: shaderContrast,
+        speed: shaderSpeed,
       });
     };
 
-    updateWaysToProcess(0);
+    updateBandSurface();
 
-    if (!prefersReducedMotion && processSection) {
+    if (waysSection) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: waysSection,
+        start: 'top 105%',
+        end: 'top 35%',
+        scrub: prefersReducedMotion ? false : true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          workToWaysProgress = self.progress;
+          updateBandSurface();
+        },
+        onRefresh: (self) => {
+          workToWaysProgress = self.progress;
+          updateBandSurface();
+        },
+      }));
+    }
+
+    if (processSection) {
       scrollTriggers.push(ScrollTrigger.create({
         trigger: processSection,
         start: 'top bottom',
         end: 'top top',
-        scrub: true,
+        scrub: prefersReducedMotion ? false : true,
         invalidateOnRefresh: true,
-        onUpdate: (self) => updateWaysToProcess(self.progress),
+        onUpdate: (self) => {
+          waysToProcessProgress = self.progress;
+          updateBandSurface();
+        },
+        onRefresh: (self) => {
+          waysToProcessProgress = self.progress;
+          updateBandSurface();
+        },
       }));
     }
 

@@ -55,8 +55,8 @@ export function mountNeuroSectionShader(mount: HTMLElement, options: NeuroSectio
   render();
 
   return {
-    update(colors: NeuroSectionShaderColors) {
-      Object.assign(state, colors);
+    update(nextOptions: Partial<NeuroSectionShaderOptions>) {
+      Object.assign(state, nextOptions);
       render();
     },
     destroy() {
