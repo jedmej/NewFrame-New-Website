@@ -61,9 +61,11 @@ const offers = t.waysToWork.items;
 
 <style>
   .ways-grid {
+    --offer-title-active-indent: 14.4px;
+
     position: relative;
     display: block;
-    min-height: calc(100svh + 130vh);
+    min-height: calc(100svh + 156vh);
     overflow: visible;
     background: transparent;
     color: var(--color-dark-text);
@@ -96,9 +98,9 @@ const offers = t.waysToWork.items;
 
   .ways-grid__main {
     display: flex;
-    gap: clamp(2rem, 5vw, 6rem);
+    gap: clamp(3rem, 5vw, 5.5rem);
     width: 100%;
-    max-width: 90rem;
+    max-width: 78rem;
     min-height: 0;
     flex: 1 1 auto;
     align-items: center;
@@ -111,7 +113,7 @@ const offers = t.waysToWork.items;
 
     position: relative;
     display: flex;
-    width: min(35vw, 31.375rem);
+    width: min(32vw, 30rem);
     height: clamp(34rem, 42vw, 42rem);
     flex: 0 0 auto;
     flex-direction: column;
@@ -121,6 +123,7 @@ const offers = t.waysToWork.items;
   .ways-grid__category {
     --offer-distance: 0;
     --offer-abs: 0;
+    --offer-title-x: 0px;
 
     position: absolute;
     top: 50%;
@@ -169,11 +172,15 @@ const offers = t.waysToWork.items;
   }
 
   .ways-grid__category:not(.is-active) .ways-grid__category-title {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(var(--offer-title-x), 0, 0);
   }
 
   .ways-grid__category:nth-child(3):not(.is-active) .ways-grid__category-title {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(var(--offer-title-x), 0, 0);
+  }
+
+  .ways-grid__category .ways-grid__category-title {
+    transform: translate3d(var(--offer-title-x), 0, 0);
   }
 
   .ways-grid__details {
@@ -181,7 +188,7 @@ const offers = t.waysToWork.items;
     display: flex;
     height: clamp(34rem, 42vw, 42rem);
     min-width: 0;
-    flex: 1 1 0;
+    flex: 0 0 clamp(21.7rem, 25.25vw, 28rem);
     flex-direction: column;
   }
 
@@ -222,9 +229,7 @@ const offers = t.waysToWork.items;
 
   @media (hover: hover) {
     .ways-grid__category:hover .ways-grid__category-title {
-      opacity: 1;
-      filter: blur(0px);
-      transform: translate3d(0, 0, 0);
+      transform: translate3d(var(--offer-title-active-indent), 0, 0);
     }
   }
 
@@ -349,6 +354,20 @@ const offers = t.waysToWork.items;
     let scrollScene: ScrollTrigger | null = null;
     let isManualSelection = false;
     let manualSelectionScrollY = 0;
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+    const smoothstep = (value: number) => value * value * (3 - 2 * value);
+    const scrollToOffer = (index: number) => {
+      if (!scrollScene) return;
+      const steps = Math.max(tabs.length - 1, 1);
+      const progress = clamp(index / steps, 0, 1);
+      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
+      const lenis = (window as any).lenis;
+      if (lenis?.scrollTo) {
+        lenis.scrollTo(targetY, { duration: 1.45 });
+      } else {
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      }
+    };
 
     function setActiveOffer(nextIndex: number, animateRows = true) {
       if (!tabs[nextIndex] || activeIndex === nextIndex) return;
@@ -393,8 +412,10 @@ const offers = t.waysToWork.items;
 
       tabs.forEach((tab, index) => {
         const distance = index - clampedProgress;
+        const focus = smoothstep(clamp(1 - Math.abs(distance), 0, 1));
         tab.style.setProperty('--offer-distance', String(distance));
         tab.style.setProperty('--offer-abs', String(Math.min(3, Math.abs(distance))));
+        tab.style.setProperty('--offer-title-x', `calc(var(--offer-title-active-indent) * ${focus.toFixed(3)})`);
       });
 
       setActiveOffer(nextIndex, animateRows);
@@ -405,36 +426,13 @@ const offers = t.waysToWork.items;
         'click',
         () => {
           const nextIndex = Number(tab.dataset.offerIndex ?? 0);
-          isManualSelection = true;
-          manualSelectionScrollY = window.scrollY;
-          setOfferProgress(nextIndex);
-
-          if (!prefersReducedMotion && scrollScene) {
-            const steps = Math.max(tabs.length - 1, 1);
-            const progress = nextIndex / steps;
-            const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
-            const lenis = (window as any).lenis;
-            if (lenis?.scrollTo) {
-              lenis.scrollTo(targetY, { immediate: true });
-            } else {
-              window.scrollTo({ top: targetY, behavior: 'auto' });
-            }
-            ScrollTrigger.update();
-            setOfferProgress(nextIndex);
-          }
-        },
-        { signal: ac.signal }
-      );
-      tab.addEventListener(
-        'focus',
-        () => {
-          isManualSelection = true;
-          manualSelectionScrollY = window.scrollY;
-          setOfferProgress(Number(tab.dataset.offerIndex ?? 0));
+          scrollToOffer(nextIndex);
         },
         { signal: ac.signal }
       );
     });
+
+    setOfferProgress(0, false);
 
     if (!prefersReducedMotion) {
       scrollScene = ScrollTrigger.create({
@@ -455,6 +453,7 @@ const offers = t.waysToWork.items;
         },
       });
       scrollTriggers.push(scrollScene);
+      setOfferProgress(scrollScene.progress * Math.max(tabs.length - 1, 1), false);
     }
 
     cleanupFn = () => {

@@ -72,7 +72,7 @@ const caseKeys = ['hubert', 'adfidence', 'esthetic', 'panenka', 'uroki'] as cons
 const caseProjects = caseKeys.map((key) => projectsByKey[key]);
 const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
-const scrollSpan = 88 + (caseProjects.length - 1) * 46;
+const scrollSpan = 96 + (caseProjects.length - 1) * 52;
 ---
 
 <section
@@ -158,6 +158,7 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
     --work-ink-faint: var(--offer-work-ink-faint, rgba(20, 18, 15, 0.26));
     --work-panel: var(--offer-work-panel, rgba(20, 18, 15, 0.06));
     --work-panel-line: var(--offer-work-panel-line, rgba(20, 18, 15, 0.1));
+    --work-title-active-indent: 14.4px;
 
     position: relative;
     min-height: var(--work-scroll-span);
@@ -229,7 +230,9 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
     opacity: var(--work-title-opacity);
     filter: blur(var(--work-title-blur));
     transform: translate3d(var(--work-title-x), calc((var(--work-title-distance) * var(--work-title-gap)) - 50%), 0);
-    transition: color 0.28s var(--ease-out-quart);
+    transition:
+      color 0.28s var(--ease-out-quart),
+      transform 0.55s var(--ease-out-expo);
     will-change: transform, opacity, filter;
   }
 
@@ -240,9 +243,8 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
   .work-selected-flat__title-link:hover,
   .work-selected-flat__title-link:focus-visible {
     color: var(--work-ink);
-    opacity: 1;
-    filter: blur(0);
-    transform: translate3d(0.08em, calc((var(--work-title-distance) * var(--work-title-gap)) - 50%), 0);
+    cursor: pointer;
+    transform: translate3d(var(--work-title-active-indent), calc((var(--work-title-distance) * var(--work-title-gap)) - 50%), 0);
   }
 
   .work-selected-flat__title-link:focus-visible,
@@ -530,6 +532,7 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
     let reelCenter = 0;
     let reelItemCenters: number[] = [];
     let copyTween: gsap.core.Tween | gsap.core.Timeline | null = null;
+    let scrollScene: ScrollTrigger | null = null;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const lerp = (start: number, end: number, amount: number) => start + (end - start) * amount;
@@ -580,7 +583,7 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
         item.style.setProperty('--work-title-distance', distance.toFixed(3));
         item.style.setProperty('--work-title-opacity', (0.95 - absDistance * 0.19).toFixed(3));
         item.style.setProperty('--work-title-blur', `${(absDistance * 2.2).toFixed(2)}px`);
-        item.style.setProperty('--work-title-x', `${(focus * 5).toFixed(2)}px`);
+        item.style.setProperty('--work-title-x', `calc(var(--work-title-active-indent) * ${focus.toFixed(3)})`);
       });
 
       reelItems.forEach((item, index) => {
@@ -680,9 +683,29 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
       });
     };
 
+    const scrollToIndex = (index: number) => {
+      if (!scrollScene) return;
+      const steps = Math.max(titleItems.length - 1, 1);
+      const progress = clamp(index / steps, 0, 1);
+      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
+      const lenis = (window as any).lenis;
+      if (lenis?.scrollTo) {
+        lenis.scrollTo(targetY, { duration: 1.45 });
+      } else {
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      }
+    };
+
     titleItems.forEach((item, index) => {
-      item.addEventListener('mouseenter', () => setActiveIndex(index), { signal });
-      item.addEventListener('focus', () => setActiveIndex(index), { signal });
+      item.addEventListener(
+        'click',
+        (event) => {
+          if (!scrollScene) return;
+          event.preventDefault();
+          scrollToIndex(index);
+        },
+        { signal }
+      );
     });
 
     reelItems.forEach((item, index) => {
@@ -712,6 +735,7 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
           setProgress(self.progress);
         },
       });
+      scrollScene = trigger;
       triggers.push(trigger);
       setProgress(trigger.progress);
 
