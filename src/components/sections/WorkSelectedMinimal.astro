@@ -81,13 +81,9 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
   aria-label={t.work.label}
   style={`--work-scroll-span: ${scrollSpan}svh;`}
 >
-  <span id="work" class="work-selected-flat__anchor" aria-hidden="true"></span>
-
   <div class="work-selected-flat__stage">
     <div class="work-selected-flat__layout">
       <header class="work-selected-flat__title-area">
-        <p class="work-selected-flat__label text-mono-xs">{t.work.label}</p>
-
         <nav class="work-selected-flat__titles" aria-label={t.work.carouselLabel}>
           {caseProjects.map((project, index) => {
             const href = project.placeholder ? undefined : project.url;
@@ -179,15 +175,6 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
     background: transparent;
   }
 
-  .work-selected-flat__anchor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 1px;
-    pointer-events: none;
-  }
-
   .work-selected-flat__layout {
     display: grid;
     grid-template-columns:
@@ -209,11 +196,6 @@ const scrollSpan = 88 + (caseProjects.length - 1) * 46;
     min-width: 0;
     transform: translate3d(0, var(--work-title-shift, 0px), 0);
     will-change: transform;
-  }
-
-  .work-selected-flat__label {
-    margin: 0;
-    color: var(--work-ink-muted);
   }
 
   .work-selected-flat__titles {

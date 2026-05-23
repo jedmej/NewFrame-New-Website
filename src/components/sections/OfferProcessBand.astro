@@ -1,5 +1,6 @@
 ---
 import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
 import WorkSelectedMinimal from './WorkSelectedMinimal.astro';
 import WaysToWorkProductGrid from './WaysToWorkProductGrid.astro';
 import ProcessAlternative from './ProcessAlternative.astro';
@@ -9,6 +10,13 @@ interface Props {
 }
 
 const { lang } = Astro.props;
+const t = useTranslations(lang);
+const normalizeHeading = (value: string) => value.toLocaleLowerCase(lang === 'pl' ? 'pl-PL' : 'en-US').replace(/^./u, (char) => char.toLocaleUpperCase(lang === 'pl' ? 'pl-PL' : 'en-US'));
+const introHeadings = {
+  work: normalizeHeading(t.work.label),
+  ways: normalizeHeading(t.waysToWork.label),
+  process: t.services.heading,
+};
 ---
 
 <div class="offer-process-band" data-offer-process-band>
@@ -17,8 +25,19 @@ const { lang } = Astro.props;
   </div>
 
   <div class="offer-process-band__content">
+    <section id="work" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="work" aria-label={introHeadings.work}>
+      <h2>{introHeadings.work}</h2>
+    </section>
     <WorkSelectedMinimal lang={lang} />
+
+    <section id="ways-to-work" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="ways" aria-label={introHeadings.ways}>
+      <h2>{introHeadings.ways}</h2>
+    </section>
     <WaysToWorkProductGrid lang={lang} />
+
+    <section id="services" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="process" aria-label={introHeadings.process}>
+      <h2>{introHeadings.process}</h2>
+    </section>
     <ProcessAlternative lang={lang} />
   </div>
 </div>
@@ -105,6 +124,60 @@ const { lang } = Astro.props;
     position: relative;
     z-index: 2;
   }
+
+  .offer-process-band__intro {
+    position: relative;
+    display: grid;
+    min-height: 90svh;
+    place-items: center;
+    padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
+    color: var(--offer-work-ink);
+    text-align: center;
+    isolation: isolate;
+  }
+
+  .offer-process-band__intro h2 {
+    max-width: min(11ch, 80vw);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.25rem, 8vw, 7.4rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+    text-transform: none;
+    text-wrap: balance;
+  }
+
+  .offer-process-band__intro[data-offer-section-intro-kind='ways'],
+  .offer-process-band__intro[data-offer-section-intro-kind='process'] {
+    color: #f3efe5;
+  }
+
+  .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
+    max-width: min(17ch, 88vw);
+    font-size: clamp(3rem, 6.45vw, 6.3rem);
+    line-height: 0.96;
+  }
+
+  @media (max-width: 767px) {
+    .offer-process-band__intro {
+      min-height: 82svh;
+      padding-inline: clamp(1.5rem, 7vw, 2.5rem);
+    }
+
+    .offer-process-band__intro h2 {
+      max-width: 9ch;
+      font-size: clamp(3rem, 16vw, 5rem);
+      line-height: 0.92;
+      letter-spacing: -0.045em;
+    }
+
+    .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
+      max-width: 10ch;
+      font-size: clamp(2.9rem, 13vw, 4.6rem);
+      line-height: 0.98;
+    }
+  }
 </style>
 
 <script>
@@ -126,6 +199,9 @@ const { lang } = Astro.props;
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const shaderMount = band.querySelector<HTMLElement>('[data-offer-process-shader]');
+    const workIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="work"]');
+    const waysIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="ways"]');
+    const processIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="process"]');
     const waysSection = band.querySelector<HTMLElement>('#ways-to-work-grid');
     const processSection = band.querySelector<HTMLElement>('#process-alternative');
     const scrollTriggers: ScrollTrigger[] = [];
@@ -134,10 +210,11 @@ const { lang } = Astro.props;
     let waysToProcessProgress = 0;
     let lastShaderSurfaceProgress = -1;
     let lastShaderSpeed = -1;
+    const introPulses = new Map<HTMLElement, number>();
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
     const easeSurface = gsap.parseEase('power2.inOut');
     const shaderBaseSpeed = 0.5;
-    const shaderTransitionSpeed = 3;
+    const shaderTransitionSpeed = 3.35;
     const transitionPulse = (progress: number) => Math.sin(clamp(progress) * Math.PI);
 
     if (!prefersReducedMotion && shaderMount) {
@@ -175,6 +252,7 @@ const { lang } = Astro.props;
       const shaderPulse = Math.max(
         transitionPulse(workToWaysProgress),
         transitionPulse(waysToProcessProgress),
+        ...Array.from(introPulses.values()),
       );
       const shaderSpeed = shaderBaseSpeed + shaderPulse * (shaderTransitionSpeed - shaderBaseSpeed);
       const shouldUpdateSurface = Math.abs(shaderSurfaceProgress - lastShaderSurfaceProgress) > 0.025;
@@ -194,11 +272,30 @@ const { lang } = Astro.props;
 
     updateBandSurface();
 
-    if (waysSection) {
+    [workIntro, waysIntro, processIntro].filter((intro): intro is HTMLElement => !!intro).forEach((intro) => {
+      introPulses.set(intro, 0);
       scrollTriggers.push(ScrollTrigger.create({
-        trigger: waysSection,
-        start: 'top 105%',
-        end: 'top 35%',
+        trigger: intro,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: prefersReducedMotion ? false : true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          introPulses.set(intro, transitionPulse(self.progress));
+          updateBandSurface();
+        },
+        onRefresh: (self) => {
+          introPulses.set(intro, transitionPulse(self.progress));
+          updateBandSurface();
+        },
+      }));
+    });
+
+    if (waysIntro || waysSection) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: waysIntro ?? waysSection,
+        start: 'top 100%',
+        end: 'bottom 22%',
         scrub: prefersReducedMotion ? false : true,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
@@ -212,11 +309,11 @@ const { lang } = Astro.props;
       }));
     }
 
-    if (processSection) {
+    if (processIntro || processSection) {
       scrollTriggers.push(ScrollTrigger.create({
-        trigger: processSection,
-        start: 'top bottom',
-        end: 'top top',
+        trigger: processIntro ?? processSection,
+        start: 'top 100%',
+        end: 'bottom 22%',
         scrub: prefersReducedMotion ? false : true,
         invalidateOnRefresh: true,
         onUpdate: (self) => {

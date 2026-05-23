@@ -11,86 +11,97 @@ const t = useTranslations(lang);
 const altLang = lang === 'en' ? 'pl' : 'en';
 const altUrl = getAlternateUrl(Astro.url, altLang);
 const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
+const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation';
 ---
 
 <nav
   id="main-nav"
-  class="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-4 py-5 lg:grid lg:grid-cols-[minmax(19rem,24vw)_minmax(0,1fr)_minmax(19rem,24vw)] lg:px-0 lg:py-0 transition-transform duration-500 text-[var(--color-text)] glass"
+  class="fixed top-0 left-0 w-full z-[100] transition-transform duration-500 text-[var(--color-text)]"
+  aria-label={navAriaLabel}
 >
-  <!-- Left: Logo -->
-  <div class="nav-section nav-section--brand flex items-center">
-    <a
-      href={`/${lang}/`}
-      id="logo-link"
-      class="group flex items-center gap-3 relative overflow-hidden"
-      transition:name="logo"
-      style="height: 1.35rem;"
-    >
-      <span id="logo-text" class="text-sm font-semibold tracking-tight uppercase block" style="font-family: var(--font-display)">
-        New Frame<sup class="text-[0.5em] align-super opacity-40 ml-0.5">®</sup>
-      </span>
-      <svg id="logo-icon" class="absolute left-1/2 -translate-x-1/2 w-auto block" style="height: 1.35rem; top: 100%;" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
-        <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
-        <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
-        <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
-      </svg>
-    </a>
+  <div class="nav-progressive-blur" aria-hidden="true">
+    <div class="nav-progressive-blur__layer nav-progressive-blur__layer--soft"></div>
+    <div class="nav-progressive-blur__layer nav-progressive-blur__layer--medium"></div>
+    <div class="nav-progressive-blur__layer nav-progressive-blur__layer--strong"></div>
+    <div class="nav-progressive-blur__layer nav-progressive-blur__layer--deep"></div>
   </div>
 
-  <!-- Center: Desktop Nav Links -->
-  <div class="nav-section nav-section--links hidden lg:flex items-center">
-    <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
-      {t.nav.work}
-    </a>
-    <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
-      {t.nav.scope}
-    </a>
-    <a href={`/${lang}/#ways-to-work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
-      {t.nav.services}
-    </a>
-    <a href={`/${lang}/#services`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
-      {t.nav.process}
-    </a>
-    <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
-      {t.nav.contact}
-    </a>
-  </div>
+  <div class="nav-shell">
+    <!-- Left: Logo -->
+    <div class="nav-section nav-section--brand flex items-center">
+      <a
+        href={`/${lang}/`}
+        id="logo-link"
+        class="nav-brand group flex items-center gap-3 relative overflow-hidden"
+        transition:name="logo"
+        style="height: 1.35rem;"
+      >
+        <span id="logo-text" class="text-sm font-semibold tracking-tight uppercase block" style="font-family: var(--font-display)">
+          New Frame<sup class="text-[0.5em] align-super opacity-40 ml-0.5">®</sup>
+        </span>
+        <svg id="logo-icon" class="absolute left-1/2 -translate-x-1/2 w-auto block" style="height: 1.35rem; top: 100%;" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="300" height="100" transform="matrix(-1 0 0 1 400 400)" fill="currentColor"/>
+          <rect width="100" height="400" transform="matrix(-1 0 0 1 500 100)" fill="currentColor"/>
+          <rect width="300" height="100" transform="matrix(1 0 0 -1 100 100)" fill="currentColor"/>
+          <rect width="100" height="400" transform="matrix(1 0 0 -1 0 400)" fill="currentColor"/>
+        </svg>
+      </a>
+    </div>
 
-  <!-- Right: CTA + Mobile Menu -->
-  <div class="nav-section nav-section--actions flex items-center justify-end gap-4">
-    <!-- Language Selector -->
-    <a
-      href={altUrl}
-      class="nav-link hidden lg:inline-flex text-mono-xs opacity-40 hover:opacity-100 transition-opacity mr-2"
-      data-lang-switch={altLang}
-    >
-      {altLang.toUpperCase()}
-    </a>
+    <!-- Center: Desktop Nav Links -->
+    <div class="nav-section nav-section--links hidden lg:flex items-center">
+      <a href={`/${lang}/#work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
+        {t.nav.work}
+      </a>
+      <a href={`/${lang}/#scope`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
+        {t.nav.scope}
+      </a>
+      <a href={`/${lang}/#ways-to-work`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
+        {t.nav.services}
+      </a>
+      <a href={`/${lang}/#services`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
+        {t.nav.process}
+      </a>
+      <a href={`/${lang}/#contact`} class="nav-link text-mono-xs opacity-60 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300">
+        {t.nav.contact}
+      </a>
+    </div>
 
-    <!-- Let's Talk CTA -->
-    <a
-      href={`/${lang}/#contact`}
-      class="nav-cta hidden lg:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity] duration-300 group"
-      data-magnetic="0.35"
-    >
-      <span>{t.contact.cta}</span>
-      <svg class="nav-cta-arrow w-3 h-3 transition-transform duration-300 ease-out" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <path d="M1 11L11 1M11 1H3M11 1V9"/>
-      </svg>
-    </a>
+    <!-- Right: CTA + Mobile Menu -->
+    <div class="nav-section nav-section--actions flex items-center justify-end gap-4">
+      <!-- Language Selector -->
+      <a
+        href={altUrl}
+        class="nav-link nav-lang hidden lg:inline-flex text-mono-xs opacity-40 hover:opacity-100 transition-opacity"
+        data-lang-switch={altLang}
+      >
+        {altLang.toUpperCase()}
+      </a>
 
-    <!-- Mobile Menu Button -->
-    <button
-      id="mobile-menu-btn"
-      class="lg:hidden flex min-h-10 min-w-10 flex-col justify-center gap-1.5 p-2 -mr-2"
-      aria-label={mobileMenuButtonLabel}
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-    >
-      <span class="menu-line w-6 h-px transition-[background-color,transform,width] duration-300 bg-[var(--color-text)]" aria-hidden="true"></span>
-      <span class="menu-line w-4 h-px transition-[background-color,transform,width] duration-300 ml-auto bg-[var(--color-text)]" aria-hidden="true"></span>
-    </button>
+      <!-- Let's Talk CTA -->
+      <a
+        href={`/${lang}/#contact`}
+        class="nav-cta hidden lg:inline-flex items-center gap-2 text-mono-xs opacity-70 hover:opacity-100 hover:text-[var(--color-accent)] transition-[color,opacity,border-color,background-color] duration-300 group"
+        data-magnetic="0.35"
+      >
+        <span>{t.contact.cta}</span>
+        <svg class="nav-cta-arrow w-3 h-3 transition-transform duration-300 ease-out" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M1 11L11 1M11 1H3M11 1V9"/>
+        </svg>
+      </a>
+
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-menu-btn"
+        class="lg:hidden flex min-h-10 min-w-10 flex-col justify-center gap-1.5 p-2 -mr-2"
+        aria-label={mobileMenuButtonLabel}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="menu-line w-6 h-px transition-[background-color,transform,width] duration-300 bg-[var(--color-text)]" aria-hidden="true"></span>
+        <span class="menu-line w-4 h-px transition-[background-color,transform,width] duration-300 ml-auto bg-[var(--color-text)]" aria-hidden="true"></span>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -117,56 +128,159 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
 
 <style>
   #main-nav {
+    --nav-top-inset: max(1rem, env(safe-area-inset-top));
+    --nav-blur-height: clamp(6.75rem, 13vh, 9.25rem);
+    --nav-content-height: 5.75rem;
+    --nav-ink: var(--color-text);
     opacity: 0;
+    pointer-events: none;
+  }
+
+  #main-nav.nav-on-dark {
+    --nav-ink: var(--color-dark-text);
+  }
+
+  #main-nav.nav-menu-open {
+    transform: translateY(0);
+  }
+
+  .nav-progressive-blur {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 0;
+    height: var(--nav-blur-height);
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+  }
+
+  .nav-progressive-blur__layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(244, 244, 244, 0.015);
+  }
+
+  .nav-progressive-blur__layer--soft {
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+  }
+
+  .nav-progressive-blur__layer--medium {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 48%, transparent 76%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 48%, transparent 76%);
+  }
+
+  .nav-progressive-blur__layer--strong {
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 22%, transparent 52%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 22%, transparent 52%);
+  }
+
+  .nav-progressive-blur__layer--deep {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 10%, transparent 34%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 10%, transparent 34%);
+  }
+
+  .nav-shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: var(--nav-content-height);
+    align-items: start;
+    padding: var(--nav-top-inset) clamp(1.25rem, 3.8vw, 4rem) 0;
+    pointer-events: none;
+  }
+
+  .nav-section {
+    pointer-events: auto;
+  }
+
+  .nav-brand,
+  .nav-section--links .nav-link,
+  .nav-section--actions > .nav-link,
+  .nav-cta,
+  #mobile-menu-btn {
+    color: var(--nav-ink);
+    transition:
+      color 0.24s var(--ease-out-quart),
+      opacity 0.24s var(--ease-out-quart);
+  }
+
+  .nav-brand {
+    width: max-content;
+  }
+
+  .nav-cta {
+    min-height: 2.35rem;
+  }
+
+  .nav-section .nav-link:hover,
+  .nav-section .nav-cta:hover {
+    color: currentColor;
+  }
+
+  .menu-line {
+    background: currentColor;
   }
 
   @media (max-width: 1023px) {
     #main-nav {
-      top: max(0.875rem, env(safe-area-inset-top));
-      right: clamp(0.75rem, 4vw, 1.25rem);
-      left: clamp(0.75rem, 4vw, 1.25rem);
-      width: auto;
-      min-height: 4.25rem;
-      padding: 0.875rem 1rem 0.875rem 1.125rem;
-      border: 1px solid rgba(20, 18, 15, 0.12);
-      border-radius: 0.125rem;
-      background: rgba(239, 235, 226, 0.68);
-      box-shadow:
-        0 1.2rem 3.4rem rgba(60, 42, 31, 0.12),
-        0 0 0 1px rgba(255, 255, 255, 0.22) inset;
-      -webkit-backdrop-filter: blur(34px) saturate(1.18);
-      backdrop-filter: blur(34px) saturate(1.18);
+      --nav-top-inset: max(0.875rem, env(safe-area-inset-top));
+      --nav-blur-height: 7.25rem;
+      --nav-content-height: 4.5rem;
     }
 
-    #main-nav.nav-menu-open {
-      border-bottom-color: rgba(20, 18, 15, 0.08);
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-      box-shadow:
-        0 0.9rem 2.8rem rgba(60, 42, 31, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+    .nav-shell {
+      display: flex;
+      min-height: var(--nav-content-height);
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: var(--nav-top-inset) clamp(1rem, 4vw, 1.35rem) 0;
+    }
+
+    .nav-section--brand,
+    .nav-section--actions {
+      min-height: 2.5rem;
+    }
+
+    .nav-section--brand {
+      align-items: center;
+    }
+
+    .nav-brand {
+      height: 2.5rem !important;
+      padding-top: 0.55rem;
     }
 
     #mobile-menu {
-      top: calc(max(0.875rem, env(safe-area-inset-top)) + 4.25rem - 1px);
-      right: clamp(0.75rem, 4vw, 1.25rem);
-      bottom: auto;
-      left: clamp(0.75rem, 4vw, 1.25rem);
-      z-index: 100;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 99;
       align-items: stretch;
       justify-content: flex-start;
-      max-height: calc(100svh - max(0.875rem, env(safe-area-inset-top)) - 5.25rem);
-      padding: 0;
+      padding: calc(var(--nav-top-inset) + 4.65rem) clamp(1rem, 4vw, 1.35rem) 1.25rem;
       overflow: hidden;
-      border: 1px solid rgba(20, 18, 15, 0.12);
-      border-top: 0;
-      border-radius: 0 0 0.125rem 0.125rem;
-      background: rgba(239, 235, 226, 0.72);
-      box-shadow:
-        0 1.8rem 4.2rem rgba(60, 42, 31, 0.16),
-        0 0 0 1px rgba(255, 255, 255, 0.18) inset;
-      -webkit-backdrop-filter: blur(34px) saturate(1.18);
-      backdrop-filter: blur(34px) saturate(1.18);
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--color-bg) 88%, transparent) 0%,
+          color-mix(in srgb, var(--color-bg) 80%, transparent) 42%,
+          color-mix(in srgb, var(--color-bg) 66%, transparent) 100%
+        );
+      -webkit-backdrop-filter: blur(24px) saturate(1.08);
+      backdrop-filter: blur(24px) saturate(1.08);
     }
 
     #mobile-menu > div:first-child {
@@ -177,7 +291,7 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
 
     #mobile-menu > div:last-child {
       margin-top: 0;
-      padding: 1rem 1.125rem 1.125rem;
+      padding: 1rem 0 0;
       border-top: 1px solid rgba(20, 18, 15, 0.1);
     }
 
@@ -186,7 +300,7 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
       align-items: center;
       justify-content: space-between;
       min-height: 3.65rem;
-      padding: 0 1.125rem;
+      padding: 0;
       border-top: 1px solid rgba(20, 18, 15, 0.1);
       font-family: var(--font-mono);
       font-size: clamp(0.82rem, 3.25vw, 1rem);
@@ -226,6 +340,39 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
     }
   }
 
+  @media (min-width: 1024px) {
+    .nav-shell {
+      grid-template-columns: minmax(12rem, 1fr) auto minmax(12rem, 1fr);
+      column-gap: clamp(1.25rem, 2vw, 2.25rem);
+    }
+
+    .nav-section--brand {
+      justify-content: flex-start;
+    }
+
+    .nav-section--links {
+      min-height: 2.35rem;
+      justify-content: center;
+      gap: clamp(1.35rem, 2.7vw, 3.35rem);
+      padding-inline: clamp(0.65rem, 1.2vw, 1.15rem);
+    }
+
+    .nav-section--actions {
+      justify-content: flex-end;
+      gap: clamp(1rem, 1.8vw, 1.75rem);
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1180px) {
+    .nav-shell {
+      padding-inline: clamp(1.1rem, 2.2vw, 2rem);
+    }
+
+    .nav-section--links {
+      gap: clamp(1.25rem, 2.25vw, 2rem);
+    }
+  }
+
   #mobile-menu-btn {
     border: 1px solid transparent;
     transition:
@@ -239,45 +386,13 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
     background: rgba(247, 242, 233, 0.34);
   }
 
-  @media (min-width: 1024px) {
-    #main-nav {
-      min-height: 5.875rem;
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .nav-progressive-blur__layer {
+      display: none;
     }
 
-    .nav-section {
-      min-height: 5.875rem;
-      height: 100%;
-      padding-inline: clamp(2rem, 3vw, 3.75rem);
-    }
-
-    .nav-section--brand {
-      justify-content: center;
-    }
-
-    .nav-section--links {
-      justify-content: center;
-      gap: clamp(2rem, 3.5vw, 4rem);
-      border-left: 1px solid var(--color-glass-border);
-      border-right: 1px solid var(--color-glass-border);
-    }
-
-    .nav-section--actions {
-      justify-content: center;
-      gap: clamp(1rem, 1.8vw, 1.75rem);
-    }
-  }
-
-  @media (min-width: 1024px) and (max-width: 1180px) {
-    #main-nav {
-      grid-template-columns: minmax(17rem, 24vw) minmax(0, 1fr) minmax(17rem, 24vw);
-    }
-
-    .nav-section {
-      padding-inline: clamp(1.25rem, 2vw, 2rem);
-    }
-
-    .nav-section--links {
-      gap: clamp(1.25rem, 2.25vw, 2rem);
+    .nav-progressive-blur {
+      display: none;
     }
   }
 
@@ -308,16 +423,7 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const timelines: gsap.core.Timeline[] = [];
     let menuCloseTimeout: ReturnType<typeof setTimeout>;
-    let lastScrollY = window.scrollY;
-    let navHidden = false;
-    let pointerNearTop = false;
-    const navRevealHotZone = 96;
-
-    const showNav = () => {
-      if (!navHidden) return;
-      navHidden = false;
-      nav.classList.remove('nav-hidden');
-    };
+    let navToneFrame = 0;
 
     const runIntro = () => {
       const logoLink = document.getElementById('logo-link');
@@ -360,6 +466,71 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
     };
 
     runIntro();
+
+    const parseCssColor = (value: string) => {
+      const color = value.trim();
+      const hex = color.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+      if (hex) {
+        const raw = hex[1];
+        const normalized = raw.length === 3
+          ? raw.split('').map((char) => char + char).join('')
+          : raw;
+        return {
+          r: Number.parseInt(normalized.slice(0, 2), 16),
+          g: Number.parseInt(normalized.slice(2, 4), 16),
+          b: Number.parseInt(normalized.slice(4, 6), 16),
+        };
+      }
+
+      const rgb = color.match(/rgba?\(([^)]+)\)/i);
+      if (!rgb) return null;
+
+      const channels = rgb[1].split(',').map((part) => Number.parseFloat(part.trim()));
+      if (channels.length < 3 || channels.some((channel) => Number.isNaN(channel))) return null;
+
+      return { r: channels[0], g: channels[1], b: channels[2] };
+    };
+
+    const getLuminance = ({ r, g, b }: { r: number; g: number; b: number }) => {
+      const srgb = [r, g, b].map((channel) => {
+        const value = channel / 255;
+        return value <= 0.03928
+          ? value / 12.92
+          : Math.pow((value + 0.055) / 1.055, 2.4);
+      });
+
+      return srgb[0] * 0.2126 + srgb[1] * 0.7152 + srgb[2] * 0.0722;
+    };
+
+    const updateNavTone = () => {
+      navToneFrame = 0;
+
+      const band = document.querySelector<HTMLElement>('[data-offer-process-band]');
+      if (!band) {
+        nav.classList.remove('nav-on-dark');
+        return;
+      }
+
+      const navSampleY = window.innerWidth >= 1024
+        ? Math.max(42, window.innerHeight * 0.055)
+        : Math.max(34, window.innerHeight * 0.05);
+      const bandRect = band.getBoundingClientRect();
+      const isOverBand = bandRect.top <= navSampleY && bandRect.bottom >= navSampleY;
+      const bg = parseCssColor(getComputedStyle(band).getPropertyValue('--offer-process-bg'));
+      const isDarkBand = !!bg && getLuminance(bg) < 0.36;
+
+      nav.classList.toggle('nav-on-dark', isOverBand && isDarkBand);
+    };
+
+    const scheduleNavToneUpdate = () => {
+      if (navToneFrame) return;
+      navToneFrame = window.requestAnimationFrame(updateNavTone);
+    };
+
+    updateNavTone();
+    window.addEventListener('scroll', scheduleNavToneUpdate, { signal, passive: true });
+    window.addEventListener('resize', scheduleNavToneUpdate, { signal, passive: true });
+    document.addEventListener('astro:page-load', scheduleNavToneUpdate, { signal });
 
     const lockScrambleWidth = (el: Element) => {
       const target = el as HTMLElement;
@@ -439,38 +610,6 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
             ease: 'power3.out',
           }, '>-0.05');
       }, { signal });
-    }
-
-    // Hide/show nav on scroll direction (desktop)
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      const delta = currentY - lastScrollY;
-
-      if (currentY < 24 || pointerNearTop) {
-        showNav();
-      } else if (delta > 8 && !navHidden) {
-        navHidden = true;
-        nav.classList.add('nav-hidden');
-      } else if (delta < -8 && navHidden) {
-        showNav();
-      }
-
-      lastScrollY = currentY;
-    };
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (window.innerWidth < 1024 || event.pointerType === 'touch') return;
-
-      pointerNearTop = event.clientY <= navRevealHotZone;
-      if (pointerNearTop) {
-        showNav();
-      }
-    };
-
-    if (window.innerWidth >= 1024) {
-      window.addEventListener('scroll', handleScroll, { signal, passive: true });
-      window.addEventListener('pointermove', handlePointerMove, { signal, passive: true });
-      handleScroll();
     }
 
     // Mobile menu
@@ -609,6 +748,10 @@ const mobileMenuButtonLabel = lang === 'pl' ? 'Otwórz menu' : 'Open menu';
       }
       nav.classList.remove('nav-menu-open');
       document.body.style.overflow = '';
+      if (navToneFrame) {
+        window.cancelAnimationFrame(navToneFrame);
+        navToneFrame = 0;
+      }
       ac.abort();
       clearTimeout(menuCloseTimeout);
     };

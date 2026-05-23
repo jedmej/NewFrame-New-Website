@@ -13,8 +13,6 @@ const totalSteps = t.services.groups.length;
 
 <section id="process-alternative" class="process-alt" aria-label={t.services.altAriaLabel}>
   <div class="process-alt__stage">
-    <h2 class="process-alt__heading">{t.services.altHeading}</h2>
-
     <div class="process-alt__body">
       <div class="process-alt__titles" aria-hidden="true">
         {t.services.groups.map((group, index) => (
@@ -94,22 +92,9 @@ const totalSteps = t.services.groups.length;
     overflow: clip;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
     isolation: isolate;
-  }
-
-  .process-alt__heading {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    font-family: var(--font-sans);
-    font-size: clamp(2.25rem, 3.5vw, 3.125rem);
-    font-weight: 500;
-    line-height: 1.12;
-    letter-spacing: -0.04em;
-    text-align: center;
-    text-wrap: balance;
   }
 
   .process-alt__body {
@@ -251,7 +236,9 @@ const totalSteps = t.services.groups.length;
   }
 
   .process-alt__rail {
-    position: relative;
+    position: absolute;
+    bottom: clamp(3.5rem, 7vw, 4rem);
+    left: 50%;
     z-index: 2;
     display: flex;
     width: min(100%, 22.25rem);
@@ -259,6 +246,7 @@ const totalSteps = t.services.groups.length;
     flex: 0 0 auto;
     align-items: center;
     gap: 1.125rem;
+    translate: -50% 0;
   }
 
   .process-alt__mobile-list {
@@ -400,7 +388,6 @@ const totalSteps = t.services.groups.length;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
 
-    const heading = section.querySelector('.process-alt__heading');
     const phases = Array.from(section.querySelectorAll<HTMLElement>('.process-alt__phase'));
     const panels = Array.from(section.querySelectorAll<HTMLElement>('.process-alt__panel'));
     const itemLists = Array.from(section.querySelectorAll<HTMLElement>('.process-alt__items'));
@@ -428,14 +415,14 @@ const totalSteps = t.services.groups.length;
     setProcessState(0, 0);
 
     if (prefersReducedMotion || !desktopQuery.matches) {
-      gsap.set([heading, rail, ...phases, ...panels, ...itemLists].filter(Boolean), { clearProps: 'all' });
+      gsap.set([rail, ...phases, ...panels, ...itemLists].filter(Boolean), { clearProps: 'all' });
       cleanupFn = () => {
         ac.abort();
       };
       return;
     }
 
-    gsap.set([heading, rail].filter(Boolean), {
+    gsap.set([rail].filter(Boolean), {
       y: 18,
       opacity: 0,
       filter: 'blur(8px)',
@@ -453,7 +440,6 @@ const totalSteps = t.services.groups.length;
     if (introTl.scrollTrigger) scrollTriggers.push(introTl.scrollTrigger);
 
     introTl
-      .to(heading, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.95 }, 0)
       .to(rail, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.8 }, 0.12);
 
     scrollTriggers.push(ScrollTrigger.create({
