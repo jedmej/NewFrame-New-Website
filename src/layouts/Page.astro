@@ -5,6 +5,7 @@ import Footer from '../components/global/Footer.astro';
 import Preloader from '../components/global/Preloader.astro';
 import CustomCursor from '../components/global/CustomCursor.astro';
 import PageShaderBackground from '../components/global/PageShaderBackground.astro';
+import ViewportProgressiveBlur from '../components/global/ViewportProgressiveBlur.astro';
 import type { Lang } from '../i18n/translations';
 import { useTranslations } from '../i18n/translations';
 
@@ -32,6 +33,7 @@ const RetuneOverlay = import.meta.env.DEV ? (await import('../components/global/
   </main>
 
   <Footer lang={lang} />
+  <ViewportProgressiveBlur />
   {RetuneOverlay && <RetuneOverlay />}
 
   <!-- Initialize Lenis smooth scroll -->

@@ -1,0 +1,67 @@
+<div class="viewport-progressive-blur" aria-hidden="true">
+  <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--soft"></div>
+  <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--medium"></div>
+  <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--strong"></div>
+  <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--deep"></div>
+</div>
+
+<style>
+  .viewport-progressive-blur {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 90;
+    height: clamp(6rem, 13vh, 9rem);
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+  }
+
+  .viewport-progressive-blur__layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(20, 18, 15, 0.01);
+  }
+
+  .viewport-progressive-blur__layer--soft {
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 25%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 25%);
+  }
+
+  .viewport-progressive-blur__layer--medium {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 24%, #000 52%);
+    mask-image: linear-gradient(180deg, transparent 24%, #000 52%);
+  }
+
+  .viewport-progressive-blur__layer--strong {
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 48%, #000 78%);
+    mask-image: linear-gradient(180deg, transparent 48%, #000 78%);
+  }
+
+  .viewport-progressive-blur__layer--deep {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 72%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent 72%, #000 100%);
+  }
+
+  @media (max-width: 767px) {
+    .viewport-progressive-blur {
+      height: 6.5rem;
+    }
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .viewport-progressive-blur {
+      display: none;
+    }
+  }
+</style>
