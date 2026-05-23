@@ -10,72 +10,35 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<section
-  id="scope"
-  class="relative min-h-screen"
->
-  <div class="w-full px-6 md:px-10 max-w-[1400px] mx-auto py-24 md:py-32 lg:py-40">
+<section id="scope" class="about-paper-section" aria-labelledby="about-title">
+  <div class="about-paper-section__inner">
+    <header class="about-paper-section__topbar">
+      <h2 id="about-title" class="text-mono-xs">{t.about.label}</h2>
+      <div class="about-paper-section__rule" data-line></div>
+    </header>
 
-    <!-- Section label -->
-    <div class="mb-8 md:mb-12">
-      <h2 class="text-mono-xs text-[var(--color-text)]">{t.about.label}</h2>
-      <div class="mt-4 w-full h-px bg-[var(--color-line)]" data-line></div>
-    </div>
-
-    <!-- Full-width manifesto text -->
     <p
       id="manifesto-text"
-      class="text-serif-display leading-[1.25]"
-      style="color: var(--color-text); font-size: clamp(2.25rem, 3.75vw, 3.375rem);"
+      class="about-paper-section__manifesto"
       data-highlights={JSON.stringify(t.about.manifestoHighlights)}
     >
       {t.about.manifesto}
     </p>
 
-    <!-- Image + body text row -->
-    <div class="about-lower flex flex-col md:flex-row md:justify-end gap-6 mt-12 md:mt-16 lg:mt-20">
-
-      <!-- Image block -->
-      <div class="about-image-wrapper w-full md:w-1/2 lg:w-[480px] flex-shrink-0">
-        <div
-          id="about-image-block"
-          class="relative overflow-hidden"
-          style="aspect-ratio: 3/4; background: var(--color-text);"
-        >
-          <img
-            src="/images/jed-mejzner-hero.webp"
-            alt={t.about.imageAlt}
-            width="848"
-            height="1149"
-            loading="lazy"
-            decoding="async"
-            class="about-founder-image"
-          />
-
-          <!-- Bottom-left detail -->
-          <div class="absolute bottom-5 left-5 flex items-center gap-3 z-10">
-            <span class="block w-6 h-px" style="background-color: var(--color-accent);"></span>
-            <span class="text-mono-xs" style="color: rgba(255,255,255,0.35);">{t.about.founder}</span>
-          </div>
-
-          <!-- Top-right detail -->
-          <div class="absolute top-5 right-5 z-10">
-            <span class="text-mono-xs" style="color: rgba(255,255,255,0.2);">{t.about.role}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Body text -->
-      <div class="about-text-wrapper flex items-start">
-        <p
-          id="about-body"
-          class="sticky top-32 md:top-40 text-body max-w-[420px]"
-        >
-          {t.about.body}
-        </p>
-      </div>
-
-    </div>
+    <figure id="about-image-block" class="about-paper-section__image-block">
+      <img
+        src="/images/about-paper-blur.jpg"
+        alt={t.about.imageAlt}
+        width="970"
+        height="460"
+        loading="lazy"
+        decoding="async"
+        class="about-paper-section__image"
+      />
+      <figcaption id="about-body" class="about-paper-section__caption text-mono-xs">
+        {t.about.body}
+      </figcaption>
+    </figure>
   </div>
 </section>
 
@@ -95,43 +58,133 @@ const t = useTranslations(lang);
     }
   }
 
-  #scope {
+  .about-paper-section {
     background: transparent;
+    color: var(--color-text);
   }
 
-  #scope > div {
+  .about-paper-section__inner {
     position: relative;
     z-index: 1;
+    width: min(100% - clamp(3rem, 10vw, 10rem), 86rem);
+    margin-inline: auto;
+    padding-block: clamp(7rem, 11vw, 11.5rem) clamp(7rem, 12vw, 12rem);
   }
 
-  #manifesto-text {
+  .about-paper-section__topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.25rem, 4vw, 4.5rem);
+    margin-bottom: clamp(4.75rem, 7.2vw, 7.25rem);
+    color: rgba(24, 24, 26, 0.72);
+  }
+
+  .about-paper-section__topbar h2 {
+    margin: 0;
+  }
+
+  .about-paper-section__rule {
+    width: 100%;
+    height: 1px;
+    background: rgba(24, 24, 26, 0.12);
+    transform-origin: left;
+  }
+
+  .about-paper-section__manifesto {
+    max-width: 76rem;
+    margin: 0 0 clamp(4.75rem, 7vw, 7rem);
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 4.55vw, 4.8rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: 0;
+    color: var(--color-text);
     text-wrap: pretty;
   }
 
-  #about-body {
-    line-height: 1.5;
+  .about-paper-section__image-block {
+    position: relative;
+    width: 100vw;
+    margin: 0 0 0 calc(50% - 50vw);
+    overflow: hidden;
+    background: rgba(24, 24, 26, 0.05);
+    aspect-ratio: 970 / 460;
+    isolation: isolate;
   }
 
-  .about-image-wrapper {
-    filter: drop-shadow(0 1.5rem 3.8rem rgba(86, 56, 39, 0.16));
-  }
-
-  .about-founder-image {
+  .about-paper-section__image {
     position: absolute;
-    inset: 0;
+    inset: -8% 0;
     width: 100%;
-    height: 100%;
+    height: 116%;
     object-fit: cover;
-    object-position: 50% 42%;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    object-position: 50% 50%;
+    will-change: transform;
   }
 
-  @media (max-width: 767px) {
-    .about-image-wrapper {
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
-      overflow: hidden;
+  .about-paper-section__caption {
+    position: absolute;
+    left: clamp(1.75rem, 3.4vw, 3rem);
+    bottom: clamp(1.6rem, 3vw, 2.6rem);
+    z-index: 1;
+    max-width: min(22rem, 42%);
+    margin: 0;
+    color: rgba(24, 24, 26, 0.58);
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 1023px) {
+    .about-paper-section__inner {
+      width: min(100% - 3rem, 52rem);
+      padding-block: clamp(5.5rem, 14vw, 8rem);
+    }
+
+    .about-paper-section__topbar {
+      gap: 1.5rem;
+      margin-bottom: 3.75rem;
+    }
+
+    .about-paper-section__manifesto {
+      font-size: clamp(2.35rem, 8vw, 4rem);
+      line-height: 1.03;
+      margin-bottom: 3.25rem;
+    }
+
+    .about-paper-section__image-block {
+      aspect-ratio: 4 / 3;
+    }
+
+    .about-paper-section__caption {
+      max-width: min(25rem, calc(100% - 3rem));
+      color: rgba(24, 24, 26, 0.64);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .about-paper-section__inner {
+      width: calc(100% - 2.5rem);
+    }
+
+    .about-paper-section__topbar {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .about-paper-section__manifesto {
+      font-size: clamp(2.1rem, 11vw, 3rem);
+    }
+
+    .about-paper-section__image-block {
+      aspect-ratio: 3 / 4;
+    }
+
+    .about-paper-section__caption {
+      left: 1.25rem;
+      bottom: 1.25rem;
+      max-width: calc(100% - 2.5rem);
     }
   }
 
@@ -153,6 +206,7 @@ const t = useTranslations(lang);
     const section = document.getElementById('scope');
     const textEl = document.getElementById('manifesto-text');
     const imageBlock = document.getElementById('about-image-block');
+    const imageEl = imageBlock?.querySelector<HTMLElement>('.about-paper-section__image') ?? null;
     const bodyEl = document.getElementById('about-body');
     const lines = section?.querySelectorAll('[data-line]') || [];
     if (!textEl || !section) return;
@@ -177,7 +231,6 @@ const t = useTranslations(lang);
       const text = word.textContent?.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, '') || '';
       if (highlights.some((h: string) => text.toLowerCase() === h.toLowerCase())) {
         word.dataset.highlight = 'true';
-        word.style.color = 'var(--color-accent)';
       }
     });
 
@@ -225,16 +278,16 @@ const t = useTranslations(lang);
         },
       }));
 
-      // Image block reveal + parallax — slightly different rate than text for organic feel
+      // Image block reveal
       if (imageBlock) {
-        gsap.set(imageBlock, { willChange: 'transform, clip-path' });
+        gsap.set(imageBlock, { willChange: 'clip-path, filter' });
         const maskTween = gsap.fromTo(imageBlock,
-          { clipPath: 'inset(100% 0 0 0)', scale: 1.08 },
+          { clipPath: 'inset(100% 0 0 0)', filter: 'blur(10px)' },
           {
             clipPath: 'inset(0% 0 0 0)',
-            scale: 1,
-            duration: 1.1,
-            ease: 'power3.out',
+            filter: 'blur(0px)',
+            duration: 1.25,
+            ease: 'power4.out',
             scrollTrigger: {
               trigger: imageBlock,
               start: 'top 85%',
@@ -244,28 +297,31 @@ const t = useTranslations(lang);
         );
         if (maskTween.scrollTrigger) scrollTriggers.push(maskTween.scrollTrigger);
 
-        const imgTween = gsap.fromTo(imageBlock,
-          { y: 50 },
-          {
-            y: -40,
-            scrollTrigger: {
-              trigger: imageBlock,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1,
-            },
-          }
-        );
-        if (imgTween.scrollTrigger) scrollTriggers.push(imgTween.scrollTrigger);
+        if (imageEl) {
+          const imageParallax = gsap.fromTo(imageEl,
+            { yPercent: -4 },
+            {
+              yPercent: 4,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: imageBlock,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.15,
+              },
+            }
+          );
+          if (imageParallax.scrollTrigger) scrollTriggers.push(imageParallax.scrollTrigger);
+        }
       }
 
       // Body text reveal
       if (bodyEl) {
         const bodyTween = gsap.fromTo(bodyEl,
-          { opacity: 0, y: 20 },
+          { opacity: 0, filter: 'blur(8px)' },
           {
             opacity: 1,
-            y: 0,
+            filter: 'blur(0px)',
             duration: 1,
             ease: 'power2.out',
             scrollTrigger: {
@@ -281,7 +337,7 @@ const t = useTranslations(lang);
     } else {
       split.words.forEach((word: HTMLElement) => {
         if (word.dataset.highlight === 'true') {
-          word.style.color = 'var(--color-accent)';
+          word.style.color = 'var(--color-text)';
         }
       });
     }

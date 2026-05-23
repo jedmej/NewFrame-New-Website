@@ -33,7 +33,7 @@ export const translations = {
       secondaryCta: 'View work',
     },
     about: {
-      label: 'ABOUT',
+      label: '0 STUDIO',
       manifesto: `NEWFRAME is an independent studio creating distinctive websites and visual systems for founders and growing companies. We work with brands that understand how much first impressions shape trust, pricing and growth.`,
       manifestoHighlights: ['NEWFRAME', 'digital', 'studio', 'first impressions'],
       body: `Founded and led by Jędrzej “Jed” Mejzner. Based near Warsaw, working with clients in Poland and abroad.`,
@@ -204,7 +204,7 @@ export const translations = {
       secondaryCta: 'Zobacz projekty',
     },
     about: {
-      label: 'O STUDIO',
+      label: '0 STUDIO',
       manifesto: `NEWFRAME to niezależne studio tworzące wyraziste strony i systemy wizualne dla założycieli oraz rozwijających się firm. Pracujemy z markami, które rozumieją, że pierwsze wrażenie wpływa na zaufanie, stawki i tempo wzrostu.`,
       manifestoHighlights: ['NEWFRAME', 'studio', 'cyfrowe', 'pierwsze wrażenie'],
       body: `Studio założone i prowadzone przez Jędrzeja “Jeda” Mejznera. Działamy z okolic Warszawy, współpracując z klientami w Polsce i za granicą.`,

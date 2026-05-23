@@ -193,10 +193,14 @@ const offers = t.waysToWork.items;
   }
 
   .ways-grid__panel {
+    position: absolute;
+    inset: 0;
     display: flex;
     min-height: 100%;
     flex: 1;
     flex-direction: column;
+    pointer-events: none;
+    will-change: opacity, filter, transform;
   }
 
   .ways-grid__panel[hidden] {
@@ -300,7 +304,7 @@ const offers = t.waysToWork.items;
     }
 
     .ways-grid__details {
-      height: auto;
+      height: clamp(28.5rem, 72vw, 36rem);
     }
   }
 
@@ -333,8 +337,9 @@ const offers = t.waysToWork.items;
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -350,8 +355,10 @@ const offers = t.waysToWork.items;
     const scrollTriggers: ScrollTrigger[] = [];
     const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-offer-tab]'));
     const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-offer-panel]'));
+    const splitInstances: SplitText[] = [];
     let activeIndex = 0;
     let scrollScene: ScrollTrigger | null = null;
+    let panelSwitchTl: gsap.core.Timeline | null = null;
     let isManualSelection = false;
     let manualSelectionScrollY = 0;
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -369,8 +376,30 @@ const offers = t.waysToWork.items;
       }
     };
 
+    const splitRowsToChars = (rows: Element[]) => {
+      const chars: Element[] = [];
+      const splits: SplitText[] = [];
+      rows.forEach((row) => {
+        const existingChars = Array.from(row.querySelectorAll('.ways-grid__char'));
+        if (existingChars.length) {
+          chars.push(...existingChars);
+          return;
+        }
+
+        const split = new SplitText(row, {
+          type: 'chars',
+          charsClass: 'ways-grid__char',
+        });
+        splitInstances.push(split);
+        splits.push(split);
+        chars.push(...split.chars);
+      });
+      return { chars, splits };
+    };
+
     function setActiveOffer(nextIndex: number, animateRows = true) {
       if (!tabs[nextIndex] || activeIndex === nextIndex) return;
+      const previousIndex = activeIndex;
       activeIndex = nextIndex;
 
       tabs.forEach((tab, index) => {
@@ -379,31 +408,74 @@ const offers = t.waysToWork.items;
         tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
       });
 
+      const previousPanel = panels[previousIndex];
+      const nextPanel = panels[nextIndex];
+      if (!nextPanel) return;
+
+      panelSwitchTl?.kill();
       panels.forEach((panel, index) => {
-        const isActive = index === nextIndex;
-        panel.hidden = !isActive;
-        panel.classList.toggle('is-active', isActive);
+        panel.classList.toggle('is-active', index === nextIndex);
       });
 
-      if (!prefersReducedMotion && animateRows) {
-        const activePanel = panels[nextIndex];
-        if (activePanel) {
-          const rows = Array.from(activePanel.querySelectorAll('.ways-grid__row'));
-          gsap.fromTo(
-            rows,
-            { y: 18, opacity: 0, filter: 'blur(6px)' },
-            {
-              y: 0,
-              opacity: 1,
-              filter: 'blur(0px)',
-              duration: 0.7,
-              stagger: 0.035,
-              ease: 'expo.out',
-              overwrite: true,
-            }
-          );
-        }
+      if (prefersReducedMotion || !animateRows) {
+        splitInstances.splice(0).forEach((split) => split.revert());
+        panels.forEach((panel, index) => {
+          panel.hidden = index !== nextIndex;
+          gsap.set(panel.querySelectorAll('.ways-grid__row'), { clearProps: 'all' });
+        });
+        return;
       }
+
+      const previousRows = previousPanel ? Array.from(previousPanel.querySelectorAll('.ways-grid__row')) : [];
+      const nextRows = Array.from(nextPanel.querySelectorAll('.ways-grid__row'));
+      nextPanel.hidden = false;
+      const previousSplit = splitRowsToChars(previousRows);
+      const nextSplit = splitRowsToChars(nextRows);
+      const previousChars = previousSplit.chars;
+      const nextChars = nextSplit.chars;
+
+      gsap.killTweensOf([...previousChars, ...nextChars]);
+      gsap.set(nextRows, { opacity: 1, filter: 'blur(0px)' });
+      gsap.set(nextChars, { opacity: 0, filter: 'blur(16px)' });
+
+      panelSwitchTl = gsap.timeline({
+        defaults: { overwrite: true },
+        onComplete: () => {
+          panels.forEach((panel, index) => {
+            panel.hidden = index !== nextIndex;
+          });
+          gsap.set([...previousChars, ...nextChars, ...previousRows, ...nextRows], { clearProps: 'opacity,filter' });
+          const preservedSplits = new Set(nextSplit.splits);
+          const staleSplits = splitInstances.filter((split) => !preservedSplits.has(split));
+          staleSplits.forEach((split) => split.revert());
+          splitInstances.splice(0, splitInstances.length, ...nextSplit.splits);
+          panelSwitchTl = null;
+        },
+      });
+
+      if (previousChars.length) {
+        panelSwitchTl.to(previousChars, {
+          opacity: 0,
+          filter: 'blur(14px)',
+          duration: 0.32,
+          stagger: {
+            each: 0.004,
+            from: 'end',
+          },
+          ease: 'power2.in',
+        }, 0);
+      }
+
+      panelSwitchTl.to(nextChars, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 1.08,
+        stagger: {
+          each: 0.0052,
+          from: 'start',
+        },
+        ease: 'power4.out',
+      }, previousChars.length ? 0.22 : 0);
     }
 
     function setOfferProgress(progressIndex: number, animateRows = true) {
@@ -457,8 +529,10 @@ const offers = t.waysToWork.items;
     }
 
     cleanupFn = () => {
+      panelSwitchTl?.kill();
       scrollTriggers.forEach((trigger) => trigger.kill());
       gsap.killTweensOf(section.querySelectorAll('*'));
+      splitInstances.forEach((split) => split.revert());
       ac.abort();
     };
   }

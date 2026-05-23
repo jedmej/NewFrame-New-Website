@@ -102,6 +102,9 @@
     let shaderResizeFrame = 0;
     let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
     let shaderResizeObserver: ResizeObserver | null = null;
+    let shaderMotionFrame = 0;
+    let shaderSpeed = 1.05;
+    let shaderTargetSpeed = 1.05;
 
     if (!shell || !shaderCanvas || prefersReducedMotion) {
       cleanupFn = () => {
@@ -121,6 +124,9 @@
 
     const mix = (from: number, to: number, progress: number) => from + (to - from) * progress;
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
+    const ambientShaderSpeed = 1.05;
+    const fastShaderSpeed = 3.3;
+    const voronoiShaderId = 'idmoz9mn6uq7jt4z0kp';
 
     const getTimeTint = (progress: number) => {
       const nextProgress = clamp(progress, 0, 1);
@@ -165,6 +171,29 @@
       shell.style.opacity = opacity.toFixed(3);
       shell.style.visibility = opacity > 0.01 ? 'visible' : 'hidden';
       setTimeTint();
+    };
+
+    const setShaderSpeedFromVelocity = (velocity: number) => {
+      const velocityProgress = smoothstep(clamp(Math.abs(velocity) / 2600, 0, 1));
+      shaderTargetSpeed = mix(ambientShaderSpeed, fastShaderSpeed, velocityProgress);
+    };
+
+    const animateShaderSpeed = () => {
+      shaderMotionFrame = window.requestAnimationFrame(animateShaderSpeed);
+      if (!shaderInstance || shaderDisposed) return;
+
+      const easing = shaderTargetSpeed > shaderSpeed ? 0.075 : 0.026;
+      shaderSpeed = mix(shaderSpeed, shaderTargetSpeed, easing);
+      shaderTargetSpeed = mix(shaderTargetSpeed, ambientShaderSpeed, 0.018);
+
+      if (Math.abs(shaderSpeed - shaderTargetSpeed) < 0.002 && Math.abs(shaderTargetSpeed - ambientShaderSpeed) < 0.002) {
+        shaderSpeed = ambientShaderSpeed;
+        shaderTargetSpeed = ambientShaderSpeed;
+      }
+
+      shaderInstance.update(voronoiShaderId, {
+        speed: Number(shaderSpeed.toFixed(3)),
+      });
     };
 
     const resizeShaderToCanvas = () => {
@@ -227,7 +256,7 @@
             edgeSoftness: 0.18,
             scale: 3,
             seed: 33,
-            speed: 3.3,
+            speed: ambientShaderSpeed,
           },
         },
         {
@@ -256,6 +285,7 @@
 
       shaderInstance = shader;
       resizeShaderToCanvas();
+      animateShaderSpeed();
       window.addEventListener('resize', scheduleShaderResize, { signal });
       window.addEventListener('orientationchange', scheduleShaderResize, { signal });
       shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
@@ -269,7 +299,10 @@
       start: 0,
       end: () => ScrollTrigger.maxScroll(window),
       invalidateOnRefresh: true,
-      onUpdate: setShaderVisibility,
+      onUpdate: (self) => {
+        setShaderVisibility();
+        setShaderSpeedFromVelocity(self.getVelocity());
+      },
       onRefresh: setShaderVisibility,
     }));
 
@@ -279,6 +312,7 @@
       shaderDisposed = true;
       if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
       if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
+      if (shaderMotionFrame) window.cancelAnimationFrame(shaderMotionFrame);
       shaderResizeObserver?.disconnect();
       shaderInstance?.destroy();
       scrollTriggers.forEach((st) => st.kill());

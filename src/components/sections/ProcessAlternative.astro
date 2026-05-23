@@ -176,18 +176,15 @@ const totalSteps = t.services.groups.length;
     gap: 0.75rem;
     opacity: 0;
     filter: blur(10px);
-    transform: translate3d(0, 1.25rem, 0);
     transition:
       opacity 0.55s var(--ease-out-expo),
-      filter 0.55s var(--ease-out-expo),
-      transform 0.55s var(--ease-out-expo);
+      filter 0.55s var(--ease-out-expo);
     pointer-events: none;
   }
 
   .process-alt__panel.is-active {
     opacity: 1;
     filter: blur(0);
-    transform: translate3d(0, 0, 0);
   }
 
   .process-alt__eyebrow {
@@ -221,17 +218,14 @@ const totalSteps = t.services.groups.length;
     list-style: none;
     opacity: 0;
     filter: blur(8px);
-    transform: translate3d(0.85rem, 0, 0);
     transition:
       opacity 0.55s var(--ease-out-expo),
-      filter 0.55s var(--ease-out-expo),
-      transform 0.55s var(--ease-out-expo);
+      filter 0.55s var(--ease-out-expo);
   }
 
   .process-alt__items.is-active {
     opacity: 1;
     filter: blur(0);
-    transform: translate3d(0, 0, 0);
   }
 
   .process-alt__items li {
@@ -380,8 +374,9 @@ const totalSteps = t.services.groups.length;
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -395,6 +390,7 @@ const totalSteps = t.services.groups.length;
     const ac = new AbortController();
     const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
+    const splitInstances: SplitText[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
 
@@ -407,6 +403,8 @@ const totalSteps = t.services.groups.length;
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
     let scrollScene: ScrollTrigger | null = null;
+    let activeStep = -1;
+    let processSwitchTl: gsap.core.Timeline | null = null;
     const scrollToStep = (index: number) => {
       if (!scrollScene) return;
       const steps = Math.max(totalSteps - 1, 1);
@@ -420,13 +418,128 @@ const totalSteps = t.services.groups.length;
       }
     };
 
-    const setProcessState = (step: number, progress: number) => {
+    const splitContentToChars = (elements: Element[]) => {
+      const chars: Element[] = [];
+      const splits: SplitText[] = [];
+      elements.forEach((element) => {
+        const existingChars = Array.from(element.querySelectorAll('.process-alt__char'));
+        if (existingChars.length) {
+          chars.push(...existingChars);
+          return;
+        }
+
+        const split = new SplitText(element, {
+          type: 'chars',
+          charsClass: 'process-alt__char',
+        });
+        splitInstances.push(split);
+        splits.push(split);
+        chars.push(...split.chars);
+      });
+      return { chars, splits };
+    };
+
+    const setProcessContent = (nextStep: number, animate = true) => {
+      if (nextStep === activeStep) return;
+      const previousStep = activeStep;
+      const previousPanel = panels[previousStep];
+      const previousItems = itemLists[previousStep];
+      const nextPanel = panels[nextStep];
+      const nextItems = itemLists[nextStep];
+      if (!nextPanel || !nextItems) return;
+
+      activeStep = nextStep;
+      if (currentStep) currentStep.textContent = String(nextStep + 1).padStart(2, '0');
+
+      processSwitchTl?.kill();
+      panels.forEach((panel, index) => panel.classList.toggle('is-active', index === nextStep));
+      itemLists.forEach((items, index) => items.classList.toggle('is-active', index === nextStep));
+
+      if (prefersReducedMotion || !desktopQuery.matches || !animate || previousStep < 0) {
+        splitInstances.splice(0).forEach((split) => split.revert());
+        gsap.set([...panels, ...itemLists], { clearProps: 'all' });
+        return;
+      }
+
+      const outgoing = [previousPanel, previousItems].filter(Boolean) as HTMLElement[];
+      const incoming = [nextPanel, nextItems];
+      const inactive = [...panels, ...itemLists].filter((el) => !outgoing.includes(el) && !incoming.includes(el));
+      const previousPanelSplit = previousPanel
+        ? splitContentToChars(Array.from(previousPanel.querySelectorAll('.process-alt__eyebrow, .process-alt__description')))
+        : { chars: [], splits: [] };
+      const previousItemSplit = previousItems
+        ? splitContentToChars(Array.from(previousItems.querySelectorAll('li')))
+        : { chars: [], splits: [] };
+      const nextPanelSplit = splitContentToChars(Array.from(nextPanel.querySelectorAll('.process-alt__eyebrow, .process-alt__description')));
+      const nextItemSplit = splitContentToChars(Array.from(nextItems.querySelectorAll('li')));
+      const previousPanelChars = previousPanelSplit.chars;
+      const previousItemChars = previousItemSplit.chars;
+      const nextPanelChars = nextPanelSplit.chars;
+      const nextItemChars = nextItemSplit.chars;
+      const outgoingChars = [...previousPanelChars, ...previousItemChars];
+      const incomingChars = [...nextPanelChars, ...nextItemChars];
+
+      gsap.killTweensOf([...outgoing, ...incoming, ...inactive, ...outgoingChars, ...incomingChars]);
+      gsap.set(inactive, { opacity: 0, filter: 'blur(14px)' });
+      gsap.set(incoming, { opacity: 1, filter: 'blur(0px)' });
+      gsap.set(incomingChars, { opacity: 0, filter: 'blur(16px)' });
+
+      processSwitchTl = gsap.timeline({
+        defaults: { overwrite: true },
+        onComplete: () => {
+          gsap.set([...outgoing, ...incoming, ...outgoingChars, ...incomingChars], { clearProps: 'opacity,filter' });
+          const nextSplits = [...nextPanelSplit.splits, ...nextItemSplit.splits];
+          const preservedSplits = new Set(nextSplits);
+          const staleSplits = splitInstances.filter((split) => !preservedSplits.has(split));
+          staleSplits.forEach((split) => split.revert());
+          splitInstances.splice(0, splitInstances.length, ...nextSplits);
+          processSwitchTl = null;
+        },
+      });
+
+      processSwitchTl
+        .to(previousPanelChars, {
+          opacity: 0,
+          filter: 'blur(16px)',
+          duration: 0.22,
+          stagger: {
+            each: 0.0028,
+            from: 'end',
+          },
+          ease: 'power2.in',
+        }, 0)
+        .to(previousItemChars, {
+          opacity: 0,
+          filter: 'blur(14px)',
+          duration: 0.2,
+          stagger: {
+            each: 0.0024,
+            from: 'end',
+          },
+          ease: 'power2.in',
+        }, 0.06)
+        .to(nextPanelChars, {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.78,
+          stagger: 0.0034,
+          ease: 'power4.out',
+        }, 0.16)
+        .to(nextItemChars, {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.74,
+          stagger: 0.0032,
+          ease: 'power4.out',
+        }, 0.32);
+    };
+
+    const setProcessState = (step: number, progress: number, animateContent = true) => {
       const clampedStep = Math.max(0, Math.min(totalSteps - 1, step));
-      const activeStep = Math.round(clampedStep);
+      const nextStep = Math.round(clampedStep);
 
       section.style.setProperty('--process-step', String(clampedStep));
       section.style.setProperty('--process-progress', `${Math.max(0, Math.min(100, progress))}%`);
-      if (currentStep) currentStep.textContent = String(activeStep + 1).padStart(2, '0');
 
       phases.forEach((phase, index) => {
         const distance = index - clampedStep;
@@ -435,11 +548,10 @@ const totalSteps = t.services.groups.length;
         phase.style.setProperty('--phase-abs', String(Math.min(3, Math.abs(distance))));
         phase.style.setProperty('--phase-title-x', `calc(var(--process-title-active-indent) * ${focus.toFixed(3)})`);
       });
-      panels.forEach((panel, index) => panel.classList.toggle('is-active', index === activeStep));
-      itemLists.forEach((items, index) => items.classList.toggle('is-active', index === activeStep));
+      setProcessContent(nextStep, animateContent);
     };
 
-    setProcessState(0, 0);
+    setProcessState(0, 0, false);
 
     if (prefersReducedMotion || !desktopQuery.matches) {
       gsap.set([rail, ...phases, ...panels, ...itemLists].filter(Boolean), { clearProps: 'all' });
@@ -487,9 +599,11 @@ const totalSteps = t.services.groups.length;
 
     cleanupFn = () => {
       ac.abort();
+      processSwitchTl?.kill();
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((trigger) => trigger.kill());
       gsap.killTweensOf(section.querySelectorAll('*'));
+      splitInstances.forEach((split) => split.revert());
     };
   }
 
