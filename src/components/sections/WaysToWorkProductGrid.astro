@@ -65,7 +65,7 @@ const offers = t.waysToWork.items;
 
     position: relative;
     display: block;
-    min-height: calc(100svh + 82vh);
+    min-height: calc(100svh + 152vh);
     overflow: visible;
     background: transparent;
     color: var(--color-dark-text);
@@ -416,6 +416,7 @@ const offers = t.waysToWork.items;
       panelSwitchTl?.kill();
       panels.forEach((panel, index) => {
         panel.classList.toggle('is-active', index === nextIndex);
+        panel.hidden = false;
       });
 
       if (prefersReducedMotion || !animateRows) {
@@ -429,13 +430,20 @@ const offers = t.waysToWork.items;
 
       const previousRows = previousPanel ? Array.from(previousPanel.querySelectorAll('.ways-grid__row')) : [];
       const nextRows = Array.from(nextPanel.querySelectorAll('.ways-grid__row'));
-      nextPanel.hidden = false;
+      const outgoing = [previousPanel].filter(Boolean) as HTMLElement[];
+      const incoming = [nextPanel];
+      const inactive = panels.filter((panel) => !outgoing.includes(panel) && !incoming.includes(panel));
       const previousSplit = splitRowsToChars(previousRows);
       const nextSplit = splitRowsToChars(nextRows);
       const previousChars = previousSplit.chars;
       const nextChars = nextSplit.chars;
 
-      gsap.killTweensOf([...previousChars, ...nextChars]);
+      gsap.killTweensOf([...outgoing, ...incoming, ...inactive, ...previousChars, ...nextChars]);
+      gsap.set(inactive, { opacity: 0, filter: 'blur(14px)' });
+      inactive.forEach((panel) => {
+        panel.hidden = true;
+      });
+      gsap.set(incoming, { opacity: 1, filter: 'blur(0px)' });
       gsap.set(nextRows, { opacity: 1, filter: 'blur(0px)' });
       gsap.set(nextChars, { opacity: 0, filter: 'blur(16px)' });
 
@@ -445,7 +453,7 @@ const offers = t.waysToWork.items;
           panels.forEach((panel, index) => {
             panel.hidden = index !== nextIndex;
           });
-          gsap.set([...previousChars, ...nextChars, ...previousRows, ...nextRows], { clearProps: 'opacity,filter' });
+          gsap.set([...outgoing, ...incoming, ...previousChars, ...nextChars, ...previousRows, ...nextRows], { clearProps: 'opacity,filter' });
           const preservedSplits = new Set(nextSplit.splits);
           const staleSplits = splitInstances.filter((split) => !preservedSplits.has(split));
           staleSplits.forEach((split) => split.revert());

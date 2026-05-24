@@ -68,7 +68,7 @@ const t = useTranslations(lang);
     z-index: 1;
     width: min(100% - clamp(3rem, 10vw, 10rem), 86rem);
     margin-inline: auto;
-    padding-block: clamp(7rem, 11vw, 11.5rem) clamp(7rem, 12vw, 12rem);
+    padding-block: clamp(7rem, 11vw, 11.5rem) 0;
   }
 
   .about-paper-section__topbar {
@@ -138,7 +138,7 @@ const t = useTranslations(lang);
   @media (max-width: 1023px) {
     .about-paper-section__inner {
       width: min(100% - 3rem, 52rem);
-      padding-block: clamp(5.5rem, 14vw, 8rem);
+      padding-block: clamp(5.5rem, 14vw, 8rem) 0;
     }
 
     .about-paper-section__topbar {

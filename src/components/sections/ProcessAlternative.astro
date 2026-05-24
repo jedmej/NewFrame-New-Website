@@ -80,7 +80,7 @@ const totalSteps = t.services.groups.length;
     --process-title-active-indent: 14.4px;
 
     position: relative;
-    min-height: calc(100svh + 96vh);
+    min-height: calc(100svh + 172vh);
     background: transparent;
     color: #f3efe5;
   }
@@ -198,7 +198,15 @@ const totalSteps = t.services.groups.length;
     line-height: 1.5;
     letter-spacing: 0;
     color: rgba(243, 239, 229, 0.72);
+    hyphens: none;
+    overflow-wrap: normal;
     text-wrap: pretty;
+    word-break: normal;
+  }
+
+  .process-alt__word {
+    display: inline-block;
+    white-space: nowrap;
   }
 
   .process-alt__menu {
@@ -235,8 +243,11 @@ const totalSteps = t.services.groups.length;
     line-height: 2.05;
     letter-spacing: 0.02em;
     color: #f3efe5;
+    hyphens: none;
+    overflow-wrap: normal;
     text-align: right;
     text-transform: uppercase;
+    word-break: normal;
   }
 
   .process-alt__rail {
@@ -430,8 +441,9 @@ const totalSteps = t.services.groups.length;
         }
 
         const split = new SplitText(element, {
-          type: 'chars',
+          type: 'words,chars',
           charsClass: 'process-alt__char',
+          wordsClass: 'process-alt__word',
         });
         splitInstances.push(split);
         splits.push(split);

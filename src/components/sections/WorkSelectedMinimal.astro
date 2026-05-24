@@ -72,7 +72,7 @@ const caseKeys = ['hubert', 'adfidence', 'esthetic', 'panenka', 'uroki'] as cons
 const caseProjects = caseKeys.map((key) => projectsByKey[key]);
 const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
-const scrollSpan = 104 + (caseProjects.length - 1) * 22;
+const scrollSpan = 104 + (caseProjects.length - 1) * 42;
 ---
 
 <section
@@ -258,11 +258,11 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
     justify-self: center;
     width: min(12rem, 100%);
     color: var(--work-ink-soft);
-    font-family: var(--font-mono);
-    font-size: 0.67rem;
-    font-weight: 500;
-    line-height: 1.35;
-    letter-spacing: 0.14em;
+    font-family: var(--font-sans);
+    font-size: clamp(0.82rem, 1vw, 0.875rem);
+    font-weight: 400;
+    line-height: 1.42;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
   }
@@ -270,7 +270,15 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
   .work-selected-flat__meta p,
   .work-selected-flat__note p {
     margin: 0;
+    hyphens: none;
+    overflow-wrap: normal;
     text-wrap: pretty;
+    word-break: normal;
+  }
+
+  .work-selected-flat__word {
+    display: inline-block;
+    white-space: nowrap;
   }
 
   .work-selected-flat__reel {
@@ -365,10 +373,10 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
     justify-self: end;
     width: min(22.5rem, 100%);
     color: var(--work-ink-muted);
-    font-family: var(--font-body);
-    font-size: clamp(0.88rem, 0.78vw, 0.95rem);
-    font-weight: 500;
-    line-height: 1.16;
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.25vw, 1.125rem);
+    font-weight: 400;
+    line-height: 1.5;
     letter-spacing: 0;
   }
 
@@ -501,8 +509,9 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -523,6 +532,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
     const ac = new AbortController();
     const { signal } = ac;
     const triggers: ScrollTrigger[] = [];
+    const splitInstances: SplitText[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 901px)');
     let activeIndex = -1;
@@ -546,6 +556,34 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
       const upperValue = values[upperIndex] ?? lowerValue;
 
       return lerp(lowerValue, upperValue, virtualIndex - lowerIndex);
+    };
+
+    const revertCopySplits = () => {
+      splitInstances.splice(0).forEach((split) => split.revert());
+    };
+
+    const splitCopyToChars = (elements: HTMLElement[]) => {
+      const chars: Element[] = [];
+      const splits: SplitText[] = [];
+
+      elements.forEach((element) => {
+        const existingChars = Array.from(element.querySelectorAll('.work-selected-flat__char'));
+        if (existingChars.length) {
+          chars.push(...existingChars);
+          return;
+        }
+
+        const split = new SplitText(element, {
+          type: 'words,chars',
+          charsClass: 'work-selected-flat__char',
+          wordsClass: 'work-selected-flat__word',
+        });
+        splitInstances.push(split);
+        splits.push(split);
+        chars.push(...split.chars);
+      });
+
+      return { chars, splits };
     };
 
     const syncTitleStackPosition = () => {
@@ -605,31 +643,45 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
       copyTween?.kill();
 
       if (copyEls.length === 0 || prefersReducedMotion) {
+        revertCopySplits();
         if (metaEl) metaEl.textContent = meta;
         if (descriptionEl) descriptionEl.textContent = description;
         return;
       }
 
-      copyTween = gsap.to(copyEls, {
+      const outgoingSplit = splitCopyToChars(copyEls);
+      const outgoingChars = outgoingSplit.chars;
+      gsap.killTweensOf([...copyEls, ...outgoingChars]);
+
+      copyTween = gsap.to(outgoingChars, {
         autoAlpha: 0,
-        y: -4,
-        filter: 'blur(2px)',
-        duration: 0.13,
-        ease: 'power2.out',
+        filter: 'blur(12px)',
+        duration: 0.18,
+        stagger: {
+          each: 0.0026,
+          from: 'end',
+        },
+        ease: 'power2.in',
         overwrite: true,
         onComplete: () => {
+          revertCopySplits();
           if (metaEl) metaEl.textContent = meta;
           if (descriptionEl) descriptionEl.textContent = description;
+
+          const incomingSplit = splitCopyToChars(copyEls);
           copyTween = gsap.fromTo(
-            copyEls,
-            { autoAlpha: 0, y: 6, filter: 'blur(3px)' },
+            incomingSplit.chars,
+            { autoAlpha: 0, filter: 'blur(14px)' },
             {
               autoAlpha: 1,
-              y: 0,
               filter: 'blur(0px)',
-              duration: 0.32,
-              ease: 'power3.out',
+              duration: 0.58,
+              stagger: 0.003,
+              ease: 'power4.out',
               overwrite: true,
+              onComplete: () => {
+                copyTween = null;
+              },
             },
           );
         },
@@ -752,6 +804,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 22;
       if (measureFrame) window.cancelAnimationFrame(measureFrame);
       measureTimers.forEach((timer) => window.clearTimeout(timer));
       copyTween?.kill();
+      revertCopySplits();
       ac.abort();
     };
   }
