@@ -72,7 +72,7 @@ const caseKeys = ['hubert', 'adfidence', 'esthetic', 'panenka', 'uroki'] as cons
 const caseProjects = caseKeys.map((key) => projectsByKey[key]);
 const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
-const scrollSpan = 96 + (caseProjects.length - 1) * 52;
+const scrollSpan = 104 + (caseProjects.length - 1) * 22;
 ---
 
 <section
@@ -200,10 +200,10 @@ const scrollSpan = 96 + (caseProjects.length - 1) * 52;
   }
 
   .work-selected-flat__titles {
-    --work-title-gap: clamp(11.5rem, 13vw, 15rem);
+    --work-title-gap: clamp(13.75rem, 15.5vw, 18rem);
 
     position: relative;
-    height: clamp(34rem, 42vw, 42rem);
+    height: clamp(40rem, 49vw, 50rem);
     overflow: visible;
     min-width: 0;
   }
@@ -537,6 +537,7 @@ const scrollSpan = 96 + (caseProjects.length - 1) * 52;
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const lerp = (start: number, end: number, amount: number) => start + (end - start) * amount;
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
+    const finalScrollTail = 0.35;
 
     const interpolatedValue = (values: number[], virtualIndex: number) => {
       const lowerIndex = clamp(Math.floor(virtualIndex), 0, Math.max(values.length - 1, 0));
@@ -668,7 +669,7 @@ const scrollSpan = 96 + (caseProjects.length - 1) * 52;
     const setProgress = (nextProgress: number) => {
       progress = clamp(nextProgress, 0, 1);
       const lastIndex = Math.max(titleItems.length - 1, 1);
-      const virtualIndex = progress * lastIndex;
+      const virtualIndex = progress * (lastIndex + finalScrollTail);
       applyContinuousFocus(virtualIndex);
       centerReelAt(virtualIndex);
       setActiveIndex(Math.round(virtualIndex));
@@ -686,8 +687,8 @@ const scrollSpan = 96 + (caseProjects.length - 1) * 52;
     const scrollToIndex = (index: number) => {
       if (!scrollScene) return;
       const steps = Math.max(titleItems.length - 1, 1);
-      const progress = clamp(index / steps, 0, 1);
-      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
+      const targetProgress = clamp(index / (steps + finalScrollTail), 0, 1);
+      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * targetProgress;
       const lenis = (window as any).lenis;
       if (lenis?.scrollTo) {
         lenis.scrollTo(targetY, { duration: 1.45 });

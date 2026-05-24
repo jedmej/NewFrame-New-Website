@@ -65,7 +65,7 @@ const offers = t.waysToWork.items;
 
     position: relative;
     display: block;
-    min-height: calc(100svh + 156vh);
+    min-height: calc(100svh + 82vh);
     overflow: visible;
     background: transparent;
     color: var(--color-dark-text);
@@ -109,12 +109,12 @@ const offers = t.waysToWork.items;
   }
 
   .ways-grid__categories {
-    --offer-title-gap: clamp(11.5rem, 13vw, 15rem);
+    --offer-title-gap: clamp(13.75rem, 15.5vw, 18rem);
 
     position: relative;
     display: flex;
     width: min(32vw, 30rem);
-    height: clamp(34rem, 42vw, 42rem);
+    height: clamp(40rem, 49vw, 50rem);
     flex: 0 0 auto;
     flex-direction: column;
     overflow: visible;
@@ -186,7 +186,7 @@ const offers = t.waysToWork.items;
   .ways-grid__details {
     position: relative;
     display: flex;
-    height: clamp(34rem, 42vw, 42rem);
+    height: clamp(40rem, 49vw, 50rem);
     min-width: 0;
     flex: 0 0 clamp(21.7rem, 25.25vw, 28rem);
     flex-direction: column;
@@ -363,11 +363,12 @@ const offers = t.waysToWork.items;
     let manualSelectionScrollY = 0;
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
+    const finalScrollTail = 0.35;
     const scrollToOffer = (index: number) => {
       if (!scrollScene) return;
       const steps = Math.max(tabs.length - 1, 1);
-      const progress = clamp(index / steps, 0, 1);
-      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
+      const targetProgress = clamp(index / (steps + finalScrollTail), 0, 1);
+      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * targetProgress;
       const lenis = (window as any).lenis;
       if (lenis?.scrollTo) {
         lenis.scrollTo(targetY, { duration: 1.45 });
@@ -479,8 +480,9 @@ const offers = t.waysToWork.items;
     }
 
     function setOfferProgress(progressIndex: number, animateRows = true) {
-      const clampedProgress = Math.max(0, Math.min(tabs.length - 1, progressIndex));
-      const nextIndex = Math.min(tabs.length - 1, Math.round(clampedProgress));
+      const lastIndex = Math.max(tabs.length - 1, 0);
+      const clampedProgress = clamp(progressIndex, 0, lastIndex + finalScrollTail);
+      const nextIndex = clamp(Math.round(clampedProgress), 0, lastIndex);
 
       tabs.forEach((tab, index) => {
         const distance = index - clampedProgress;
@@ -521,11 +523,11 @@ const offers = t.waysToWork.items;
           }
 
           const steps = Math.max(tabs.length - 1, 1);
-          setOfferProgress(self.progress * steps);
+          setOfferProgress(self.progress * (steps + finalScrollTail));
         },
       });
       scrollTriggers.push(scrollScene);
-      setOfferProgress(scrollScene.progress * Math.max(tabs.length - 1, 1), false);
+      setOfferProgress(scrollScene.progress * (Math.max(tabs.length - 1, 1) + finalScrollTail), false);
     }
 
     cleanupFn = () => {

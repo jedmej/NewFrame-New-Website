@@ -80,7 +80,7 @@ const totalSteps = t.services.groups.length;
     --process-title-active-indent: 14.4px;
 
     position: relative;
-    min-height: calc(100svh + 220vh);
+    min-height: calc(100svh + 96vh);
     background: transparent;
     color: #f3efe5;
   }
@@ -110,10 +110,10 @@ const totalSteps = t.services.groups.length;
   }
 
   .process-alt__titles {
-    --process-phase-gap: clamp(11.5rem, 13vw, 15rem);
+    --process-phase-gap: clamp(13.75rem, 15.5vw, 18rem);
 
     position: relative;
-    height: clamp(34rem, 42vw, 42rem);
+    height: clamp(40rem, 49vw, 50rem);
     overflow: visible;
   }
 
@@ -402,14 +402,15 @@ const totalSteps = t.services.groups.length;
     const totalSteps = Math.max(1, panels.length);
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
+    const finalScrollTail = 0.35;
     let scrollScene: ScrollTrigger | null = null;
     let activeStep = -1;
     let processSwitchTl: gsap.core.Timeline | null = null;
     const scrollToStep = (index: number) => {
       if (!scrollScene) return;
       const steps = Math.max(totalSteps - 1, 1);
-      const progress = clamp(index / steps, 0, 1);
-      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * progress;
+      const targetProgress = clamp(index / (steps + finalScrollTail), 0, 1);
+      const targetY = scrollScene.start + (scrollScene.end - scrollScene.start) * targetProgress;
       const lenis = (window as any).lenis;
       if (lenis?.scrollTo) {
         lenis.scrollTo(targetY, { duration: 1.45 });
@@ -535,8 +536,9 @@ const totalSteps = t.services.groups.length;
     };
 
     const setProcessState = (step: number, progress: number, animateContent = true) => {
-      const clampedStep = Math.max(0, Math.min(totalSteps - 1, step));
-      const nextStep = Math.round(clampedStep);
+      const lastStep = Math.max(totalSteps - 1, 0);
+      const clampedStep = clamp(step, 0, lastStep + finalScrollTail);
+      const nextStep = clamp(Math.round(clampedStep), 0, lastStep);
 
       section.style.setProperty('--process-step', String(clampedStep));
       section.style.setProperty('--process-progress', `${Math.max(0, Math.min(100, progress))}%`);
@@ -592,7 +594,7 @@ const totalSteps = t.services.groups.length;
       scrub: true,
       onUpdate: (self) => {
         const scrollRange = Math.max(totalSteps - 1, 1);
-        setProcessState(self.progress * scrollRange, self.progress * 100);
+        setProcessState(self.progress * (scrollRange + finalScrollTail), self.progress * 100);
       },
     });
     scrollTriggers.push(scrollScene);
