@@ -130,6 +130,7 @@ export const translations = {
     },
     testimonials: {
       label: 'TESTIMONIALS',
+      heading: 'What are our clients saying about us?',
       lead: 'The website gave them confidence before they even walked in.',
       items: [
         {
@@ -145,6 +146,13 @@ export const translations = {
           highlights: ['straightforward', 'raised', 'more'],
           name: 'Igor M.',
           role: 'FOUNDER, PANENKA CREATIVES',
+        },
+        {
+          lead: 'The process gave us a clearer direction before a single page was built.',
+          quote: 'Before the design even started, the process helped us understand what the website needed to say. The final result felt calm, focused and much more premium than anything we could have assembled from a template.',
+          highlights: ['clearer', 'calm', 'premium'],
+          name: 'Marta S.',
+          role: 'FOUNDER, ESTHETIC DENTAL',
         },
       ],
     },
@@ -301,6 +309,7 @@ export const translations = {
     },
     testimonials: {
       label: 'OPINIE',
+      heading: 'Co mówią o nas klienci?',
       lead: 'Strona dała im pewność, zanim jeszcze przyszli na miejsce.',
       items: [
         {
@@ -316,6 +325,13 @@ export const translations = {
           highlights: ['konkretna', 'podniosła', 'więcej'],
           name: 'Igor M.',
           role: 'ZAŁOŻYCIEL, PANENKA CREATIVES',
+        },
+        {
+          lead: 'Proces dał nam klarowny kierunek, zanim powstał pierwszy ekran.',
+          quote: 'Jeszcze przed projektowaniem uporządkowaliśmy to, co strona naprawdę ma komunikować. Efekt jest spokojny, skupiony i dużo bardziej premium niż cokolwiek, co moglibyśmy złożyć z gotowego szablonu.',
+          highlights: ['klarowny', 'spokojny', 'premium'],
+          name: 'Marta S.',
+          role: 'ZAŁOŻYCIELKA, ESTHETIC DENTAL',
         },
       ],
     },

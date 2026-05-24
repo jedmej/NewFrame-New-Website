@@ -13,11 +13,16 @@ const totalStr = String(items.length).padStart(2, '0');
 const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 ---
 
-<section
-  id="testimonials"
-  class="relative"
-  data-testimonial-leads={JSON.stringify(testimonialLeads)}
->
+<div class="testimonial-paper-band">
+  <section class="testimonial-paper-intro" aria-label={t.testimonials.heading}>
+    <h2>{t.testimonials.heading}</h2>
+  </section>
+
+  <section
+    id="testimonials"
+    class="relative"
+    data-testimonial-leads={JSON.stringify(testimonialLeads)}
+  >
   <!-- Scroll height container — creates the scroll distance for panels -->
   <div class="testimonial-scroll-height">
 
@@ -113,19 +118,91 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 
     </div>
   </div>
-</section>
+  </section>
+</div>
 
 <style>
+  .testimonial-paper-band {
+    --testimonial-paper-bg: #F4F4F4;
+    --testimonial-paper-fade-size: clamp(8rem, 18svh, 16rem);
+
+    position: relative;
+    background-color: var(--testimonial-paper-bg);
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 53 53' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4.1' numOctaves='7' seed='37' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.68'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='53' height='53' filter='url(%23grain)'/%3E%3C/svg%3E");
+    background-size: 53px 53px;
+    color: var(--color-text);
+    isolation: isolate;
+  }
+
+  .testimonial-paper-band::before,
+  .testimonial-paper-band::after {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: var(--testimonial-paper-fade-size);
+    pointer-events: none;
+    content: '';
+  }
+
+  .testimonial-paper-band::before {
+    top: calc(var(--testimonial-paper-fade-size) * -1);
+    background:
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        color-mix(in srgb, var(--testimonial-paper-bg) 18%, transparent) 36%,
+        var(--testimonial-paper-bg) 100%
+      );
+  }
+
+  .testimonial-paper-band::after {
+    bottom: calc(var(--testimonial-paper-fade-size) * -1);
+    background:
+      linear-gradient(
+        180deg,
+        var(--testimonial-paper-bg) 0%,
+        color-mix(in srgb, var(--testimonial-paper-bg) 20%, transparent) 58%,
+        transparent 100%
+      );
+  }
+
+  .testimonial-paper-band > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .testimonial-paper-intro {
+    position: relative;
+    display: grid;
+    min-height: 88svh;
+    place-items: center;
+    padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
+    text-align: center;
+  }
+
+  .testimonial-paper-intro h2 {
+    max-width: min(12ch, 86vw);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7.4vw, 7rem);
+    font-weight: 500;
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
   .testimonial-scroll-height {
     height: 250vh;
   }
 
   #testimonials {
-    background: transparent;
+    background: var(--testimonial-paper-bg);
   }
 
   .testimonial-sticky {
-    background: transparent;
+    background: var(--testimonial-paper-bg);
   }
 
   @media (min-width: 768px) {
@@ -147,6 +224,18 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
   }
 
   @media (max-width: 767px) {
+    .testimonial-paper-intro {
+      min-height: 82svh;
+      padding-inline: clamp(1.5rem, 7vw, 2.5rem);
+    }
+
+    .testimonial-paper-intro h2 {
+      max-width: 10ch;
+      font-size: clamp(2.85rem, 14vw, 4.85rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
     .testimonial-panels-container {
       padding-top: 28vh;
     }
@@ -166,8 +255,8 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
   }
 
   .testimonial-panel {
-    background: var(--color-bg);
-    background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+    background: var(--testimonial-paper-bg);
+    background: color-mix(in srgb, var(--testimonial-paper-bg) 86%, transparent);
     will-change: transform, clip-path;
   }
 
@@ -261,6 +350,8 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     const section = document.getElementById('testimonials');
     if (!section) return;
 
+    const ac = new AbortController();
+    const introHeading = document.querySelector<HTMLElement>('.testimonial-paper-intro h2');
     const panels = section.querySelectorAll('.testimonial-panel');
     const counterActiveEl = document.getElementById('testimonial-counter-active');
     const leadEl = document.getElementById('testimonial-lead');
@@ -320,6 +411,35 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     });
 
     if (!prefersReducedMotion) {
+      if (introHeading) {
+        gsap.set(introHeading, {
+          y: 32,
+          opacity: 0,
+          filter: 'blur(10px)',
+        });
+
+        const headingTl = gsap.timeline({
+          defaults: { ease: 'expo.out' },
+          scrollTrigger: {
+            trigger: introHeading,
+            start: 'top 82%',
+            once: true,
+          },
+          onComplete: () => {
+            gsap.set(introHeading, { clearProps: 'willChange,filter,transform,opacity' });
+          },
+        });
+        timelines.push(headingTl);
+        if (headingTl.scrollTrigger) scrollTriggers.push(headingTl.scrollTrigger);
+
+        headingTl.to(introHeading, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1,
+        });
+      }
+
       gsap.set(line, { scaleX: 0, transformOrigin: 'left' });
       gsap.set([topbar, panelsContainer, bgNumberEl, dotsWrap, progressEl].filter(Boolean), {
         y: 30,
@@ -538,6 +658,7 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
       splits.forEach((split) => split.revert());
+      ac.abort();
     };
   }
 
