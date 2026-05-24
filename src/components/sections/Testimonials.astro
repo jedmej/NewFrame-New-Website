@@ -10,336 +10,190 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const items = t.testimonials.items;
 const totalStr = String(items.length).padStart(2, '0');
-const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
 ---
 
-<div class="testimonial-paper-band">
-  <section class="testimonial-paper-intro" aria-label={t.testimonials.heading}>
-    <h2>{t.testimonials.heading}</h2>
-  </section>
-
-  <section
-    id="testimonials"
-    class="relative"
-    data-testimonial-leads={JSON.stringify(testimonialLeads)}
-  >
-  <!-- Scroll height container — creates the scroll distance for panels -->
-  <div class="testimonial-scroll-height">
-
-    <!-- Sticky viewport -->
-    <div class="testimonial-sticky sticky top-0 h-screen flex items-center overflow-hidden">
-
-      <!-- Top bar: label + counter -->
-      <div class="absolute top-0 left-0 right-0 px-6 md:px-10 pt-32 md:pt-36 z-20">
-        <div class="testimonial-topbar max-w-[1400px] mx-auto">
-          <h2 class="text-mono-xs text-[var(--color-text)]">{t.testimonials.label}</h2>
-          <p id="testimonial-lead" class="testimonial-lead hidden lg:block">{testimonialLeads[0]}</p>
-          <span class="text-mono-xs text-[var(--color-text-subtle)]">
-            <span id="testimonial-counter-active" style="color: var(--color-accent);">01</span> / {totalStr}
-          </span>
-        </div>
-        <div class="max-w-[1400px] mx-auto mt-4 w-full h-px bg-[var(--color-line)]" data-line></div>
+<section
+  id="testimonials"
+  class="testimonial-horizontal"
+  aria-label={t.testimonials.label}
+  data-testimonial-total={items.length}
+>
+  <div class="testimonial-horizontal__scroll">
+    <div class="testimonial-horizontal__sticky">
+      <div class="testimonial-horizontal__counter text-mono-xs" aria-hidden="true">
+        <span id="testimonial-counter-active">01</span>
+        <span>/</span>
+        <span>{totalStr}</span>
       </div>
 
-      <!-- Decorative: Background panel index number -->
-      <div
-        id="testimonial-bg-number"
-        class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 select-none hidden md:flex"
-        aria-hidden="true"
-      >
-        <span
-          class="text-transparent font-bold leading-none"
-          style="font-family: var(--font-display); font-size: clamp(15rem, 30vw, 35rem); -webkit-text-stroke: 2px var(--color-line); letter-spacing: -0.04em;"
-        >
-          01
-        </span>
-      </div>
-
-      <!-- Testimonial panels container -->
-      <div class="relative w-full px-6 md:px-10 max-w-[1400px] mx-auto z-10 testimonial-panels-container">
+      <div class="testimonial-horizontal__stage" data-testimonial-stage>
         {items.map((item, i) => (
-          <div
-            class="testimonial-panel absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center px-6 md:px-10"
-            data-panel-index={i}
-            data-highlights={JSON.stringify(item.highlights)}
-            style={i === 0
-              ? `opacity: 1; z-index: ${i}; clip-path: inset(0 0 0 0);`
-              : `opacity: 0; z-index: ${i}; clip-path: inset(100% 0 0 0); transform: translateY(100%);`}
+          <article
+            class="testimonial-card"
+            data-testimonial-card
+            data-card-index={i}
+            style={`--card-index: ${i};`}
           >
-            <!-- Quote -->
-            <blockquote class="max-w-[900px] w-full">
-              <p
-                class="testimonial-quote leading-[1.3] text-[var(--color-text)]"
-              >
-                &ldquo;{item.quote}&rdquo;
-              </p>
+            <blockquote class="testimonial-card__quote">
+              &ldquo;{item.quote}&rdquo;
             </blockquote>
-
-            <!-- Author -->
-            <div class="testimonial-author mt-8 md:mt-12 max-w-[900px] w-full">
-              <div class="flex items-center gap-3">
-                <span class="w-6 h-px bg-[var(--color-accent)]"></span>
-                <span class="text-mono-xs text-[var(--color-text)]">{item.name}</span>
-              </div>
-              <div class="ml-9">
-                <span class="text-mono-xs text-[var(--color-text-subtle)]">{item.role}</span>
-              </div>
-            </div>
-          </div>
+            <footer class="testimonial-card__footer">
+              <span>{item.name}</span>
+              <span>{item.role.replace(/^(MANAGER|FOUNDER|ZAŁOŻYCIEL|ZAŁOŻYCIELKA),\s*/u, '')}</span>
+            </footer>
+          </article>
         ))}
-      </div>
-
-      <!-- Bottom bar: dots + progress -->
-      <div class="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-8 z-20">
-        <div class="max-w-[1400px] mx-auto flex justify-between items-center">
-        <!-- Dot indicators -->
-        <div class="flex items-center gap-2" id="testimonial-dots">
-          {items.map((_, i) => (
-            <span
-              class="testimonial-dot w-2 h-2 rounded-full transition-[background-color,transform,opacity] duration-500"
-              data-dot-index={i}
-              style={i === 0
-                ? 'background-color: var(--color-accent);'
-                : 'background-color: var(--color-text-ghost);'}
-            ></span>
-          ))}
-        </div>
-
-        <!-- Progress bar -->
-        <div class="w-32 md:w-48 h-px bg-[var(--color-border-strong)] relative overflow-hidden">
-          <div
-            id="testimonial-progress"
-            class="absolute inset-y-0 left-0 bg-[var(--color-accent)]"
-            style="width: 0%; transition: none;"
-          ></div>
-        </div>
-        </div>
       </div>
 
     </div>
   </div>
-  </section>
-</div>
+</section>
 
 <style>
-  .testimonial-paper-band {
-    --testimonial-paper-bg: #F4F4F4;
-    --testimonial-paper-fade-size: clamp(8rem, 18svh, 16rem);
+  .testimonial-horizontal {
+    --testimonial-ink: #ffffff;
+    --testimonial-muted: rgba(255, 255, 255, 0.72);
+    --testimonial-faint: rgba(255, 255, 255, 0.18);
+    --testimonial-card-width: clamp(18.5rem, 36vw, 32.5rem);
+    --testimonial-card-height: clamp(26rem, 62vh, 38.125rem);
 
     position: relative;
-    background-color: var(--testimonial-paper-bg);
-    background-image:
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 53 53' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4.1' numOctaves='7' seed='37' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.68'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='53' height='53' filter='url(%23grain)'/%3E%3C/svg%3E");
-    background-size: 53px 53px;
-    color: var(--color-text);
-    isolation: isolate;
+    color: var(--testimonial-ink);
   }
 
-  .testimonial-paper-band::before,
-  .testimonial-paper-band::after {
-    position: absolute;
-    left: 0;
-    z-index: 1;
-    width: 100%;
-    height: var(--testimonial-paper-fade-size);
-    pointer-events: none;
-    content: '';
+  .testimonial-horizontal__scroll {
+    height: calc(100svh + (var(--testimonial-total, 3) * 64svh));
+    min-height: 250svh;
   }
 
-  .testimonial-paper-band::before {
-    top: calc(var(--testimonial-paper-fade-size) * -1);
-    background:
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        color-mix(in srgb, var(--testimonial-paper-bg) 18%, transparent) 36%,
-        var(--testimonial-paper-bg) 100%
-      );
-  }
-
-  .testimonial-paper-band::after {
-    bottom: calc(var(--testimonial-paper-fade-size) * -1);
-    background:
-      linear-gradient(
-        180deg,
-        var(--testimonial-paper-bg) 0%,
-        color-mix(in srgb, var(--testimonial-paper-bg) 20%, transparent) 58%,
-        transparent 100%
-      );
-  }
-
-  .testimonial-paper-band > * {
-    position: relative;
-    z-index: 2;
-  }
-
-  .testimonial-paper-intro {
-    position: relative;
+  .testimonial-horizontal__sticky {
+    position: sticky;
+    top: 0;
     display: grid;
-    min-height: 88svh;
-    place-items: center;
-    padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
-    text-align: center;
-  }
-
-  .testimonial-paper-intro h2 {
-    max-width: min(12ch, 86vw);
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 7.4vw, 7rem);
-    font-weight: 500;
-    line-height: 0.94;
-    letter-spacing: -0.045em;
-    text-wrap: balance;
-  }
-
-  .testimonial-scroll-height {
-    height: 250vh;
-  }
-
-  #testimonials {
-    background: var(--testimonial-paper-bg);
-  }
-
-  .testimonial-sticky {
-    background: var(--testimonial-paper-bg);
-  }
-
-  @media (min-width: 768px) {
-    .testimonial-scroll-height {
-      height: 300vh;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .testimonial-scroll-height {
-      height: 340vh;
-    }
-  }
-
-  .testimonial-panels-container {
-    min-height: 60vh;
-    padding-top: 25vh;
-    padding-bottom: 10vh;
-  }
-
-  @media (max-width: 767px) {
-    .testimonial-paper-intro {
-      min-height: 82svh;
-      padding-inline: clamp(1.5rem, 7vw, 2.5rem);
-    }
-
-    .testimonial-paper-intro h2 {
-      max-width: 10ch;
-      font-size: clamp(2.85rem, 14vw, 4.85rem);
-      line-height: 0.96;
-      letter-spacing: -0.04em;
-    }
-
-    .testimonial-panels-container {
-      padding-top: 28vh;
-    }
-
-    .testimonial-panel {
-      padding-right: clamp(1.75rem, 7vw, 2.5rem);
-      padding-left: clamp(1.75rem, 7vw, 2.5rem);
-    }
-  }
-
-  @media (min-width: 768px) {
-    .testimonial-panels-container {
-      margin-top: clamp(4rem, 8vh, 6rem);
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-  }
-
-  .testimonial-panel {
-    background: var(--testimonial-paper-bg);
-    background: color-mix(in srgb, var(--testimonial-paper-bg) 86%, transparent);
-    will-change: transform, clip-path;
-  }
-
-  .testimonial-topbar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    min-height: 100svh;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    row-gap: clamp(2.25rem, 6.5vh, 7.75rem);
     align-items: center;
-    gap: 2rem;
+    overflow: clip;
+    padding: clamp(7rem, 15vh, 8.5rem) clamp(1.5rem, 5vw, 4.5rem) clamp(6.5rem, 13vh, 8rem);
   }
 
-  .testimonial-topbar,
-  .testimonial-panels-container,
-  #testimonial-bg-number,
-  #testimonial-dots,
-  #testimonial-progress {
-    will-change: transform, opacity, filter;
-  }
-
-  .testimonial-topbar > span {
-    justify-self: end;
+  .testimonial-horizontal__counter {
+    justify-self: center;
+    color: color-mix(in srgb, #C43E3D 52%, #ffffff);
+    letter-spacing: 0.16em;
     font-variant-numeric: tabular-nums;
   }
 
-  .testimonial-lead {
-    justify-self: center;
-    max-width: min(44rem, 58vw);
-    font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2vw, 2rem);
-    line-height: 1.05;
-    letter-spacing: 0;
-    color: var(--color-text);
-    text-align: center;
-    white-space: nowrap;
+  .testimonial-horizontal__stage {
+    position: relative;
+    width: 100%;
+    height: min(62svh, 38.125rem);
+    min-height: 31rem;
   }
 
-  .testimonial-quote {
+  .testimonial-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    width: var(--testimonial-card-width);
+    height: var(--testimonial-card-height);
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(2rem, 3vw, 2.625rem);
+    color: var(--testimonial-ink);
+    transform: translate3d(-50%, -50%, 0);
+    transform-origin: center;
+    will-change: transform, opacity, filter;
+  }
+
+  .testimonial-card__quote {
+    max-width: 11.5em;
+    margin: auto 0;
     font-family: var(--font-serif);
-    font-size: clamp(1.65rem, 7.5vw, 2rem);
-    line-height: 1.28;
+    font-size: clamp(2rem, 3.2vw, 2.875rem);
+    line-height: 1.17;
     letter-spacing: 0;
     text-wrap: pretty;
   }
 
-  @media (min-width: 768px) {
-    .testimonial-quote {
-      font-size: clamp(2.25rem, 4vw, 3.5rem);
-      line-height: 1.3;
-      letter-spacing: -0.02em;
+  .testimonial-card__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .testimonial-card__footer span:last-child {
+    color: var(--testimonial-muted);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+  }
+
+  @media (max-width: 767px) {
+    .testimonial-horizontal__sticky {
+      row-gap: clamp(1.75rem, 5vh, 3rem);
+      padding: clamp(6.5rem, 14vh, 7.5rem) clamp(1.15rem, 5vw, 1.5rem) clamp(5.25rem, 11vh, 6.5rem);
     }
-  }
 
-  .quote-word {
-    display: inline-block;
-  }
-
-  .quote-char {
-    display: inline-block;
-    will-change: opacity;
-  }
-
-  @media (min-width: 1024px) {
-    .quote-char {
-      will-change: opacity, filter;
+    .testimonial-horizontal__stage {
+      height: 62svh;
+      min-height: 28rem;
     }
+
+    .testimonial-card {
+      width: min(78vw, 22rem);
+      height: min(58svh, 31rem);
+      padding: 1.75rem;
+    }
+
+    .testimonial-card__quote {
+      font-size: clamp(1.65rem, 7.4vw, 2.35rem);
+      line-height: 1.12;
+    }
+
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .testimonial-topbar,
-    .testimonial-panels-container,
-    #testimonial-bg-number,
-    #testimonial-dots,
-    #testimonial-progress {
-      will-change: auto;
+    .testimonial-horizontal__scroll {
+      height: auto;
+      min-height: auto;
+    }
+
+    .testimonial-horizontal__sticky {
+      position: relative;
+    }
+
+    .testimonial-horizontal__stage {
+      display: grid;
+      height: auto;
+      min-height: auto;
+      gap: 2rem;
+    }
+
+    .testimonial-card {
+      position: relative;
+      top: auto;
+      left: auto;
+      width: 100%;
+      max-width: 36rem;
+      height: auto;
+      min-height: 24rem;
+      transform: none;
     }
   }
 </style>
 
 <script>
   import gsap from 'gsap';
-  import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  gsap.registerPlugin(SplitText, ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -351,313 +205,96 @@ const testimonialLeads = items.map((item) => item.lead ?? t.testimonials.lead);
     if (!section) return;
 
     const ac = new AbortController();
-    const introHeading = document.querySelector<HTMLElement>('.testimonial-paper-intro h2');
-    const panels = section.querySelectorAll('.testimonial-panel');
-    const counterActiveEl = document.getElementById('testimonial-counter-active');
-    const leadEl = document.getElementById('testimonial-lead');
-    const progressEl = document.getElementById('testimonial-progress');
-    const bgNumberEl = document.getElementById('testimonial-bg-number');
-    const bgNumberSpan = bgNumberEl?.querySelector('span');
-    const dots = section.querySelectorAll('.testimonial-dot');
-    const line = section.querySelector('[data-line]');
-    const topbar = section.querySelector('.testimonial-topbar');
-    const panelsContainer = section.querySelector('.testimonial-panels-container');
-    const dotsWrap = document.getElementById('testimonial-dots');
-    const totalPanels = panels.length;
-    const testimonialLeads = JSON.parse(section.dataset.testimonialLeads || '[]') as string[];
-    const scrollTriggers: ScrollTrigger[] = [];
-    const timelines: gsap.core.Timeline[] = [];
-
-    if (totalPanels === 0) return;
-
-    // Check reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const usesDesktopRevealBlur = window.matchMedia('(min-width: 1024px)').matches;
+    const sticky = section.querySelector<HTMLElement>('.testimonial-horizontal__sticky');
+    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-testimonial-card]'));
+    const counterActiveEl = document.getElementById('testimonial-counter-active');
+    const scrollTriggers: ScrollTrigger[] = [];
+    const totalCards = cards.length;
 
-    // Split each panel's quote into words and chars
-    const splits: any[] = [];
-    panels.forEach((panel, i) => {
-      const quoteEl = panel.querySelector('.testimonial-quote');
-      if (!quoteEl) return;
-
-      const highlights = JSON.parse((panel as HTMLElement).dataset.highlights || '[]') as string[];
-
-      const split = new SplitText(quoteEl, {
-        type: 'words,chars',
-        wordsClass: 'quote-word',
-        charsClass: 'quote-char',
-      });
-
-      // Mark highlight words with accent color from the start
-      split.words.forEach((word: HTMLElement) => {
-        const text = word.textContent?.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\-]/g, '') || '';
-        if (highlights.some((h: string) => text.toLowerCase() === h.toLowerCase())) {
-          word.dataset.highlight = 'true';
-          word.style.color = 'var(--color-accent)';
-        }
-      });
-
-      split.chars.forEach((char: HTMLElement) => {
-        if (prefersReducedMotion) {
-          char.style.opacity = '1';
-          char.style.filter = 'none';
-        } else {
-          char.style.opacity = '0.06';
-          char.style.filter = usesDesktopRevealBlur ? 'blur(5px)' : 'none';
-        }
-      });
-
-      splits.push(split);
-    });
-
-    if (!prefersReducedMotion) {
-      if (introHeading) {
-        gsap.set(introHeading, {
-          y: 32,
-          opacity: 0,
-          filter: 'blur(10px)',
-        });
-
-        const headingTl = gsap.timeline({
-          defaults: { ease: 'expo.out' },
-          scrollTrigger: {
-            trigger: introHeading,
-            start: 'top 82%',
-            once: true,
-          },
-          onComplete: () => {
-            gsap.set(introHeading, { clearProps: 'willChange,filter,transform,opacity' });
-          },
-        });
-        timelines.push(headingTl);
-        if (headingTl.scrollTrigger) scrollTriggers.push(headingTl.scrollTrigger);
-
-        headingTl.to(introHeading, {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 1,
-        });
-      }
-
-      gsap.set(line, { scaleX: 0, transformOrigin: 'left' });
-      gsap.set([topbar, panelsContainer, bgNumberEl, dotsWrap, progressEl].filter(Boolean), {
-        y: 30,
-        opacity: 0,
-        filter: 'blur(9px)',
-      });
-
-      const introTl = gsap.timeline({
-        defaults: { ease: 'expo.out' },
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 78%',
-          once: true,
-        },
-        onComplete: () => {
-          gsap.set([topbar, panelsContainer, bgNumberEl, dotsWrap, progressEl].filter(Boolean), {
-            clearProps: 'willChange,filter,transform,opacity',
-          });
-        },
-      });
-      timelines.push(introTl);
-      if (introTl.scrollTrigger) scrollTriggers.push(introTl.scrollTrigger);
-
-      introTl
-        .to(topbar, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.85 }, 0)
-        .to(line, { scaleX: 1, duration: 1.05 }, 0.08)
-        .to(bgNumberEl, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.05 }, 0.2)
-        .to(panelsContainer, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1 }, 0.32)
-        .to([dotsWrap, progressEl].filter(Boolean), {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 0.75,
-          stagger: 0.06,
-        }, 0.48);
-    } else if (line) {
-      gsap.set(line, { scaleX: 1, transformOrigin: 'left' });
+    if (!totalCards) {
+      cleanupFn = () => ac.abort();
+      return;
     }
 
-    // ===== MAIN SCROLL TRIGGER =====
-    scrollTriggers.push(ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 1,
-      onUpdate: (self) => {
-        const progress = self.progress;
-        const panelProgress = progress * totalPanels;
-        const activePanelIndex = Math.min(totalPanels - 1, Math.floor(panelProgress));
-        const panelLocalProgress = panelProgress - activePanelIndex;
+    section.style.setProperty('--testimonial-total', String(totalCards));
 
-        // Update progress bar
-        if (progressEl) {
-          progressEl.style.width = `${progress * 100}%`;
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    const smooth = (value: number) => value * value * (3 - 2 * value);
+    const interpolate = gsap.utils.interpolate;
+
+    const renderCards = (progress: number) => {
+      const exitBuffer = window.innerWidth < 768 ? 0.82 : 0.96;
+      const track = progress * (Math.max(totalCards - 1, 1) + exitBuffer);
+      const activeIndex = Math.min(totalCards - 1, Math.round(track));
+      const exitProgress = clamp((track - Math.max(totalCards - 1, 1)) / exitBuffer);
+
+      if (counterActiveEl) {
+        counterActiveEl.textContent = String(activeIndex + 1).padStart(2, '0');
+      }
+
+      if (sticky) {
+        sticky.style.transform = `translate3d(0, ${(-smooth(exitProgress) * 68).toFixed(2)}vh, 0)`;
+      }
+
+      cards.forEach((card, index) => {
+        const offset = index - track;
+        const absOffset = Math.abs(offset);
+        const near = smooth(clamp(1 - absOffset));
+        const side = offset < 0 ? -1 : 1;
+        const x = offset * (window.innerWidth < 768 ? 74 : 46);
+        const opacity = interpolate(0.42, 1, near);
+        const blur = interpolate(3.5, 0, near);
+        const trail = blur * (window.innerWidth < 768 ? 1.7 : 2.25);
+        const trailOpacity = clamp((1 - near) * 0.18, 0, 0.18);
+        const directionalBlur = blur > 0.08
+          ? `blur(${blur.toFixed(2)}px) drop-shadow(-${trail.toFixed(2)}px 0 ${(trail * 1.1).toFixed(2)}px rgba(255, 255, 255, ${trailOpacity.toFixed(3)}))`
+          : 'none';
+
+        card.style.zIndex = String(Math.round(100 - absOffset * 10));
+        card.style.opacity = opacity.toFixed(3);
+        card.style.filter = directionalBlur;
+        card.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}vw), -50%, 0)`;
+        card.style.pointerEvents = absOffset < 0.6 ? 'auto' : 'none';
+
+        if (absOffset > 1.65) {
+          card.style.opacity = '0';
+          card.style.transform = `translate3d(calc(-50% + ${side * 72}vw), -50%, 0)`;
         }
-
-        // Update counter
-        if (counterActiveEl) {
-          counterActiveEl.textContent = String(activePanelIndex + 1).padStart(2, '0');
-        }
-
-        if (leadEl && testimonialLeads[activePanelIndex] && leadEl.textContent !== testimonialLeads[activePanelIndex]) {
-          leadEl.textContent = testimonialLeads[activePanelIndex];
-        }
-
-        // Update background number
-        if (bgNumberSpan) {
-          bgNumberSpan.textContent = String(activePanelIndex + 1).padStart(2, '0');
-        }
-
-        // Update dot indicators
-        dots.forEach((dot, i) => {
-          const el = dot as HTMLElement;
-          if (i === activePanelIndex) {
-            el.style.backgroundColor = 'var(--color-accent)';
-            el.style.transform = 'scale(1.3)';
-          } else {
-            el.style.backgroundColor = 'var(--color-text-ghost)';
-            el.style.transform = 'scale(1)';
-          }
-        });
-
-        // Panel visibility and word reveal — stacking card slide-over
-        const crossfadeStart = 0.7; // Last 30% of panel scroll = transition zone
-
-        panels.forEach((panel, i) => {
-          const el = panel as HTMLElement;
-          const authorEl = el.querySelector('.testimonial-author') as HTMLElement;
-          const split = splits[i];
-
-          // Z-index stacking: later panels sit on top
-          el.style.zIndex = String(i);
-
-          if (i < activePanelIndex) {
-            // Previous panels — visible behind the stack with subtle upward drift
-            el.style.opacity = '1';
-            const depth = activePanelIndex - i;
-            const scale = prefersReducedMotion ? 1 : 1 - Math.min(0.05, depth * 0.015);
-            el.style.transform = `translateY(${-depth * 15}px) scale(${scale})`;
-            el.style.clipPath = 'inset(0 0 0 0)';
-            el.style.pointerEvents = 'none';
-
-            // All chars fully revealed on passed panels
-            if (split && !prefersReducedMotion) {
-              split.chars.forEach((char: HTMLElement) => {
-                char.style.opacity = '1';
-                char.style.filter = usesDesktopRevealBlur ? 'blur(0px)' : 'none';
-              });
-              split.words.forEach((word: HTMLElement) => {
-                if (word.dataset.highlight === 'true') {
-                  word.style.color = 'var(--color-accent)';
-                }
-              });
-            }
-            if (authorEl) {
-              authorEl.style.opacity = '1';
-              authorEl.style.transform = 'translateY(0)';
-              authorEl.style.transition = 'none';
-            }
-          } else if (i === activePanelIndex) {
-            // Current panel — fully visible
-            el.style.opacity = '1';
-            el.style.clipPath = 'inset(0 0 0 0)';
-            el.style.pointerEvents = 'auto';
-
-            // Slight upward drift as next panel starts covering
-            if (panelLocalProgress > crossfadeStart && i < totalPanels - 1) {
-              const drift = (panelLocalProgress - crossfadeStart) / (1 - crossfadeStart);
-              const scale = prefersReducedMotion ? 1 : 1 - drift * 0.01;
-              el.style.transform = `translateY(${-15 * drift}px) scale(${scale})`;
-            } else {
-              el.style.transform = 'translateY(0) scale(1)';
-            }
-
-            // Char reveal based on local progress (first 70% of panel scroll)
-            // Uses a smooth gradient: chars near the frontier get intermediate opacity
-            if (split && !prefersReducedMotion) {
-              const revealPhase = Math.min(1, panelLocalProgress / 0.65);
-              const totalChars = split.chars.length;
-              const revealCenter = revealPhase * totalChars;
-              const spread = 8; // chars over which opacity transitions from 0 → 1
-
-              split.chars.forEach((char: HTMLElement, ci: number) => {
-                const t = (revealCenter - ci + spread) / spread; // 1 = fully revealed, 0 = ghost
-                const clamped = Math.min(1, Math.max(0, t));
-                const opacity = 0.06 + clamped * 0.94; // 0.06 → 1
-                const blur = (1 - clamped) * 5; // 5px → 0px
-                char.style.opacity = String(opacity);
-                char.style.filter = usesDesktopRevealBlur ? `blur(${blur.toFixed(2)}px)` : 'none';
-              });
-
-              // Apply highlight color — always on so it reveals with opacity
-              split.words.forEach((word: HTMLElement) => {
-                if (word.dataset.highlight === 'true') {
-                  word.style.color = 'var(--color-accent)';
-                }
-              });
-            }
-
-            // Author always visible on active panel
-            if (authorEl) {
-              authorEl.style.opacity = '1';
-              authorEl.style.transform = 'translateY(0)';
-            }
-          } else if (i === activePanelIndex + 1 && panelLocalProgress > crossfadeStart) {
-            // Next panel — sliding up from below, covering the current one
-            const reveal = (panelLocalProgress - crossfadeStart) / (1 - crossfadeStart); // 0→1
-            el.style.opacity = '1';
-            const scale = prefersReducedMotion ? 1 : 1.02 - reveal * 0.02;
-            el.style.transform = `translateY(${(1 - reveal) * 100}%) scale(${scale})`;
-            el.style.clipPath = `inset(${(1 - reveal) * 100}% 0 0 0)`;
-            el.style.pointerEvents = 'none';
-
-            // Reset chars on incoming panel
-            if (split && !prefersReducedMotion) {
-              split.chars.forEach((char: HTMLElement) => {
-                char.style.opacity = '0.06';
-                char.style.filter = usesDesktopRevealBlur ? 'blur(5px)' : 'none';
-              });
-            }
-          } else {
-            // Future panels — hidden below
-            el.style.opacity = '0';
-            const scale = prefersReducedMotion ? 1 : 1.02;
-            el.style.transform = `translateY(100%) scale(${scale})`;
-            el.style.clipPath = 'inset(100% 0 0 0)';
-            el.style.pointerEvents = 'none';
-
-            // Reset char opacity for future panels
-            if (split && !prefersReducedMotion) {
-              split.chars.forEach((char: HTMLElement) => {
-                char.style.opacity = '0.06';
-                char.style.filter = usesDesktopRevealBlur ? 'blur(5px)' : 'none';
-              });
-            }
-          }
-        });
-      },
-    }));
-
-    // ===== BACKGROUND NUMBER PARALLAX =====
-    if (bgNumberEl && !prefersReducedMotion) {
-      const parallaxTween = gsap.to(bgNumberEl, {
-        y: -60,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
       });
-      if (parallaxTween.scrollTrigger) scrollTriggers.push(parallaxTween.scrollTrigger);
+    };
+
+    renderCards(0);
+
+    if (!prefersReducedMotion) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => renderCards(self.progress),
+        onRefresh: (self) => renderCards(self.progress),
+      }));
+    } else {
+      cards.forEach((card) => {
+        card.style.opacity = '1';
+        card.style.filter = 'none';
+        card.style.transform = 'none';
+      });
+      if (sticky) sticky.style.transform = 'none';
     }
 
     cleanupFn = () => {
-      timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
-      splits.forEach((split) => split.revert());
+      cards.forEach((card) => {
+        card.style.removeProperty('z-index');
+        card.style.removeProperty('opacity');
+        card.style.removeProperty('filter');
+        card.style.removeProperty('transform');
+        card.style.removeProperty('pointer-events');
+      });
+      sticky?.style.removeProperty('transform');
       ac.abort();
     };
   }

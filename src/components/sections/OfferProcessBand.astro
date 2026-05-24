@@ -4,6 +4,7 @@ import { useTranslations } from '../../i18n/translations';
 import WorkSelectedMinimal from './WorkSelectedMinimal.astro';
 import WaysToWorkProductGrid from './WaysToWorkProductGrid.astro';
 import ProcessAlternative from './ProcessAlternative.astro';
+import Testimonials from './Testimonials.astro';
 
 interface Props {
   lang: Lang;
@@ -16,6 +17,7 @@ const introHeadings = {
   work: normalizeHeading(t.work.label),
   ways: normalizeHeading(t.waysToWork.label),
   process: t.services.heading,
+  testimonials: t.testimonials.heading,
 };
 ---
 
@@ -39,6 +41,11 @@ const introHeadings = {
       <h2>{introHeadings.process}</h2>
     </section>
     <ProcessAlternative lang={lang} />
+
+    <section id="testimonials-intro" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="testimonials" aria-label={introHeadings.testimonials}>
+      <h2>{introHeadings.testimonials}</h2>
+    </section>
+    <Testimonials lang={lang} />
   </div>
 </div>
 
@@ -171,7 +178,8 @@ const introHeadings = {
   }
 
   .offer-process-band__intro[data-offer-section-intro-kind='ways'],
-  .offer-process-band__intro[data-offer-section-intro-kind='process'] {
+  .offer-process-band__intro[data-offer-section-intro-kind='process'],
+  .offer-process-band__intro[data-offer-section-intro-kind='testimonials'] {
     color: #f3efe5;
   }
 
@@ -179,6 +187,10 @@ const introHeadings = {
     max-width: min(17ch, 88vw);
     font-size: clamp(3rem, 6.45vw, 6.3rem);
     line-height: 0.96;
+  }
+
+  .offer-process-band__intro[data-offer-section-intro-kind='testimonials'] h2 {
+    max-width: min(12ch, 86vw);
   }
 
   @media (max-width: 767px) {
@@ -224,14 +236,19 @@ const introHeadings = {
     const workIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="work"]');
     const waysIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="ways"]');
     const processIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="process"]');
+    const testimonialsIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="testimonials"]');
     const waysSection = band.querySelector<HTMLElement>('#ways-to-work-grid');
     const processSection = band.querySelector<HTMLElement>('#process-alternative');
+    const testimonialsSection = band.querySelector<HTMLElement>('#testimonials');
     const scrollTriggers: ScrollTrigger[] = [];
     let shader: ReturnType<typeof mountNeuroSectionShader> | null = null;
     let workToWaysProgress = 0;
     let waysToProcessProgress = 0;
+    let processToTestimonialsProgress = 0;
     let lastShaderSurfaceProgress = -1;
     let lastShaderSpeed = -1;
+    let shaderVelocityBoost = 0;
+    let shaderVelocityFrame = 0;
     const introPulses = new Map<HTMLElement, number>();
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
     const easeSurface = gsap.parseEase('power2.inOut');
@@ -241,9 +258,9 @@ const introHeadings = {
 
     if (!prefersReducedMotion && shaderMount) {
       shader = mountNeuroSectionShader(shaderMount, {
-        colorMid: '#FFFDFB',
-        colorFront: '#00000080',
-        contrast: 0,
+        colorMid: '#BDB4AA',
+        colorFront: '#000000B0',
+        contrast: 0.18,
         speed: shaderBaseSpeed,
       });
     }
@@ -251,33 +268,36 @@ const introHeadings = {
     const updateBandSurface = () => {
       const workProgress = easeSurface(clamp(workToWaysProgress));
       const processProgress = easeSurface(clamp(waysToProcessProgress));
+      const testimonialsProgress = easeSurface(clamp(processToTestimonialsProgress));
       const blueBg = gsap.utils.interpolate('#F4F4F4', '#1a1b64', workProgress);
-      const bg = gsap.utils.interpolate(blueBg, '#172825', processProgress);
-      const shaderOpacity = 0.26 + workProgress * 0.74;
-      const workShaderMid = gsap.utils.interpolate('#D4C9BF', '#FFFDFB', workProgress);
-      const workShaderFront = gsap.utils.interpolate('#00000080', 'rgba(255, 255, 255, 0.5)', workProgress);
-      const shaderContrast = gsap.utils.interpolate(0, 1, workProgress);
+      const processBg = gsap.utils.interpolate(blueBg, '#172825', processProgress);
+      const bg = gsap.utils.interpolate(processBg, '#C43E3D', testimonialsProgress);
+      const shaderOpacity = 0.38 + workProgress * 0.62;
+      const workShaderMid = gsap.utils.interpolate('#BDB4AA', '#FFFDFB', workProgress);
+      const workShaderFront = gsap.utils.interpolate('#000000B0', 'rgba(255, 255, 255, 0.5)', workProgress);
+      const shaderContrast = gsap.utils.interpolate(0.18, 1, workProgress);
 
       band.style.setProperty('--offer-work-to-blue-progress', workProgress.toFixed(3));
       band.style.setProperty('--offer-process-bg', bg);
-      band.style.setProperty('--offer-process-grain-opacity', (0.1 + workProgress * 0.18 + processProgress * 0.08).toFixed(3));
-      band.style.setProperty('--offer-process-shader-opacity', shaderOpacity.toFixed(3));
-      band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', workProgress));
-      band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', workProgress));
-      band.style.setProperty('--offer-work-ink-soft', gsap.utils.interpolate('rgba(20, 18, 15, 0.42)', 'rgba(243, 234, 223, 0.42)', workProgress));
-      band.style.setProperty('--offer-work-ink-faint', gsap.utils.interpolate('rgba(20, 18, 15, 0.26)', 'rgba(243, 234, 223, 0.26)', workProgress));
-      band.style.setProperty('--offer-work-panel', gsap.utils.interpolate('rgba(20, 18, 15, 0.06)', 'rgba(243, 234, 223, 0.08)', workProgress));
-      band.style.setProperty('--offer-work-panel-line', gsap.utils.interpolate('rgba(20, 18, 15, 0.1)', 'rgba(255, 255, 255, 0.14)', workProgress));
+      band.style.setProperty('--offer-process-grain-opacity', (0.1 + workProgress * 0.18 + processProgress * 0.08 + testimonialsProgress * 0.1).toFixed(3));
+      band.style.setProperty('--offer-process-shader-opacity', (shaderOpacity + testimonialsProgress * 0.1).toFixed(3));
+      band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', Math.max(workProgress, testimonialsProgress)));
+      band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', Math.max(workProgress, testimonialsProgress)));
+      band.style.setProperty('--offer-work-ink-soft', gsap.utils.interpolate('rgba(20, 18, 15, 0.42)', 'rgba(243, 234, 223, 0.42)', Math.max(workProgress, testimonialsProgress)));
+      band.style.setProperty('--offer-work-ink-faint', gsap.utils.interpolate('rgba(20, 18, 15, 0.26)', 'rgba(243, 234, 223, 0.26)', Math.max(workProgress, testimonialsProgress)));
+      band.style.setProperty('--offer-work-panel', gsap.utils.interpolate('rgba(20, 18, 15, 0.06)', 'rgba(243, 234, 223, 0.08)', Math.max(workProgress, testimonialsProgress)));
+      band.style.setProperty('--offer-work-panel-line', gsap.utils.interpolate('rgba(20, 18, 15, 0.1)', 'rgba(255, 255, 255, 0.14)', Math.max(workProgress, testimonialsProgress)));
 
       if (!shader) return;
 
-      const shaderSurfaceProgress = Math.max(workProgress, processProgress);
+      const shaderSurfaceProgress = Math.max(workProgress, processProgress, testimonialsProgress);
       const shaderPulse = Math.max(
         transitionPulse(workToWaysProgress),
         transitionPulse(waysToProcessProgress),
+        transitionPulse(processToTestimonialsProgress),
         ...Array.from(introPulses.values()),
       );
-      const shaderSpeed = shaderBaseSpeed + shaderPulse * (shaderTransitionSpeed - shaderBaseSpeed);
+      const shaderSpeed = shaderBaseSpeed + shaderPulse * (shaderTransitionSpeed - shaderBaseSpeed) + shaderVelocityBoost;
       const shouldUpdateSurface = Math.abs(shaderSurfaceProgress - lastShaderSurfaceProgress) > 0.025;
       const shouldUpdateSpeed = Math.abs(shaderSpeed - lastShaderSpeed) > 0.04;
 
@@ -286,16 +306,46 @@ const introHeadings = {
       lastShaderSurfaceProgress = shaderSurfaceProgress;
       lastShaderSpeed = shaderSpeed;
       shader.update({
-        colorMid: gsap.utils.interpolate(workShaderMid, '#EAF2E8', processProgress),
-        colorFront: gsap.utils.interpolate(workShaderFront, 'rgba(255, 255, 255, 0.69)', processProgress),
+        colorMid: gsap.utils.interpolate(gsap.utils.interpolate(workShaderMid, '#EAF2E8', processProgress), '#FFD6CC', testimonialsProgress),
+        colorFront: gsap.utils.interpolate(gsap.utils.interpolate(workShaderFront, 'rgba(255, 255, 255, 0.69)', processProgress), 'rgba(255, 255, 255, 0.72)', testimonialsProgress),
         contrast: shaderContrast,
         speed: shaderSpeed,
       });
     };
 
+    const animateShaderVelocityReturn = () => {
+      shaderVelocityFrame = window.requestAnimationFrame(animateShaderVelocityReturn);
+      shaderVelocityBoost *= 0.88;
+
+      if (shaderVelocityBoost < 0.01) {
+        shaderVelocityBoost = 0;
+        if (shaderVelocityFrame) window.cancelAnimationFrame(shaderVelocityFrame);
+        shaderVelocityFrame = 0;
+      }
+
+      updateBandSurface();
+    };
+
+    const setShaderVelocityBoost = (velocity: number) => {
+      const velocityProgress = easeSurface(clamp(Math.abs(velocity) / 3200));
+      shaderVelocityBoost = velocityProgress * 1.05;
+      updateBandSurface();
+      if (!shaderVelocityFrame) animateShaderVelocityReturn();
+    };
+
     updateBandSurface();
 
-    [workIntro, waysIntro, processIntro].filter((intro): intro is HTMLElement => !!intro).forEach((intro) => {
+    scrollTriggers.push(ScrollTrigger.create({
+      trigger: band,
+      start: 'top bottom',
+      end: 'bottom top',
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        if (!prefersReducedMotion) setShaderVelocityBoost(self.getVelocity());
+      },
+    }));
+
+    [workIntro, waysIntro, processIntro, testimonialsIntro].filter((intro): intro is HTMLElement => !!intro).forEach((intro) => {
       introPulses.set(intro, 0);
       scrollTriggers.push(ScrollTrigger.create({
         trigger: intro,
@@ -350,7 +400,26 @@ const introHeadings = {
       }));
     }
 
+    if (testimonialsIntro || testimonialsSection) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: testimonialsIntro ?? testimonialsSection,
+        start: 'top 100%',
+        end: 'bottom 18%',
+        scrub: prefersReducedMotion ? false : true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          processToTestimonialsProgress = self.progress;
+          updateBandSurface();
+        },
+        onRefresh: (self) => {
+          processToTestimonialsProgress = self.progress;
+          updateBandSurface();
+        },
+      }));
+    }
+
     cleanupFn = () => {
+      if (shaderVelocityFrame) window.cancelAnimationFrame(shaderVelocityFrame);
       scrollTriggers.forEach((trigger) => trigger.kill());
       shader?.destroy();
       ac.abort();
