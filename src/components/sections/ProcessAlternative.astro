@@ -16,7 +16,7 @@ const totalSteps = t.services.groups.length;
     <div class="process-alt__body">
       <div class="process-alt__titles" aria-hidden="true">
         {t.services.groups.map((group, index) => (
-          <p class="process-alt__phase" data-phase={index}>
+          <p class="process-alt__phase">
             {group.category}
           </p>
         ))}
@@ -145,22 +145,6 @@ const totalSteps = t.services.groups.length;
     .process-alt__phase:hover {
       transform: translate3d(var(--process-title-active-indent), calc((var(--phase-distance) * var(--process-phase-gap)) - 50%), 0);
     }
-  }
-
-  .process-alt__phase:nth-child(1) {
-    --index: 0;
-  }
-
-  .process-alt__phase:nth-child(2) {
-    --index: 1;
-  }
-
-  .process-alt__phase:nth-child(3) {
-    --index: 2;
-  }
-
-  .process-alt__phase:nth-child(4) {
-    --index: 3;
   }
 
   .process-alt__meta {

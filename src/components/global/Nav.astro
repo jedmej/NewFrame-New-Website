@@ -422,7 +422,6 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const { signal } = ac;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const timelines: gsap.core.Timeline[] = [];
-    let menuCloseTimeout: ReturnType<typeof setTimeout>;
     let navToneFrame = 0;
 
     const runIntro = () => {
@@ -753,7 +752,6 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         navToneFrame = 0;
       }
       ac.abort();
-      clearTimeout(menuCloseTimeout);
     };
   }
 

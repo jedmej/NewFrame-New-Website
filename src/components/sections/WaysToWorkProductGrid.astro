@@ -359,8 +359,6 @@ const offers = t.waysToWork.items;
     let activeIndex = 0;
     let scrollScene: ScrollTrigger | null = null;
     let panelSwitchTl: gsap.core.Timeline | null = null;
-    let isManualSelection = false;
-    let manualSelectionScrollY = 0;
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
     const finalScrollTail = 0.35;
@@ -524,12 +522,6 @@ const offers = t.waysToWork.items;
         scrub: true,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          if (isManualSelection) {
-            const hasScrolledAfterSelection = Math.abs(window.scrollY - manualSelectionScrollY) > 8;
-            if (!hasScrolledAfterSelection) return;
-            isManualSelection = false;
-          }
-
           const steps = Math.max(tabs.length - 1, 1);
           setOfferProgress(self.progress * (steps + finalScrollTail));
         },

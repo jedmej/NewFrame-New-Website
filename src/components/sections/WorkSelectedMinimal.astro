@@ -512,7 +512,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
 
     const splitCopyToChars = (elements: HTMLElement[]) => {
       const chars: Element[] = [];
-      const splits: SplitText[] = [];
 
       elements.forEach((element) => {
         const existingChars = Array.from(element.querySelectorAll('.work-selected-flat__char'));
@@ -527,11 +526,10 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
           wordsClass: 'work-selected-flat__word',
         });
         splitInstances.push(split);
-        splits.push(split);
         chars.push(...split.chars);
       });
 
-      return { chars, splits };
+      return chars;
     };
 
     const syncTitleStackPosition = () => {
@@ -607,8 +605,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
         return;
       }
 
-      const outgoingSplit = splitCopyToChars(copyEls);
-      const outgoingChars = outgoingSplit.chars;
+      const outgoingChars = splitCopyToChars(copyEls);
       gsap.killTweensOf([...copyEls, ...outgoingChars]);
 
       copyTween = gsap.to(outgoingChars, {
@@ -625,9 +622,9 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
           revertCopySplits();
           if (descriptionEl) descriptionEl.textContent = description;
 
-          const incomingSplit = splitCopyToChars(copyEls);
+          const incomingChars = splitCopyToChars(copyEls);
           copyTween = gsap.fromTo(
-            incomingSplit.chars,
+            incomingChars,
             { autoAlpha: 0, filter: 'blur(14px)' },
             {
               autoAlpha: 1,

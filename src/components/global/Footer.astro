@@ -141,27 +141,6 @@ const footerLinks = [
     }
   }
 
-  .footer-availability {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: clamp(2.5rem, 5vw, 4rem);
-    color: rgba(243, 234, 223, 0.66);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    line-height: 1;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-
-  .footer-status-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--color-accent);
-    box-shadow: 0 0 0 0.45rem rgba(201, 70, 57, 0.12);
-  }
-
   .footer-grid {
     display: grid;
     border: 1px solid rgba(243, 234, 223, 0.12);
@@ -587,12 +566,6 @@ const footerLinks = [
       padding: 4.5rem 1rem 1.25rem;
     }
 
-    .footer-availability {
-      margin-bottom: 2rem;
-      font-size: 0.64rem;
-      letter-spacing: 0.14em;
-    }
-
     .footer-cta-cell {
       min-height: 18.5rem;
       padding: 2rem 1.25rem;
@@ -860,8 +833,6 @@ const footerLinks = [
     // SplitText word animation on giant CTA
     const ctaEl = document.getElementById('footer-cta');
     if (ctaEl) {
-      delete ctaEl.dataset.animated;
-
       splitInstance = new SplitText(ctaEl, {
         type: 'words',
         wordsClass: 'footer-word',
