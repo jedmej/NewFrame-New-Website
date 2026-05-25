@@ -100,10 +100,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
                 data-work-title-item
                 data-index={index}
                 data-title={displayNameByKey[project.key]}
-                data-category={project.category}
                 data-description={meta.description}
-                data-roles={meta.roles.join(' / ')}
-                data-meta={meta.roles.join(' / ')}
               >
                 {displayNameByKey[project.key]}
               </a>
@@ -111,10 +108,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
           })}
         </nav>
       </header>
-
-      <div class="work-selected-flat__meta" aria-label={`${displayNameByKey[firstProject.key]} ${firstProject.category}`}>
-        <p data-work-meta>{firstMeta.roles.join(' / ')}</p>
-      </div>
 
       <div class="work-selected-flat__reel" role="list" aria-label={t.work.carouselLabel} data-work-reel>
         {caseProjects.map((project, index) => {
@@ -179,11 +172,10 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
   .work-selected-flat__layout {
     display: grid;
     grid-template-columns:
-      minmax(18rem, 1fr)
-      minmax(7rem, 0.45fr)
-      clamp(13.25rem, 15.65vw, 18.75rem)
-      minmax(17rem, 0.9fr);
-    gap: clamp(2rem, 4vw, 5rem);
+      minmax(19rem, 1.04fr)
+      clamp(17rem, 22vw, 26rem)
+      minmax(17rem, 0.82fr);
+    gap: clamp(2.25rem, 4.7vw, 6rem);
     align-items: center;
     width: 100%;
     height: 100%;
@@ -253,21 +245,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     outline-offset: 0.45rem;
   }
 
-  .work-selected-flat__meta {
-    align-self: center;
-    justify-self: center;
-    width: min(12rem, 100%);
-    color: var(--work-ink-soft);
-    font-family: var(--font-sans);
-    font-size: clamp(0.82rem, 1vw, 0.875rem);
-    font-weight: 400;
-    line-height: 1.42;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .work-selected-flat__meta p,
   .work-selected-flat__note p {
     margin: 0;
     hyphens: none;
@@ -282,14 +259,14 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
   }
 
   .work-selected-flat__reel {
-    --reel-width: clamp(13.25rem, 15.65vw, 18.75rem);
+    --reel-width: clamp(17rem, 22vw, 26rem);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
     width: var(--reel-width);
-    height: min(100%, clamp(39rem, 58vw, 58rem));
+    height: min(100%, clamp(42rem, 64vw, 64rem));
     justify-self: center;
     transform: translate3d(0, var(--work-reel-shift, 0px), 0);
     will-change: transform;
@@ -300,10 +277,13 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     --work-item-grayscale: 100%;
     --work-item-y: 0px;
     --work-item-scale: 1;
+    --work-item-ratio: 1;
     position: relative;
     display: block;
     overflow: hidden;
     flex: 0 0 auto;
+    width: calc(var(--reel-width) * 0.9);
+    aspect-ratio: var(--work-item-ratio);
     border-radius: 2px;
     background: var(--work-panel);
     color: inherit;
@@ -324,31 +304,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
 
   .work-selected-flat__reel-item.is-active {
     z-index: 2;
-  }
-
-  .work-selected-flat__reel-item--1 {
-    width: calc(var(--reel-width) * 0.88);
-    height: clamp(10rem, 12.5vw, 15.5rem);
-  }
-
-  .work-selected-flat__reel-item--2 {
-    width: calc(var(--reel-width) * 0.7);
-    height: clamp(9.5rem, 11vw, 13.5rem);
-  }
-
-  .work-selected-flat__reel-item--3 {
-    width: var(--reel-width);
-    height: clamp(7.5rem, 8.7vw, 10.8rem);
-  }
-
-  .work-selected-flat__reel-item--4 {
-    width: calc(var(--reel-width) * 0.65);
-    aspect-ratio: 1;
-  }
-
-  .work-selected-flat__reel-item--5 {
-    width: calc(var(--reel-width) * 0.87);
-    height: clamp(11.5rem, 13.4vw, 16.5rem);
   }
 
   .work-selected-flat__reel-item img {
@@ -384,14 +339,13 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     .work-selected-flat__layout {
       grid-template-columns:
         minmax(16rem, 1fr)
-        minmax(10rem, 0.5fr)
-        clamp(11.5rem, 17vw, 14.5rem)
-        minmax(13rem, 0.8fr);
-      gap: clamp(1.35rem, 2.8vw, 3rem);
+        clamp(15rem, 24vw, 20rem)
+        minmax(13rem, 0.76fr);
+      gap: clamp(1.75rem, 3.4vw, 3.75rem);
     }
 
     .work-selected-flat__reel {
-      --reel-width: clamp(11.5rem, 17vw, 14.5rem);
+      --reel-width: clamp(15rem, 24vw, 20rem);
       min-height: clamp(38rem, 60vw, 52rem);
     }
   }
@@ -440,11 +394,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       line-height: 0.94;
       filter: blur(3px);
       transform: translate3d(var(--work-title-x), 0, 0);
-    }
-
-    .work-selected-flat__meta {
-      justify-self: start;
-      width: min(16rem, 80vw);
     }
 
     .work-selected-flat__reel {
@@ -527,7 +476,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     const titleArea = section.querySelector<HTMLElement>('.work-selected-flat__title-area');
     const titleStack = section.querySelector<HTMLElement>('.work-selected-flat__titles');
     const reel = section.querySelector<HTMLElement>('[data-work-reel]');
-    const metaEl = section.querySelector<HTMLElement>('[data-work-meta]');
     const descriptionEl = section.querySelector<HTMLElement>('[data-work-description]');
     const ac = new AbortController();
     const { signal } = ac;
@@ -598,9 +546,13 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       titleArea.style.setProperty('--work-title-shift', `${shift.toFixed(2)}px`);
     };
 
-    const measureGeometry = () => {
+    const measureReelGeometry = () => {
       reelCenter = reel?.clientHeight ? reel.clientHeight / 2 : 0;
       reelItemCenters = reelItems.map((item) => item.offsetTop + item.offsetHeight / 2);
+    };
+
+    const measureGeometry = () => {
+      measureReelGeometry();
       syncTitleStackPosition();
     };
 
@@ -627,24 +579,30 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
 
       reelItems.forEach((item, index) => {
         const distance = Math.abs(index - virtualIndex);
-        const focus = smoothstep(clamp(1 - distance, 0, 1));
+        const focusHold = 0.18;
+        const focusRange = 1.08;
+        const heldDistance = clamp((distance - focusHold) / (focusRange - focusHold), 0, 1);
+        const focus = smoothstep(1 - heldDistance);
+        const shapeHold = 0.26;
+        const shapeRange = 1.04;
+        const shapeDistance = clamp((distance - shapeHold) / (shapeRange - shapeHold), 0, 1);
+        const shapeFocus = smoothstep(1 - shapeDistance);
         item.style.setProperty('--work-item-opacity', (0.34 + focus * 0.66).toFixed(3));
         item.style.setProperty('--work-item-grayscale', `${((1 - focus) * 100).toFixed(2)}%`);
         item.style.setProperty('--work-item-y', `${(-5.5 * focus).toFixed(2)}px`);
         item.style.setProperty('--work-item-scale', (1 + focus * 0.035).toFixed(3));
+        item.style.setProperty('--work-item-ratio', (1 - shapeFocus * 0.25).toFixed(3));
       });
     };
 
     const setActiveCopy = (activeTitle: HTMLElement | undefined) => {
-      const meta = activeTitle?.dataset.meta || '';
       const description = activeTitle?.dataset.description || '';
-      const copyEls = [metaEl, descriptionEl].filter(Boolean) as HTMLElement[];
+      const copyEls = [descriptionEl].filter(Boolean) as HTMLElement[];
 
       copyTween?.kill();
 
       if (copyEls.length === 0 || prefersReducedMotion) {
         revertCopySplits();
-        if (metaEl) metaEl.textContent = meta;
         if (descriptionEl) descriptionEl.textContent = description;
         return;
       }
@@ -665,7 +623,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
         overwrite: true,
         onComplete: () => {
           revertCopySplits();
-          if (metaEl) metaEl.textContent = meta;
           if (descriptionEl) descriptionEl.textContent = description;
 
           const incomingSplit = splitCopyToChars(copyEls);
@@ -723,6 +680,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       const lastIndex = Math.max(titleItems.length - 1, 1);
       const virtualIndex = progress * (lastIndex + finalScrollTail);
       applyContinuousFocus(virtualIndex);
+      measureReelGeometry();
       centerReelAt(virtualIndex);
       setActiveIndex(Math.round(virtualIndex));
     };
