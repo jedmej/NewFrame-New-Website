@@ -1,6 +1,7 @@
 ---
 import type { Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/translations';
+import Hero from './Hero.astro';
 import About from './About.astro';
 import WorkSelectedMinimal from './WorkSelectedMinimal.astro';
 import WaysToWorkPaperGrid from './WaysToWorkPaperGrid.astro';
@@ -23,12 +24,13 @@ const introHeadings = {
 };
 ---
 
-<div class="offer-process-band" data-offer-process-band>
+<div class="offer-process-band" data-offer-process-band data-offer-process-surface="A">
   <div class="offer-process-band__background" aria-hidden="true">
     <div class="offer-process-band__shader" data-offer-process-shader></div>
   </div>
 
   <div class="offer-process-band__content">
+    <Hero lang={lang} />
     <About lang={lang} />
 
     <section id="work" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="work" aria-label={introHeadings.work}>
@@ -92,7 +94,7 @@ const introHeadings = {
       linear-gradient(
         180deg,
         transparent 0%,
-        color-mix(in srgb, var(--offer-process-bg) 18%, transparent) 34%,
+        color-mix(in srgb, var(--offer-process-bg) 20%, transparent) 42%,
         var(--offer-process-bg) 100%
       );
   }
@@ -135,6 +137,14 @@ const introHeadings = {
     opacity: var(--offer-process-grain-opacity);
     pointer-events: none;
     content: '';
+    transition:
+      opacity 180ms var(--ease-out-quart),
+      visibility 180ms var(--ease-out-quart);
+  }
+
+  :global(.film-grain-disabled) .offer-process-band__background::after {
+    opacity: 0;
+    visibility: hidden;
   }
 
   .offer-process-band__shader {
@@ -142,7 +152,15 @@ const introHeadings = {
     inset: 0;
     overflow: hidden;
     opacity: var(--offer-process-shader-opacity);
+    transition:
+      opacity 220ms var(--ease-out-quart),
+      visibility 220ms var(--ease-out-quart);
     will-change: opacity;
+  }
+
+  :global(.shader-background-disabled) .offer-process-band__shader {
+    opacity: 0 !important;
+    visibility: hidden;
   }
 
   .offer-process-band__shader > :global(*) {

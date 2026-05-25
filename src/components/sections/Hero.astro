@@ -10,528 +10,138 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<section
-  id="hero"
-  data-lang={lang}
-  class="relative w-full min-h-[100svh] flex flex-col overflow-hidden"
->
-  <canvas id="hero-background-shader-canvas" class="hero-background-shader" aria-hidden="true"></canvas>
+<section id="hero" class="hero-clean" data-lang={lang} data-nav-tone="light" aria-label={t.hero.title}>
+  <div class="hero-clean__content">
+    <p class="hero-clean__credit">{t.hero.credit}</p>
 
-  <div class="hero-shell relative flex w-full min-h-[100svh] flex-col">
-    <div class="hero-grid">
-      <div class="hero-panel hero-panel--title">
-        <div id="hero-offer" class="hero-offer">
-          <h1
-            id="hero-title"
-            class="hero-offer__statement"
-            aria-label={t.hero.statement}
-          >
-            {t.hero.statement}
-          </h1>
-          <div class="hero-offer__actions">
-            <a href={`/${lang}/#contact`} class="hero-offer__link hero-offer__link--primary" data-cursor="CLICK">
-              <span>{t.hero.primaryCta}</span>
-              <svg viewBox="0 0 12 12" aria-hidden="true">
-                <path d="M1 11L11 1M11 1H3M11 1V9" />
-              </svg>
-            </a>
-            <span class="hero-offer__divider" aria-hidden="true"></span>
-            <a href={`/${lang}/#work`} class="hero-offer__link hero-offer__link--secondary" data-cursor="CLICK">
-              <span>{t.hero.secondaryCta}</span>
-              <span class="hero-offer__dot" aria-hidden="true"></span>
-            </a>
-          </div>
-        </div>
-      </div>
+    <div class="hero-clean__statement-wrap">
+      <h1 id="hero-title" class="hero-clean__statement">
+        {t.hero.statement}
+      </h1>
     </div>
   </div>
 </section>
 
 <style>
-  .hero-shell {
-    z-index: 2;
-    padding-top: 5rem;
-  }
-
-  #hero {
+  .hero-clean {
+    position: relative;
+    display: flex;
+    min-height: 100svh;
+    overflow: clip;
     isolation: isolate;
     background: transparent;
-  }
-
-  .hero-background-shader {
-    position: absolute;
-    display: block;
-    pointer-events: none;
-    inset: 0;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-  }
-
-  .hero-grid {
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    width: 100%;
-    min-height: calc(100svh - 10.5rem);
-  }
-
-  .hero-panel {
-    min-width: 0;
-  }
-
-  .hero-panel--title {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-    align-items: center;
-    padding: clamp(2rem, 8svh, 4rem) 1.5rem clamp(2.75rem, 9svh, 4.75rem);
-  }
-
-  .hero-offer {
-    display: flex;
-    width: min(100%, 62rem);
-    flex-direction: column;
     color: var(--color-text);
-    text-align: left;
-    text-shadow:
-      0 0.08em 0.34em rgba(239, 235, 226, 0.32),
-      0 1rem 3rem rgba(239, 235, 226, 0.22);
   }
 
-  .hero-offer__statement {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: clamp(3.25rem, 15vw, 6.5rem);
-    font-weight: 300;
-    line-height: 0.95;
-    letter-spacing: 0;
-    perspective: 900px;
-    text-wrap: pretty;
-  }
-
-  .hero-offer__statement :global(.hero-line) {
-    display: block;
-    overflow: hidden;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
-  }
-
-  .hero-offer__statement :global(.hero-line-inner) {
-    display: block;
-    will-change: transform, opacity, filter;
-  }
-
-  .hero-offer__statement :global(.hero-char) {
-    display: inline-block;
-    will-change: transform, opacity, filter;
-  }
-
-  .hero-offer__statement span {
-    font-style: italic;
-  }
-
-  .hero-offer__actions {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    margin-top: 2rem;
-    border: 1px solid rgba(15, 15, 15, 0.24);
-    background-color: rgba(239, 234, 225, 0.38);
-    backdrop-filter: blur(6px);
-    overflow: hidden;
-    transition:
-      border-color 420ms var(--ease-out-expo),
-      background-color 420ms var(--ease-out-expo),
-      backdrop-filter 420ms var(--ease-out-expo);
-  }
-
-  .hero-offer__link {
+  .hero-clean__content {
     position: relative;
-    display: inline-flex;
-    min-height: 4rem;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    padding: 0 1.75rem;
-    color: var(--color-text);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    line-height: 1.15;
-    text-transform: uppercase;
-    transition:
-      color 360ms var(--ease-out-expo),
-      background-color 420ms var(--ease-out-expo);
-  }
-
-  .hero-offer__link::before {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: rgba(239, 234, 225, 0.34);
-    opacity: 0;
-    transform: scaleX(0.96);
-    transition:
-      opacity 420ms var(--ease-out-expo),
-      transform 620ms var(--ease-out-expo);
-    content: '';
-  }
-
-  .hero-offer__link span:first-child {
-    transition:
-      color 360ms var(--ease-out-expo),
-      transform 520ms var(--ease-out-expo),
-      letter-spacing 520ms var(--ease-out-expo);
-  }
-
-  .hero-offer__link svg {
-    width: 1.125rem;
-    height: 1.125rem;
-    flex: 0 0 auto;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.5;
-    transform-origin: center;
-    transition:
-      transform 520ms var(--ease-out-expo),
-      stroke-width 520ms var(--ease-out-expo);
-  }
-
-  .hero-offer__divider {
-    display: block;
-    width: 100%;
-    height: 1px;
-    flex: 0 0 auto;
-    background-color: rgba(15, 15, 15, 0.18);
-  }
-
-  .hero-offer__dot {
+    z-index: 2;
     display: flex;
-    width: 2.125rem;
-    height: 2.125rem;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(15, 15, 15, 0.24);
-    border-radius: 999px;
-    transition:
-      border-color 420ms var(--ease-out-expo),
-      transform 520ms var(--ease-out-expo);
+    width: 100%;
+    min-height: 100svh;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(7.25rem, 13svh, 8.5rem) clamp(1.25rem, 3vw, 2.625rem) clamp(5rem, 8svh, 7rem);
   }
 
-  .hero-offer__dot::after {
-    width: 0.4375rem;
-    height: 0.4375rem;
-    border-radius: 999px;
-    background-color: var(--color-accent);
-    content: '';
-    transition:
-      transform 520ms var(--ease-out-expo),
-      background-color 420ms var(--ease-out-expo),
-      box-shadow 520ms var(--ease-out-expo);
+  .hero-clean__statement-wrap {
+    display: flex;
+    width: min(100%, 44rem);
+    flex-direction: column;
+    gap: clamp(1.25rem, 3svh, 2.125rem);
   }
 
-  .hero-offer__link:hover,
-  .hero-offer__link:focus-visible {
-    color: var(--color-accent);
+  .hero-clean__statement {
+    max-width: 10.8ch;
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: clamp(4.2rem, 7.35vw, 6.625rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 0.962;
+    text-wrap: balance;
   }
 
-  .hero-offer__actions:has(.hero-offer__link:hover),
-  .hero-offer__actions:has(.hero-offer__link:focus-visible) {
-    border-color: rgba(15, 15, 15, 0.34);
-    background-color: rgba(239, 234, 225, 0.48);
-    backdrop-filter: blur(8px);
+  .hero-clean__statement :global(.hero-line) {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.04em;
+    margin-bottom: -0.04em;
   }
 
-  .hero-offer__link:hover::before,
-  .hero-offer__link:focus-visible::before {
-    opacity: 1;
-    transform: scaleX(1);
+  .hero-clean__statement :global(.hero-line-inner) {
+    display: block;
+    will-change: transform, opacity, filter;
   }
 
-  .hero-offer__link--primary:hover span:first-child,
-  .hero-offer__link--primary:focus-visible span:first-child {
-    letter-spacing: 0.24em;
-    transform: translateX(0.125rem);
+  .hero-clean__credit {
+    max-width: 34rem;
+    margin: 0;
+    align-self: flex-end;
+    color: rgba(20, 18, 15, 0.62);
+    font-family: var(--font-mono);
+    font-size: clamp(0.68rem, 0.88vw, 0.8125rem);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    text-align: right;
+    text-transform: uppercase;
   }
 
-  .hero-offer__link--primary:hover svg,
-  .hero-offer__link--primary:focus-visible svg {
-    stroke-width: 1.8;
-    transform: rotate(45deg);
-  }
-
-  .hero-offer__link--secondary:hover span:first-child,
-  .hero-offer__link--secondary:focus-visible span:first-child {
-    letter-spacing: 0.24em;
-    transform: translateX(0.125rem);
-  }
-
-  .hero-offer__link--secondary:hover .hero-offer__dot,
-  .hero-offer__link--secondary:focus-visible .hero-offer__dot {
-    border-color: rgba(216, 74, 58, 0.42);
-    transform: scale(1.06);
-  }
-
-  .hero-offer__link--secondary:hover .hero-offer__dot::after,
-  .hero-offer__link--secondary:focus-visible .hero-offer__dot::after {
-    box-shadow: 0 0 0 0.35rem rgba(216, 74, 58, 0.1);
-    transform: scale(1.35);
-  }
-
-  .hero-offer__link--primary {
-    color: var(--color-accent);
-  }
-
-  @media (min-width: 1024px) {
-    .hero-shell {
-      padding-top: 5.875rem;
+  @media (max-width: 1023px) {
+    .hero-clean__content {
+      padding-top: calc(max(0.875rem, env(safe-area-inset-top)) + 6rem);
     }
 
-    .hero-grid {
-      min-height: calc(100svh - 5.875rem);
-    }
-
-    .hero-panel {
-      min-height: calc(100svh - 5.875rem);
-    }
-
-    .hero-panel--title {
-      align-items: stretch;
-      border-left: 1px solid var(--color-border-strong);
-      padding: clamp(3rem, 5.2vw, 4rem) clamp(3rem, 4.8vw, 5.5rem) clamp(3rem, 5.6vh, 4.5rem);
-    }
-
-    .hero-offer {
-      display: grid;
-      width: 100%;
-      min-height: 100%;
-      grid-template-columns: minmax(0, 30rem) minmax(12rem, 1fr) minmax(0, 24rem);
-      grid-template-rows: auto 1fr auto;
-      column-gap: clamp(2rem, 5vw, 6rem);
-      align-items: start;
-    }
-
-    .hero-offer__statement {
-      grid-column: 1 / -1;
-      justify-self: center;
-      max-width: none;
-      font-size: clamp(3.565rem, 4.8875vw, 5.98rem);
-      line-height: 0.94;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    #hero[data-lang='pl'] .hero-offer__statement {
-      max-width: none;
-      font-size: clamp(3.5075rem, 4.7725vw, 5.8075rem);
-    }
-
-    .hero-offer__actions {
-      grid-column: 1 / -1;
-      grid-row: 3;
-      align-self: end;
-      flex-direction: row;
-      align-items: stretch;
-      justify-content: stretch;
-      width: min(100%, 72rem);
-      margin: auto auto 0;
-    }
-
-    .hero-offer__link {
-      min-height: 4rem;
-      justify-content: space-between;
-      gap: 1.25rem;
-      font-size: 0.75rem;
-      white-space: nowrap;
-    }
-
-    .hero-offer__link--primary {
-      width: calc(50% - 0.5px);
-    }
-
-    .hero-offer__link--secondary {
-      width: calc(50% - 0.5px);
-    }
-
-    .hero-offer__divider {
-      width: 1px;
-      height: auto;
-      background-color: rgba(15, 15, 15, 0.18);
-    }
-
-  }
-
-  @media (min-width: 1536px) {
-    .hero-panel--title {
-      padding-right: clamp(4.5rem, 5vw, 6rem);
-      padding-left: clamp(4.5rem, 5vw, 6rem);
-    }
-  }
-
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .hero-shell {
-      padding-top: 5rem;
-    }
-
-    .hero-grid {
-      min-height: calc(100svh - 5rem);
-    }
-
-    .hero-panel--title {
-      align-items: stretch;
-      padding: clamp(3rem, 6svh, 4.25rem) 3rem clamp(3.75rem, 7svh, 5rem);
-    }
-
-    .hero-offer {
-      min-height: 100%;
-      display: grid;
-      grid-template-rows: auto 1fr auto auto;
-      justify-content: stretch;
-    }
-
-    .hero-offer__statement {
-      max-width: 42rem;
-      font-size: clamp(4rem, 8.6vw, 5.55rem);
-      line-height: 0.92;
-    }
-
-    .hero-offer__actions {
-      grid-row: 3;
-      align-self: end;
-      flex-direction: row;
-      align-items: stretch;
-      margin-top: clamp(1.5rem, 3svh, 2.25rem);
-    }
-
-    .hero-offer__link--primary {
-      width: calc(56% - 0.5px);
-    }
-
-    .hero-offer__link--secondary {
-      width: calc(44% - 0.5px);
-    }
-
-    .hero-offer__divider {
-      width: 1px;
-      height: auto;
-      background-color: rgba(15, 15, 15, 0.18);
-    }
-
-  }
-
-  @media (min-width: 860px) and (max-width: 1023px) {
-    .hero-panel--title {
-      padding-top: clamp(1.5rem, 3svh, 2.25rem);
-    }
-
-    .hero-offer__statement {
-      max-width: 40rem;
-      font-size: clamp(4.4rem, 7.35vw, 4.85rem);
-      line-height: 0.88;
+    .hero-clean__statement {
+      max-width: 9.8ch;
+      font-size: clamp(3.85rem, 12.5vw, 6.2rem);
     }
   }
 
   @media (max-width: 767px) {
-    .hero-shell {
-      padding-top: 4.75rem;
+    .hero-clean__content {
+      padding-right: 1.25rem;
+      padding-bottom: clamp(2.25rem, 6svh, 3.5rem);
+      padding-left: 1.25rem;
     }
 
-    .hero-grid {
-      min-height: calc(100svh - 4.75rem);
+    .hero-clean__statement-wrap {
+      gap: 1.15rem;
     }
 
-    .hero-panel--title {
-      align-items: stretch;
-      padding: clamp(1.55rem, 5svh, 2.75rem) 1.5rem clamp(1.45rem, 4.4svh, 2.65rem);
+    .hero-clean__statement {
+      max-width: 9.4ch;
+      font-size: clamp(3.4rem, 15.5vw, 4.9rem);
+      line-height: 0.97;
     }
 
-    .hero-offer {
-      min-height: 100%;
-      display: grid;
-      grid-template-rows: auto 1fr auto auto;
-      justify-content: stretch;
-      text-align: center;
-    }
-
-    .hero-offer__statement {
-      justify-self: center;
-      font-size: clamp(2.95rem, 12.6vw, 4.15rem);
-      max-width: min(100%, 21rem);
-      line-height: 0.94;
-    }
-
-    .hero-offer__actions {
-      align-self: end;
-      margin-top: clamp(6rem, 22svh, 12rem);
-    }
-
-    .hero-offer__link {
-      padding: 0 1.125rem;
-      font-size: 0.72rem;
-      gap: 1rem;
-      letter-spacing: 0.14em;
-      line-height: 1.15;
-    }
-
-  }
-
-  @media (max-height: 760px) {
-    .hero-offer__actions {
-      margin-top: 1.4rem;
+    .hero-clean__credit {
+      max-width: 17rem;
+      font-size: 0.68rem;
+      line-height: 1.45;
+      text-align: left;
+      align-self: flex-start;
     }
   }
 
-  @media (min-width: 1024px) and (max-height: 760px) {
-    .hero-panel--title {
-      padding-top: 2.5rem;
-      padding-bottom: 2.5rem;
-    }
-
-    .hero-offer__statement {
-      font-size: clamp(3.5075rem, 4.715vw, 5.4625rem);
+  @media (max-height: 760px) and (min-width: 768px) {
+    .hero-clean__statement {
+      font-size: clamp(3.7rem, 6.7vw, 5.7rem);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-offer__statement :global(.hero-line-inner) {
+    .hero-clean__statement :global(.hero-line-inner) {
       will-change: auto;
     }
-
-    .hero-offer__actions,
-    .hero-offer__link,
-    .hero-offer__link::before,
-    .hero-offer__link span:first-child,
-    .hero-offer__link svg,
-    .hero-offer__dot,
-    .hero-offer__dot::after {
-      transition-duration: 1ms;
-    }
-
-    .hero-offer__link--primary:hover span:first-child,
-    .hero-offer__link--primary:focus-visible span:first-child,
-    .hero-offer__link--primary:hover svg,
-    .hero-offer__link--primary:focus-visible svg,
-    .hero-offer__link--secondary:hover span:first-child,
-    .hero-offer__link--secondary:focus-visible span:first-child,
-    .hero-offer__link--secondary:hover .hero-offer__dot,
-    .hero-offer__link--secondary:focus-visible .hero-offer__dot,
-    .hero-offer__link--secondary:hover .hero-offer__dot::after,
-    .hero-offer__link--secondary:focus-visible .hero-offer__dot::after {
-      transform: none;
-    }
   }
-
 </style>
 
 <script>
   import gsap from 'gsap';
   import { SplitText } from 'gsap/SplitText';
-  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(SplitText);
 
@@ -543,260 +153,73 @@ const t = useTranslations(lang);
 
     const hero = document.getElementById('hero');
     const title = document.getElementById('hero-title');
-    const actions = hero?.querySelector('.hero-offer__actions');
-    const shaderCanvas = document.getElementById('hero-background-shader-canvas') as HTMLCanvasElement | null;
+    const credit = hero?.querySelector('.hero-clean__credit');
     const ac = new AbortController();
-    const { signal } = ac;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const splitInstances: SplitText[] = [];
     const timelines: gsap.core.Timeline[] = [];
-    let shaderInstance: ShaderInstance | null = null;
-    let shaderDisposed = false;
-    let shaderResizeFrame = 0;
-    let shaderResizeObserver: ResizeObserver | null = null;
-    const isMobileShader = window.matchMedia('(max-width: 767px)').matches;
-    const logoTextureId = 'idmp8izvgso13bcjfkh';
-    const getLogoTransform = () => {
-      if (!shaderCanvas) {
-        return {
-          offsetX: 0,
-          offsetY: 0.05,
-          rotation: 0,
-          scale: isMobileShader ? 0.64 : 0.5,
-          anchorX: 0.5,
-          anchorY: 0.5,
-          edges: 'transparent',
-        };
-      }
 
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const aspect = width / height;
-      const shortSide = Math.min(width, height);
-      const baseDesktopScale = Math.min(0.58, Math.max(0.46, (shortSide / 1080) * 0.52));
-      const ultrawideReduction = Math.min(0.085, Math.max(0, (aspect - 1.85) * 0.13));
-      const desktopScale = baseDesktopScale - ultrawideReduction;
-      const mobileScale = Math.min(0.7, Math.max(0.58, (shortSide / 430) * 0.64));
-
-      return {
-        offsetX: 0,
-        offsetY: isMobileShader ? 0.09 : 0.04,
-        rotation: 0,
-        scale: isMobileShader ? mobileScale : desktopScale,
-        anchorX: 0.5,
-        anchorY: 0.5,
-        edges: 'transparent',
-      };
-    };
-
-    const runIntro = () => {
-      if (!hero || !title || prefersReducedMotion) {
-        gsap.set([title, actions].filter(Boolean), { clearProps: 'all' });
-        return;
-      }
-
-      const split = new SplitText(title, {
-        type: 'lines, chars',
-        linesClass: 'hero-line',
-        charsClass: 'hero-char',
-        mask: 'lines',
-      });
-      splitInstances.push(split);
-
-      split.lines.forEach((line) => {
-        const inner = document.createElement('span');
-        inner.className = 'hero-line-inner';
-        while (line.firstChild) inner.appendChild(line.firstChild);
-        line.appendChild(inner);
-      });
-
-      const lineInners = split.lines
-        .map((line) => line.querySelector('.hero-line-inner'))
-        .filter((line): line is HTMLElement => line instanceof HTMLElement);
-      const chars = split.chars.filter((char): char is HTMLElement => char instanceof HTMLElement);
-
-      gsap.set(lineInners, {
-        opacity: 1,
-        filter: 'blur(0px)',
-        rotateX: 0,
-      });
-      gsap.set(chars, {
-        yPercent: 116,
-        opacity: 0,
-        filter: 'blur(10px)',
-        rotateX: -18,
-        transformOrigin: '50% 100%',
-      });
-      gsap.set(actions, {
-        y: 28,
-        opacity: 0,
-        filter: 'blur(8px)',
-      });
-      gsap.set(shaderCanvas, {
-        opacity: 0.72,
-        scale: 1.035,
-        transformOrigin: '50% 50%',
-      });
-
-      const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-      timelines.push(tl);
-
-      tl.to(shaderCanvas, {
-        opacity: 1,
-        scale: 1,
-        duration: 2.2,
-        ease: 'power3.out',
-      }, 0)
-        .to(chars, {
-          yPercent: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          rotateX: 0,
-          duration: 0.95,
-          stagger: 0.018,
-        }, 0.16)
-        .to(actions, {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 1,
-        }, 0.72);
-    };
-
-    const resizeShaderToCanvas = () => {
-      shaderResizeFrame = 0;
-      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
-
-      shaderCanvas.style.width = '';
-      shaderCanvas.style.height = '';
-      const rect = shaderCanvas.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
-        shaderInstance.update(logoTextureId, {
-          transform: getLogoTransform(),
-        });
-      }
-    };
-
-    const scheduleShaderResize = () => {
-      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
-      shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
-    };
-
-    if (shaderCanvas && !prefersReducedMotion) {
-      shaderCanvas.style.width = '';
-      shaderCanvas.style.height = '';
-      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
-        components: [
-          {
-            type: 'Swirl',
-            id: 'idmopuqc7pml2j3z58j',
-            props: {
-              colorA: '#EFEAE1',
-              colorB: '#dbd3c5',
-              detail: 1.7,
-              visible: true,
-            },
-          },
-          {
-            type: 'ImageTexture',
-            id: logoTextureId,
-            props: {
-              objectFit: 'contain',
-              url: new URL('/images/newframe-logo.svg', window.location.origin).href,
-              transform: getLogoTransform(),
-            },
-          },
-          {
-            type: 'ChromaFlow',
-            id: 'idlr5w8x2qm9k3v7n2a',
-            props: {
-              baseColor: '#18181a',
-              downColor: '#6600ff',
-              leftColor: '#aa00ee',
-              momentum: 13,
-              rightColor: '#ff0066',
-              upColor: '#ff00aa',
-              visible: false,
-            },
-          },
-          {
-            type: 'FlutedGlass',
-            id: 'idmopubojpm8gm5raws',
-            props: {
-              angle: 0,
-              aberration: 0.5,
-              blendMode: 'normal',
-              edges: 'stretch',
-              frequency: 6,
-              highlight: 0.12,
-              highlightColor: '#ffffff',
-              highlightSoftness: 0,
-              lightAngle: 30,
-              maskType: 'alpha',
-              opacity: 1,
-              refraction: 1.5,
-              shape: 'waves',
-              softness: 0,
-              speed: 0.2,
-              transform: {
-                offsetX: 0,
-                offsetY: 0,
-                rotation: 0,
-                scale: 1,
-                anchorX: 0.5,
-                anchorY: 0.5,
-                edges: 'transparent',
-              },
-              waveAmplitude: 0.05,
-              waveFrequency: isMobileShader ? 2.4 : 1.8,
-              visible: true,
-            },
-          },
-          {
-            type: 'FilmGrain',
-            id: 'idmopv498snizgmx7xn',
-            props: {
-              strength: 0.05,
-              visible: true,
-            },
-          },
-          {
-            type: 'CursorRipples',
-            id: 'idmp8j8cmkjmxa4rvkv',
-            props: {
-              chromaticSplit: 3,
-              decay: 20,
-              intensity: 11.6,
-            },
-          },
-        ],
-      })).then((shader) => {
-        if (shaderDisposed) {
-          shader.destroy();
-          return;
-        }
-        shaderInstance = shader;
-        resizeShaderToCanvas();
-        window.addEventListener('resize', scheduleShaderResize, { signal });
-        window.addEventListener('orientationchange', scheduleShaderResize, { signal });
-        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
-        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
-      }).catch((error) => {
-        console.warn('Hero shader failed to initialize', error);
-      });
+    if (!hero || !title || prefersReducedMotion) {
+      gsap.set([title, credit].filter(Boolean), { clearProps: 'all' });
+      cleanupFn = () => ac.abort();
+      return;
     }
 
-    runIntro();
+    const split = new SplitText(title, {
+      type: 'lines',
+      linesClass: 'hero-line',
+      mask: 'lines',
+    });
+    splitInstances.push(split);
+
+    split.lines.forEach((line) => {
+      const inner = document.createElement('span');
+      inner.className = 'hero-line-inner';
+      while (line.firstChild) inner.appendChild(line.firstChild);
+      line.appendChild(inner);
+    });
+
+    const lineInners = split.lines
+      .map((line) => line.querySelector('.hero-line-inner'))
+      .filter((line): line is HTMLElement => line instanceof HTMLElement);
+
+    gsap.set(lineInners, {
+      yPercent: 112,
+      opacity: 0,
+      filter: 'blur(10px)',
+    });
+    gsap.set(credit, {
+      y: 14,
+      opacity: 0,
+      filter: 'blur(6px)',
+    });
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'expo.out' },
+      onComplete: () => {
+        gsap.set([credit, ...lineInners].filter(Boolean), { clearProps: 'willChange,filter,transform,opacity' });
+      },
+    });
+    timelines.push(tl);
+
+    tl.to(lineInners, {
+        yPercent: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 1.08,
+        stagger: 0.08,
+      }, 0.12)
+      .to(credit, {
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.9,
+      }, 0.42);
 
     cleanupFn = () => {
-      shaderDisposed = true;
-      timelines.forEach((tl) => tl.kill());
-      gsap.killTweensOf([title, actions, shaderCanvas].filter(Boolean));
-      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
-      shaderResizeObserver?.disconnect();
-      shaderInstance?.destroy();
-      splitInstances.forEach((split) => split.revert());
+      timelines.forEach((timeline) => timeline.kill());
+      gsap.killTweensOf([credit, ...lineInners].filter(Boolean));
+      splitInstances.forEach((splitInstance) => splitInstance.revert());
       ac.abort();
     };
   }

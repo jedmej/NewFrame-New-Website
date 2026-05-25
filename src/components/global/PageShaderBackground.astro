@@ -61,6 +61,20 @@
     mix-blend-mode: multiply;
     opacity: 0.44;
     pointer-events: none;
+    transition:
+      opacity 180ms var(--ease-out-quart),
+      visibility 180ms var(--ease-out-quart);
+  }
+
+  :global(.film-grain-disabled) .page-shader-background__noise,
+  :global(.film-grain-disabled) .page-film-grain {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  :global(.shader-background-disabled) .page-shader-background {
+    opacity: 0 !important;
+    visibility: hidden;
   }
 
   :global(.page-content--scroll-shader) {

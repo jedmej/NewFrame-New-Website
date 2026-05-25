@@ -78,6 +78,36 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         {altLang.toUpperCase()}
       </a>
 
+      <button
+        type="button"
+        class="nav-grain-toggle hidden lg:inline-flex"
+        data-grain-toggle
+        data-label-on={t.nav.grainOn}
+        data-label-off={t.nav.grainOff}
+        aria-label={t.nav.grainOn}
+        aria-pressed="true"
+      >
+        <span class="nav-grain-toggle__label text-mono-xs">{t.nav.grain}</span>
+        <span class="nav-grain-toggle__track" aria-hidden="true">
+          <span class="nav-grain-toggle__thumb"></span>
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-grain-toggle hidden lg:inline-flex"
+        data-shader-toggle
+        data-label-on={t.nav.shaderOn}
+        data-label-off={t.nav.shaderOff}
+        aria-label={t.nav.shaderOn}
+        aria-pressed="true"
+      >
+        <span class="nav-grain-toggle__label text-mono-xs">{t.nav.shader}</span>
+        <span class="nav-grain-toggle__track" aria-hidden="true">
+          <span class="nav-grain-toggle__thumb"></span>
+        </span>
+      </button>
+
       <!-- Let's Talk CTA -->
       <a
         href={`/${lang}/#contact`}
@@ -120,6 +150,34 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.contact}</a>
   </div>
   <div class="flex items-center gap-6 mt-10 opacity-0 translate-y-8 mobile-menu-link">
+    <button
+      type="button"
+      class="nav-grain-toggle nav-grain-toggle--mobile"
+      data-grain-toggle
+      data-label-on={t.nav.grainOn}
+      data-label-off={t.nav.grainOff}
+      aria-label={t.nav.grainOn}
+      aria-pressed="true"
+    >
+      <span class="nav-grain-toggle__label text-mono-xs">{t.nav.grain}</span>
+      <span class="nav-grain-toggle__track" aria-hidden="true">
+        <span class="nav-grain-toggle__thumb"></span>
+      </span>
+    </button>
+    <button
+      type="button"
+      class="nav-grain-toggle nav-grain-toggle--mobile"
+      data-shader-toggle
+      data-label-on={t.nav.shaderOn}
+      data-label-off={t.nav.shaderOff}
+      aria-label={t.nav.shaderOn}
+      aria-pressed="true"
+    >
+      <span class="nav-grain-toggle__label text-mono-xs">{t.nav.shader}</span>
+      <span class="nav-grain-toggle__track" aria-hidden="true">
+        <span class="nav-grain-toggle__thumb"></span>
+      </span>
+    </button>
     <a href={altUrl} class="text-mono-xs opacity-60 hover:opacity-100 transition-opacity" data-lang-switch={altLang}>
       {altLang.toUpperCase()}
     </a>
@@ -208,6 +266,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
   .nav-brand,
   .nav-section--links .nav-link,
   .nav-section--actions > .nav-link,
+  .nav-grain-toggle,
   .nav-cta,
   #mobile-menu-btn {
     color: var(--nav-ink);
@@ -222,6 +281,63 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 
   .nav-cta {
     min-height: 2.35rem;
+  }
+
+  .nav-grain-toggle {
+    min-height: 2.35rem;
+    align-items: center;
+    gap: 0.55rem;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    opacity: 0.58;
+    cursor: pointer;
+    transition:
+      color 0.24s var(--ease-out-quart),
+      opacity 0.24s var(--ease-out-quart),
+      transform 0.24s var(--ease-out-quart);
+  }
+
+  .nav-grain-toggle:hover {
+    opacity: 1;
+  }
+
+  .nav-grain-toggle:active {
+    transform: translateY(1px);
+  }
+
+  .nav-grain-toggle:focus-visible {
+    outline: 1px solid rgba(201, 70, 57, 0.58);
+    outline-offset: 0.3rem;
+  }
+
+  .nav-grain-toggle__track {
+    position: relative;
+    width: 1.7rem;
+    height: 0.9rem;
+    flex: 0 0 auto;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.7;
+  }
+
+  .nav-grain-toggle__thumb {
+    position: absolute;
+    top: 50%;
+    left: 0.16rem;
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: currentColor;
+    transform: translate(0.66rem, -50%);
+    transition:
+      transform 0.24s var(--ease-out-quart),
+      opacity 0.24s var(--ease-out-quart);
+  }
+
+  .nav-grain-toggle[aria-pressed="false"] .nav-grain-toggle__thumb {
+    opacity: 0.48;
+    transform: translate(0, -50%);
   }
 
   .nav-section .nav-link:hover,
@@ -335,6 +451,11 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       content: none;
     }
 
+    .nav-grain-toggle--mobile {
+      color: var(--color-text-muted);
+      opacity: 0.72;
+    }
+
     #mobile-menu-btn {
       margin-right: -0.5rem;
     }
@@ -427,7 +548,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const runIntro = () => {
       const logoLink = document.getElementById('logo-link');
       const navLinks = Array.from(nav.querySelectorAll('.nav-section--links .nav-link'));
-      const actionItems = Array.from(nav.querySelectorAll('.nav-section--actions > .nav-link, .nav-section--actions > .nav-cta, #mobile-menu-btn'));
+      const actionItems = Array.from(nav.querySelectorAll('.nav-section--actions > .nav-link, .nav-section--actions > .nav-grain-toggle, .nav-section--actions > .nav-cta, #mobile-menu-btn'));
       const revealItems = [logoLink, ...navLinks, ...actionItems].filter((item): item is Element => item instanceof Element);
 
       if (prefersReducedMotion || revealItems.length === 0) {
@@ -504,15 +625,25 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const updateNavTone = () => {
       navToneFrame = 0;
 
-      const band = document.querySelector<HTMLElement>('[data-offer-process-band]');
-      if (!band) {
-        nav.classList.remove('nav-on-dark');
-        return;
-      }
-
       const navSampleY = window.innerWidth >= 1024
         ? Math.max(42, window.innerHeight * 0.055)
         : Math.max(34, window.innerHeight * 0.05);
+      const band = document.querySelector<HTMLElement>('[data-offer-process-band]');
+      const hero = document.getElementById('hero');
+      const heroRect = hero?.getBoundingClientRect();
+      const isOverHero = !!heroRect && heroRect.top <= navSampleY && heroRect.bottom >= navSampleY;
+      const isOverDarkHero = isOverHero && hero?.dataset.navTone === 'dark';
+
+      if (!band) {
+        nav.classList.toggle('nav-on-dark', isOverDarkHero);
+        return;
+      }
+
+      if (isOverHero) {
+        nav.classList.toggle('nav-on-dark', isOverDarkHero);
+        return;
+      }
+
       const bandRect = band.getBoundingClientRect();
       const isOverBand = bandRect.top <= navSampleY && bandRect.bottom >= navSampleY;
       const bg = parseCssColor(getComputedStyle(band).getPropertyValue('--offer-process-bg'));
@@ -530,6 +661,68 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     window.addEventListener('scroll', scheduleNavToneUpdate, { signal, passive: true });
     window.addEventListener('resize', scheduleNavToneUpdate, { signal, passive: true });
     document.addEventListener('astro:page-load', scheduleNavToneUpdate, { signal });
+
+    const grainStorageKey = 'newframe-film-grain';
+    const grainToggles = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-grain-toggle]'));
+
+    const setGrainEnabled = (enabled: boolean) => {
+      document.documentElement.classList.toggle('film-grain-disabled', !enabled);
+      grainToggles.forEach((toggle) => {
+        const label = enabled ? toggle.dataset.labelOn : toggle.dataset.labelOff;
+        toggle.setAttribute('aria-pressed', String(enabled));
+        if (label) toggle.setAttribute('aria-label', label);
+      });
+
+      try {
+        localStorage.setItem(grainStorageKey, enabled ? 'on' : 'off');
+      } catch {}
+    };
+
+    const readStoredGrainPreference = () => {
+      try {
+        return localStorage.getItem(grainStorageKey) !== 'off';
+      } catch {
+        return true;
+      }
+    };
+
+    setGrainEnabled(readStoredGrainPreference());
+    grainToggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        setGrainEnabled(toggle.getAttribute('aria-pressed') !== 'true');
+      }, { signal });
+    });
+
+    const shaderStorageKey = 'newframe-background-shader';
+    const shaderToggles = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-shader-toggle]'));
+
+    const setShaderEnabled = (enabled: boolean) => {
+      document.documentElement.classList.toggle('shader-background-disabled', !enabled);
+      shaderToggles.forEach((toggle) => {
+        const label = enabled ? toggle.dataset.labelOn : toggle.dataset.labelOff;
+        toggle.setAttribute('aria-pressed', String(enabled));
+        if (label) toggle.setAttribute('aria-label', label);
+      });
+
+      try {
+        localStorage.setItem(shaderStorageKey, enabled ? 'on' : 'off');
+      } catch {}
+    };
+
+    const readStoredShaderPreference = () => {
+      try {
+        return localStorage.getItem(shaderStorageKey) !== 'off';
+      } catch {
+        return true;
+      }
+    };
+
+    setShaderEnabled(readStoredShaderPreference());
+    shaderToggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        setShaderEnabled(toggle.getAttribute('aria-pressed') !== 'true');
+      }, { signal });
+    });
 
     const lockScrambleWidth = (el: Element) => {
       const target = el as HTMLElement;
@@ -731,7 +924,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     });
 
     // Close menu on link click
-    menuLinks?.forEach((link) => {
+    mobileMenu?.querySelectorAll('a.mobile-menu-link').forEach((link) => {
       link.addEventListener('click', () => {
         if (menuOpen) menuBtn?.click();
       }, { signal });
@@ -740,7 +933,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     cleanupFn = () => {
       timelines.forEach((tl) => tl.kill());
       gsap.killTweensOf(nav);
-      gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-cta, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line'));
+      gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-grain-toggle, .nav-cta, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line'));
       gsap.killTweensOf(mobileMenu?.querySelectorAll('.mobile-menu-link') || []);
       if (mobileMenu) {
         gsap.killTweensOf(mobileMenu);
