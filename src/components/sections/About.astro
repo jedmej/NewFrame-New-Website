@@ -24,21 +24,6 @@ const t = useTranslations(lang);
     >
       {t.about.manifesto}
     </p>
-
-    <figure id="about-image-block" class="about-paper-section__image-block">
-      <img
-        src="/images/about-paper-blur.jpg"
-        alt={t.about.imageAlt}
-        width="970"
-        height="460"
-        loading="lazy"
-        decoding="async"
-        class="about-paper-section__image"
-      />
-      <figcaption id="about-body" class="about-paper-section__caption text-mono-xs">
-        {t.about.body}
-      </figcaption>
-    </figure>
   </div>
 </section>
 
@@ -68,7 +53,7 @@ const t = useTranslations(lang);
     z-index: 1;
     width: min(100% - clamp(3rem, 10vw, 10rem), 86rem);
     margin-inline: auto;
-    padding-block: clamp(7rem, 11vw, 11.5rem) 0;
+    padding-block: clamp(7rem, 11vw, 11.5rem);
   }
 
   .about-paper-section__topbar {
@@ -93,52 +78,20 @@ const t = useTranslations(lang);
 
   .about-paper-section__manifesto {
     max-width: 76rem;
-    margin: 0 0 clamp(4.75rem, 7vw, 7rem);
+    margin: 0;
     font-family: var(--font-serif);
     font-size: clamp(2.4rem, 4.55vw, 4.8rem);
-    font-weight: 400;
+    font-weight: 300;
     line-height: 0.98;
     letter-spacing: 0;
     color: var(--color-text);
     text-wrap: pretty;
   }
 
-  .about-paper-section__image-block {
-    position: relative;
-    width: 100vw;
-    margin: 0 0 0 calc(50% - 50vw);
-    overflow: hidden;
-    background: rgba(24, 24, 26, 0.05);
-    aspect-ratio: 970 / 460;
-    isolation: isolate;
-  }
-
-  .about-paper-section__image {
-    position: absolute;
-    inset: -8% 0;
-    width: 100%;
-    height: 116%;
-    object-fit: cover;
-    object-position: 50% 50%;
-    will-change: transform;
-  }
-
-  .about-paper-section__caption {
-    position: absolute;
-    left: clamp(1.75rem, 3.4vw, 3rem);
-    bottom: clamp(1.6rem, 3vw, 2.6rem);
-    z-index: 1;
-    max-width: min(22rem, 42%);
-    margin: 0;
-    color: rgba(24, 24, 26, 0.58);
-    line-height: 1.35;
-    text-wrap: balance;
-  }
-
   @media (max-width: 1023px) {
     .about-paper-section__inner {
       width: min(100% - 3rem, 52rem);
-      padding-block: clamp(5.5rem, 14vw, 8rem) 0;
+      padding-block: clamp(5.5rem, 14vw, 8rem);
     }
 
     .about-paper-section__topbar {
@@ -149,16 +102,6 @@ const t = useTranslations(lang);
     .about-paper-section__manifesto {
       font-size: clamp(2.35rem, 8vw, 4rem);
       line-height: 1.03;
-      margin-bottom: 3.25rem;
-    }
-
-    .about-paper-section__image-block {
-      aspect-ratio: 4 / 3;
-    }
-
-    .about-paper-section__caption {
-      max-width: min(25rem, calc(100% - 3rem));
-      color: rgba(24, 24, 26, 0.64);
     }
   }
 
@@ -177,15 +120,6 @@ const t = useTranslations(lang);
       font-size: clamp(2.1rem, 11vw, 3rem);
     }
 
-    .about-paper-section__image-block {
-      aspect-ratio: 3 / 4;
-    }
-
-    .about-paper-section__caption {
-      left: 1.25rem;
-      bottom: 1.25rem;
-      max-width: calc(100% - 2.5rem);
-    }
   }
 
 </style>
@@ -205,9 +139,6 @@ const t = useTranslations(lang);
 
     const section = document.getElementById('scope');
     const textEl = document.getElementById('manifesto-text');
-    const imageBlock = document.getElementById('about-image-block');
-    const imageEl = imageBlock?.querySelector<HTMLElement>('.about-paper-section__image') ?? null;
-    const bodyEl = document.getElementById('about-body');
     const lines = section?.querySelectorAll('[data-line]') || [];
     if (!textEl || !section) return;
 
@@ -277,62 +208,6 @@ const t = useTranslations(lang);
           });
         },
       }));
-
-      // Image block reveal
-      if (imageBlock) {
-        gsap.set(imageBlock, { willChange: 'clip-path, filter' });
-        const maskTween = gsap.fromTo(imageBlock,
-          { clipPath: 'inset(100% 0 0 0)', filter: 'blur(10px)' },
-          {
-            clipPath: 'inset(0% 0 0 0)',
-            filter: 'blur(0px)',
-            duration: 1.25,
-            ease: 'power4.out',
-            scrollTrigger: {
-              trigger: imageBlock,
-              start: 'top 85%',
-              once: true,
-            },
-          }
-        );
-        if (maskTween.scrollTrigger) scrollTriggers.push(maskTween.scrollTrigger);
-
-        if (imageEl) {
-          const imageParallax = gsap.fromTo(imageEl,
-            { yPercent: -4 },
-            {
-              yPercent: 4,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: imageBlock,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 1.15,
-              },
-            }
-          );
-          if (imageParallax.scrollTrigger) scrollTriggers.push(imageParallax.scrollTrigger);
-        }
-      }
-
-      // Body text reveal
-      if (bodyEl) {
-        const bodyTween = gsap.fromTo(bodyEl,
-          { opacity: 0, filter: 'blur(8px)' },
-          {
-            opacity: 1,
-            filter: 'blur(0px)',
-            duration: 1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: bodyEl,
-              start: 'top 85%',
-              once: true,
-            },
-          }
-        );
-        if (bodyTween.scrollTrigger) scrollTriggers.push(bodyTween.scrollTrigger);
-      }
 
     } else {
       split.words.forEach((word: HTMLElement) => {

@@ -60,19 +60,21 @@ const projectsByKey = Object.fromEntries(
 ) as Record<ProjectKey, GridProject>;
 
 const displayNameByKey = {
-  hubert: 'Hubert Photography',
-  uroki: 'Uroki Tattoo',
-  panenka: 'Panenka Creatives',
+  hubert: 'Hubert',
+  uroki: 'Uroki',
+  panenka: 'Panenka',
   esthetic: 'Esthetic',
   adfidence: 'Adfidence',
   amvis: 'Amvis',
 } satisfies Record<ProjectKey, string>;
 
-const caseKeys = ['hubert', 'adfidence', 'esthetic', 'panenka', 'uroki'] as const;
+const caseKeys = ['uroki', 'hubert', 'adfidence', 'panenka', 'esthetic'] as const;
 const caseProjects = caseKeys.map((key) => projectsByKey[key]);
 const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
-const scrollSpan = 104 + (caseProjects.length - 1) * 42;
+const firstRoles = firstMeta.roles.join(' / ');
+const padIndex = (index: number) => String(index + 1).padStart(2, '0');
+const scrollSpan = 112 + (caseProjects.length - 1) * 45;
 ---
 
 <section
@@ -101,6 +103,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
                 data-index={index}
                 data-title={displayNameByKey[project.key]}
                 data-description={meta.description}
+                data-roles={meta.roles.join(' / ')}
               >
                 {displayNameByKey[project.key]}
               </a>
@@ -109,7 +112,8 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
         </nav>
       </header>
 
-      <div class="work-selected-flat__reel" role="list" aria-label={t.work.carouselLabel} data-work-reel>
+      <div class="work-selected-flat__project-panel">
+        <div class="work-selected-flat__preview" role="list" aria-label={t.work.carouselLabel}>
         {caseProjects.map((project, index) => {
           const href = project.placeholder ? undefined : project.url;
           const meta = t.work.projects[project.key];
@@ -119,11 +123,11 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
               href={href}
               target={href ? '_blank' : undefined}
               rel={href ? 'noopener noreferrer' : undefined}
-              class={`work-selected-flat__reel-item work-selected-flat__reel-item--${index + 1}${index === 0 ? ' is-active' : ''}`}
+              class={`work-selected-flat__preview-item${index === 0 ? ' is-active' : ''}`}
               role="listitem"
-              aria-label={`${displayNameByKey[project.key]}. ${project.category}. ${meta.description}`}
+              aria-label={`${displayNameByKey[project.key]}. ${meta.roles.join(' / ')}. ${meta.description}`}
               aria-current={index === 0 ? 'true' : undefined}
-              data-work-reel-item
+              data-work-preview-item
               data-index={index}
             >
               <img
@@ -134,11 +138,16 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
             </a>
           );
         })}
-      </div>
+        </div>
 
-      <aside class="work-selected-flat__note" aria-live="polite">
-        <p data-work-description>{firstMeta.description}</p>
-      </aside>
+        <aside class="work-selected-flat__note" aria-live="polite">
+          <span class="work-selected-flat__note-index" data-work-note-index>{padIndex(0)}</span>
+          <div class="work-selected-flat__note-copy">
+            <p class="work-selected-flat__roles" data-work-roles>{firstRoles}</p>
+            <p class="work-selected-flat__description" data-work-description>{firstMeta.description}</p>
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
 </section>
@@ -151,7 +160,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     --work-ink-faint: var(--offer-work-ink-faint, rgba(20, 18, 15, 0.26));
     --work-panel: var(--offer-work-panel, rgba(20, 18, 15, 0.06));
     --work-panel-line: var(--offer-work-panel-line, rgba(20, 18, 15, 0.1));
-    --work-title-active-indent: 14.4px;
+    --work-title-active-indent: clamp(0.25rem, 0.8vw, 0.9rem);
 
     position: relative;
     min-height: var(--work-scroll-span);
@@ -165,17 +174,14 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     top: 0;
     overflow: hidden;
     height: 100svh;
-    padding: clamp(3.5rem, 7vw, 4rem) clamp(1.5rem, 8.9vw, 8rem);
+    padding: clamp(4.5rem, 7.8vw, 5rem) clamp(1.5rem, 4.2vw, 5rem);
     background: transparent;
   }
 
   .work-selected-flat__layout {
     display: grid;
-    grid-template-columns:
-      minmax(19rem, 1.04fr)
-      clamp(17rem, 22vw, 26rem)
-      minmax(17rem, 0.82fr);
-    gap: clamp(2.25rem, 4.7vw, 6rem);
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, clamp(28rem, 32vw, 37.75rem));
+    gap: clamp(1.5rem, 3.2vw, 4rem);
     align-items: center;
     width: 100%;
     height: 100%;
@@ -184,18 +190,16 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
 
   .work-selected-flat__title-area {
     display: grid;
-    gap: clamp(3rem, 7vw, 9.5rem);
     align-self: center;
     min-width: 0;
-    transform: translate3d(0, var(--work-title-shift, 0px), 0);
-    will-change: transform;
+    overflow: visible;
   }
 
   .work-selected-flat__titles {
-    --work-title-gap: clamp(13.75rem, 15.5vw, 18rem);
+    --work-title-gap: clamp(7.1rem, 11.25vw, 14.5rem);
 
     position: relative;
-    height: clamp(40rem, 49vw, 50rem);
+    height: min(68vh, clamp(36rem, 48vw, 61rem));
     overflow: visible;
     min-width: 0;
   }
@@ -209,18 +213,20 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     top: 50%;
     left: 0;
     display: block;
-    width: 100%;
+    width: max-content;
     max-width: 100%;
-    color: var(--work-ink);
-    font-family: var(--font-serif);
-    font-size: clamp(3.05rem, 4.3vw, 3.875rem);
+    color: color-mix(in srgb, var(--work-ink) 18%, transparent);
+    font-family: var(--font-sans);
+    font-size: clamp(5.25rem, 9.85vw, 12.8rem);
     font-weight: 400;
-    line-height: 1.06;
+    line-height: 0.98;
     letter-spacing: 0;
     text-decoration: none;
-    text-wrap: balance;
+    text-transform: capitalize;
+    white-space: nowrap;
     opacity: var(--work-title-opacity);
     filter: blur(var(--work-title-blur));
+    mix-blend-mode: overlay;
     transform: translate3d(var(--work-title-x), calc((var(--work-title-distance) * var(--work-title-gap)) - 50%), 0);
     transition:
       color 0.28s var(--ease-out-quart),
@@ -230,6 +236,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
 
   .work-selected-flat__title-link.is-active {
     color: var(--work-ink);
+    mix-blend-mode: normal;
   }
 
   .work-selected-flat__title-link:hover,
@@ -240,12 +247,13 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
   }
 
   .work-selected-flat__title-link:focus-visible,
-  .work-selected-flat__reel-item:focus-visible {
+  .work-selected-flat__preview-item:focus-visible {
     outline: 1px solid rgba(243, 234, 223, 0.76);
     outline-offset: 0.45rem;
   }
 
-  .work-selected-flat__note p {
+  .work-selected-flat__note p,
+  .work-selected-flat__note span {
     margin: 0;
     hyphens: none;
     overflow-wrap: normal;
@@ -258,55 +266,55 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     white-space: nowrap;
   }
 
-  .work-selected-flat__reel {
-    --reel-width: clamp(17rem, 22vw, 26rem);
+  .work-selected-flat__project-panel {
+    position: relative;
+    z-index: 5;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    width: var(--reel-width);
-    height: min(100%, clamp(42rem, 64vw, 64rem));
-    justify-self: center;
-    transform: translate3d(0, var(--work-reel-shift, 0px), 0);
-    will-change: transform;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(1.5rem, 2.15vw, 2rem);
+    width: min(100%, clamp(28rem, 32vw, 37.75rem));
+    justify-self: end;
   }
 
-  .work-selected-flat__reel-item {
-    --work-item-opacity: 0.82;
-    --work-item-grayscale: 100%;
-    --work-item-y: 0px;
-    --work-item-scale: 1;
-    --work-item-ratio: 1;
+  .work-selected-flat__preview {
     position: relative;
-    display: block;
+    width: 100%;
+    aspect-ratio: 1.776;
     overflow: hidden;
-    flex: 0 0 auto;
-    width: calc(var(--reel-width) * 0.9);
-    aspect-ratio: var(--work-item-ratio);
-    border-radius: 2px;
+    border-radius: clamp(0.7rem, 1.25vw, 1.5rem);
+    background: var(--work-panel);
+  }
+
+  .work-selected-flat__preview-item {
+    --work-item-opacity: 0;
+    --work-item-scale: 1.035;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
     background: var(--work-panel);
     color: inherit;
     text-decoration: none;
+    pointer-events: none;
     opacity: var(--work-item-opacity);
-    filter: grayscale(var(--work-item-grayscale));
-    transform: translate3d(0, var(--work-item-y), 0) scale(var(--work-item-scale));
+    transform: scale(var(--work-item-scale));
+    transition:
+      opacity 0.45s var(--ease-out-quart),
+      transform 0.7s var(--ease-out-expo);
     z-index: 1;
-    will-change: transform, opacity, filter;
+    will-change: transform, opacity;
   }
 
-  .work-selected-flat__reel-item:hover,
-  .work-selected-flat__reel-item:focus-visible {
-    opacity: 1;
-    filter: grayscale(0%);
-    transform: translate3d(0, -0.35rem, 0) scale(1.035);
-  }
-
-  .work-selected-flat__reel-item.is-active {
+  .work-selected-flat__preview-item.is-active {
+    pointer-events: auto;
     z-index: 2;
   }
 
-  .work-selected-flat__reel-item img {
+  .work-selected-flat__preview-item img {
     display: block;
     width: 100%;
     height: 100%;
@@ -317,36 +325,70 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     transition: transform 0.6s var(--ease-out-quart);
   }
 
-  .work-selected-flat__reel-item:hover img,
-  .work-selected-flat__reel-item:focus-visible img {
+  .work-selected-flat__preview-item:hover img,
+  .work-selected-flat__preview-item:focus-visible img {
     transform: scale(1.06);
   }
 
   .work-selected-flat__note {
-    display: grid;
-    gap: 1.1rem;
-    justify-self: end;
-    width: min(22.5rem, 100%);
-    color: var(--work-ink-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1rem, 1.7vw, 2rem);
+    width: 100%;
+    color: var(--work-ink);
     font-family: var(--font-sans);
-    font-size: clamp(1rem, 1.25vw, 1.125rem);
-    font-weight: 400;
-    line-height: 1.5;
+    font-weight: 300;
     letter-spacing: 0;
+  }
+
+  .work-selected-flat__note-index {
+    flex: 0 0 auto;
+    min-width: 1.5rem;
+    color: var(--work-ink-muted);
+    font-family: var(--font-mono);
+    font-size: clamp(0.72rem, 0.78vw, 0.875rem);
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.12em;
+  }
+
+  .work-selected-flat__note-copy {
+    display: grid;
+    gap: clamp(0.75rem, 1.1vw, 1rem);
+    min-width: 0;
+  }
+
+  .work-selected-flat__roles {
+    color: var(--work-ink-muted);
+    font-family: var(--font-mono);
+    font-size: clamp(0.68rem, 0.76vw, 0.8125rem);
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .work-selected-flat__description {
+    color: var(--work-ink);
+    font-size: clamp(1.3rem, 1.68vw, 2rem);
+    font-weight: 300;
+    line-height: 1.125;
+    letter-spacing: 0;
+    max-width: 18em;
   }
 
   @media (max-width: 1180px) {
     .work-selected-flat__layout {
-      grid-template-columns:
-        minmax(16rem, 1fr)
-        clamp(15rem, 24vw, 20rem)
-        minmax(13rem, 0.76fr);
+      grid-template-columns: minmax(0, 1fr) minmax(20rem, 32rem);
       gap: clamp(1.75rem, 3.4vw, 3.75rem);
     }
 
-    .work-selected-flat__reel {
-      --reel-width: clamp(15rem, 24vw, 20rem);
-      min-height: clamp(38rem, 60vw, 52rem);
+    .work-selected-flat__project-panel {
+      width: min(100%, 32rem);
+    }
+
+    .work-selected-flat__title-link {
+      font-size: clamp(4.75rem, 9.4vw, 9rem);
     }
   }
 
@@ -365,24 +407,21 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     .work-selected-flat__layout {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 3.5rem;
-      min-height: auto;
-    }
-
-    .work-selected-flat__title-area {
-      gap: 3.75rem;
-    }
-
-    .work-selected-flat__titles {
-      display: grid;
-      gap: 1.85rem;
+      gap: 3rem;
       height: auto;
-      overflow: visible;
+      min-height: auto;
     }
 
     .work-selected-flat__title-area {
       transform: none;
       will-change: auto;
+    }
+
+    .work-selected-flat__titles {
+      display: grid;
+      gap: 1rem;
+      height: auto;
+      overflow: visible;
     }
 
     .work-selected-flat__title-link {
@@ -390,50 +429,37 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       top: auto;
       left: auto;
       width: 100%;
-      font-size: clamp(3rem, 14vw, 4.75rem);
-      line-height: 0.94;
-      filter: blur(3px);
+      font-size: clamp(3.5rem, 17vw, 6.5rem);
+      line-height: 0.98;
+      filter: blur(2px);
       transform: translate3d(var(--work-title-x), 0, 0);
     }
 
-    .work-selected-flat__reel {
-      --reel-width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
+    .work-selected-flat__title-link.is-active {
+      filter: blur(0px);
+    }
+
+    .work-selected-flat__project-panel {
       width: 100%;
-      min-height: auto;
-      align-items: stretch;
-      transform: none;
-      will-change: auto;
+      align-items: flex-start;
     }
 
-    .work-selected-flat__reel-item,
-    .work-selected-flat__reel-item--1,
-    .work-selected-flat__reel-item--2,
-    .work-selected-flat__reel-item--3,
-    .work-selected-flat__reel-item--4,
-    .work-selected-flat__reel-item--5 {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 0.86;
+    .work-selected-flat__preview {
+      aspect-ratio: 1.32;
+      border-radius: 0.85rem;
     }
 
-    .work-selected-flat__reel-item--3 {
-      grid-column: 1 / -1;
-      aspect-ratio: 1.72;
-    }
-
-    .work-selected-flat__reel-item--5 {
-      grid-column: 2;
-      grid-row: 4 / span 2;
+    .work-selected-flat__preview-item {
+      position: absolute;
     }
 
     .work-selected-flat__note {
-      justify-self: start;
-      width: min(26rem, 100%);
-      font-size: 0.95rem;
-      line-height: 1.32;
+      gap: 1rem;
+    }
+
+    .work-selected-flat__description {
+      font-size: clamp(1.35rem, 7vw, 2rem);
+      line-height: 1.08;
     }
   }
 
@@ -448,8 +474,8 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     }
 
     .work-selected-flat__title-link,
-    .work-selected-flat__reel-item,
-    .work-selected-flat__reel-item img {
+    .work-selected-flat__preview-item,
+    .work-selected-flat__preview-item img {
       transition: none;
     }
   }
@@ -472,10 +498,9 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     if (!section) return;
 
     const titleItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-title-item]'));
-    const reelItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-reel-item]'));
-    const titleArea = section.querySelector<HTMLElement>('.work-selected-flat__title-area');
-    const titleStack = section.querySelector<HTMLElement>('.work-selected-flat__titles');
-    const reel = section.querySelector<HTMLElement>('[data-work-reel]');
+    const previewItems = Array.from(section.querySelectorAll<HTMLElement>('[data-work-preview-item]'));
+    const noteIndexEl = section.querySelector<HTMLElement>('[data-work-note-index]');
+    const rolesEl = section.querySelector<HTMLElement>('[data-work-roles]');
     const descriptionEl = section.querySelector<HTMLElement>('[data-work-description]');
     const ac = new AbortController();
     const { signal } = ac;
@@ -487,24 +512,13 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
     let progress = 0;
     let measureFrame = 0;
     const measureTimers: ReturnType<typeof setTimeout>[] = [];
-    let reelCenter = 0;
-    let reelItemCenters: number[] = [];
     let copyTween: gsap.core.Tween | gsap.core.Timeline | null = null;
     let scrollScene: ScrollTrigger | null = null;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
-    const lerp = (start: number, end: number, amount: number) => start + (end - start) * amount;
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
     const finalScrollTail = 0.35;
-
-    const interpolatedValue = (values: number[], virtualIndex: number) => {
-      const lowerIndex = clamp(Math.floor(virtualIndex), 0, Math.max(values.length - 1, 0));
-      const upperIndex = clamp(Math.ceil(virtualIndex), 0, Math.max(values.length - 1, 0));
-      const lowerValue = values[lowerIndex] ?? 0;
-      const upperValue = values[upperIndex] ?? lowerValue;
-
-      return lerp(lowerValue, upperValue, virtualIndex - lowerIndex);
-    };
+    const padIndex = (index: number) => String(index + 1).padStart(2, '0');
 
     const revertCopySplits = () => {
       splitInstances.splice(0).forEach((split) => split.revert());
@@ -532,36 +546,8 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       return chars;
     };
 
-    const syncTitleStackPosition = () => {
-      if (!titleArea || !titleStack || !desktopQuery.matches || prefersReducedMotion) {
-        titleArea?.style.removeProperty('--work-title-shift');
-        return;
-      }
-
-      const titleAreaRect = titleArea.getBoundingClientRect();
-      const titleStackRect = titleStack.getBoundingClientRect();
-      const shift = (titleAreaRect.top + titleAreaRect.height / 2) - (titleStackRect.top + titleStackRect.height / 2);
-      titleArea.style.setProperty('--work-title-shift', `${shift.toFixed(2)}px`);
-    };
-
-    const measureReelGeometry = () => {
-      reelCenter = reel?.clientHeight ? reel.clientHeight / 2 : 0;
-      reelItemCenters = reelItems.map((item) => item.offsetTop + item.offsetHeight / 2);
-    };
-
     const measureGeometry = () => {
-      measureReelGeometry();
-      syncTitleStackPosition();
-    };
-
-    const centerReelAt = (virtualIndex = activeIndex) => {
-      if (!reel || !desktopQuery.matches || prefersReducedMotion || reelItemCenters.length === 0) {
-        reel?.style.removeProperty('--work-reel-shift');
-        return;
-      }
-
-      const shift = reelCenter - interpolatedValue(reelItemCenters, virtualIndex);
-      reel.style.setProperty('--work-reel-shift', `${shift.toFixed(2)}px`);
+      section.style.setProperty('--work-progress-width', `${((activeIndex + 1) / Math.max(titleItems.length, 1) * 100).toFixed(2)}%`);
     };
 
     const applyContinuousFocus = (virtualIndex: number) => {
@@ -570,76 +556,54 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
         const absDistance = Math.min(3, Math.abs(distance));
         const focus = smoothstep(clamp(1 - Math.abs(distance), 0, 1));
         item.style.setProperty('--work-title-distance', distance.toFixed(3));
-        item.style.setProperty('--work-title-opacity', (0.95 - absDistance * 0.19).toFixed(3));
-        item.style.setProperty('--work-title-blur', `${(absDistance * 2.2).toFixed(2)}px`);
+        item.style.setProperty('--work-title-opacity', (1 - absDistance * 0.13).toFixed(3));
+        item.style.setProperty('--work-title-blur', `${(absDistance * 1.7).toFixed(2)}px`);
         item.style.setProperty('--work-title-x', `calc(var(--work-title-active-indent) * ${focus.toFixed(3)})`);
       });
 
-      reelItems.forEach((item, index) => {
+      previewItems.forEach((item, index) => {
         const distance = Math.abs(index - virtualIndex);
         const focusHold = 0.18;
-        const focusRange = 1.08;
+        const focusRange = 0.94;
         const heldDistance = clamp((distance - focusHold) / (focusRange - focusHold), 0, 1);
         const focus = smoothstep(1 - heldDistance);
-        const shapeHold = 0.26;
-        const shapeRange = 1.04;
-        const shapeDistance = clamp((distance - shapeHold) / (shapeRange - shapeHold), 0, 1);
-        const shapeFocus = smoothstep(1 - shapeDistance);
-        item.style.setProperty('--work-item-opacity', (0.34 + focus * 0.66).toFixed(3));
-        item.style.setProperty('--work-item-grayscale', `${((1 - focus) * 100).toFixed(2)}%`);
-        item.style.setProperty('--work-item-y', `${(-5.5 * focus).toFixed(2)}px`);
-        item.style.setProperty('--work-item-scale', (1 + focus * 0.035).toFixed(3));
-        item.style.setProperty('--work-item-ratio', (1 - shapeFocus * 0.25).toFixed(3));
+        item.style.setProperty('--work-item-opacity', focus.toFixed(3));
+        item.style.setProperty('--work-item-scale', (1.045 - focus * 0.045).toFixed(3));
       });
     };
 
     const setActiveCopy = (activeTitle: HTMLElement | undefined) => {
       const description = activeTitle?.dataset.description || '';
-      const copyEls = [descriptionEl].filter(Boolean) as HTMLElement[];
+      const roles = activeTitle?.dataset.roles || '';
+      const copyEls = [rolesEl, descriptionEl].filter(Boolean) as HTMLElement[];
 
       copyTween?.kill();
+      gsap.killTweensOf(copyEls);
+      revertCopySplits();
+
+      if (rolesEl) rolesEl.textContent = roles;
+      if (descriptionEl) descriptionEl.textContent = description;
 
       if (copyEls.length === 0 || prefersReducedMotion) {
-        revertCopySplits();
-        if (descriptionEl) descriptionEl.textContent = description;
         return;
       }
 
-      const outgoingChars = splitCopyToChars(copyEls);
-      gsap.killTweensOf([...copyEls, ...outgoingChars]);
-
-      copyTween = gsap.to(outgoingChars, {
-        autoAlpha: 0,
-        filter: 'blur(12px)',
-        duration: 0.18,
-        stagger: {
-          each: 0.0026,
-          from: 'end',
+      copyTween = gsap.fromTo(
+        copyEls,
+        { autoAlpha: 0, filter: 'blur(12px)', y: 8 },
+        {
+          autoAlpha: 1,
+          filter: 'blur(0px)',
+          y: 0,
+          duration: 0.46,
+          stagger: 0.025,
+          ease: 'power4.out',
+          overwrite: true,
+          onComplete: () => {
+            copyTween = null;
+          },
         },
-        ease: 'power2.in',
-        overwrite: true,
-        onComplete: () => {
-          revertCopySplits();
-          if (descriptionEl) descriptionEl.textContent = description;
-
-          const incomingChars = splitCopyToChars(copyEls);
-          copyTween = gsap.fromTo(
-            incomingChars,
-            { autoAlpha: 0, filter: 'blur(14px)' },
-            {
-              autoAlpha: 1,
-              filter: 'blur(0px)',
-              duration: 0.58,
-              stagger: 0.003,
-              ease: 'power4.out',
-              overwrite: true,
-              onComplete: () => {
-                copyTween = null;
-              },
-            },
-          );
-        },
-      });
+      );
     };
 
     const setActiveIndex = (index: number) => {
@@ -659,7 +623,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
         }
       });
 
-      reelItems.forEach((item, itemIndex) => {
+      previewItems.forEach((item, itemIndex) => {
         const isActive = itemIndex === nextIndex;
         item.classList.toggle('is-active', isActive);
         if (isActive) {
@@ -669,6 +633,9 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
         }
       });
 
+      const paddedIndex = padIndex(nextIndex);
+      if (noteIndexEl) noteIndexEl.textContent = paddedIndex;
+      section.style.setProperty('--work-progress-width', `${((nextIndex + 1) / Math.max(titleItems.length, 1) * 100).toFixed(2)}%`);
       setActiveCopy(activeTitle);
     };
 
@@ -677,8 +644,6 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       const lastIndex = Math.max(titleItems.length - 1, 1);
       const virtualIndex = progress * (lastIndex + finalScrollTail);
       applyContinuousFocus(virtualIndex);
-      measureReelGeometry();
-      centerReelAt(virtualIndex);
       setActiveIndex(Math.round(virtualIndex));
     };
 
@@ -716,7 +681,7 @@ const scrollSpan = 104 + (caseProjects.length - 1) * 42;
       );
     });
 
-    reelItems.forEach((item, index) => {
+    previewItems.forEach((item, index) => {
       item.addEventListener('mouseenter', () => setActiveIndex(index), { signal });
       item.addEventListener('focus', () => setActiveIndex(index), { signal });
     });

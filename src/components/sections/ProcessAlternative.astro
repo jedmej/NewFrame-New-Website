@@ -131,6 +131,7 @@ const totalSteps = t.services.groups.length;
     filter: blur(calc(min(var(--phase-abs), 3) * 2.2px));
     font-family: var(--font-serif);
     font-size: clamp(3.05rem, 4.3vw, 3.875rem);
+    font-weight: 300;
     line-height: 1.06;
     letter-spacing: 0;
     transform: translate3d(var(--phase-title-x), calc((var(--phase-distance) * var(--process-phase-gap)) - 50%), 0);
@@ -186,11 +187,6 @@ const totalSteps = t.services.groups.length;
     overflow-wrap: normal;
     text-wrap: pretty;
     word-break: normal;
-  }
-
-  .process-alt__word {
-    display: inline-block;
-    white-space: nowrap;
   }
 
   .process-alt__menu {
@@ -319,7 +315,7 @@ const totalSteps = t.services.groups.length;
     .process-alt__mobile-step h3 {
       font-family: var(--font-serif);
       font-size: clamp(2.4rem, 12vw, 4.5rem);
-      font-weight: 400;
+      font-weight: 300;
       line-height: 1.04;
       letter-spacing: 0;
       color: #f3efe5;
@@ -369,9 +365,8 @@ const totalSteps = t.services.groups.length;
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { SplitText } from 'gsap/SplitText';
 
-  gsap.registerPlugin(ScrollTrigger, SplitText);
+  gsap.registerPlugin(ScrollTrigger);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -385,7 +380,6 @@ const totalSteps = t.services.groups.length;
     const ac = new AbortController();
     const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
-    const splitInstances: SplitText[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
 
@@ -414,28 +408,6 @@ const totalSteps = t.services.groups.length;
       }
     };
 
-    const splitContentToChars = (elements: Element[]) => {
-      const chars: Element[] = [];
-      const splits: SplitText[] = [];
-      elements.forEach((element) => {
-        const existingChars = Array.from(element.querySelectorAll('.process-alt__char'));
-        if (existingChars.length) {
-          chars.push(...existingChars);
-          return;
-        }
-
-        const split = new SplitText(element, {
-          type: 'words,chars',
-          charsClass: 'process-alt__char',
-          wordsClass: 'process-alt__word',
-        });
-        splitInstances.push(split);
-        splits.push(split);
-        chars.push(...split.chars);
-      });
-      return { chars, splits };
-    };
-
     const setProcessContent = (nextStep: number, animate = true) => {
       if (nextStep === activeStep) return;
       const previousStep = activeStep;
@@ -453,7 +425,6 @@ const totalSteps = t.services.groups.length;
       itemLists.forEach((items, index) => items.classList.toggle('is-active', index === nextStep));
 
       if (prefersReducedMotion || !desktopQuery.matches || !animate || previousStep < 0) {
-        splitInstances.splice(0).forEach((split) => split.revert());
         gsap.set([...panels, ...itemLists], { clearProps: 'all' });
         return;
       }
@@ -461,74 +432,38 @@ const totalSteps = t.services.groups.length;
       const outgoing = [previousPanel, previousItems].filter(Boolean) as HTMLElement[];
       const incoming = [nextPanel, nextItems];
       const inactive = [...panels, ...itemLists].filter((el) => !outgoing.includes(el) && !incoming.includes(el));
-      const previousPanelSplit = previousPanel
-        ? splitContentToChars(Array.from(previousPanel.querySelectorAll('.process-alt__eyebrow, .process-alt__description')))
-        : { chars: [], splits: [] };
-      const previousItemSplit = previousItems
-        ? splitContentToChars(Array.from(previousItems.querySelectorAll('li')))
-        : { chars: [], splits: [] };
-      const nextPanelSplit = splitContentToChars(Array.from(nextPanel.querySelectorAll('.process-alt__eyebrow, .process-alt__description')));
-      const nextItemSplit = splitContentToChars(Array.from(nextItems.querySelectorAll('li')));
-      const previousPanelChars = previousPanelSplit.chars;
-      const previousItemChars = previousItemSplit.chars;
-      const nextPanelChars = nextPanelSplit.chars;
-      const nextItemChars = nextItemSplit.chars;
-      const outgoingChars = [...previousPanelChars, ...previousItemChars];
-      const incomingChars = [...nextPanelChars, ...nextItemChars];
 
-      gsap.killTweensOf([...outgoing, ...incoming, ...inactive, ...outgoingChars, ...incomingChars]);
-      gsap.set(inactive, { opacity: 0, filter: 'blur(14px)' });
-      gsap.set(incoming, { opacity: 1, filter: 'blur(0px)' });
-      gsap.set(incomingChars, { opacity: 0, filter: 'blur(16px)' });
+      gsap.killTweensOf([...outgoing, ...incoming, ...inactive]);
+      gsap.set(inactive, { opacity: 0, filter: 'blur(10px)', y: 0 });
 
       processSwitchTl = gsap.timeline({
         defaults: { overwrite: true },
         onComplete: () => {
-          gsap.set([...outgoing, ...incoming, ...outgoingChars, ...incomingChars], { clearProps: 'opacity,filter' });
-          const nextSplits = [...nextPanelSplit.splits, ...nextItemSplit.splits];
-          const preservedSplits = new Set(nextSplits);
-          const staleSplits = splitInstances.filter((split) => !preservedSplits.has(split));
-          staleSplits.forEach((split) => split.revert());
-          splitInstances.splice(0, splitInstances.length, ...nextSplits);
+          gsap.set([...outgoing, ...incoming], { clearProps: 'opacity,filter,y' });
           processSwitchTl = null;
         },
       });
 
       processSwitchTl
-        .to(previousPanelChars, {
+        .to(outgoing, {
           opacity: 0,
-          filter: 'blur(16px)',
-          duration: 0.22,
-          stagger: {
-            each: 0.0028,
-            from: 'end',
-          },
+          filter: 'blur(12px)',
+          y: -8,
+          duration: 0.2,
           ease: 'power2.in',
         }, 0)
-        .to(previousItemChars, {
+        .fromTo(incoming, {
           opacity: 0,
-          filter: 'blur(14px)',
-          duration: 0.2,
-          stagger: {
-            each: 0.0024,
-            from: 'end',
-          },
-          ease: 'power2.in',
-        }, 0.06)
-        .to(nextPanelChars, {
+          filter: 'blur(12px)',
+          y: 8,
+        }, {
           opacity: 1,
           filter: 'blur(0px)',
-          duration: 0.78,
-          stagger: 0.0034,
+          y: 0,
+          duration: 0.54,
+          stagger: 0.035,
           ease: 'power4.out',
-        }, 0.16)
-        .to(nextItemChars, {
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 0.74,
-          stagger: 0.0032,
-          ease: 'power4.out',
-        }, 0.32);
+        }, 0.12);
     };
 
     const setProcessState = (step: number, progress: number, animateContent = true) => {
@@ -601,7 +536,6 @@ const totalSteps = t.services.groups.length;
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((trigger) => trigger.kill());
       gsap.killTweensOf(section.querySelectorAll('*'));
-      splitInstances.forEach((split) => split.revert());
     };
   }
 

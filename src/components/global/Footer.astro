@@ -46,7 +46,7 @@ const footerLinks = [
             aria-label={`Email ${email}`}
           >
             <span class="footer-cell-kicker">{t.footer.email}</span>
-            <span class="footer-email footer-email-address">hello@<wbr />newframe.studio</span>
+            <span class="footer-email footer-email-address">hello@newframe.studio</span>
           </a>
 
           <div class="footer-meta-card" aria-label="Newframe studio meta">
@@ -144,11 +144,11 @@ const footerLinks = [
   }
 
   .footer-cta {
-    max-width: 4.65em;
+    max-width: 6.8em;
     color: var(--color-dark-text);
     font-family: var(--font-serif);
-    font-size: clamp(5.5rem, 6.875vw, 8.25rem);
-    font-weight: 400;
+    font-size: clamp(4.85rem, 6.1vw, 7.3rem);
+    font-weight: 300;
     line-height: 0.86;
     letter-spacing: 0;
     text-wrap: balance;
@@ -245,6 +245,7 @@ const footerLinks = [
     max-width: 100%;
     font-family: var(--font-serif);
     font-size: clamp(2.5rem, 2.6vw, 3.125rem);
+    font-weight: 300;
     font-style: italic;
     line-height: 0.95;
     letter-spacing: 0;
@@ -401,13 +402,13 @@ const footerLinks = [
     }
 
     .footer-email {
-      font-size: clamp(1.85rem, 10vw, 2.65rem);
-      white-space: normal;
-      overflow-wrap: anywhere;
+      font-size: clamp(1.35rem, 7.4vw, 2.2rem);
+      white-space: nowrap;
+      overflow-wrap: normal;
     }
 
     .footer-email-address {
-      font-size: clamp(1.55rem, 8.2vw, 2.05rem);
+      font-size: clamp(1.2rem, 6.5vw, 2.05rem);
       overflow-wrap: normal;
       word-break: normal;
     }

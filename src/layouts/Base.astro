@@ -78,27 +78,9 @@ const ogImageUrl = new URL(ogImage, Astro.site);
     <link rel="preload" href="/fonts/nohemi/Nohemi-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/nohemi/Nohemi-Bold.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Preconnect to font servers -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
     <!-- DNS prefetch for third-party resources -->
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://hoirqrkdgbmvpwutwuwj.supabase.co" />
-
-    <!-- Google Fonts: Instrument Serif (non-render-blocking) -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
 
     <!-- Hide preloader instantly if user has already seen it -->
     <script is:inline>
