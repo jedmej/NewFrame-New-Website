@@ -62,8 +62,8 @@ const totalStr = String(items.length).padStart(2, '0');
   }
 
   .testimonial-horizontal__scroll {
-    height: calc(100svh + (var(--testimonial-total, 3) * 64svh));
-    min-height: 250svh;
+    height: calc(100svh + (var(--testimonial-total, 3) * 46svh));
+    min-height: 218svh;
   }
 
   .testimonial-horizontal__sticky {
@@ -224,17 +224,16 @@ const totalStr = String(items.length).padStart(2, '0');
     const interpolate = gsap.utils.interpolate;
 
     const renderCards = (progress: number) => {
-      const exitBuffer = window.innerWidth < 768 ? 0.82 : 0.96;
-      const track = progress * (Math.max(totalCards - 1, 1) + exitBuffer);
+      const cardTravelProgress = clamp(progress / 0.88);
+      const track = cardTravelProgress * Math.max(totalCards - 1, 1);
       const activeIndex = Math.min(totalCards - 1, Math.round(track));
-      const exitProgress = clamp((track - Math.max(totalCards - 1, 1)) / exitBuffer);
 
       if (counterActiveEl) {
         counterActiveEl.textContent = String(activeIndex + 1).padStart(2, '0');
       }
 
       if (sticky) {
-        sticky.style.transform = `translate3d(0, ${(-smooth(exitProgress) * 68).toFixed(2)}vh, 0)`;
+        sticky.style.transform = 'translate3d(0, 0, 0)';
       }
 
       cards.forEach((card, index) => {

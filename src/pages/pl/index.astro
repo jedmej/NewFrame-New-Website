@@ -1,15 +1,11 @@
 ---
 import Page from '../../layouts/Page.astro';
 import { useTranslations } from '../../i18n/translations';
-import Hero from '../../components/sections/Hero.astro';
-import About from '../../components/sections/About.astro';
 import OfferProcessBand from '../../components/sections/OfferProcessBand.astro';
 
 const t = useTranslations('pl');
 ---
 
-<Page lang="pl" title={t.seo.title} description={t.seo.description}>
-  <Hero lang="pl" />
-  <About lang="pl" />
+<Page lang="pl" title={t.seo.title} description={t.seo.description} showFooter={false}>
   <OfferProcessBand lang="pl" />
 </Page>

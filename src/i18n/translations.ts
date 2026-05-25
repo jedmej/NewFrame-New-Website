@@ -161,7 +161,7 @@ export const translations = {
       prompt: 'Send your current site, idea or problem. We will reply with a clear next step.',
     },
     footer: {
-      cta: "Let's build something together",
+      cta: "Let's build great things together",
       navigation: 'Navigation',
       info: 'Info',
       available: 'Available for projects',
@@ -340,7 +340,7 @@ export const translations = {
       prompt: 'Wyślij obecną stronę, pomysł albo problem. Odpowiemy konkretnie i zaproponujemy najlepszy następny krok.',
     },
     footer: {
-      cta: 'Zróbmy coś razem',
+      cta: 'Zróbmy razem świetne rzeczy',
       navigation: 'Nawigacja',
       info: 'Info',
       available: 'Dostępny do projektów',

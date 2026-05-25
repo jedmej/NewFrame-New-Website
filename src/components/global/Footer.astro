@@ -30,11 +30,7 @@ const footerLinks = [
 ---
 
 <footer id="contact" class="relative z-50 overflow-hidden footer-shell">
-  <div id="footer-wipe-in" class="absolute top-0 left-0 right-0 h-screen z-30 pointer-events-none"
-       style="background-color: var(--color-bg);"></div>
-
   <div class="footer-surface">
-    <canvas id="footer-shader-canvas" class="footer-shader" aria-hidden="true"></canvas>
     <div class="footer-inner">
       <div class="footer-grid">
         <div class="footer-cta-cell">
@@ -51,7 +47,6 @@ const footerLinks = [
           >
             <span class="footer-cell-kicker">{t.footer.email}</span>
             <span class="footer-email footer-email-address">hello@<wbr />newframe.studio</span>
-            <span class="footer-cell-arrow" aria-hidden="true">↗</span>
           </a>
 
           <div class="footer-meta-card" aria-label="Newframe studio meta">
@@ -68,122 +63,91 @@ const footerLinks = [
             {footerLinks.map((link) => (
               <li>
                 <a href={link.href} class="footer-link group">
-                  <span class="footer-link-index" aria-hidden="true"></span>
                   <span class="scramble-target">{link.label}</span>
                 </a>
               </li>
             ))}
           </ul>
         </nav>
-
-        <div class="footer-mark-cell" aria-hidden="true">
-          <span class="footer-mark-logo"></span>
-        </div>
       </div>
 
       <div class="footer-bottom">
-        <div class="footer-brand">
-          <span class="footer-brand-mark" aria-hidden="true"></span>
-          <span>NEW FRAME</span>
-        </div>
-
         <p>&copy; {year} New Frame Studio · {t.footer.rights}</p>
-
-        <button id="back-to-top" class="footer-top-button group">
-          <span>{t.footer.backToTop}</span>
-          <svg aria-hidden="true" class="transition-transform duration-500 group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-          </svg>
-        </button>
       </div>
     </div>
+
+    <div class="footer-wordmark-shader" data-footer-wordmark-shader aria-hidden="true"></div>
   </div>
 </footer>
 
 <style>
   .footer-shell {
+    --footer-cream: rgba(243, 234, 223, 0.9);
+    --footer-cream-muted: rgba(243, 234, 223, 0.62);
+    --footer-cream-soft: rgba(243, 234, 223, 0.38);
+    --footer-line: rgba(243, 234, 223, 0.12);
+    z-index: 100;
     color: var(--color-dark-text);
   }
 
   .footer-surface {
     position: relative;
+    box-sizing: border-box;
     min-height: 100svh;
     overflow: hidden;
-    background: var(--color-bg-dark);
-  }
-
-  .footer-shader {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    opacity: 0.72;
-    pointer-events: none;
+    background: transparent;
   }
 
   .footer-inner {
     position: relative;
-    z-index: 1;
+    box-sizing: border-box;
+    z-index: 2;
     display: grid;
     min-height: 100svh;
     align-content: center;
-    gap: 1.5rem;
-    width: min(100%, 1400px);
+    gap: clamp(1.25rem, 1.25vw, 1.5rem);
+    width: min(100%, 1760px);
     margin: 0 auto;
-    padding: clamp(4.5rem, 7svh, 6.5rem) 1.5rem clamp(2rem, 4svh, 3rem);
-  }
-
-  @media (min-width: 768px) {
-    .footer-inner {
-      padding-inline: 2.5rem;
-    }
+    padding: clamp(5.5rem, 6.8svh, 5.5rem) clamp(1.25rem, 4.17vw, 5rem) clamp(8.5rem, 10.5svh, 8.5rem);
   }
 
   .footer-grid {
     display: grid;
-    border: 1px solid rgba(243, 234, 223, 0.12);
-    background: rgba(17, 24, 32, 0.42);
-    backdrop-filter: blur(10px) saturate(1.08);
-    -webkit-backdrop-filter: blur(10px) saturate(1.08);
+    min-height: clamp(31rem, 47.7svh, 38.75rem);
+    background: transparent;
   }
 
   @media (min-width: 1024px) {
     .footer-grid {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr) minmax(26rem, 36.5rem);
     }
   }
 
   .footer-cta-cell,
   .footer-email-cell,
-  .footer-nav-cell,
-  .footer-mark-cell {
+  .footer-nav-cell {
     min-width: 0;
-    border-bottom: 1px solid rgba(243, 234, 223, 0.12);
   }
 
   .footer-cta-cell {
     display: flex;
-    min-height: clamp(28rem, 43vw, 40rem);
+    min-height: clamp(28rem, 47.7svh, 38.75rem);
     flex-direction: column;
     justify-content: center;
-    padding: clamp(2rem, 5vw, 5rem);
+    padding: clamp(2.5rem, 4.17vw, 5rem);
   }
 
   @media (min-width: 1024px) {
     .footer-cta-cell {
-      grid-column: 1 / 8;
       grid-row: 1;
-      border-right: 1px solid rgba(243, 234, 223, 0.12);
     }
   }
 
   .footer-cta {
-    max-width: 10.5em;
+    max-width: 4.65em;
     color: var(--color-dark-text);
     font-family: var(--font-serif);
-    font-size: clamp(4rem, 8.2vw, 9.8rem);
+    font-size: clamp(5.5rem, 6.875vw, 8.25rem);
     font-weight: 400;
     line-height: 0.86;
     letter-spacing: 0;
@@ -197,27 +161,26 @@ const footerLinks = [
   }
 
   .footer-contact-prompt {
-    max-width: 39rem;
-    margin-top: clamp(1.5rem, 3vw, 2.75rem);
+    max-width: 37.5rem;
+    margin-top: clamp(2rem, 3vw, 2.625rem);
     font-family: var(--font-mono);
-    font-size: clamp(1.08rem, 1.12vw, 1.28rem);
+    font-size: clamp(1.02rem, 0.94vw, 1.125rem);
     line-height: 1.5;
     letter-spacing: 0.02em;
-    color: rgba(243, 234, 223, 0.62);
+    color: var(--footer-cream-muted);
     text-wrap: pretty;
   }
 
   .footer-contact-stack {
     position: relative;
     display: grid;
-    min-height: clamp(22rem, 33vw, 34rem);
+    min-height: clamp(28rem, 47.7svh, 38.75rem);
     grid-template-rows: repeat(2, minmax(0, 1fr));
     color: var(--color-dark-text);
   }
 
   @media (min-width: 1024px) {
     .footer-contact-stack {
-      grid-column: 8 / 13;
       grid-row: 1;
     }
   }
@@ -227,28 +190,29 @@ const footerLinks = [
     position: relative;
     display: grid;
     min-width: 0;
-    align-content: end;
-    gap: 1rem;
-    border-bottom: 1px solid rgba(243, 234, 223, 0.12);
-    padding: clamp(1.5rem, 3vw, 3rem);
+    align-content: center;
+    justify-items: end;
+    gap: clamp(1rem, 0.94vw, 1.125rem);
+    padding: clamp(2rem, 2.5vw, 3rem);
     color: inherit;
+    text-align: right;
   }
 
   .footer-contact-link {
     text-decoration: none;
     transition:
-      background-color 0.45s var(--ease-out-expo),
       color 0.45s var(--ease-out-expo);
   }
 
   .footer-meta-card {
-    border-bottom: 0;
+    border-top: 0;
   }
 
   .footer-meta-line {
-    color: rgba(243, 234, 223, 0.62);
+    width: 100%;
+    color: var(--footer-cream-muted);
     font-family: var(--font-mono);
-    font-size: clamp(0.8rem, 0.9vw, 1rem);
+    font-size: clamp(0.86rem, 0.78vw, 0.94rem);
     line-height: 1.35;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -264,12 +228,12 @@ const footerLinks = [
 
   .footer-contact-link:hover,
   .footer-contact-link:focus-visible {
-    background: rgba(243, 234, 223, 0.075);
     color: #fff;
   }
 
   .footer-cell-kicker {
-    color: rgba(243, 234, 223, 0.36);
+    justify-self: stretch;
+    color: var(--footer-cream-soft);
     font-family: var(--font-mono);
     font-size: 0.68rem;
     line-height: 1;
@@ -280,38 +244,22 @@ const footerLinks = [
   .footer-email {
     max-width: 100%;
     font-family: var(--font-serif);
-    font-size: clamp(2rem, 2.85vw, 3.4rem);
+    font-size: clamp(2.5rem, 2.6vw, 3.125rem);
     font-style: italic;
     line-height: 0.95;
     letter-spacing: 0;
     white-space: nowrap;
   }
 
-  .footer-cell-arrow {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    color: var(--color-accent);
-    font-family: var(--font-mono);
-    font-size: 1.35rem;
-    line-height: 1;
-    transition: transform 0.45s var(--ease-out-expo);
-  }
-
-  .footer-contact-link:hover .footer-cell-arrow,
-  .footer-contact-link:focus-visible .footer-cell-arrow {
-    transform: translate(0.25rem, -0.25rem);
-  }
-
   .footer-nav-cell {
+    grid-column: 1 / -1;
     padding: 0;
+    border-top: 1px solid var(--footer-line);
   }
 
   @media (min-width: 1024px) {
     .footer-nav-cell {
-      grid-column: 1 / 12;
       grid-row: 2;
-      border-right: 1px solid rgba(243, 234, 223, 0.12);
       border-bottom: 0;
     }
   }
@@ -320,7 +268,7 @@ const footerLinks = [
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
-    height: 100%;
+    min-height: clamp(5.5rem, 8.92svh, 7.25rem);
     padding: 0;
     margin: 0;
     list-style: none;
@@ -347,64 +295,20 @@ const footerLinks = [
   .footer-link-grid li {
     display: flex;
     min-width: 0;
-    border-right: 1px solid rgba(243, 234, 223, 0.12);
   }
 
   .footer-link-grid li:last-child {
     border-right: 0;
   }
 
-  .footer-link-grid li:nth-child(n + 3) {
-    border-top: 1px solid rgba(243, 234, 223, 0.12);
-  }
-
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .footer-link-grid li:nth-child(4n) {
-      border-right: 0;
-    }
-
-    .footer-link-grid li:nth-child(n + 3) {
-      border-top: 0;
-    }
-
-    .footer-link-grid li:nth-child(n + 5) {
-      border-top: 1px solid rgba(243, 234, 223, 0.12);
-    }
-  }
-
-  @media (min-width: 1024px) and (max-width: 1279px) {
-    .footer-link-grid li:nth-child(4n) {
-      border-right: 1px solid rgba(243, 234, 223, 0.12);
-    }
-
-    .footer-link-grid li:nth-child(n + 3) {
-      border-top: 0;
-    }
-
-    .footer-link-grid li:nth-child(n + 5) {
-      border-top: 1px solid rgba(243, 234, 223, 0.12);
-    }
-
-    .footer-link-grid li:last-child {
-      border-right: 1px solid rgba(243, 234, 223, 0.12);
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .footer-link-grid li:nth-child(n + 3) {
-      border-top: 0;
-    }
-  }
-
   .footer-link {
     display: flex;
     flex: 1 1 auto;
-    min-height: clamp(5.75rem, 7vw, 7.25rem);
+    min-height: clamp(5.5rem, 8.92svh, 7.25rem);
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
     padding: 1rem;
-    color: rgba(243, 234, 223, 0.62);
+    color: var(--footer-cream-muted);
     font-family: var(--font-mono);
     font-size: 0.72rem;
     line-height: 1;
@@ -418,113 +322,18 @@ const footerLinks = [
 
   .footer-link:hover,
   .footer-link:focus-visible {
-    background: rgba(243, 234, 223, 0.055);
     color: var(--color-dark-text);
   }
 
-  .footer-link-index {
-    width: 0.36rem;
-    height: 0.36rem;
-    flex: 0 0 auto;
-    background: var(--color-accent);
-    transform: rotate(45deg) scale(0.75);
-    opacity: 0.7;
-    transition:
-      transform 0.35s var(--ease-out-expo),
-      opacity 0.35s var(--ease-out-expo);
-  }
-
-  .footer-link:hover .footer-link-index,
-  .footer-link:focus-visible .footer-link-index {
-    opacity: 1;
-    transform: rotate(45deg) scale(1);
-  }
-
-  .footer-mark-cell {
-    display: grid;
-    --footer-mark-size: clamp(3.5rem, 4vw, 4.5rem);
-    min-height: calc(var(--footer-mark-size) + 24px);
-    min-width: calc(var(--footer-mark-size) + 24px);
-    place-items: center;
-    padding: 12px;
-    border-bottom: 0;
-    color: rgba(243, 234, 223, 0.9);
-  }
-
-  @media (min-width: 1024px) {
-    .footer-mark-cell {
-      grid-column: 12 / 13;
-      grid-row: 2;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      min-height: 0;
-      justify-self: end;
-      align-self: stretch;
-    }
-  }
-
-  .footer-mark-logo {
-    display: block;
-    width: var(--footer-mark-size);
-    height: var(--footer-mark-size);
-    background: currentColor;
-    mask: url('/images/newframe-logo.svg') center / contain no-repeat;
-    -webkit-mask: url('/images/newframe-logo.svg') center / contain no-repeat;
-  }
-
   .footer-bottom {
-    display: grid;
-    gap: 1.25rem;
-    align-items: center;
-    padding-top: 1.5rem;
-    color: rgba(243, 234, 223, 0.38);
+    display: flex;
+    justify-content: center;
+    color: var(--footer-cream-soft);
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.82rem;
     line-height: 1.5;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-  }
-
-  @media (min-width: 768px) {
-    .footer-bottom {
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    }
-  }
-
-  @media (max-width: 1023px) {
-    .footer-bottom {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      justify-items: center;
-      text-align: center;
-      font-size: 0.72rem;
-      line-height: 1.55;
-      letter-spacing: 0.12em;
-    }
-
-    .footer-brand,
-    .footer-top-button {
-      justify-content: center;
-    }
-
-    .footer-top-button {
-      justify-self: center;
-    }
-  }
-
-  .footer-brand,
-  .footer-top-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .footer-brand-mark {
-    width: 0.82rem;
-    height: 0.82rem;
-    border: 2px solid currentColor;
-    box-shadow: 0.28rem 0.28rem 0 0 currentColor;
   }
 
   .footer-bottom p {
@@ -532,48 +341,35 @@ const footerLinks = [
     text-align: center;
   }
 
-  .footer-top-button {
-    justify-self: start;
-    border: 0;
-    padding: 0;
-    color: inherit;
-    background: transparent;
-    cursor: pointer;
-    font: inherit;
-    letter-spacing: inherit;
-    text-transform: inherit;
-    transition: color 0.3s var(--ease-out-expo);
-  }
-
-  .footer-top-button:hover,
-  .footer-top-button:focus-visible {
-    color: rgba(243, 234, 223, 0.78);
-  }
-
-  .footer-top-button svg {
-    width: 0.9rem;
-    height: 0.9rem;
-  }
-
-  @media (min-width: 768px) {
-    .footer-top-button {
-      justify-self: end;
-    }
+  .footer-wordmark-shader {
+    position: absolute;
+    z-index: 1;
+    bottom: clamp(-3rem, -2.5vw, -1.4rem);
+    left: 2.53vw;
+    width: 94.95vw;
+    height: clamp(8.5rem, 14.9vw, 17.875rem);
+    filter: saturate(0.82) brightness(0.58) contrast(0.98);
+    opacity: 0.84;
+    pointer-events: none;
   }
 
   @media (max-width: 767px) {
     .footer-inner {
-      padding: 4.5rem 1rem 1.25rem;
+      padding: 4.5rem 1rem 7.5rem;
+    }
+
+    .footer-grid {
+      min-height: 0;
     }
 
     .footer-cta-cell {
       min-height: 18.5rem;
-      padding: 2rem 1.25rem;
+      padding: 0 0 2.25rem;
     }
 
     .footer-cta {
-      max-width: 8.75em;
-      font-size: clamp(3rem, 16vw, 4.5rem);
+      max-width: 6em;
+      font-size: clamp(3.2rem, 17vw, 4.6rem);
       line-height: 0.9;
     }
 
@@ -586,13 +382,16 @@ const footerLinks = [
     .footer-contact-stack {
       min-height: 0;
       grid-template-rows: none;
+      border-top: 1px solid var(--footer-line);
     }
 
     .footer-contact-link,
     .footer-meta-card {
       min-height: 9.5rem;
+      justify-items: start;
       gap: 0.75rem;
-      padding: 1.25rem;
+      padding: 1.5rem 0;
+      text-align: left;
     }
 
     .footer-meta-line {
@@ -602,7 +401,6 @@ const footerLinks = [
     }
 
     .footer-email {
-      padding-right: 1.8rem;
       font-size: clamp(1.85rem, 10vw, 2.65rem);
       white-space: normal;
       overflow-wrap: anywhere;
@@ -612,12 +410,6 @@ const footerLinks = [
       font-size: clamp(1.55rem, 8.2vw, 2.05rem);
       overflow-wrap: normal;
       word-break: normal;
-    }
-
-    .footer-cell-arrow {
-      top: 1.25rem;
-      right: 1.25rem;
-      font-size: 1.1rem;
     }
 
     .footer-link-grid li:nth-child(2n) {
@@ -636,12 +428,6 @@ const footerLinks = [
       letter-spacing: 0.1em;
     }
 
-    .footer-mark-cell {
-      --footer-mark-size: 4.25rem;
-      min-height: 9.5rem;
-      padding: 1.25rem;
-    }
-
     .footer-bottom {
       width: 100%;
       gap: 1.05rem;
@@ -650,8 +436,6 @@ const footerLinks = [
       letter-spacing: 0.085em;
     }
 
-    .footer-brand,
-    .footer-top-button,
     .footer-bottom p {
       width: 100%;
       text-align: center;
@@ -659,6 +443,12 @@ const footerLinks = [
 
     .footer-bottom p {
       text-wrap: balance;
+    }
+
+    .footer-wordmark-shader {
+      left: -8vw;
+      width: 118vw;
+      height: 7rem;
     }
   }
 </style>
@@ -668,7 +458,7 @@ const footerLinks = [
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-  import type { ShaderInstance } from 'shaders/js';
+  import { mountLiquidMetalWordmarkShader } from '../../scripts/liquidMetalWordmarkShader';
 
   gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
@@ -683,152 +473,14 @@ const footerLinks = [
     const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
     let splitInstance: any = null;
+    let wordmarkShader: ReturnType<typeof mountLiquidMetalWordmarkShader> | null = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isTouchLayout = window.matchMedia('(max-width: 1023px)').matches;
-    const shaderCanvas = document.getElementById('footer-shader-canvas') as HTMLCanvasElement | null;
-    let shaderInstance: ShaderInstance | null = null;
-    let shaderDisposed = false;
-    let shaderResizeFrame = 0;
-    let shaderResizeTimer: ReturnType<typeof setTimeout> | null = null;
-    let shaderResizeObserver: ResizeObserver | null = null;
+    const wordmarkShaderMount = document.querySelector<HTMLElement>('[data-footer-wordmark-shader]');
 
-    const resizeShaderToCanvas = () => {
-      if (!shaderCanvas || !shaderInstance || shaderDisposed) return;
-
-      shaderCanvas.style.width = '';
-      shaderCanvas.style.height = '';
-      const rect = shaderCanvas.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        shaderInstance.resize(Math.round(rect.width), Math.round(rect.height));
-      }
-    };
-
-    const scheduleShaderResize = () => {
-      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
-      shaderResizeTimer = window.setTimeout(() => {
-        shaderResizeFrame = window.requestAnimationFrame(resizeShaderToCanvas);
-      }, 120);
-    };
-
-    if (shaderCanvas && !prefersReducedMotion) {
-      shaderCanvas.style.width = '';
-      shaderCanvas.style.height = '';
-      import('shaders/js').then(({ createShader }) => createShader(shaderCanvas, {
-        components: [
-          {
-            type: 'SolidColor',
-            id: 'idmmbht0k6sfod45zuq',
-            props: {
-              color: '#09060f00',
-            },
-          },
-          {
-            type: 'GridDistortion',
-            id: 'idmmbj5gb3owu3efr8',
-            props: {
-              decay: 3.6,
-              gridSize: 26,
-              intensity: 1.25,
-              radius: 1.1,
-            },
-            children: [
-              {
-                type: 'Pixelate',
-                id: 'idmmbhss4cxdb5pyi6j',
-                props: {
-                  gap: {
-                    type: 'map',
-                    curve: 0.35,
-                    source: 'idmmbhthud5inxgebqc',
-                    channel: 'alphaInverted',
-                    inputMax: 1,
-                    inputMin: 0,
-                    outputMax: 0.82,
-                    outputMin: 0.1,
-                  },
-                  scale: 104,
-                },
-                children: [
-                  {
-                    type: 'Plasma',
-                    id: 'idmmbhsq0prs1cmevaa',
-                    props: {
-                      balance: 57,
-                      colorA: '#C54538',
-                      contrast: 1.6,
-                      density: 2,
-                      intensity: 1.8,
-                      speed: 2,
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'SineWave',
-            id: 'idmmbhthud5inxgebqc',
-            props: {
-              amplitude: 0.1,
-              position: {
-                x: 0.5,
-                y: 1,
-              },
-              softness: 0.8,
-              thickness: 0.5,
-              visible: false,
-            },
-          },
-        ],
-      })).then((shader) => {
-        if (shaderDisposed) {
-          shader.destroy();
-          return;
-        }
-
-        shaderInstance = shader;
-        resizeShaderToCanvas();
-        window.addEventListener('resize', scheduleShaderResize, { signal });
-        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
-        shaderResizeObserver.observe(shaderCanvas.parentElement ?? shaderCanvas);
-      }).catch((error) => {
-        console.warn('Footer shader failed to initialize', error);
-      });
+    if (wordmarkShaderMount && !prefersReducedMotion) {
+      wordmarkShader = mountLiquidMetalWordmarkShader(wordmarkShaderMount);
     }
-
-    // Entrance wipe — cream overlay clips away to reveal footer
-    const footerWipe = document.getElementById('footer-wipe-in');
-    const footer = document.getElementById('contact');
-    if (footerWipe && footer && !prefersReducedMotion && !isTouchLayout) {
-      const wipeTween = gsap.fromTo(footerWipe,
-        { clipPath: 'inset(0% 0% 0% 0%)' },
-        {
-          clipPath: 'inset(0% 0% 100% 0%)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: footer,
-            start: 'top bottom',
-            end: 'bottom bottom',
-            scrub: true,
-          },
-        }
-      );
-      if (wipeTween.scrollTrigger) scrollTriggers.push(wipeTween.scrollTrigger);
-    } else if (footerWipe) {
-      footerWipe.style.display = 'none';
-    }
-
-    // Back to top — use Lenis if available
-    const btn = document.getElementById('back-to-top');
-    btn?.addEventListener('click', () => {
-      const lenis = (window as any).lenis;
-      if (lenis) {
-        lenis.scrollTo(0);
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, { signal });
 
     // SplitText word animation on giant CTA
     const ctaEl = document.getElementById('footer-cta');
@@ -861,14 +513,12 @@ const footerLinks = [
     const footerContactLink = document.querySelector('.footer-contact-link');
     const footerMetaCard = document.querySelector('.footer-meta-card');
     const footerNavItems = Array.from(document.querySelectorAll('.footer-link-grid li'));
-    const footerMarkCell = document.querySelector('.footer-mark-cell');
     const footerBottomItems = Array.from(document.querySelectorAll('.footer-bottom > *'));
     const footerRevealItems = [
       footerPrompt,
       footerContactLink,
       footerMetaCard,
       ...footerNavItems,
-      footerMarkCell,
       ...footerBottomItems,
     ].filter((item): item is Element => item instanceof Element);
 
@@ -916,10 +566,6 @@ const footerLinks = [
         }, 0.58);
       }
 
-      if (footerMarkCell) {
-        footerTl.to(footerMarkCell, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.82 }, 0.76);
-      }
-
       if (footerBottomItems.length > 0) {
         footerTl.to(footerBottomItems, {
           y: 0,
@@ -955,12 +601,8 @@ const footerLinks = [
     });
 
     cleanupFn = () => {
-      shaderDisposed = true;
-      if (shaderResizeTimer) window.clearTimeout(shaderResizeTimer);
-      cancelAnimationFrame(shaderResizeFrame);
-      shaderResizeObserver?.disconnect();
-      shaderInstance?.destroy();
       ac.abort();
+      wordmarkShader?.destroy();
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
       gsap.killTweensOf(footerRevealItems);

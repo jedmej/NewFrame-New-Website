@@ -14,9 +14,10 @@ interface Props {
   description?: string;
   lang: Lang;
   showScrollShader?: boolean;
+  showFooter?: boolean;
 }
 
-const { title, description, lang, showScrollShader = false } = Astro.props;
+const { title, description, lang, showScrollShader = false, showFooter = true } = Astro.props;
 const t = useTranslations(lang);
 const RetuneOverlay = import.meta.env.DEV ? (await import('../components/global/RetuneOverlay.astro')).default : null;
 ---
@@ -32,7 +33,7 @@ const RetuneOverlay = import.meta.env.DEV ? (await import('../components/global/
     <slot />
   </main>
 
-  <Footer lang={lang} />
+  {showFooter && <Footer lang={lang} />}
   <ViewportProgressiveBlur />
   {RetuneOverlay && <RetuneOverlay />}
 
