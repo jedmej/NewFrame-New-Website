@@ -2,7 +2,7 @@
 import type { Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/translations';
 import WorkSelectedMinimal from './WorkSelectedMinimal.astro';
-import WaysToWorkProductGrid from './WaysToWorkProductGrid.astro';
+import WaysToWorkPaperGrid from './WaysToWorkPaperGrid.astro';
 import ProcessAlternative from './ProcessAlternative.astro';
 import Testimonials from './Testimonials.astro';
 
@@ -35,7 +35,7 @@ const introHeadings = {
     <section id="ways-to-work" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="ways" aria-label={introHeadings.ways}>
       <h2>{introHeadings.ways}</h2>
     </section>
-    <WaysToWorkProductGrid lang={lang} />
+    <WaysToWorkPaperGrid lang={lang} />
 
     <section id="services" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="process" aria-label={introHeadings.process}>
       <h2>{introHeadings.process}</h2>
@@ -170,7 +170,7 @@ const introHeadings = {
     margin: 0;
     font-family: var(--font-display);
     font-size: clamp(2.75rem, 4.35vw, 3rem);
-    font-weight: 500;
+    font-weight: 300;
     line-height: 0.96;
     letter-spacing: -0.03em;
     text-transform: none;
@@ -233,7 +233,7 @@ const introHeadings = {
     const waysIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="ways"]');
     const processIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="process"]');
     const testimonialsIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="testimonials"]');
-    const waysSection = band.querySelector<HTMLElement>('#ways-to-work-grid');
+    const waysSection = band.querySelector<HTMLElement>('#ways-to-work-paper-grid');
     const processSection = band.querySelector<HTMLElement>('#process-alternative');
     const testimonialsSection = band.querySelector<HTMLElement>('#testimonials');
     const scrollTriggers: ScrollTrigger[] = [];
@@ -241,6 +241,7 @@ const introHeadings = {
     let workToWaysProgress = 0;
     let waysToProcessProgress = 0;
     let processToTestimonialsProgress = 0;
+    let waysHoldProgress = 0;
     let lastShaderSurfaceProgress = -1;
     let lastShaderSpeed = -1;
     let shaderVelocityBoost = 0;
@@ -287,13 +288,15 @@ const introHeadings = {
       if (!shader) return;
 
       const shaderSurfaceProgress = Math.max(workProgress, processProgress, testimonialsProgress);
-      const shaderPulse = Math.max(
+      const shaderPulseRaw = Math.max(
         transitionPulse(workToWaysProgress),
         transitionPulse(waysToProcessProgress),
         transitionPulse(processToTestimonialsProgress),
         ...Array.from(introPulses.values()),
       );
-      const shaderSpeed = shaderBaseSpeed + shaderPulse * (shaderTransitionSpeed - shaderBaseSpeed) + shaderVelocityBoost;
+      const shaderPulse = gsap.utils.interpolate(shaderPulseRaw, 0, waysHoldProgress * 0.82);
+      const heldVelocityBoost = shaderVelocityBoost * (1 - waysHoldProgress * 0.75);
+      const shaderSpeed = shaderBaseSpeed + shaderPulse * (shaderTransitionSpeed - shaderBaseSpeed) + heldVelocityBoost;
       const shouldUpdateSurface = Math.abs(shaderSurfaceProgress - lastShaderSurfaceProgress) > 0.025;
       const shouldUpdateSpeed = Math.abs(shaderSpeed - lastShaderSpeed) > 0.04;
 
@@ -373,6 +376,24 @@ const introHeadings = {
         },
         onRefresh: (self) => {
           workToWaysProgress = self.progress;
+          updateBandSurface();
+        },
+      }));
+    }
+
+    if (waysSection) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: waysSection,
+        start: 'top 78%',
+        end: 'bottom 22%',
+        scrub: prefersReducedMotion ? false : true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          waysHoldProgress = transitionPulse(self.progress);
+          updateBandSurface();
+        },
+        onRefresh: (self) => {
+          waysHoldProgress = transitionPulse(self.progress);
           updateBandSurface();
         },
       }));

@@ -1,0 +1,191 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const cards = t.waysToWork.items;
+---
+
+<section id="ways-to-work-paper-grid" class="ways-paper-grid" aria-label={t.waysToWork.heading}>
+  <div class="ways-paper-grid__shell">
+    {cards.map((card) => (
+      <article class="ways-paper-grid__card">
+        <div class="ways-paper-grid__card-head">
+          <h3>{card.title}</h3>
+        </div>
+        <div class="ways-paper-grid__card-foot">
+          <p>{card.description}</p>
+          <ul>
+            {card.includes.map((entry) => (
+              <li>{entry}</li>
+            ))}
+          </ul>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .ways-paper-grid {
+    position: relative;
+    display: grid;
+    min-height: 100svh;
+    padding: clamp(4.5rem, 8svh, 6.5rem) clamp(1.5rem, 8.9vw, 8rem);
+    place-items: center;
+    color: #ffffff;
+    isolation: isolate;
+  }
+
+  .ways-paper-grid__shell {
+    display: grid;
+    width: 100%;
+    min-height: min(42rem, calc(100svh - clamp(9rem, 17svh, 13rem)));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .ways-paper-grid__card {
+    position: relative;
+    display: grid;
+    min-height: min(42rem, calc(100svh - clamp(9rem, 17svh, 13rem)));
+    grid-template-rows: auto auto 1fr;
+    row-gap: clamp(2.5rem, 5.2svh, 4.75rem);
+    overflow: clip;
+    padding: clamp(1.5rem, 2.1vw, 1.875rem);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    isolation: isolate;
+  }
+
+  .ways-paper-grid__card::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 47 47' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.8' numOctaves='7' seed='31' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.82'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='47' height='47' filter='url(%23grain)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 71 71' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.95' numOctaves='6' seed='47' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.64'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='71' height='71' filter='url(%23grain)'/%3E%3C/svg%3E");
+    background-position:
+      0 0,
+      23px 17px;
+    background-size:
+      47px 47px,
+      71px 71px;
+    mix-blend-mode: overlay;
+    opacity: 0.34;
+    pointer-events: none;
+    content: '';
+  }
+
+  .ways-paper-grid__card-head {
+    position: relative;
+    z-index: 1;
+  }
+
+  .ways-paper-grid__card h3 {
+    width: min(18rem, 88%);
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(2.35rem, 3.05vw, 3.15rem);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .ways-paper-grid__card-foot {
+    display: contents;
+  }
+
+  .ways-paper-grid__card p {
+    position: relative;
+    z-index: 1;
+    width: min(22rem, 86%);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(0.9rem, 1.05vw, 0.9375rem);
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: rgba(255, 255, 255, 0.56);
+    text-wrap: pretty;
+  }
+
+  .ways-paper-grid__card ul {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ways-paper-grid__card li {
+    display: flex;
+    align-items: center;
+    min-height: clamp(2.9rem, 4.3vw, 4.1rem);
+    padding: 0.35rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.25vw, 1.125rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    color: rgba(255, 255, 255, 0.78);
+    text-wrap: balance;
+  }
+
+  .ways-paper-grid__card li:last-child {
+    padding-bottom: 0;
+  }
+
+  @media (max-width: 1023px) {
+    .ways-paper-grid {
+      min-height: 100svh;
+      padding: clamp(4rem, 8svh, 5rem) clamp(1.5rem, 7vw, 4rem);
+    }
+
+    .ways-paper-grid__shell {
+      min-height: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ways-paper-grid__card {
+      min-height: 24rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ways-paper-grid {
+      height: auto;
+      padding: 4rem 1rem;
+    }
+
+    .ways-paper-grid__shell {
+      grid-template-columns: 1fr;
+    }
+
+    .ways-paper-grid__card {
+      min-height: 36rem;
+    }
+
+    .ways-paper-grid__card h3 {
+      width: min(15rem, 68%);
+      font-size: clamp(1.55rem, 8vw, 2rem);
+    }
+
+    .ways-paper-grid__card p {
+      width: min(19rem, 88%);
+    }
+
+    .ways-paper-grid__card li {
+      min-height: 3rem;
+    }
+  }
+</style>
