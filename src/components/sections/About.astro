@@ -28,19 +28,23 @@ const t = useTranslations(lang);
 </section>
 
 <style>
-  .manifesto-word {
+  .about-paper-section__manifesto :global(.manifesto-word) {
     display: inline-block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+    vertical-align: bottom;
   }
 
-  .manifesto-char {
+  .about-paper-section__manifesto :global(.manifesto-char) {
     display: inline-block;
-    will-change: opacity;
+    overflow: hidden;
+    vertical-align: bottom;
   }
 
-  @media (min-width: 1024px) {
-    .manifesto-char {
-      will-change: opacity, filter;
-    }
+  .about-paper-section__manifesto :global(.manifesto-char-inner) {
+    display: inline-block;
+    will-change: transform;
   }
 
   .about-paper-section {
@@ -142,18 +146,21 @@ const t = useTranslations(lang);
     const lines = section?.querySelectorAll('[data-line]') || [];
     if (!textEl || !section) return;
 
+    const controller = new AbortController();
     const scrollTriggers: ScrollTrigger[] = [];
+    const splitInstances: SplitText[] = [];
+    const animatedGlyphs: HTMLElement[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const usesDesktopRevealBlur = window.matchMedia('(min-width: 1024px)').matches;
     const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
 
-    // ===== Character-by-character manifesto reveal =====
+    // Character-by-character manifesto reveal.
 
     const split = new SplitText(textEl, {
       type: 'words,chars',
       wordsClass: 'manifesto-word',
       charsClass: 'manifesto-char',
     });
+    splitInstances.push(split);
 
     split.words.forEach((word: HTMLElement) => {
       word.style.transition = 'none';
@@ -166,9 +173,12 @@ const t = useTranslations(lang);
     });
 
     split.chars.forEach((char: HTMLElement) => {
-      char.style.opacity = prefersReducedMotion ? '1' : '0.06';
-      char.style.filter = !prefersReducedMotion && usesDesktopRevealBlur ? 'blur(5px)' : 'none';
+      const inner = document.createElement('span');
+      inner.className = 'manifesto-char-inner';
+      while (char.firstChild) inner.appendChild(char.firstChild);
+      char.appendChild(inner);
       char.style.transition = 'none';
+      animatedGlyphs.push(inner);
     });
 
     if (!prefersReducedMotion) {
@@ -187,27 +197,28 @@ const t = useTranslations(lang);
         if (lineTween.scrollTrigger) scrollTriggers.push(lineTween.scrollTrigger);
       }
 
-      // Character reveal on scroll — same smooth frontier as testimonials
-      scrollTriggers.push(ScrollTrigger.create({
-        trigger: textEl,
-        start: 'top 80%',
-        end: 'bottom 40%',
-        scrub: 1,
-        onUpdate: (self) => {
-          const totalChars = split.chars.length;
-          const revealCenter = self.progress * totalChars;
-          const spread = 8;
-
-          split.chars.forEach((char: HTMLElement, ci: number) => {
-            const t = (revealCenter - ci + spread) / spread;
-            const clamped = Math.min(1, Math.max(0, t));
-            const opacity = 0.06 + clamped * 0.94;
-            const blur = (1 - clamped) * 5;
-            char.style.opacity = String(opacity);
-            char.style.filter = usesDesktopRevealBlur ? `blur(${blur.toFixed(2)}px)` : 'none';
-          });
+      const manifestoTween = gsap.fromTo(
+        animatedGlyphs,
+        {
+          yPercent: 118,
         },
-      }));
+        {
+          yPercent: 0,
+          duration: 1,
+          ease: 'power3.out',
+          stagger: {
+            each: 0.012,
+            from: 'start',
+          },
+          scrollTrigger: {
+            trigger: textEl,
+            start: 'top 82%',
+            end: 'bottom 52%',
+            scrub: 0.75,
+          },
+        },
+      );
+      if (manifestoTween.scrollTrigger) scrollTriggers.push(manifestoTween.scrollTrigger);
 
     } else {
       split.words.forEach((word: HTMLElement) => {
@@ -218,8 +229,10 @@ const t = useTranslations(lang);
     }
 
     cleanupFn = () => {
+      controller.abort();
       scrollTriggers.forEach((st) => st.kill());
-      split.revert();
+      gsap.killTweensOf(animatedGlyphs);
+      splitInstances.forEach((instance) => instance.revert());
     };
   }
 

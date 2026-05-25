@@ -74,7 +74,7 @@ const firstProject = caseProjects[0];
 const firstMeta = t.work.projects[firstProject.key];
 const firstRoles = firstMeta.roles.join(' / ');
 const padIndex = (index: number) => String(index + 1).padStart(2, '0');
-const scrollSpan = 112 + (caseProjects.length - 1) * 45;
+const scrollSpan = 100 + (caseProjects.length - 1) * 28;
 ---
 
 <section
@@ -209,15 +209,16 @@ const scrollSpan = 112 + (caseProjects.length - 1) * 45;
     --work-title-opacity: 0.95;
     --work-title-blur: 0px;
     --work-title-x: 0px;
+    --work-title-fit-scale: 1;
     position: absolute;
     top: 50%;
     left: 0;
     display: block;
     width: max-content;
-    max-width: 100%;
+    max-width: none;
     color: color-mix(in srgb, var(--work-ink) 18%, transparent);
     font-family: var(--font-sans);
-    font-size: clamp(5.25rem, 9.85vw, 12.8rem);
+    font-size: calc(clamp(5.25rem, 9.85vw, 12.8rem) * var(--work-title-fit-scale));
     font-weight: 400;
     line-height: 0.98;
     letter-spacing: 0;
@@ -388,7 +389,7 @@ const scrollSpan = 112 + (caseProjects.length - 1) * 45;
     }
 
     .work-selected-flat__title-link {
-      font-size: clamp(4.75rem, 9.4vw, 9rem);
+      font-size: calc(clamp(4.75rem, 9.4vw, 9rem) * var(--work-title-fit-scale));
     }
   }
 
@@ -429,6 +430,7 @@ const scrollSpan = 112 + (caseProjects.length - 1) * 45;
       top: auto;
       left: auto;
       width: 100%;
+      max-width: 100%;
       font-size: clamp(3.5rem, 17vw, 6.5rem);
       line-height: 0.98;
       filter: blur(2px);
@@ -517,8 +519,12 @@ const scrollSpan = 112 + (caseProjects.length - 1) * 45;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
-    const finalScrollTail = 0.35;
+    const finalScrollTail = 0.18;
     const padIndex = (index: number) => String(index + 1).padStart(2, '0');
+    const getActiveIndentPixels = () => {
+      const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+      return Math.min(Math.max(rootFontSize * 0.25, window.innerWidth * 0.008), rootFontSize * 0.9);
+    };
 
     const revertCopySplits = () => {
       splitInstances.splice(0).forEach((split) => split.revert());
@@ -548,6 +554,30 @@ const scrollSpan = 112 + (caseProjects.length - 1) * 45;
 
     const measureGeometry = () => {
       section.style.setProperty('--work-progress-width', `${((activeIndex + 1) / Math.max(titleItems.length, 1) * 100).toFixed(2)}%`);
+
+      if (!desktopQuery.matches) {
+        titleItems.forEach((item) => item.style.removeProperty('--work-title-fit-scale'));
+        return;
+      }
+
+      const titlesBox = section.querySelector<HTMLElement>('.work-selected-flat__titles');
+      if (!titlesBox) return;
+
+      const activeIndent = getActiveIndentPixels();
+      const availableWidth = Math.max(1, titlesBox.clientWidth - activeIndent * 2 - 2);
+
+      titleItems.forEach((item) => {
+        item.style.setProperty('--work-title-fit-scale', '1');
+      });
+
+      const sharedFitScale = titleItems.reduce((scale, item) => {
+        const naturalWidth = item.scrollWidth || item.getBoundingClientRect().width;
+        return Math.min(scale, availableWidth / Math.max(1, naturalWidth));
+      }, 1);
+
+      titleItems.forEach((item) => {
+        item.style.setProperty('--work-title-fit-scale', Math.min(1, sharedFitScale).toFixed(3));
+      });
     };
 
     const applyContinuousFocus = (virtualIndex: number) => {

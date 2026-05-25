@@ -200,10 +200,35 @@ const introHeadings = {
     text-wrap: balance;
   }
 
+  .offer-process-band__intro h2 :global(.offer-intro-title-word) {
+    display: inline-block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+    vertical-align: bottom;
+  }
+
+  .offer-process-band__intro h2 :global(.offer-intro-title-char) {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+
+  .offer-process-band__intro h2 :global(.offer-intro-title-char-inner) {
+    display: inline-block;
+    will-change: transform;
+  }
+
   .offer-process-band__intro[data-offer-section-intro-kind='ways'],
   .offer-process-band__intro[data-offer-section-intro-kind='process'],
   .offer-process-band__intro[data-offer-section-intro-kind='testimonials'] {
     color: #f3efe5;
+  }
+
+  .offer-process-band__intro[data-offer-section-intro-kind='work'],
+  .offer-process-band__intro[data-offer-section-intro-kind='process'] {
+    min-height: auto;
+    padding-block: clamp(6rem, 10vw, 8.5rem);
   }
 
   .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
@@ -230,15 +255,22 @@ const introHeadings = {
     .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
       max-width: 10ch;
     }
+
+    .offer-process-band__intro[data-offer-section-intro-kind='work'],
+    .offer-process-band__intro[data-offer-section-intro-kind='process'] {
+      min-height: auto;
+      padding-block: clamp(5rem, 18vw, 6.5rem);
+    }
   }
 </style>
 
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
   import { mountNeuroSectionShader } from '../../scripts/neuroSectionShader';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -256,11 +288,14 @@ const introHeadings = {
     const waysIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="ways"]');
     const processIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="process"]');
     const testimonialsIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="testimonials"]');
+    const introSections = [workIntro, waysIntro, processIntro, testimonialsIntro].filter((intro): intro is HTMLElement => !!intro);
     const aboutSection = band.querySelector<HTMLElement>('#scope');
     const waysSection = band.querySelector<HTMLElement>('#ways-to-work-paper-grid');
     const processSection = band.querySelector<HTMLElement>('#process-alternative');
     const testimonialsSection = band.querySelector<HTMLElement>('#testimonials');
     const scrollTriggers: ScrollTrigger[] = [];
+    const splitInstances: SplitText[] = [];
+    const introTitleGlyphs: HTMLElement[] = [];
     let shader: ReturnType<typeof mountNeuroSectionShader> | null = null;
     let workToWaysProgress = 0;
     let waysToProcessProgress = 0;
@@ -278,6 +313,50 @@ const introHeadings = {
     const shaderBaseSpeed = 0.5;
     const shaderTransitionSpeed = 3.35;
     const transitionPulse = (progress: number) => Math.sin(clamp(progress) * Math.PI);
+
+    if (!prefersReducedMotion) {
+      introSections.forEach((intro) => {
+        const title = intro.querySelector<HTMLElement>('h2');
+        if (!title) return;
+
+        const split = new SplitText(title, {
+          type: 'words,chars',
+          wordsClass: 'offer-intro-title-word',
+          charsClass: 'offer-intro-title-char',
+        });
+        splitInstances.push(split);
+
+        const glyphs = split.chars.map((char) => {
+          const inner = document.createElement('span');
+          inner.className = 'offer-intro-title-char-inner';
+          while (char.firstChild) inner.appendChild(char.firstChild);
+          char.appendChild(inner);
+          return inner;
+        });
+        introTitleGlyphs.push(...glyphs);
+
+        const revealTween = gsap.fromTo(
+          glyphs,
+          { yPercent: 112 },
+          {
+            yPercent: 0,
+            duration: 1,
+            ease: 'power3.out',
+            stagger: {
+              each: 0.018,
+              from: 'start',
+            },
+            scrollTrigger: {
+              trigger: title,
+              start: 'top 88%',
+              end: 'center 54%',
+              scrub: 0.9,
+            },
+          },
+        );
+        if (revealTween.scrollTrigger) scrollTriggers.push(revealTween.scrollTrigger);
+      });
+    }
 
     if (!prefersReducedMotion && shaderMount) {
       shader = mountNeuroSectionShader(shaderMount, {
@@ -391,7 +470,7 @@ const introHeadings = {
       }));
     }
 
-    [workIntro, waysIntro, processIntro, testimonialsIntro].filter((intro): intro is HTMLElement => !!intro).forEach((intro) => {
+    introSections.forEach((intro) => {
       introPulses.set(intro, 0);
       scrollTriggers.push(ScrollTrigger.create({
         trigger: intro,
@@ -503,6 +582,8 @@ const introHeadings = {
     cleanupFn = () => {
       if (shaderVelocityFrame) window.cancelAnimationFrame(shaderVelocityFrame);
       scrollTriggers.forEach((trigger) => trigger.kill());
+      gsap.killTweensOf(introTitleGlyphs);
+      splitInstances.forEach((split) => split.revert());
       shader?.destroy();
       ac.abort();
     };

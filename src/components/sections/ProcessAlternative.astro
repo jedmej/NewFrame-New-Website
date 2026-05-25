@@ -80,7 +80,7 @@ const totalSteps = t.services.groups.length;
     --process-title-active-indent: 14.4px;
 
     position: relative;
-    min-height: calc(100svh + 172vh);
+    min-height: calc(100svh + 96vh);
     background: transparent;
     color: #f3efe5;
   }
@@ -391,7 +391,7 @@ const totalSteps = t.services.groups.length;
     const totalSteps = Math.max(1, panels.length);
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const smoothstep = (value: number) => value * value * (3 - 2 * value);
-    const finalScrollTail = 0.35;
+    const finalScrollTail = 0.18;
     let scrollScene: ScrollTrigger | null = null;
     let activeStep = -1;
     let processSwitchTl: gsap.core.Timeline | null = null;
