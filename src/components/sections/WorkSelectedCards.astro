@@ -68,45 +68,54 @@ const cardCount = workSelectedCardItems.length;
               data-work-cards-item
               data-work-card-key={project.key}
             >
-              <div class="work-selected-cards__card-media" aria-hidden="true">
-                <img
-                  src={project.image}
-                  alt=""
-                  loading={index < 2 ? 'eager' : 'lazy'}
-                  decoding="async"
-                />
-                <canvas
-                  class="work-selected-cards__card-shader"
-                  data-work-card-shader
-                  data-work-card-shader-image={project.image}
-                ></canvas>
-                <div class="work-selected-cards__card-gradient"></div>
-              </div>
+              <div class="work-selected-cards__card-visual">
+                <div class="work-selected-cards__card-media" aria-hidden="true">
+                  <img
+                    src={project.image}
+                    alt=""
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                  <canvas
+                    class="work-selected-cards__card-shader"
+                    data-work-card-shader
+                    data-work-card-shader-image={project.image}
+                  ></canvas>
+                  <div class="work-selected-cards__card-gradient"></div>
+                </div>
 
-              <div class="work-selected-cards__card-default" aria-hidden="true">
-                <span class="work-selected-cards__card-index">{padWorkCardIndex(index)}</span>
-                <div class="work-selected-cards__card-footer">
-                  <span class="work-selected-cards__card-name">{displayName}</span>
+                <div class="work-selected-cards__card-default" aria-hidden="true">
+                  <span class="work-selected-cards__card-index">{padWorkCardIndex(index)}</span>
+                  <div class="work-selected-cards__card-footer">
+                    <span class="work-selected-cards__card-name">{displayName}</span>
+                  </div>
+                </div>
+
+                <div class="work-selected-cards__card-hover">
+                  <div class="work-selected-cards__card-hover-content">
+                    <div class="work-selected-cards__card-hover-top">
+                      <span class="work-selected-cards__card-hover-meta">
+                        {category} · {padWorkCardIndex(index)}
+                      </span>
+                      <span class="work-selected-cards__card-hover-arrow" aria-hidden="true">↗</span>
+                    </div>
+
+                    <div class="work-selected-cards__card-hover-body">
+                      <h3 class="work-selected-cards__card-hover-name">{displayName}</h3>
+                      <p class="work-selected-cards__card-hover-description">{meta.description}</p>
+                      <p class="work-selected-cards__card-hover-roles">{roles}</p>
+                    </div>
+
+                    <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
+                  </div>
                 </div>
               </div>
 
-              <div class="work-selected-cards__card-hover">
-                <div class="work-selected-cards__card-hover-content">
-                  <div class="work-selected-cards__card-hover-top">
-                    <span class="work-selected-cards__card-hover-meta">
-                      {category} · {padWorkCardIndex(index)}
-                    </span>
-                    <span class="work-selected-cards__card-hover-arrow" aria-hidden="true">↗</span>
-                  </div>
-
-                  <div class="work-selected-cards__card-hover-body">
-                    <h3 class="work-selected-cards__card-hover-name">{displayName}</h3>
-                    <p class="work-selected-cards__card-hover-description">{meta.description}</p>
-                    <p class="work-selected-cards__card-hover-roles">{roles}</p>
-                  </div>
-
-                  <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
-                </div>
+              <div class="work-selected-cards__card-mobile-copy">
+                <span class="work-selected-cards__card-mobile-meta">{category} · {padWorkCardIndex(index)}</span>
+                <h3 class="work-selected-cards__card-mobile-name">{displayName}</h3>
+                <p class="work-selected-cards__card-mobile-description">{meta.description}</p>
+                <p class="work-selected-cards__card-mobile-roles">{roles}</p>
               </div>
             </a>
           );
@@ -258,16 +267,20 @@ const cardCount = workSelectedCardItems.length;
     display: block;
     flex: 0 0 var(--work-cards-card-width);
     width: var(--work-cards-card-width);
-    height: var(--work-cards-card-height);
-    overflow: hidden;
-    border-radius: 0;
-    background: var(--color-bg-dark);
     color: inherit;
     scroll-snap-align: start;
     text-decoration: none;
     transition:
       box-shadow var(--work-cards-hover-enter),
       transform var(--work-cards-hover-enter);
+  }
+
+  .work-selected-cards__card-visual {
+    position: relative;
+    height: var(--work-cards-card-height);
+    overflow: hidden;
+    border-radius: 0;
+    background: var(--color-bg-dark);
   }
 
   .work-selected-cards__card-media {
@@ -476,7 +489,7 @@ const cardCount = workSelectedCardItems.length;
     color: rgba(255, 255, 255, 0.54);
   }
 
-  @media (hover: hover) {
+  @media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
     .work-selected-cards__card:hover,
     .work-selected-cards__card:focus-visible {
       box-shadow: 0 24px 64px rgba(20, 18, 15, 0.18);
@@ -562,6 +575,40 @@ const cardCount = workSelectedCardItems.length;
     outline-offset: 0.35rem;
   }
 
+  .work-selected-cards__card-mobile-copy {
+    display: none;
+  }
+
+  .work-selected-cards__card-mobile-meta,
+  .work-selected-cards__card-mobile-roles {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    line-height: 1.45;
+    text-transform: uppercase;
+    color: var(--work-cards-ink-faint);
+  }
+
+  .work-selected-cards__card-mobile-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 5vw, 1.75rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--work-cards-ink);
+  }
+
+  .work-selected-cards__card-mobile-description {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+    color: var(--work-cards-ink-muted);
+  }
+
   .work-selected-cards__footer {
     display: flex;
     align-items: center;
@@ -593,10 +640,24 @@ const cardCount = workSelectedCardItems.length;
     transition: width 0.12s linear;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 1279px), (hover: none), (pointer: coarse) {
+    .work-selected-cards {
+      overflow: hidden;
+    }
+
     .work-selected-cards__scroll {
-      height: calc(100svh + max(0, var(--work-cards-count) - 1) * 20svh);
-      min-height: 136svh;
+      height: auto;
+      min-height: auto;
+    }
+
+    .work-selected-cards__sticky {
+      position: relative;
+      min-height: auto;
+      padding-block: clamp(4.5rem, 16vw, 6rem);
+    }
+
+    .work-selected-cards__inner {
+      gap: 1.5rem;
     }
 
     .work-selected-cards__header {
@@ -605,8 +666,49 @@ const cardCount = workSelectedCardItems.length;
     }
 
     .work-selected-cards__cta {
-      align-self: flex-start;
-      margin-top: 0;
+      display: none;
+    }
+
+    .work-selected-cards__track-shell {
+      overflow: visible;
+    }
+
+    .work-selected-cards__track {
+      overflow-x: auto;
+      overflow-y: visible;
+      overscroll-behavior-x: contain;
+      scroll-padding-inline: var(--work-cards-gutter);
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      touch-action: pan-x pan-y;
+      -ms-overflow-style: none;
+    }
+
+    .work-selected-cards__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .work-selected-cards__track-inner {
+      will-change: auto;
+      transform: none !important;
+    }
+
+    .work-selected-cards__card {
+      flex-basis: min(82vw, 23rem);
+      width: min(82vw, 23rem);
+    }
+
+    .work-selected-cards__card-hover,
+    .work-selected-cards__card-shader {
+      display: none;
+    }
+
+    .work-selected-cards__card-mobile-copy {
+      display: flex;
+      min-height: 11rem;
+      flex-direction: column;
+      gap: 0.625rem;
+      padding-top: 1rem;
     }
 
     .work-selected-cards__footer {
@@ -807,6 +909,8 @@ const cardCount = workSelectedCardItems.length;
 
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktopScrollQuery = window.matchMedia('(min-width: 1280px) and (hover: hover) and (pointer: fine)');
+    const isDesktopScroll = desktopScrollQuery.matches;
     const scrollWrap = section.querySelector<HTMLElement>('[data-work-cards-scroll]');
     const track = section.querySelector<HTMLElement>('[data-work-cards-track]');
     const trackInner = section.querySelector<HTMLElement>('[data-work-cards-track-inner]');
@@ -1000,7 +1104,7 @@ const cardCount = workSelectedCardItems.length;
       updateTrackState(progress);
     };
 
-    if (!prefersReducedMotion && shaderCanvases.length) {
+    if (!prefersReducedMotion && isDesktopScroll && shaderCanvases.length) {
       if ('ResizeObserver' in window) {
         shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
         cards.forEach((card) => shaderResizeObserver?.observe(card));
@@ -1028,22 +1132,26 @@ const cardCount = workSelectedCardItems.length;
       window.addEventListener('resize', scheduleNearbyShaderWarm, { signal: ac.signal });
     }
 
-    cards.forEach((card) => {
-      card.addEventListener('pointerenter', () => setCardShaderActive(card, true), { signal: ac.signal });
-      card.addEventListener('pointerleave', () => setCardShaderActive(card, false), { signal: ac.signal });
-      card.addEventListener('focusin', () => setCardShaderActive(card, true), { signal: ac.signal });
-      card.addEventListener(
-        'focusout',
-        (event) => {
-          const nextTarget = event.relatedTarget;
-          if (nextTarget instanceof Node && card.contains(nextTarget)) return;
-          setCardShaderActive(card, false);
-        },
-        { signal: ac.signal }
-      );
-    });
+    if (isDesktopScroll) {
+      cards.forEach((card) => {
+        card.addEventListener('pointerenter', () => setCardShaderActive(card, true), { signal: ac.signal });
+        card.addEventListener('pointerleave', () => setCardShaderActive(card, false), { signal: ac.signal });
+        card.addEventListener('focusin', () => setCardShaderActive(card, true), { signal: ac.signal });
+        card.addEventListener(
+          'focusout',
+          (event) => {
+            const nextTarget = event.relatedTarget;
+            if (nextTarget instanceof Node && card.contains(nextTarget)) return;
+            setCardShaderActive(card, false);
+          },
+          { signal: ac.signal }
+        );
+      });
+    }
 
-    if (prefersReducedMotion) {
+    desktopScrollQuery.addEventListener('change', initWorkSelectedCards, { signal: ac.signal });
+
+    if (prefersReducedMotion || !isDesktopScroll) {
       section.classList.remove('is-scroll-driven');
       clearImageParallax();
       syncFromNativeScroll();

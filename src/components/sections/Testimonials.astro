@@ -163,6 +163,52 @@ const totalStr = String(items.length).padStart(2, '0');
 
   }
 
+  @media (max-width: 1279px), (hover: none), (pointer: coarse) {
+    .testimonial-diagonal__scroll {
+      height: auto;
+      min-height: auto;
+    }
+
+    .testimonial-diagonal__sticky {
+      position: relative;
+      min-height: auto;
+      overflow: hidden;
+    }
+
+    .testimonial-diagonal__stage {
+      display: flex;
+      width: auto;
+      height: auto;
+      min-height: auto;
+      gap: clamp(1rem, 3vw, 1.5rem);
+      overflow-x: auto;
+      overflow-y: visible;
+      overscroll-behavior-x: contain;
+      scroll-padding-inline: clamp(1.15rem, 5vw, 4.5rem);
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      touch-action: pan-x pan-y;
+      -ms-overflow-style: none;
+    }
+
+    .testimonial-diagonal__stage::-webkit-scrollbar {
+      display: none;
+    }
+
+    .testimonial-card {
+      position: relative;
+      top: auto;
+      left: auto;
+      flex: 0 0 min(82vw, 31rem);
+      width: min(82vw, 31rem);
+      height: auto;
+      min-height: clamp(23rem, 58svh, 31rem);
+      transform: none;
+      will-change: auto;
+      scroll-snap-align: start;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .testimonial-diagonal__scroll {
       height: auto;
@@ -223,6 +269,8 @@ const totalStr = String(items.length).padStart(2, '0');
 
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktopScrollQuery = window.matchMedia('(min-width: 1280px) and (hover: hover) and (pointer: fine)');
+    const isDesktopScroll = desktopScrollQuery.matches;
     const stage = section.querySelector<HTMLElement>('[data-testimonial-stage]');
     const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-testimonial-card]'));
     const counterActiveEl = document.getElementById('testimonial-counter-active');
@@ -239,6 +287,24 @@ const totalStr = String(items.length).padStart(2, '0');
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
     const smooth = (value: number) => value * value * (3 - 2 * value);
     const interpolate = gsap.utils.interpolate;
+
+    const resetCards = () => {
+      cards.forEach((card) => {
+        card.style.opacity = '1';
+        card.style.filter = 'none';
+        card.style.transform = 'none';
+        card.style.pointerEvents = 'auto';
+        card.style.removeProperty('z-index');
+      });
+    };
+
+    const syncCounterFromNativeScroll = () => {
+      if (!stage || !counterActiveEl) return;
+      const maxScroll = stage.scrollWidth - stage.clientWidth;
+      const progress = maxScroll <= 0 ? 0 : stage.scrollLeft / maxScroll;
+      const activeIndex = Math.min(totalCards - 1, Math.round(progress * Math.max(totalCards - 1, 1)));
+      counterActiveEl.textContent = String(activeIndex + 1).padStart(2, '0');
+    };
 
     const getDiagonalSpacing = () => {
       const isMobile = window.innerWidth < 768;
@@ -289,9 +355,11 @@ const totalStr = String(items.length).padStart(2, '0');
       });
     };
 
-    renderCards(0);
+    desktopScrollQuery.addEventListener('change', initTestimonials, { signal: ac.signal });
 
-    if (!prefersReducedMotion) {
+    if (!prefersReducedMotion && isDesktopScroll) {
+      renderCards(0);
+
       scrollTriggers.push(ScrollTrigger.create({
         trigger: section,
         start: 'top top',
@@ -302,11 +370,10 @@ const totalStr = String(items.length).padStart(2, '0');
         onRefresh: (self) => renderCards(self.progress),
       }));
     } else {
-      cards.forEach((card) => {
-        card.style.opacity = '1';
-        card.style.filter = 'none';
-        card.style.transform = 'none';
-      });
+      resetCards();
+      syncCounterFromNativeScroll();
+      stage?.addEventListener('scroll', syncCounterFromNativeScroll, { passive: true, signal: ac.signal });
+      window.addEventListener('resize', syncCounterFromNativeScroll, { signal: ac.signal });
     }
 
     cleanupFn = () => {

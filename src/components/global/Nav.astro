@@ -503,6 +503,12 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     background: rgba(247, 242, 233, 0.34);
   }
 
+  @media (max-width: 1279px), (hover: none), (pointer: coarse) {
+    .nav-progressive-blur {
+      display: none;
+    }
+  }
+
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .nav-progressive-blur__layer {
       display: none;
