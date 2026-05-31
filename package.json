@@ -18,7 +18,6 @@
     "lenis": "^1.1.21",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "retune": "^0.7.6",
     "shaders": "^2.5.113",
     "tailwindcss": "^4.0.0"
   }

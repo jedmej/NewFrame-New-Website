@@ -45,7 +45,6 @@ const footerLinks = [
             data-cursor="CLICK"
             aria-label={`Email ${email}`}
           >
-            <span class="footer-cell-kicker">{t.footer.email}</span>
             <span class="footer-email footer-email-address">hello@newframe.studio</span>
           </a>
 
@@ -135,6 +134,7 @@ const footerLinks = [
     flex-direction: column;
     justify-content: center;
     padding: clamp(2.5rem, 4.17vw, 5rem);
+    padding-right: 0;
   }
 
   @media (min-width: 1024px) {
@@ -147,7 +147,7 @@ const footerLinks = [
     max-width: 6.8em;
     color: var(--color-dark-text);
     font-family: var(--font-serif);
-    font-size: clamp(4.85rem, 6.1vw, 7.3rem);
+    font-size: clamp(4.375rem, 6.1vw, 7.3rem);
     font-weight: 300;
     line-height: 0.86;
     letter-spacing: 0;
@@ -231,22 +231,12 @@ const footerLinks = [
     color: #fff;
   }
 
-  .footer-cell-kicker {
-    justify-self: stretch;
-    color: var(--footer-cream-soft);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    line-height: 1;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
   .footer-email {
     max-width: 100%;
     font-family: var(--font-serif);
     font-size: clamp(2.5rem, 2.6vw, 3.125rem);
-    font-weight: 300;
-    font-style: italic;
+    font-weight: 200;
+    font-style: normal;
     line-height: 0.95;
     letter-spacing: 0;
     white-space: nowrap;

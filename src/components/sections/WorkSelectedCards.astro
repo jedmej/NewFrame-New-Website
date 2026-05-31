@@ -116,10 +116,10 @@ const cardCount = workSelectedCardItems.length;
     </div>
 
     <footer class="work-selected-cards__footer">
-      <p class="work-selected-cards__scroll-hint text-mono-xs">{t.work.cards.scrollHint}</p>
       <div class="work-selected-cards__progress" aria-hidden="true">
-        <span class="work-selected-cards__progress-fill" data-work-cards-progress></span>
-        <span class="work-selected-cards__progress-track"></span>
+        <span class="work-selected-cards__progress-track">
+          <span class="work-selected-cards__progress-fill" data-work-cards-progress></span>
+        </span>
       </div>
     </footer>
       </div>
@@ -129,6 +129,7 @@ const cardCount = workSelectedCardItems.length;
 
 <style>
   .work-selected-cards {
+    --work-cards-progress: 0%;
     --work-cards-ink: var(--offer-work-ink, var(--color-text));
     --work-cards-ink-muted: var(--offer-work-ink-muted, rgba(20, 18, 15, 0.56));
     --work-cards-ink-faint: var(--offer-work-ink-faint, rgba(20, 18, 15, 0.34));
@@ -175,7 +176,7 @@ const cardCount = workSelectedCardItems.length;
   .work-selected-cards__header {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: center;
     gap: clamp(1.5rem, 3vw, 3rem);
     padding-inline: var(--work-cards-gutter);
   }
@@ -190,11 +191,16 @@ const cardCount = workSelectedCardItems.length;
 	  .work-selected-cards__heading {
 	    margin: 0;
 	    font-family: var(--font-display);
-	    font-size: clamp(2.35rem, 4.25vw, 3.8125rem);
+	    font-size: 2.5rem;
 	    font-weight: 300;
     line-height: 1.02;
     letter-spacing: -0.03em;
     text-wrap: balance;
+  }
+
+  .work-selected-cards__cta,
+  .work-selected-cards__card-hover-cta {
+    border-radius: 0;
   }
 
   .work-selected-cards__cta {
@@ -335,7 +341,7 @@ const cardCount = workSelectedCardItems.length;
   .work-selected-cards__card-name {
     font-family: var(--font-display);
     font-size: clamp(1.5rem, 1.75vw, 1.75rem);
-    font-weight: 600;
+    font-weight: 300;
     line-height: 1;
     letter-spacing: -0.02em;
     color: #fff;
@@ -410,7 +416,7 @@ const cardCount = workSelectedCardItems.length;
     justify-content: center;
     min-height: 3rem;
     border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
+    border-radius: 0;
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
     transition-delay: 0s;
@@ -559,39 +565,32 @@ const cardCount = workSelectedCardItems.length;
   .work-selected-cards__footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1.5rem;
     padding-inline: var(--work-cards-gutter);
   }
 
-  .work-selected-cards__scroll-hint {
-    margin: 0;
-    color: var(--work-cards-ink-faint);
-  }
-
   .work-selected-cards__progress {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    width: min(100%, 13rem);
+    justify-content: center;
   }
 
-  .work-selected-cards__progress-fill,
   .work-selected-cards__progress-track {
-    display: block;
+    display: flex;
+    width: 100%;
     height: 2px;
+    align-items: center;
     border-radius: 999px;
+    background: rgba(20, 18, 15, 0.12);
   }
 
   .work-selected-cards__progress-fill {
-    width: 3rem;
+    width: var(--work-cards-progress);
+    height: 2px;
+    border-radius: 999px;
     background: var(--work-cards-ink);
-    transform-origin: left center;
-    transition: transform 0.2s var(--ease-out-quart);
-  }
-
-  .work-selected-cards__progress-track {
-    width: 7.5rem;
-    background: rgba(20, 18, 15, 0.12);
+    transition: width 0.12s linear;
   }
 
   @media (max-width: 767px) {
@@ -612,7 +611,7 @@ const cardCount = workSelectedCardItems.length;
 
     .work-selected-cards__footer {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
     }
   }
 
@@ -811,7 +810,6 @@ const cardCount = workSelectedCardItems.length;
     const scrollWrap = section.querySelector<HTMLElement>('[data-work-cards-scroll]');
     const track = section.querySelector<HTMLElement>('[data-work-cards-track]');
     const trackInner = section.querySelector<HTMLElement>('[data-work-cards-track-inner]');
-    const progressFill = section.querySelector<HTMLElement>('[data-work-cards-progress]');
     const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-work-cards-item]'));
     const shaderCanvases = Array.from(section.querySelectorAll<HTMLCanvasElement>('[data-work-card-shader]'));
     const scrollTriggers: ScrollTrigger[] = [];
@@ -985,13 +983,7 @@ const cardCount = workSelectedCardItems.length;
 
     const updateTrackState = (progress = 0) => {
       const normalizedProgress = clamp(progress);
-
-      if (progressFill) {
-        const minWidth = 48;
-        const maxWidth = 168;
-        const width = minWidth + normalizedProgress * (maxWidth - minWidth);
-        progressFill.style.width = `${width}px`;
-      }
+      section.style.setProperty('--work-cards-progress', `${(normalizedProgress * 100).toFixed(2)}%`);
     };
 
     const setHorizontalProgress = (progress: number) => {

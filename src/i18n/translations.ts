@@ -113,7 +113,6 @@ export const translations = {
       previewProject: 'Preview',
       cards: {
         heading: 'Projects that prove first impressions are worth designing for',
-        scrollHint: 'Keep scrolling to explore',
         startProject: 'Start a project',
         carouselLabel: 'Horizontal showcase of selected projects',
       },
@@ -312,7 +311,6 @@ export const translations = {
       previewProject: 'Zapowiedź',
       cards: {
         heading: 'Projekty, które pokazują, że pierwsze wrażenie warto zaprojektować',
-        scrollHint: 'Przewijaj dalej, żeby zobaczyć więcej',
         startProject: 'Rozpocznij projekt',
         carouselLabel: 'Pozioma prezentacja wybranych projektów',
       },
