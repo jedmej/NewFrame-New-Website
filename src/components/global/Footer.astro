@@ -23,7 +23,6 @@ const footerLinks = [
   { label: t.nav.work, href: `/${lang}/#work` },
   { label: t.nav.scope, href: `/${lang}/#scope` },
   { label: t.nav.services, href: `/${lang}/#ways-to-work` },
-  { label: t.nav.process, href: `/${lang}/#services` },
   { label: t.nav.contact, href: `/${lang}/#contact` },
   { label: t.footer.privacy, href: `/${lang}/privacy/` },
 ];
@@ -482,14 +481,24 @@ const footerLinks = [
       });
 
       const tween = gsap.fromTo(splitInstance.words,
-        { y: 60, opacity: 0, rotateX: -40 },
+        {
+          y: 60,
+          opacity: 0,
+          rotateX: -40,
+          filter: 'blur(12px)',
+          willChange: 'transform, opacity, filter',
+        },
         {
           y: 0,
           opacity: 1,
           rotateX: 0,
+          filter: 'blur(0px)',
           duration: 0.8,
           stagger: 0.02,
           ease: 'power4.out',
+          onComplete: () => {
+            gsap.set(splitInstance.words, { clearProps: 'willChange,filter,transform,opacity' });
+          },
           scrollTrigger: {
             trigger: ctaEl,
             start: 'top 85%',
@@ -597,7 +606,10 @@ const footerLinks = [
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
       gsap.killTweensOf(footerRevealItems);
-      if (splitInstance) splitInstance.revert();
+      if (splitInstance) {
+        gsap.killTweensOf(splitInstance.words);
+        splitInstance.revert();
+      }
     };
   }
 

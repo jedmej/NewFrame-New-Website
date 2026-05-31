@@ -27,7 +27,7 @@ const t = useTranslations(lang);
     position: relative;
     display: flex;
     min-height: 100svh;
-    overflow: clip;
+    overflow: visible;
     isolation: isolate;
     background: transparent;
     color: var(--color-text);
@@ -49,6 +49,7 @@ const t = useTranslations(lang);
     width: min(100%, 44rem);
     flex-direction: column;
     gap: clamp(1.25rem, 3svh, 2.125rem);
+    will-change: transform, opacity, filter;
   }
 
   .hero-clean__statement {
@@ -68,6 +69,8 @@ const t = useTranslations(lang);
     overflow: hidden;
     padding-bottom: 0.04em;
     margin-bottom: -0.04em;
+    transform-origin: left center;
+    will-change: transform, opacity, filter;
   }
 
   .hero-clean__statement :global(.hero-line-inner) {
@@ -136,14 +139,20 @@ const t = useTranslations(lang);
     .hero-clean__statement :global(.hero-line-inner) {
       will-change: auto;
     }
+
+    .hero-clean__statement :global(.hero-line),
+    .hero-clean__statement-wrap {
+      will-change: auto;
+    }
   }
 </style>
 
 <script>
   import gsap from 'gsap';
   import { SplitText } from 'gsap/SplitText';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  gsap.registerPlugin(SplitText);
+  gsap.registerPlugin(SplitText, ScrollTrigger);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -157,6 +166,7 @@ const t = useTranslations(lang);
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const splitInstances: SplitText[] = [];
+    const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
 
     if (!hero || !title || prefersReducedMotion) {
@@ -168,7 +178,6 @@ const t = useTranslations(lang);
     const split = new SplitText(title, {
       type: 'lines',
       linesClass: 'hero-line',
-      mask: 'lines',
     });
     splitInstances.push(split);
 
@@ -182,6 +191,7 @@ const t = useTranslations(lang);
     const lineInners = split.lines
       .map((line) => line.querySelector('.hero-line-inner'))
       .filter((line): line is HTMLElement => line instanceof HTMLElement);
+    const lineMasks = split.lines.filter((line): line is HTMLElement => line instanceof HTMLElement);
 
     gsap.set(lineInners, {
       yPercent: 112,
@@ -193,11 +203,19 @@ const t = useTranslations(lang);
       opacity: 0,
       filter: 'blur(6px)',
     });
+    gsap.set(lineMasks, {
+      y: 0,
+      yPercent: 0,
+      opacity: 1,
+      filter: 'blur(0px)',
+      transformOrigin: 'left center',
+    });
 
     const tl = gsap.timeline({
       defaults: { ease: 'expo.out' },
       onComplete: () => {
-        gsap.set([credit, ...lineInners].filter(Boolean), { clearProps: 'willChange,filter,transform,opacity' });
+        gsap.set(lineMasks, { overflow: 'visible' });
+        gsap.set(lineInners, { clearProps: 'willChange' });
       },
     });
     timelines.push(tl);
@@ -216,9 +234,48 @@ const t = useTranslations(lang);
         duration: 0.9,
       }, 0.42);
 
+    const exitTl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
+    timelines.push(exitTl);
+
+    exitTl.set(lineMasks, { overflow: 'visible' }, 0);
+
+    lineMasks.forEach((line, index) => {
+      const lineDepth = Math.max(0, lineMasks.length - 1 - index);
+      exitTl.to(line, {
+        y: () => -window.innerHeight * (0.018 + lineDepth * 0.024),
+        yPercent: -26 - lineDepth * 18,
+        opacity: 0,
+        filter: `blur(${7 + lineDepth * 3}px)`,
+        duration: 0.62,
+      }, index * 0.055);
+    });
+
+    exitTl
+      .to(credit, {
+        y: () => -window.innerHeight * 0.06,
+        opacity: 0,
+        filter: 'blur(8px)',
+        duration: 0.52,
+      }, 0)
+      .to('.hero-clean__statement-wrap', {
+        y: () => -window.innerHeight * 0.025,
+        duration: 0.72,
+      }, 0.02);
+
+    const exitTrigger = ScrollTrigger.create({
+      trigger: hero,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 0.2,
+      animation: exitTl,
+      invalidateOnRefresh: true,
+    });
+    scrollTriggers.push(exitTrigger);
+
     cleanupFn = () => {
+      scrollTriggers.forEach((st) => st.kill());
       timelines.forEach((timeline) => timeline.kill());
-      gsap.killTweensOf([credit, ...lineInners].filter(Boolean));
+      gsap.killTweensOf([credit, ...lineMasks, ...lineInners].filter(Boolean));
       splitInstances.forEach((splitInstance) => splitInstance.revert());
       ac.abort();
     };

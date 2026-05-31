@@ -44,7 +44,7 @@ const t = useTranslations(lang);
 
   .about-paper-section__manifesto :global(.manifesto-char-inner) {
     display: inline-block;
-    will-change: transform;
+    will-change: transform, opacity, filter;
   }
 
   .about-paper-section {
@@ -204,9 +204,13 @@ const t = useTranslations(lang);
         animatedGlyphs,
         {
           yPercent: 118,
+          opacity: 0,
+          filter: 'blur(7px)',
         },
         {
           yPercent: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
           duration: 1,
           ease: 'power3.out',
           stagger: {
@@ -215,9 +219,9 @@ const t = useTranslations(lang);
           },
           scrollTrigger: {
             trigger: textEl,
-            start: 'top 82%',
+            start: 'top 88%',
             end: 'bottom 66%',
-            scrub: 0.55,
+            scrub: 0.45,
           },
         },
       );
@@ -235,6 +239,7 @@ const t = useTranslations(lang);
       controller.abort();
       scrollTriggers.forEach((st) => st.kill());
       gsap.killTweensOf(animatedGlyphs);
+      gsap.set(animatedGlyphs, { clearProps: 'willChange,filter,opacity,transform' });
       splitInstances.forEach((instance) => instance.revert());
     };
   }

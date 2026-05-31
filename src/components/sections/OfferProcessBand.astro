@@ -5,7 +5,6 @@ import Hero from './Hero.astro';
 import About from './About.astro';
 import WorkSelectedCards from './WorkSelectedCards.astro';
 import WaysToWorkPaperRows from './WaysToWorkPaperRows.astro';
-import ProcessAlternative from './ProcessAlternative.astro';
 import Testimonials from './Testimonials.astro';
 import Footer from '../global/Footer.astro';
 
@@ -19,7 +18,6 @@ const normalizeHeading = (value: string) => value.toLocaleLowerCase(lang === 'pl
 const introHeadings = {
   work: normalizeHeading(t.work.label),
   ways: normalizeHeading(t.waysToWork.label),
-  process: t.services.heading,
   testimonials: t.testimonials.heading,
 };
 ---
@@ -42,11 +40,6 @@ const introHeadings = {
       <h2>{introHeadings.ways}</h2>
     </section>
     <WaysToWorkPaperRows lang={lang} />
-
-    <section id="services" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="process" aria-label={introHeadings.process}>
-      <h2>{introHeadings.process}</h2>
-    </section>
-    <ProcessAlternative lang={lang} />
 
     <section id="testimonials-intro" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="testimonials" aria-label={introHeadings.testimonials}>
       <h2>{introHeadings.testimonials}</h2>
@@ -216,23 +209,17 @@ const introHeadings = {
 
   .offer-process-band__intro h2 :global(.offer-intro-title-char-inner) {
     display: inline-block;
-    will-change: transform;
+    will-change: transform, opacity, filter;
   }
 
   .offer-process-band__intro[data-offer-section-intro-kind='ways'],
-  .offer-process-band__intro[data-offer-section-intro-kind='process'],
   .offer-process-band__intro[data-offer-section-intro-kind='testimonials'] {
     color: #f3efe5;
   }
 
-  .offer-process-band__intro[data-offer-section-intro-kind='work'],
-  .offer-process-band__intro[data-offer-section-intro-kind='process'] {
+  .offer-process-band__intro[data-offer-section-intro-kind='work'] {
     min-height: auto;
     padding-block: clamp(12rem, 20vw, 17rem);
-  }
-
-  .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
-    max-width: min(17ch, 88vw);
   }
 
   .offer-process-band__intro[data-offer-section-intro-kind='testimonials'] h2 {
@@ -252,12 +239,7 @@ const introHeadings = {
       letter-spacing: -0.03em;
     }
 
-    .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
-      max-width: 10ch;
-    }
-
-    .offer-process-band__intro[data-offer-section-intro-kind='work'],
-    .offer-process-band__intro[data-offer-section-intro-kind='process'] {
+    .offer-process-band__intro[data-offer-section-intro-kind='work'] {
       min-height: auto;
       padding-block: clamp(10rem, 36vw, 13rem);
     }
@@ -286,20 +268,17 @@ const introHeadings = {
     const shaderMount = band.querySelector<HTMLElement>('[data-offer-process-shader]');
     const workIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="work"]');
     const waysIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="ways"]');
-    const processIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="process"]');
     const testimonialsIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="testimonials"]');
-    const introSections = [workIntro, waysIntro, processIntro, testimonialsIntro].filter((intro): intro is HTMLElement => !!intro);
+    const introSections = [workIntro, waysIntro, testimonialsIntro].filter((intro): intro is HTMLElement => !!intro);
     const aboutSection = band.querySelector<HTMLElement>('#scope');
     const waysRowsSection = band.querySelector<HTMLElement>('#ways-to-work-paper-rows');
-    const processSection = band.querySelector<HTMLElement>('#process-alternative');
     const testimonialsSection = band.querySelector<HTMLElement>('#testimonials');
     const scrollTriggers: ScrollTrigger[] = [];
     const splitInstances: SplitText[] = [];
     const introTitleGlyphs: HTMLElement[] = [];
     let shader: ReturnType<typeof mountNeuroSectionShader> | null = null;
     let workToWaysProgress = 0;
-    let waysToProcessProgress = 0;
-    let processToTestimonialsProgress = 0;
+    let waysToTestimonialsProgress = 0;
     let testimonialsToFooterProgress = 0;
     let aboutHoldProgress = 0;
     let waysHoldProgress = 0;
@@ -337,9 +316,15 @@ const introHeadings = {
 
         const revealTween = gsap.fromTo(
           glyphs,
-          { yPercent: 112 },
+          {
+            yPercent: 112,
+            opacity: 0,
+            filter: 'blur(8px)',
+          },
           {
             yPercent: 0,
+            opacity: 1,
+            filter: 'blur(0px)',
             duration: 1,
             ease: 'power3.out',
             stagger: {
@@ -369,11 +354,9 @@ const introHeadings = {
 
     const updateBandSurface = () => {
       const workProgress = easeSurface(clamp(workToWaysProgress));
-      const processProgress = easeSurface(clamp(waysToProcessProgress));
-      const testimonialsProgress = easeSurface(clamp(processToTestimonialsProgress));
+      const testimonialsProgress = easeSurface(clamp(waysToTestimonialsProgress));
       const blueBg = gsap.utils.interpolate('#F4F4F4', '#1a1b64', workProgress);
-      const processBg = gsap.utils.interpolate(blueBg, '#172825', processProgress);
-      const testimonialBg = gsap.utils.interpolate(processBg, '#C43E3D', testimonialsProgress);
+      const testimonialBg = gsap.utils.interpolate(blueBg, '#C43E3D', testimonialsProgress);
       const bg = gsap.utils.interpolate(testimonialBg, '#14120F', easeSurface(clamp(testimonialsToFooterProgress)));
       const shaderOpacity = 0.38 + workProgress * 0.62;
       const workShaderMid = gsap.utils.interpolate('#BDB4AA', '#FFFDFB', workProgress);
@@ -382,7 +365,7 @@ const introHeadings = {
 
       band.style.setProperty('--offer-work-to-blue-progress', workProgress.toFixed(3));
       band.style.setProperty('--offer-process-bg', bg);
-      band.style.setProperty('--offer-process-grain-opacity', (0.1 + workProgress * 0.18 + processProgress * 0.08 + testimonialsProgress * 0.1).toFixed(3));
+      band.style.setProperty('--offer-process-grain-opacity', (0.1 + workProgress * 0.18 + testimonialsProgress * 0.1).toFixed(3));
       band.style.setProperty('--offer-process-shader-opacity', (shaderOpacity + testimonialsProgress * 0.1).toFixed(3));
       band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', Math.max(workProgress, testimonialsProgress)));
       band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', Math.max(workProgress, testimonialsProgress)));
@@ -394,11 +377,10 @@ const introHeadings = {
       if (!shader) return;
 
       const footerProgress = easeSurface(clamp(testimonialsToFooterProgress));
-      const shaderSurfaceProgress = Math.max(workProgress, processProgress, testimonialsProgress, footerProgress);
+      const shaderSurfaceProgress = Math.max(workProgress, testimonialsProgress, footerProgress);
       const shaderPulseRaw = Math.max(
         transitionPulse(workToWaysProgress),
-        transitionPulse(waysToProcessProgress),
-        transitionPulse(processToTestimonialsProgress),
+        transitionPulse(waysToTestimonialsProgress),
         ...Array.from(introPulses.values()),
       );
       const holdProgress = Math.max(aboutHoldProgress, waysHoldProgress);
@@ -413,8 +395,8 @@ const introHeadings = {
       lastShaderSurfaceProgress = shaderSurfaceProgress;
       lastShaderSpeed = shaderSpeed;
       shader.update({
-        colorMid: gsap.utils.interpolate(gsap.utils.interpolate(gsap.utils.interpolate(workShaderMid, '#EAF2E8', processProgress), '#FFD6CC', testimonialsProgress), '#8F8477', footerProgress),
-        colorFront: gsap.utils.interpolate(gsap.utils.interpolate(gsap.utils.interpolate(workShaderFront, 'rgba(255, 255, 255, 0.69)', processProgress), 'rgba(255, 255, 255, 0.72)', testimonialsProgress), 'rgba(243, 234, 223, 0.34)', footerProgress),
+        colorMid: gsap.utils.interpolate(gsap.utils.interpolate(workShaderMid, '#FFD6CC', testimonialsProgress), '#8F8477', footerProgress),
+        colorFront: gsap.utils.interpolate(gsap.utils.interpolate(workShaderFront, 'rgba(255, 255, 255, 0.72)', testimonialsProgress), 'rgba(243, 234, 223, 0.34)', footerProgress),
         contrast: shaderContrast,
         speed: shaderSpeed,
       });
@@ -469,8 +451,7 @@ const introHeadings = {
 
 	    const syncSurfaceProgressFromLayout = () => {
 	      workToWaysProgress = getElementProgress(waysIntro ?? waysRowsSection, 1, 0.22);
-	      waysToProcessProgress = getElementProgress(processIntro ?? processSection, 1, 0.22);
-	      processToTestimonialsProgress = getElementProgress(testimonialsIntro ?? testimonialsSection, 1, 0.18);
+	      waysToTestimonialsProgress = getElementProgress(testimonialsIntro ?? testimonialsSection, 1, 0.18);
 	      testimonialsToFooterProgress = getElementBottomProgress(testimonialsSection, 0.96, 0.38);
 	      updateBandSurface();
 	    };
@@ -550,6 +531,7 @@ const introHeadings = {
       if (shaderVelocityFrame) window.cancelAnimationFrame(shaderVelocityFrame);
       scrollTriggers.forEach((trigger) => trigger.kill());
       gsap.killTweensOf(introTitleGlyphs);
+      gsap.set(introTitleGlyphs, { clearProps: 'willChange,filter,opacity,transform' });
       splitInstances.forEach((split) => split.revert());
       shader?.destroy();
       ac.abort();

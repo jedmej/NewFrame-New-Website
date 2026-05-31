@@ -204,11 +204,37 @@ const rows = t.waysToWork.items;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 641px)');
     const rows = Array.from(section.querySelectorAll<HTMLElement>('.ways-paper-rows__row'));
+    let activeRowIndex = -1;
 
     const setActiveRow = (index: number) => {
+      if (index === activeRowIndex) return;
+      activeRowIndex = index;
       rows.forEach((row, rowIndex) => {
         row.classList.toggle('is-active', rowIndex === index);
       });
+    };
+
+    const getStickyLine = () => window.innerHeight * 0.4;
+
+    const syncActiveRow = () => {
+      const stickyLine = getStickyLine();
+      const owningRow = rows.findIndex((row) => {
+        const rect = row.getBoundingClientRect();
+        return rect.top <= stickyLine && rect.bottom > stickyLine;
+      });
+
+      if (owningRow >= 0) {
+        setActiveRow(owningRow);
+        return;
+      }
+
+      const nearestRow = rows.reduce((nearest, row, index) => {
+        const rect = row.getBoundingClientRect();
+        const distance = Math.min(Math.abs(rect.top - stickyLine), Math.abs(rect.bottom - stickyLine));
+        return distance < nearest.distance ? { index, distance } : nearest;
+      }, { index: 0, distance: Number.POSITIVE_INFINITY });
+
+      setActiveRow(nearestRow.index);
     };
 
     setActiveRow(0);
@@ -219,19 +245,16 @@ const rows = t.waysToWork.items;
       return;
     }
 
-    rows.forEach((row, index) => {
-      const trigger = ScrollTrigger.create({
-        trigger: row,
-        start: 'top 40%',
-        end: 'bottom 60%',
-        onEnter: () => setActiveRow(index),
-        onEnterBack: () => setActiveRow(index),
-        onRefresh: (self) => {
-          if (self.isActive) setActiveRow(index);
-        },
-      });
-      scrollTriggers.push(trigger);
-    });
+    syncActiveRow();
+
+    scrollTriggers.push(ScrollTrigger.create({
+      trigger: section,
+      start: 'top bottom',
+      end: 'bottom top',
+      invalidateOnRefresh: true,
+      onUpdate: syncActiveRow,
+      onRefresh: syncActiveRow,
+    }));
 
     cleanupFn = () => {
       scrollTriggers.forEach((trigger) => trigger.kill());
