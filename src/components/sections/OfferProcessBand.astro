@@ -3,8 +3,8 @@ import type { Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/translations';
 import Hero from './Hero.astro';
 import About from './About.astro';
-import WorkSelectedMinimal from './WorkSelectedMinimal.astro';
-import WaysToWorkPaperGrid from './WaysToWorkPaperGrid.astro';
+import WorkSelectedCards from './WorkSelectedCards.astro';
+import WaysToWorkPaperRows from './WaysToWorkPaperRows.astro';
 import ProcessAlternative from './ProcessAlternative.astro';
 import Testimonials from './Testimonials.astro';
 import Footer from '../global/Footer.astro';
@@ -36,12 +36,12 @@ const introHeadings = {
     <section id="work" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="work" aria-label={introHeadings.work}>
       <h2>{introHeadings.work}</h2>
     </section>
-    <WorkSelectedMinimal lang={lang} />
+    <WorkSelectedCards lang={lang} />
 
     <section id="ways-to-work" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="ways" aria-label={introHeadings.ways}>
       <h2>{introHeadings.ways}</h2>
     </section>
-    <WaysToWorkPaperGrid lang={lang} />
+    <WaysToWorkPaperRows lang={lang} />
 
     <section id="services" class="offer-process-band__intro" data-offer-section-intro data-offer-section-intro-kind="process" aria-label={introHeadings.process}>
       <h2>{introHeadings.process}</h2>
@@ -228,7 +228,7 @@ const introHeadings = {
   .offer-process-band__intro[data-offer-section-intro-kind='work'],
   .offer-process-band__intro[data-offer-section-intro-kind='process'] {
     min-height: auto;
-    padding-block: clamp(6rem, 10vw, 8.5rem);
+    padding-block: clamp(12rem, 20vw, 17rem);
   }
 
   .offer-process-band__intro[data-offer-section-intro-kind='process'] h2 {
@@ -259,7 +259,7 @@ const introHeadings = {
     .offer-process-band__intro[data-offer-section-intro-kind='work'],
     .offer-process-band__intro[data-offer-section-intro-kind='process'] {
       min-height: auto;
-      padding-block: clamp(5rem, 18vw, 6.5rem);
+      padding-block: clamp(10rem, 36vw, 13rem);
     }
   }
 </style>
@@ -290,7 +290,7 @@ const introHeadings = {
     const testimonialsIntro = band.querySelector<HTMLElement>('[data-offer-section-intro-kind="testimonials"]');
     const introSections = [workIntro, waysIntro, processIntro, testimonialsIntro].filter((intro): intro is HTMLElement => !!intro);
     const aboutSection = band.querySelector<HTMLElement>('#scope');
-    const waysSection = band.querySelector<HTMLElement>('#ways-to-work-paper-grid');
+    const waysRowsSection = band.querySelector<HTMLElement>('#ways-to-work-paper-rows');
     const processSection = band.querySelector<HTMLElement>('#process-alternative');
     const testimonialsSection = band.querySelector<HTMLElement>('#testimonials');
     const scrollTriggers: ScrollTrigger[] = [];
@@ -433,24 +433,63 @@ const introHeadings = {
       updateBandSurface();
     };
 
-    const setShaderVelocityBoost = (velocity: number) => {
-      const velocityProgress = easeSurface(clamp(Math.abs(velocity) / 3200));
-      shaderVelocityBoost = velocityProgress * 1.05;
-      updateBandSurface();
-      if (!shaderVelocityFrame) animateShaderVelocityReturn();
-    };
+	    const setShaderVelocityBoost = (velocity: number) => {
+	      const velocityProgress = easeSurface(clamp(Math.abs(velocity) / 3200));
+	      shaderVelocityBoost = velocityProgress * 1.05;
+	      updateBandSurface();
+	      if (!shaderVelocityFrame) animateShaderVelocityReturn();
+	    };
+	
+	    const getElementProgress = (element: HTMLElement | null, startViewportRatio: number, endViewportRatio: number) => {
+	      if (!element) return 0;
 
-    updateBandSurface();
+	      const rect = element.getBoundingClientRect();
+	      const top = rect.top + window.scrollY;
+	      const bottom = rect.bottom + window.scrollY;
+	      const start = top - window.innerHeight * startViewportRatio;
+	      const end = bottom - window.innerHeight * endViewportRatio;
+	      const distance = end - start;
 
-    scrollTriggers.push(ScrollTrigger.create({
-      trigger: band,
-      start: 'top bottom',
-      end: 'bottom top',
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        if (!prefersReducedMotion) setShaderVelocityBoost(self.getVelocity());
-      },
-    }));
+	      if (distance <= 0) return window.scrollY >= end ? 1 : 0;
+	      return clamp((window.scrollY - start) / distance);
+	    };
+
+	    const getElementBottomProgress = (element: HTMLElement | null, startViewportRatio: number, endViewportRatio: number) => {
+	      if (!element) return 0;
+
+	      const rect = element.getBoundingClientRect();
+	      const bottom = rect.bottom + window.scrollY;
+	      const start = bottom - window.innerHeight * startViewportRatio;
+	      const end = bottom - window.innerHeight * endViewportRatio;
+	      const distance = end - start;
+
+	      if (distance <= 0) return window.scrollY >= end ? 1 : 0;
+	      return clamp((window.scrollY - start) / distance);
+	    };
+
+	    const syncSurfaceProgressFromLayout = () => {
+	      workToWaysProgress = getElementProgress(waysIntro ?? waysRowsSection, 1, 0.22);
+	      waysToProcessProgress = getElementProgress(processIntro ?? processSection, 1, 0.22);
+	      processToTestimonialsProgress = getElementProgress(testimonialsIntro ?? testimonialsSection, 1, 0.18);
+	      testimonialsToFooterProgress = getElementBottomProgress(testimonialsSection, 0.96, 0.38);
+	      updateBandSurface();
+	    };
+
+	    syncSurfaceProgressFromLayout();
+	
+	    scrollTriggers.push(ScrollTrigger.create({
+	      trigger: band,
+	      start: 'top bottom',
+	      end: 'bottom top',
+	      invalidateOnRefresh: true,
+	      onUpdate: (self) => {
+	        if (!prefersReducedMotion) setShaderVelocityBoost(self.getVelocity());
+	        syncSurfaceProgressFromLayout();
+	      },
+	      onRefresh: () => {
+	        syncSurfaceProgressFromLayout();
+	      },
+	    }));
 
     if (aboutSection) {
       scrollTriggers.push(ScrollTrigger.create({
@@ -489,27 +528,9 @@ const introHeadings = {
       }));
     });
 
-    if (waysIntro || waysSection) {
-      scrollTriggers.push(ScrollTrigger.create({
-        trigger: waysIntro ?? waysSection,
-        start: 'top 100%',
-        end: 'bottom 22%',
-        scrub: prefersReducedMotion ? false : true,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          workToWaysProgress = self.progress;
-          updateBandSurface();
-        },
-        onRefresh: (self) => {
-          workToWaysProgress = self.progress;
-          updateBandSurface();
-        },
-      }));
-    }
-
-    if (waysSection) {
-      scrollTriggers.push(ScrollTrigger.create({
-        trigger: waysSection,
+	    if (waysRowsSection) {
+	      scrollTriggers.push(ScrollTrigger.create({
+	        trigger: waysRowsSection,
         start: 'top 78%',
         end: 'bottom 22%',
         scrub: prefersReducedMotion ? false : true,
@@ -525,61 +546,7 @@ const introHeadings = {
       }));
     }
 
-    if (processIntro || processSection) {
-      scrollTriggers.push(ScrollTrigger.create({
-        trigger: processIntro ?? processSection,
-        start: 'top 100%',
-        end: 'bottom 22%',
-        scrub: prefersReducedMotion ? false : true,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          waysToProcessProgress = self.progress;
-          updateBandSurface();
-        },
-        onRefresh: (self) => {
-          waysToProcessProgress = self.progress;
-          updateBandSurface();
-        },
-      }));
-    }
-
-    if (testimonialsIntro || testimonialsSection) {
-      scrollTriggers.push(ScrollTrigger.create({
-        trigger: testimonialsIntro ?? testimonialsSection,
-        start: 'top 100%',
-        end: 'bottom 18%',
-        scrub: prefersReducedMotion ? false : true,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          processToTestimonialsProgress = self.progress;
-          updateBandSurface();
-        },
-        onRefresh: (self) => {
-          processToTestimonialsProgress = self.progress;
-          updateBandSurface();
-        },
-      }));
-    }
-
-    if (testimonialsSection) {
-      scrollTriggers.push(ScrollTrigger.create({
-        trigger: testimonialsSection,
-        start: 'bottom 96%',
-        end: 'bottom 38%',
-        scrub: prefersReducedMotion ? false : true,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          testimonialsToFooterProgress = self.progress;
-          updateBandSurface();
-        },
-        onRefresh: (self) => {
-          testimonialsToFooterProgress = self.progress;
-          updateBandSurface();
-        },
-      }));
-    }
-
-    cleanupFn = () => {
+	    cleanupFn = () => {
       if (shaderVelocityFrame) window.cancelAnimationFrame(shaderVelocityFrame);
       scrollTriggers.forEach((trigger) => trigger.kill());
       gsap.killTweensOf(introTitleGlyphs);

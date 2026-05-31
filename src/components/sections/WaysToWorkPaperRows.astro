@@ -1,0 +1,244 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const rows = t.waysToWork.items;
+---
+
+<section
+  id="ways-to-work-paper-rows"
+  class="ways-paper-rows"
+  aria-label={t.waysToWork.rowsLayoutLabel}
+  data-ways-paper-rows
+>
+  <div class="ways-paper-rows__stack">
+    {
+      rows.map((row, index) => (
+        <article class:list={['ways-paper-rows__row', { 'is-active': index === 0 }]} data-row={index}>
+          <div class="ways-paper-rows__blank" aria-hidden="true"></div>
+
+          <div class="ways-paper-rows__index-col">
+            <span class="ways-paper-rows__index">{String(index + 1).padStart(2, '0')}</span>
+          </div>
+
+          <div class="ways-paper-rows__label-col">
+            <span class="ways-paper-rows__label">{row.metaLabel}</span>
+          </div>
+
+          <ul class="ways-paper-rows__items">
+            {row.includes.map((entry) => (
+              <li>{entry}</li>
+            ))}
+          </ul>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .ways-paper-rows {
+    --ways-row-ink: rgba(255, 253, 226, 0.3);
+    --ways-row-ink-active: #fffde2;
+    --ways-paper-rows-sticky-top: 40svh;
+
+    position: relative;
+    padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 8.9vw, 8rem) clamp(5rem, 10vw, 8rem);
+    color: var(--ways-row-ink-active);
+    isolation: isolate;
+  }
+
+  .ways-paper-rows__stack {
+    display: grid;
+    width: min(100%, 71.25rem);
+    margin: 0 auto;
+    gap: clamp(1rem, 2.1vw, 1.05rem);
+  }
+
+  .ways-paper-rows__row {
+    display: grid;
+    grid-template-columns:
+      minmax(1.25rem, 0.42fr)
+      minmax(2.5rem, 0.55fr)
+      minmax(4.5rem, 0.72fr)
+      minmax(0, 3.31fr);
+    gap: clamp(0.75rem, 1.25vw, 1.2rem);
+    align-items: start;
+    color: var(--ways-row-ink);
+    transition: color 0.45s var(--ease-out-expo);
+  }
+
+  .ways-paper-rows__row.is-active {
+    color: var(--ways-row-ink-active);
+  }
+
+  .ways-paper-rows__blank {
+    min-height: 1px;
+  }
+
+  .ways-paper-rows__index-col,
+  .ways-paper-rows__label-col {
+    position: sticky;
+    top: var(--ways-paper-rows-sticky-top);
+    z-index: 2;
+    height: max-content;
+    align-self: start;
+    padding-bottom: 0.55rem;
+  }
+
+  .ways-paper-rows__index,
+  .ways-paper-rows__label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(0.7rem, 0.84vw, 0.8rem);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: 0;
+  }
+
+  .ways-paper-rows__label {
+    font-style: italic;
+  }
+
+  .ways-paper-rows__items {
+    display: flex;
+    grid-column: 4;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: -0.12rem 0 0;
+    padding: 0 0 clamp(2.5rem, 6vw, 4rem);
+    list-style: none;
+  }
+
+  .ways-paper-rows__row:last-child .ways-paper-rows__items {
+    padding-bottom: 0;
+  }
+
+  .ways-paper-rows__items li {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.15vw, 3.75rem);
+    font-weight: 400;
+    line-height: 1.067;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 1023px) {
+    .ways-paper-rows {
+      padding-block: clamp(3rem, 8vw, 4.5rem);
+    }
+
+    .ways-paper-rows__row {
+      grid-template-columns:
+        minmax(0.75rem, 0.28fr)
+        minmax(2rem, 0.42fr)
+        minmax(3.5rem, 0.62fr)
+        minmax(0, 2.68fr);
+    }
+
+    .ways-paper-rows__items li {
+      font-size: clamp(1.55rem, 7.2vw, 2.35rem);
+      line-height: 1.08;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ways-paper-rows__stack {
+      gap: clamp(2rem, 8vw, 2.75rem);
+    }
+
+    .ways-paper-rows__row {
+      grid-template-columns: 1fr;
+    }
+
+    .ways-paper-rows__blank {
+      display: none;
+    }
+
+    .ways-paper-rows__index-col,
+    .ways-paper-rows__label-col {
+      position: static;
+      display: flex;
+      gap: 0.65rem;
+      align-items: baseline;
+      padding-bottom: 0;
+    }
+
+    .ways-paper-rows__items {
+      grid-column: auto;
+      margin-top: 0.35rem;
+      padding-bottom: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ways-paper-rows__row {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let cleanupFn: (() => void) | null = null;
+
+  function initWaysPaperRows() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const section = document.querySelector<HTMLElement>('[data-ways-paper-rows]');
+    if (!section) return;
+
+    const ac = new AbortController();
+    const scrollTriggers: ScrollTrigger[] = [];
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktopQuery = window.matchMedia('(min-width: 641px)');
+    const rows = Array.from(section.querySelectorAll<HTMLElement>('.ways-paper-rows__row'));
+
+    const setActiveRow = (index: number) => {
+      rows.forEach((row, rowIndex) => {
+        row.classList.toggle('is-active', rowIndex === index);
+      });
+    };
+
+    setActiveRow(0);
+
+    if (prefersReducedMotion || !desktopQuery.matches) {
+      rows.forEach((row) => row.classList.add('is-active'));
+      cleanupFn = () => ac.abort();
+      return;
+    }
+
+    rows.forEach((row, index) => {
+      const trigger = ScrollTrigger.create({
+        trigger: row,
+        start: 'top 40%',
+        end: 'bottom 60%',
+        onEnter: () => setActiveRow(index),
+        onEnterBack: () => setActiveRow(index),
+        onRefresh: (self) => {
+          if (self.isActive) setActiveRow(index);
+        },
+      });
+      scrollTriggers.push(trigger);
+    });
+
+    cleanupFn = () => {
+      scrollTriggers.forEach((trigger) => trigger.kill());
+      ac.abort();
+    };
+  }
+
+  initWaysPaperRows();
+  document.addEventListener('astro:after-swap', initWaysPaperRows);
+</script>

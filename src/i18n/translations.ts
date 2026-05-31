@@ -52,18 +52,22 @@ export const translations = {
       heading: 'What we can build for you',
       intro: 'Clear ways to work together for companies that need a stronger digital presence, from focused websites to digital systems.',
       pricing: 'Most projects are scoped individually. Website projects usually start from 5,000 PLN, depending on scope.',
+      rowsLayoutLabel: 'Ways to work row layout',
       items: [
         {
+          metaLabel: 'Websites',
           title: 'Websites & Landing Pages',
           description: 'A custom website for a business that wants to look sharper, more credible and easier to understand online.',
           includes: ['Offer architecture', 'Conversion sections', 'Interface design', 'Frontend development', 'Mobile performance', 'Launch setup'],
         },
         {
+          metaLabel: 'Brand',
           title: 'Brand & Design Direction',
           description: 'We shape the visual direction, structure and website language so the brand feels more focused, premium and distinct.',
           includes: ['Visual audit', 'Reference boards', 'Art direction', 'Homepage concept', 'Design system basics', 'Motion and interaction style'],
         },
         {
+          metaLabel: 'Systems',
           title: 'Full Digital Systems',
           description: 'For projects where a website alone is not enough: booking flows, forms, content systems or simple automations.',
           includes: ['User flows', 'Booking or intake flows', 'Lead capture forms', 'CMS content model', 'Integrations', 'Operational handoff'],
@@ -107,6 +111,12 @@ export const translations = {
       carouselLabel: 'Interactive showcase of selected projects',
       viewProject: 'Visit',
       previewProject: 'Preview',
+      cards: {
+        heading: 'Projects that prove first impressions are worth designing for',
+        scrollHint: 'Keep scrolling to explore',
+        startProject: 'Start a project',
+        carouselLabel: 'Horizontal showcase of selected projects',
+      },
       projects: {
         hubert: {
           description: 'A focused personal website built around presence, clarity and a sharp first impression.',
@@ -127,6 +137,10 @@ export const translations = {
         adfidence: {
           description: 'A sharper digital presence for a performance and marketing-focused business.',
           roles: ['Web design', 'Development', 'Interface system'],
+        },
+        karmel: {
+          description: 'A branding-led web presence built around warmth, clarity and a confident first impression.',
+          roles: ['Branding', 'Web design'],
         },
         amvis: {
           description: 'A website redesign for an accounting office, currently being prepared for launch.',
@@ -237,18 +251,22 @@ export const translations = {
       heading: 'Co możemy dla Ciebie zrobić',
       intro: 'Konkretne formy współpracy dla firm, które chcą mocniejszej obecności online, od skupionych stron po systemy cyfrowe.',
       pricing: 'Większość projektów wyceniamy indywidualnie. Strony najczęściej startują od 5 000 PLN, zależnie od zakresu.',
+      rowsLayoutLabel: 'Formy współpracy — układ wierszy',
       items: [
         {
+          metaLabel: 'Strony',
           title: 'Strony i landing pages',
           description: 'Indywidualna strona dla firmy, która chce wyglądać nowocześniej, bardziej wiarygodnie i łatwiej opowiadać o swojej ofercie.',
           includes: ['Architektura oferty', 'Sekcje sprzedażowe', 'Projekt interfejsu', 'Wdrożenie frontendowe', 'Mobile i performance', 'Konfiguracja publikacji'],
         },
         {
+          metaLabel: 'Marka',
           title: 'Kierunek marki i designu',
           description: 'Pomagamy uporządkować wygląd, strukturę i język strony, żeby marka była bardziej wyrazista, spójna i premium.',
           includes: ['Audyt wizualny', 'Moodboard i referencje', 'Art direction', 'Koncepcja strony głównej', 'Podstawy systemu designu', 'Styl ruchu i interakcji'],
         },
         {
+          metaLabel: 'Systemy',
           title: 'Pełne systemy cyfrowe',
           description: 'Dla projektów, w których sama strona to za mało: rezerwacje, formularze, system treści albo proste automatyzacje.',
           includes: ['Ścieżki użytkownika', 'Rezerwacje albo zgłoszenia', 'Formularze leadowe', 'Model treści i CMS', 'Integracje', 'Przekazanie operacyjne'],
@@ -292,6 +310,12 @@ export const translations = {
       carouselLabel: 'Interaktywna prezentacja wybranych projektów',
       viewProject: 'Odwiedź',
       previewProject: 'Zapowiedź',
+      cards: {
+        heading: 'Projekty, które pokazują, że pierwsze wrażenie warto zaprojektować',
+        scrollHint: 'Przewijaj dalej, żeby zobaczyć więcej',
+        startProject: 'Rozpocznij projekt',
+        carouselLabel: 'Pozioma prezentacja wybranych projektów',
+      },
       projects: {
         hubert: {
           description: 'Strona osobista zbudowana wokół obecności, prostoty i mocnego pierwszego wrażenia.',
@@ -312,6 +336,10 @@ export const translations = {
         adfidence: {
           description: 'Nowocześniejsza strona dla firmy skupionej na performance i marketingu.',
           roles: ['Web design', 'Development', 'System interfejsu'],
+        },
+        karmel: {
+          description: 'Obecność online oparta na brandingu, cieple i mocnym pierwszym wrażeniu.',
+          roles: ['Branding', 'Web design'],
         },
         amvis: {
           description: 'Redesign strony biura rachunkowego przygotowywany do startu.',

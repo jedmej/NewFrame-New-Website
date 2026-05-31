@@ -1,0 +1,1115 @@
+---
+import type { Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/translations';
+import {
+  formatWorkCardCategory,
+  getWorkCardContactHref,
+  padWorkCardIndex,
+  workSelectedCardItems,
+} from '../../lib/workSelectedCardAssets';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const contactHref = getWorkCardContactHref(lang);
+const cardCount = workSelectedCardItems.length;
+---
+
+<section
+  id="work-cards"
+  class="work-selected-cards"
+  aria-label={t.work.cards.carouselLabel}
+  style={`--work-cards-count: ${cardCount};`}
+>
+  <div class="work-selected-cards__scroll" data-work-cards-scroll>
+    <div class="work-selected-cards__sticky">
+      <div class="work-selected-cards__inner">
+	    <header class="work-selected-cards__header">
+	      <div class="work-selected-cards__headline-group">
+	        <h2 class="work-selected-cards__heading">{t.work.cards.heading}</h2>
+	      </div>
+
+      <a class="work-selected-cards__cta text-mono-xs" href={contactHref}>
+        <span>{t.work.cards.startProject}</span>
+        <span class="work-selected-cards__cta-arrow" aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <div class="work-selected-cards__track-shell">
+      <div
+        class="work-selected-cards__track"
+        data-work-cards-track
+      >
+        <div
+          class="work-selected-cards__track-inner"
+          data-work-cards-track-inner
+          role="list"
+          aria-label={t.work.carouselLabel}
+        >
+        {workSelectedCardItems.map((project, index) => {
+          const href = project.url;
+          const meta = t.work.projects[project.key];
+          const displayName = project.displayName;
+          const category = formatWorkCardCategory(project.category);
+          const roles = meta.roles.join(' / ');
+          const isExternal = href.startsWith('http');
+
+          return (
+            <a
+              href={href}
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
+              class="work-selected-cards__card"
+              role="listitem"
+              aria-label={`${displayName}. ${roles}. ${meta.description}`}
+              data-work-cards-item
+              data-work-card-key={project.key}
+            >
+              <div class="work-selected-cards__card-media" aria-hidden="true">
+                <img
+                  src={project.image}
+                  alt=""
+                  loading={index < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+                <canvas
+                  class="work-selected-cards__card-shader"
+                  data-work-card-shader
+                  data-work-card-shader-image={project.image}
+                ></canvas>
+                <div class="work-selected-cards__card-gradient"></div>
+              </div>
+
+              <div class="work-selected-cards__card-default" aria-hidden="true">
+                <span class="work-selected-cards__card-index">{padWorkCardIndex(index)}</span>
+                <div class="work-selected-cards__card-footer">
+                  <span class="work-selected-cards__card-name">{displayName}</span>
+                </div>
+              </div>
+
+              <div class="work-selected-cards__card-hover">
+                <div class="work-selected-cards__card-hover-content">
+                  <div class="work-selected-cards__card-hover-top">
+                    <span class="work-selected-cards__card-hover-meta">
+                      {category} · {padWorkCardIndex(index)}
+                    </span>
+                    <span class="work-selected-cards__card-hover-arrow" aria-hidden="true">↗</span>
+                  </div>
+
+                  <div class="work-selected-cards__card-hover-body">
+                    <h3 class="work-selected-cards__card-hover-name">{displayName}</h3>
+                    <p class="work-selected-cards__card-hover-description">{meta.description}</p>
+                    <p class="work-selected-cards__card-hover-roles">{roles}</p>
+                  </div>
+
+                  <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+        </div>
+      </div>
+    </div>
+
+    <footer class="work-selected-cards__footer">
+      <p class="work-selected-cards__scroll-hint text-mono-xs">{t.work.cards.scrollHint}</p>
+      <div class="work-selected-cards__progress" aria-hidden="true">
+        <span class="work-selected-cards__progress-fill" data-work-cards-progress></span>
+        <span class="work-selected-cards__progress-track"></span>
+      </div>
+    </footer>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .work-selected-cards {
+    --work-cards-ink: var(--offer-work-ink, var(--color-text));
+    --work-cards-ink-muted: var(--offer-work-ink-muted, rgba(20, 18, 15, 0.56));
+    --work-cards-ink-faint: var(--offer-work-ink-faint, rgba(20, 18, 15, 0.34));
+    --work-cards-card-width: clamp(17.5rem, 27.8vw, 25rem);
+    --work-cards-card-height: clamp(28rem, 36vw, 32.5rem);
+    --work-cards-card-gap: clamp(1.25rem, 2vw, 1.5rem);
+    --work-cards-gutter: clamp(1.5rem, 4.2vw, 4rem);
+    --work-cards-track-pad: clamp(2.5rem, 6vw, 4rem);
+    --work-cards-glass: rgba(239, 235, 226, 0.62);
+    --work-cards-hover-enter: 0.62s cubic-bezier(0.16, 1, 0.3, 1);
+    --work-cards-hover-exit: 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+
+    position: relative;
+    overflow: clip;
+    padding: 0;
+    background: transparent;
+    color: var(--work-cards-ink);
+    isolation: isolate;
+  }
+
+  .work-selected-cards__scroll {
+    height: calc(100svh + max(0, var(--work-cards-count) - 1) * 24svh);
+    min-height: 148svh;
+  }
+
+  .work-selected-cards__sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(4.5rem, 5.6vw, 5rem) clamp(5rem, 6vw, 6rem);
+  }
+
+  .work-selected-cards__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 2.4vw, 2.25rem);
+  }
+
+  .work-selected-cards__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    padding-inline: var(--work-cards-gutter);
+  }
+
+  .work-selected-cards__headline-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: min(61rem, 100%);
+  }
+
+	  .work-selected-cards__heading {
+	    margin: 0;
+	    font-family: var(--font-display);
+	    font-size: clamp(2.35rem, 4.25vw, 3.8125rem);
+	    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .work-selected-cards__cta {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.625rem;
+    margin-top: 0.35rem;
+    color: var(--work-cards-ink);
+    text-decoration: none;
+    transition: color 180ms var(--ease-out-quart);
+  }
+
+  .work-selected-cards__cta:hover,
+  .work-selected-cards__cta:focus-visible {
+    color: var(--color-accent);
+  }
+
+  .work-selected-cards__cta:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 0.35rem;
+  }
+
+  .work-selected-cards__cta-arrow {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+	  .work-selected-cards__track-shell {
+	    position: relative;
+	    width: 100%;
+	    padding-block: 0;
+	    overflow: clip;
+	  }
+
+  .work-selected-cards__track {
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .work-selected-cards__track-inner {
+    display: flex;
+    gap: var(--work-cards-card-gap);
+    width: max-content;
+    padding-inline: var(--work-cards-gutter);
+    will-change: transform;
+  }
+
+  .work-selected-cards.is-scroll-driven .work-selected-cards__track-inner {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .work-selected-cards__card {
+    position: relative;
+    display: block;
+    flex: 0 0 var(--work-cards-card-width);
+    width: var(--work-cards-card-width);
+    height: var(--work-cards-card-height);
+    overflow: hidden;
+    border-radius: 0;
+    background: var(--color-bg-dark);
+    color: inherit;
+    scroll-snap-align: start;
+    text-decoration: none;
+    transition:
+      box-shadow var(--work-cards-hover-enter),
+      transform var(--work-cards-hover-enter);
+  }
+
+  .work-selected-cards__card-media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .work-selected-cards__card-media,
+  .work-selected-cards__card-media img,
+  .work-selected-cards__card-shader {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .work-selected-cards__card-shader {
+    --work-card-shader-nudge: 3px;
+
+    z-index: 1;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(calc(-1 * var(--work-card-shader-nudge)), calc(-1 * var(--work-card-shader-nudge)), 0);
+    transition: opacity 1s ease-in-out;
+    will-change: opacity;
+  }
+
+  .work-selected-cards__card.is-shader-ready.is-shader-active .work-selected-cards__card-shader {
+    opacity: 1;
+  }
+
+  .work-selected-cards.is-scroll-driven .work-selected-cards__card-shader {
+    will-change: opacity;
+  }
+
+  .work-selected-cards__card-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(20, 18, 15, 0) 42%, rgba(20, 18, 15, 0.72) 100%);
+  }
+
+  .work-selected-cards__card-default {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    transition: opacity var(--work-cards-hover-exit);
+  }
+
+  .work-selected-cards__card-index {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .work-selected-cards__card-footer {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.375rem;
+    left: 1.25rem;
+  }
+
+  .work-selected-cards__card-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.75vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  .work-selected-cards__card-hover {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    opacity: 0;
+    transition: opacity var(--work-cards-hover-enter);
+  }
+
+  .work-selected-cards__card-hover::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.48) 46%, rgba(0, 0, 0, 0.78) 100%),
+      radial-gradient(circle at 50% 18%, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.42) 72%);
+    opacity: 0.92;
+    pointer-events: none;
+  }
+
+  .work-selected-cards__card-hover-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 1.5rem;
+  }
+
+  .work-selected-cards__card-hover-top,
+  .work-selected-cards__card-hover-name,
+  .work-selected-cards__card-hover-description,
+  .work-selected-cards__card-hover-roles,
+  .work-selected-cards__card-hover-cta,
+  .work-selected-cards__card-hover-arrow {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition:
+      opacity var(--work-cards-hover-exit),
+      transform var(--work-cards-hover-exit),
+      filter var(--work-cards-hover-exit);
+  }
+
+  .work-selected-cards__card-hover-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    transition-delay: 0.08s;
+  }
+
+  .work-selected-cards__card-hover-name {
+    transition-delay: 0.06s;
+  }
+
+  .work-selected-cards__card-hover-description {
+    transition-delay: 0.04s;
+  }
+
+  .work-selected-cards__card-hover-roles {
+    transition-delay: 0.02s;
+  }
+
+  .work-selected-cards__card-hover-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition-delay: 0s;
+  }
+
+  .work-selected-cards__card-hover-meta {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .work-selected-cards__card-hover-arrow {
+    font-size: 1.125rem;
+    line-height: 1;
+    color: #fff;
+    transform-origin: center;
+    filter: blur(4px);
+    transform: translate3d(0, 14px, 0) scale(0.25);
+  }
+
+  .work-selected-cards__card-hover-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .work-selected-cards__card-hover-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 2.2vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .work-selected-cards__card-hover-description {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.78);
+    text-wrap: pretty;
+  }
+
+  .work-selected-cards__card-hover-roles {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.54);
+  }
+
+  @media (hover: hover) {
+    .work-selected-cards__card:hover,
+    .work-selected-cards__card:focus-visible {
+      box-shadow: 0 24px 64px rgba(20, 18, 15, 0.18);
+      transform: translate3d(0, -3px, 0);
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-default,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-default {
+      opacity: 0;
+      transition: opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover {
+      opacity: 1;
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-top,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-top {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity var(--work-cards-hover-enter),
+        transform var(--work-cards-hover-enter);
+      transition-delay: 0.06s;
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-name,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-name {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity var(--work-cards-hover-enter),
+        transform var(--work-cards-hover-enter);
+      transition-delay: 0.12s;
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-description,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-description {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity var(--work-cards-hover-enter),
+        transform var(--work-cards-hover-enter);
+      transition-delay: 0.18s;
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-roles,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-roles {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity var(--work-cards-hover-enter),
+        transform var(--work-cards-hover-enter);
+      transition-delay: 0.24s;
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-cta,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-cta {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity var(--work-cards-hover-enter),
+        transform var(--work-cards-hover-enter);
+      transition-delay: 0.32s;
+    }
+
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-arrow,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-arrow {
+      opacity: 1;
+      filter: blur(0);
+      transform: translate3d(0, 0, 0) scale(1);
+      transition:
+        opacity var(--work-cards-hover-enter),
+        transform var(--work-cards-hover-enter),
+        filter var(--work-cards-hover-enter);
+      transition-delay: 0.1s;
+    }
+  }
+
+  .work-selected-cards__card:focus-visible {
+    outline: 2px solid rgba(243, 234, 223, 0.76);
+    outline-offset: 0.35rem;
+  }
+
+  .work-selected-cards__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-inline: var(--work-cards-gutter);
+  }
+
+  .work-selected-cards__scroll-hint {
+    margin: 0;
+    color: var(--work-cards-ink-faint);
+  }
+
+  .work-selected-cards__progress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .work-selected-cards__progress-fill,
+  .work-selected-cards__progress-track {
+    display: block;
+    height: 2px;
+    border-radius: 999px;
+  }
+
+  .work-selected-cards__progress-fill {
+    width: 3rem;
+    background: var(--work-cards-ink);
+    transform-origin: left center;
+    transition: transform 0.2s var(--ease-out-quart);
+  }
+
+  .work-selected-cards__progress-track {
+    width: 7.5rem;
+    background: rgba(20, 18, 15, 0.12);
+  }
+
+  @media (max-width: 767px) {
+    .work-selected-cards__scroll {
+      height: calc(100svh + max(0, var(--work-cards-count) - 1) * 20svh);
+      min-height: 136svh;
+    }
+
+    .work-selected-cards__header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .work-selected-cards__cta {
+      align-self: flex-start;
+      margin-top: 0;
+    }
+
+    .work-selected-cards__footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-selected-cards__scroll {
+      height: auto;
+      min-height: auto;
+    }
+
+    .work-selected-cards__sticky {
+      position: relative;
+      min-height: auto;
+    }
+
+    .work-selected-cards__track {
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .work-selected-cards__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .work-selected-cards__track-inner {
+      will-change: auto;
+      transform: none !important;
+    }
+
+    .work-selected-cards__card,
+    .work-selected-cards__card-default,
+    .work-selected-cards__card-hover,
+    .work-selected-cards__card-hover-top,
+    .work-selected-cards__card-hover-name,
+    .work-selected-cards__card-hover-description,
+    .work-selected-cards__card-hover-roles,
+    .work-selected-cards__card-hover-cta,
+    .work-selected-cards__card-hover-arrow,
+    .work-selected-cards__progress-fill {
+      transition: none;
+    }
+
+    .work-selected-cards__card-media img {
+      will-change: auto;
+    }
+
+    .work-selected-cards__card-shader {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { createShader, createSharedDevice } from 'shaders/js';
+  import type { ShaderInstance } from 'shaders/js';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let cleanupFn: (() => void) | null = null;
+  let sharedGpuPromise: ReturnType<typeof createSharedDevice> | null = null;
+
+  type WorkCardShaderState = {
+    card: HTMLElement;
+    canvas: HTMLCanvasElement;
+    shader: ShaderInstance;
+    pixelateScale: {
+      progress: number;
+    };
+    pixelateTween: gsap.core.Tween | null;
+    isPaused: boolean;
+  };
+
+  const workCardShaderIds = {
+    flow: 'idmostv5d9xi2rmvn45',
+    source: 'idmostsrlvujw3m2cxq',
+    pixelate: 'idmot2a1w6g1hb7aovg',
+    maskedSource: 'idmot2dbqc9l1sb04fo',
+    halftone: 'idmot2fstocgjsqzber',
+  } as const;
+  const workCardShaderNudge = 3;
+  const workCardShaderPixelatedScale = 29;
+  const workCardShaderClearScale = 1000;
+  const workCardShaderEnterDuration = 0.65;
+  const workCardShaderExitDuration = 0.65;
+  const workCardShaderPixelateEase = 'sine.inOut';
+  const workCardShaderPixelateRange = workCardShaderPixelatedScale / workCardShaderClearScale;
+
+  const getSharedGpu = () => {
+    sharedGpuPromise ??= createSharedDevice();
+    return sharedGpuPromise;
+  };
+
+  const getPixelateScaleMap = (outputMin: number) => ({
+    type: 'map',
+    curve: -1,
+    source: workCardShaderIds.flow,
+    channel: 'alpha',
+    inputMax: 1,
+    inputMin: 0,
+    outputMax: 1000,
+    outputMin,
+  });
+
+  const getPixelateScaleFromProgress = (progress: number) =>
+    workCardShaderClearScale * Math.pow(workCardShaderPixelateRange, progress);
+
+  function tweenCardPixelation(
+    state: WorkCardShaderState,
+    progress: number,
+    duration: number,
+    onComplete?: () => void
+  ) {
+    state.pixelateTween?.kill();
+    state.pixelateTween = gsap.to(state.pixelateScale, {
+      progress,
+      duration,
+      ease: workCardShaderPixelateEase,
+      overwrite: true,
+      onUpdate: () => {
+        state.shader.update(workCardShaderIds.pixelate, {
+          scale: getPixelateScaleMap(getPixelateScaleFromProgress(state.pixelateScale.progress)),
+        });
+      },
+      onComplete: () => {
+        state.pixelateTween = null;
+        onComplete?.();
+      },
+    });
+  }
+
+  const getWorkCardShaderPreset = (imageUrl: string) => ({
+    components: [
+      {
+        type: 'ChromaFlow',
+        id: workCardShaderIds.flow,
+        props: {
+          baseColor: '#ffffff',
+          downColor: '#ffffff',
+          intensity: 1.5,
+          leftColor: '#ffffff',
+          momentum: 32,
+          radius: 4,
+          rightColor: '#ffffff',
+          upColor: '#ffffff',
+          visible: false,
+        },
+      },
+      {
+        type: 'ImageTexture',
+        id: workCardShaderIds.source,
+        props: {
+          url: imageUrl,
+        },
+      },
+      {
+        type: 'Pixelate',
+        id: workCardShaderIds.pixelate,
+        props: {
+          scale: getPixelateScaleMap(workCardShaderClearScale),
+        },
+      },
+      {
+        type: 'ImageTexture',
+        id: workCardShaderIds.maskedSource,
+        props: {
+          maskSource: workCardShaderIds.flow,
+          url: imageUrl,
+        },
+      },
+      {
+        type: 'Halftone',
+        id: workCardShaderIds.halftone,
+        props: {
+          blendMode: 'colorDodge',
+          frequency: 145,
+          opacity: 0.3,
+          style: 'cmyk',
+        },
+      },
+    ],
+  });
+
+  function initWorkSelectedCards() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const section = document.getElementById('work-cards');
+    if (!section) return;
+
+    const ac = new AbortController();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollWrap = section.querySelector<HTMLElement>('[data-work-cards-scroll]');
+    const track = section.querySelector<HTMLElement>('[data-work-cards-track]');
+    const trackInner = section.querySelector<HTMLElement>('[data-work-cards-track-inner]');
+    const progressFill = section.querySelector<HTMLElement>('[data-work-cards-progress]');
+    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-work-cards-item]'));
+    const shaderCanvases = Array.from(section.querySelectorAll<HTMLCanvasElement>('[data-work-card-shader]'));
+    const scrollTriggers: ScrollTrigger[] = [];
+    const shaderStates = new Map<HTMLCanvasElement, WorkCardShaderState>();
+    const shaderInitPromises = new Map<HTMLCanvasElement, Promise<void>>();
+    let isCleanedUp = false;
+    let shaderObserver: IntersectionObserver | null = null;
+    let shaderResizeObserver: ResizeObserver | null = null;
+    let shaderResizeFrame = 0;
+    let shaderWarmFrame = 0;
+
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+
+    const getMaxScroll = () => {
+      if (!track || !trackInner) return 0;
+      return Math.max(0, trackInner.scrollWidth - track.clientWidth);
+    };
+
+    function resizeCardShader(state: WorkCardShaderState) {
+      state.canvas.style.width = '';
+      state.canvas.style.height = '';
+
+      const cardRect = state.card.getBoundingClientRect();
+      const width = cardRect.width + workCardShaderNudge * 2;
+      const height = cardRect.height + workCardShaderNudge * 2;
+      if (width <= 0 || height <= 0) return;
+
+      state.shader.resize(width, height);
+    }
+
+    function scheduleShaderResize() {
+      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
+      shaderResizeFrame = window.requestAnimationFrame(() => {
+        shaderResizeFrame = 0;
+        shaderStates.forEach(resizeCardShader);
+      });
+    }
+
+    function warmNearbyCardShaders() {
+      if (prefersReducedMotion || !shaderCanvases.length) return;
+
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const preloadMarginX = viewportWidth * 0.75;
+      const preloadMarginY = viewportHeight * 0.75;
+
+      shaderCanvases.forEach((canvas) => {
+        if (shaderStates.has(canvas) || shaderInitPromises.has(canvas)) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const isNearby =
+          rect.right >= -preloadMarginX &&
+          rect.left <= viewportWidth + preloadMarginX &&
+          rect.bottom >= -preloadMarginY &&
+          rect.top <= viewportHeight + preloadMarginY;
+
+        if (isNearby) void initCardShader(canvas);
+      });
+    }
+
+    function scheduleNearbyShaderWarm() {
+      if (shaderWarmFrame) window.cancelAnimationFrame(shaderWarmFrame);
+      shaderWarmFrame = window.requestAnimationFrame(() => {
+        shaderWarmFrame = 0;
+        warmNearbyCardShaders();
+      });
+    }
+
+    async function initCardShader(canvas: HTMLCanvasElement) {
+      if (isCleanedUp || shaderStates.has(canvas) || shaderInitPromises.has(canvas)) return;
+
+      const card = canvas.closest<HTMLElement>('[data-work-cards-item]');
+      const image = canvas.dataset.workCardShaderImage;
+      if (!card || !image) return;
+
+      const initPromise = (async () => {
+        try {
+          const imageUrl = new URL(image, window.location.href).href;
+          const sharedGpu = await getSharedGpu();
+          if (isCleanedUp) return;
+
+          const shader = await createShader(canvas, getWorkCardShaderPreset(imageUrl), {
+            disableTelemetry: true,
+            ...(sharedGpu ? { gpu: sharedGpu } : {}),
+          });
+
+          if (isCleanedUp) {
+            shader.destroy();
+            return;
+          }
+
+          const state: WorkCardShaderState = {
+            card,
+            canvas,
+            shader,
+            pixelateScale: {
+              progress: 0,
+            },
+            pixelateTween: null,
+            isPaused: false,
+          };
+
+          shaderStates.set(canvas, state);
+          card.classList.add('is-shader-ready');
+          resizeCardShader(state);
+          shader.update(workCardShaderIds.pixelate, {
+            scale: getPixelateScaleMap(workCardShaderClearScale),
+          });
+          if (card.classList.contains('is-shader-active')) {
+            shader.resume();
+            tweenCardPixelation(state, 1, workCardShaderEnterDuration);
+          } else {
+            shader.pause();
+            state.isPaused = true;
+          }
+        } catch (error) {
+          console.warn('[work-cards] Failed to initialize card shader', error);
+        } finally {
+          shaderInitPromises.delete(canvas);
+        }
+      })();
+
+      shaderInitPromises.set(canvas, initPromise);
+    }
+
+    function setCardShaderActive(card: HTMLElement, active: boolean) {
+      if (prefersReducedMotion) return;
+
+      const canvas = card.querySelector<HTMLCanvasElement>('[data-work-card-shader]');
+      if (!canvas) return;
+
+      const state = shaderStates.get(canvas);
+
+      card.classList.toggle('is-shader-active', active);
+
+      if (active && !state) {
+        void initCardShader(canvas);
+        return;
+      }
+
+      if (!state) return;
+
+      if (active) {
+        if (state.isPaused) {
+          state.shader.resume();
+          state.isPaused = false;
+        }
+        tweenCardPixelation(state, 1, workCardShaderEnterDuration);
+      } else {
+        if (state.isPaused) {
+          state.shader.resume();
+          state.isPaused = false;
+        }
+        tweenCardPixelation(state, 0, workCardShaderExitDuration, () => {
+          if (card.classList.contains('is-shader-active')) return;
+          state.shader.pause();
+          state.isPaused = true;
+        });
+      }
+    }
+
+    const clearImageParallax = () => {
+      cards.forEach((card) => {
+        const img = card.querySelector<HTMLImageElement>('.work-selected-cards__card-media img');
+        const shaderCanvas = card.querySelector<HTMLCanvasElement>('[data-work-card-shader]');
+        const parallaxTargets = [img, shaderCanvas].filter(Boolean) as HTMLElement[];
+        if (!parallaxTargets.length) return;
+        gsap.set(parallaxTargets, { clearProps: 'transform' });
+      });
+    };
+
+    const updateTrackState = (progress = 0) => {
+      const normalizedProgress = clamp(progress);
+
+      if (progressFill) {
+        const minWidth = 48;
+        const maxWidth = 168;
+        const width = minWidth + normalizedProgress * (maxWidth - minWidth);
+        progressFill.style.width = `${width}px`;
+      }
+    };
+
+    const setHorizontalProgress = (progress: number) => {
+      if (!trackInner) return;
+      const maxScroll = getMaxScroll();
+      gsap.set(trackInner, { x: -maxScroll * clamp(progress) });
+      updateTrackState(progress);
+    };
+
+    const syncFromNativeScroll = () => {
+      if (!track) return;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      const progress = maxScroll <= 0 ? 0 : track.scrollLeft / maxScroll;
+      updateTrackState(progress);
+    };
+
+    if (!prefersReducedMotion && shaderCanvases.length) {
+      if ('ResizeObserver' in window) {
+        shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
+        cards.forEach((card) => shaderResizeObserver?.observe(card));
+      }
+
+      if ('IntersectionObserver' in window) {
+        shaderObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) void initCardShader(entry.target as HTMLCanvasElement);
+            });
+          },
+          {
+            root: null,
+            rootMargin: '75% 75%',
+          }
+        );
+
+        shaderCanvases.forEach((canvas) => shaderObserver?.observe(canvas));
+      } else {
+        shaderCanvases.forEach((canvas) => void initCardShader(canvas));
+      }
+
+      scheduleNearbyShaderWarm();
+      window.addEventListener('resize', scheduleNearbyShaderWarm, { signal: ac.signal });
+    }
+
+    cards.forEach((card) => {
+      card.addEventListener('pointerenter', () => setCardShaderActive(card, true), { signal: ac.signal });
+      card.addEventListener('pointerleave', () => setCardShaderActive(card, false), { signal: ac.signal });
+      card.addEventListener('focusin', () => setCardShaderActive(card, true), { signal: ac.signal });
+      card.addEventListener(
+        'focusout',
+        (event) => {
+          const nextTarget = event.relatedTarget;
+          if (nextTarget instanceof Node && card.contains(nextTarget)) return;
+          setCardShaderActive(card, false);
+        },
+        { signal: ac.signal }
+      );
+    });
+
+    if (prefersReducedMotion) {
+      section.classList.remove('is-scroll-driven');
+      clearImageParallax();
+      syncFromNativeScroll();
+      track?.addEventListener('scroll', syncFromNativeScroll, { passive: true, signal: ac.signal });
+      window.addEventListener('resize', syncFromNativeScroll, { signal: ac.signal });
+    } else if (scrollWrap && track && trackInner) {
+      section.classList.add('is-scroll-driven');
+
+      const scene = ScrollTrigger.create({
+        trigger: scrollWrap,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onRefreshInit: scheduleNearbyShaderWarm,
+        onRefresh: (self) => {
+          setHorizontalProgress(self.progress);
+          scheduleNearbyShaderWarm();
+        },
+        onUpdate: (self) => {
+          setHorizontalProgress(self.progress);
+          scheduleNearbyShaderWarm();
+        },
+      });
+
+      scrollTriggers.push(scene);
+      setHorizontalProgress(scene.progress);
+
+      window.addEventListener('resize', () => ScrollTrigger.refresh(), { signal: ac.signal });
+    }
+
+    cleanupFn = () => {
+      isCleanedUp = true;
+      if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
+      if (shaderWarmFrame) window.cancelAnimationFrame(shaderWarmFrame);
+      shaderObserver?.disconnect();
+      shaderResizeObserver?.disconnect();
+      shaderStates.forEach((state) => {
+        state.pixelateTween?.kill();
+        state.shader.destroy();
+      });
+      shaderStates.clear();
+      cards.forEach((card) => {
+        card.classList.remove('is-shader-ready');
+        card.classList.remove('is-shader-active');
+      });
+      shaderCanvases.forEach((canvas) => {
+        canvas.style.removeProperty('width');
+        canvas.style.removeProperty('height');
+      });
+      scrollTriggers.forEach((trigger) => trigger.kill());
+      section.classList.remove('is-scroll-driven');
+      trackInner?.style.removeProperty('transform');
+      clearImageParallax();
+      ac.abort();
+    };
+  }
+
+  initWorkSelectedCards();
+  document.addEventListener('astro:after-swap', initWorkSelectedCards);
+</script>

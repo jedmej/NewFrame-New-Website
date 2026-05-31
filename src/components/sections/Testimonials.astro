@@ -14,19 +14,19 @@ const totalStr = String(items.length).padStart(2, '0');
 
 <section
   id="testimonials"
-  class="testimonial-horizontal"
+  class="testimonial-diagonal"
   aria-label={t.testimonials.label}
   data-testimonial-total={items.length}
 >
-  <div class="testimonial-horizontal__scroll">
-    <div class="testimonial-horizontal__sticky">
-      <div class="testimonial-horizontal__counter text-mono-xs" aria-hidden="true">
+  <div class="testimonial-diagonal__scroll">
+    <div class="testimonial-diagonal__sticky">
+      <div class="testimonial-diagonal__counter text-mono-xs" aria-hidden="true">
         <span id="testimonial-counter-active">01</span>
         <span>/</span>
         <span>{totalStr}</span>
       </div>
 
-      <div class="testimonial-horizontal__stage" data-testimonial-stage>
+      <div class="testimonial-diagonal__stage" data-testimonial-stage>
         {items.map((item, i) => (
           <article
             class="testimonial-card"
@@ -50,23 +50,25 @@ const totalStr = String(items.length).padStart(2, '0');
 </section>
 
 <style>
-  .testimonial-horizontal {
+  .testimonial-diagonal {
     --testimonial-ink: #ffffff;
     --testimonial-muted: rgba(255, 255, 255, 0.72);
     --testimonial-faint: rgba(255, 255, 255, 0.18);
     --testimonial-card-width: clamp(18.5rem, 36vw, 32.5rem);
     --testimonial-card-height: clamp(26rem, 62vh, 38.125rem);
+    --testimonial-diag-x: clamp(7rem, 16vw, 13rem);
+    --testimonial-diag-y: clamp(5rem, 12vh, 9.5rem);
 
     position: relative;
     color: var(--testimonial-ink);
   }
 
-  .testimonial-horizontal__scroll {
-    height: calc(100svh + (var(--testimonial-total, 3) * 28svh));
-    min-height: 176svh;
+  .testimonial-diagonal__scroll {
+    height: calc(100svh + (var(--testimonial-total, 3) * 30svh));
+    min-height: 188svh;
   }
 
-  .testimonial-horizontal__sticky {
+  .testimonial-diagonal__sticky {
     position: sticky;
     top: 0;
     display: grid;
@@ -78,18 +80,18 @@ const totalStr = String(items.length).padStart(2, '0');
     padding: clamp(7rem, 15vh, 8.5rem) clamp(1.5rem, 5vw, 4.5rem) clamp(6.5rem, 13vh, 8rem);
   }
 
-  .testimonial-horizontal__counter {
+  .testimonial-diagonal__counter {
     justify-self: center;
     color: color-mix(in srgb, #C43E3D 52%, #ffffff);
     letter-spacing: 0.16em;
     font-variant-numeric: tabular-nums;
   }
 
-  .testimonial-horizontal__stage {
+  .testimonial-diagonal__stage {
     position: relative;
     width: 100%;
-    height: min(62svh, 38.125rem);
-    min-height: 31rem;
+    height: min(68svh, 42rem);
+    min-height: 34rem;
   }
 
   .testimonial-card {
@@ -138,14 +140,14 @@ const totalStr = String(items.length).padStart(2, '0');
   }
 
   @media (max-width: 767px) {
-    .testimonial-horizontal__sticky {
+    .testimonial-diagonal__sticky {
       row-gap: clamp(1.75rem, 5vh, 3rem);
       padding: clamp(6.5rem, 14vh, 7.5rem) clamp(1.15rem, 5vw, 1.5rem) clamp(5.25rem, 11vh, 6.5rem);
     }
 
-    .testimonial-horizontal__stage {
-      height: 62svh;
-      min-height: 28rem;
+    .testimonial-diagonal__stage {
+      height: 64svh;
+      min-height: 30rem;
     }
 
     .testimonial-card {
@@ -162,20 +164,22 @@ const totalStr = String(items.length).padStart(2, '0');
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .testimonial-horizontal__scroll {
+    .testimonial-diagonal__scroll {
       height: auto;
       min-height: auto;
     }
 
-    .testimonial-horizontal__sticky {
+    .testimonial-diagonal__sticky {
       position: relative;
     }
 
-    .testimonial-horizontal__stage {
-      display: grid;
+    .testimonial-diagonal__stage {
+      display: flex;
+      flex-direction: column;
       height: auto;
       min-height: auto;
-      gap: 2rem;
+      gap: clamp(2rem, 6vw, 3rem);
+      padding-block: 1rem;
     }
 
     .testimonial-card {
@@ -186,7 +190,18 @@ const totalStr = String(items.length).padStart(2, '0');
       max-width: 36rem;
       height: auto;
       min-height: 24rem;
+      margin-inline: auto;
       transform: none;
+    }
+
+    .testimonial-card:nth-child(odd) {
+      margin-inline: auto auto;
+      margin-right: clamp(0rem, 8vw, 4rem);
+    }
+
+    .testimonial-card:nth-child(even) {
+      margin-inline: auto auto;
+      margin-left: clamp(0rem, 8vw, 4rem);
     }
   }
 </style>
@@ -208,7 +223,7 @@ const totalStr = String(items.length).padStart(2, '0');
 
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const sticky = section.querySelector<HTMLElement>('.testimonial-horizontal__sticky');
+    const stage = section.querySelector<HTMLElement>('[data-testimonial-stage]');
     const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-testimonial-card]'));
     const counterActiveEl = document.getElementById('testimonial-counter-active');
     const scrollTriggers: ScrollTrigger[] = [];
@@ -225,17 +240,22 @@ const totalStr = String(items.length).padStart(2, '0');
     const smooth = (value: number) => value * value * (3 - 2 * value);
     const interpolate = gsap.utils.interpolate;
 
+    const getDiagonalSpacing = () => {
+      const isMobile = window.innerWidth < 768;
+      return {
+        x: isMobile ? 58 : 36,
+        y: isMobile ? 46 : 28,
+      };
+    };
+
     const renderCards = (progress: number) => {
       const cardTravelProgress = clamp(progress / 0.88);
       const track = cardTravelProgress * Math.max(totalCards - 1, 1);
       const activeIndex = Math.min(totalCards - 1, Math.round(track));
+      const { x: diagX, y: diagY } = getDiagonalSpacing();
 
       if (counterActiveEl) {
         counterActiveEl.textContent = String(activeIndex + 1).padStart(2, '0');
-      }
-
-      if (sticky) {
-        sticky.style.transform = 'translate3d(0, 0, 0)';
       }
 
       cards.forEach((card, index) => {
@@ -243,24 +263,28 @@ const totalStr = String(items.length).padStart(2, '0');
         const absOffset = Math.abs(offset);
         const near = smooth(clamp(1 - absOffset));
         const side = offset < 0 ? -1 : 1;
-        const x = offset * (window.innerWidth < 768 ? 74 : 46);
-        const opacity = interpolate(0.42, 1, near);
+        const x = offset * diagX;
+        const y = offset * diagY;
+        const opacity = interpolate(0.38, 1, near);
         const blur = interpolate(3.5, 0, near);
-        const trail = blur * (window.innerWidth < 768 ? 1.7 : 2.25);
-        const trailOpacity = clamp((1 - near) * 0.18, 0, 0.18);
+        const scale = interpolate(0.9, 1, near);
+        const trail = blur * (window.innerWidth < 768 ? 1.5 : 2);
+        const trailOpacity = clamp((1 - near) * 0.16, 0, 0.16);
         const directionalBlur = blur > 0.08
-          ? `blur(${blur.toFixed(2)}px) drop-shadow(-${trail.toFixed(2)}px 0 ${(trail * 1.1).toFixed(2)}px rgba(255, 255, 255, ${trailOpacity.toFixed(3)}))`
+          ? `blur(${blur.toFixed(2)}px) drop-shadow(${trail.toFixed(2)}px ${trail.toFixed(2)}px ${(trail * 1.15).toFixed(2)}px rgba(255, 255, 255, ${trailOpacity.toFixed(3)}))`
           : 'none';
 
         card.style.zIndex = String(Math.round(100 - absOffset * 10));
         card.style.opacity = opacity.toFixed(3);
         card.style.filter = directionalBlur;
-        card.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}vw), -50%, 0)`;
+        card.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}vw), calc(-50% + ${y.toFixed(2)}vh), 0) scale(${scale.toFixed(3)})`;
         card.style.pointerEvents = absOffset < 0.6 ? 'auto' : 'none';
 
         if (absOffset > 1.65) {
+          const exitX = side * (window.innerWidth < 768 ? 92 : 72);
+          const exitY = side * (window.innerWidth < 768 ? 74 : 56);
           card.style.opacity = '0';
-          card.style.transform = `translate3d(calc(-50% + ${side * 72}vw), -50%, 0)`;
+          card.style.transform = `translate3d(calc(-50% + ${exitX}vw), calc(-50% + ${exitY}vh), 0) scale(0.88)`;
         }
       });
     };
@@ -283,7 +307,6 @@ const totalStr = String(items.length).padStart(2, '0');
         card.style.filter = 'none';
         card.style.transform = 'none';
       });
-      if (sticky) sticky.style.transform = 'none';
     }
 
     cleanupFn = () => {
@@ -295,7 +318,7 @@ const totalStr = String(items.length).padStart(2, '0');
         card.style.removeProperty('transform');
         card.style.removeProperty('pointer-events');
       });
-      sticky?.style.removeProperty('transform');
+      stage?.style.removeProperty('transform');
       ac.abort();
     };
   }
