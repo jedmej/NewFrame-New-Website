@@ -105,7 +105,7 @@ const t = useTranslations(lang);
 
   @media (max-width: 1023px) {
     .about-paper-section__inner {
-      width: min(100% - 3rem, 52rem);
+      width: min(100% - (var(--mobile-section-gutter) * 2), 52rem);
       padding-block: clamp(5rem, 12vw, 7rem);
     }
 
@@ -118,13 +118,18 @@ const t = useTranslations(lang);
 
   @media (max-width: 640px) {
     .about-paper-section__inner {
-      width: calc(100% - 2.5rem);
+      width: calc(100% - (var(--mobile-section-gutter) * 2));
     }
 
     .about-paper-section__topbar {
       grid-template-columns: 1fr;
       gap: 1rem;
       margin-bottom: 3rem;
+    }
+
+    .about-paper-section__manifesto {
+      font-size: 1.70625rem;
+      line-height: 2.275rem;
     }
 
   }

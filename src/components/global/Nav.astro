@@ -135,48 +135,54 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 <!-- Mobile Menu Overlay -->
 <div
   id="mobile-menu"
-  class="fixed inset-0 z-[99] bg-[var(--color-bg)] flex flex-col items-end justify-end px-4 pb-12 pointer-events-none"
+  class="fixed inset-0 z-[99] pointer-events-none"
   style="clip-path: inset(0 0 100% 0);"
   aria-hidden="true"
 >
-  <div class="flex flex-col items-end gap-2">
-    <a href={`/${lang}/#work`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.work}</a>
-    <a href={`/${lang}/#scope`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.scope}</a>
-    <a href={`/${lang}/#ways-to-work`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.services}</a>
-    <a href={`/${lang}/#contact`} class="mobile-menu-link text-display-lg text-right opacity-0 translate-y-8">{t.nav.contact}</a>
-  </div>
-  <div class="flex items-center gap-6 mt-10 opacity-0 translate-y-8 mobile-menu-link">
-    <button
-      type="button"
-      class="nav-grain-toggle nav-grain-toggle--mobile"
-      data-grain-toggle
-      data-label-on={t.nav.grainOn}
-      data-label-off={t.nav.grainOff}
-      aria-label={t.nav.grainOn}
-      aria-pressed="true"
-    >
-      <span class="nav-grain-toggle__label text-mono-xs">{t.nav.grain}</span>
-      <span class="nav-grain-toggle__track" aria-hidden="true">
-        <span class="nav-grain-toggle__thumb"></span>
-      </span>
-    </button>
-    <button
-      type="button"
-      class="nav-grain-toggle nav-grain-toggle--mobile"
-      data-shader-toggle
-      data-label-on={t.nav.shaderOn}
-      data-label-off={t.nav.shaderOff}
-      aria-label={t.nav.shaderOn}
-      aria-pressed="true"
-    >
-      <span class="nav-grain-toggle__label text-mono-xs">{t.nav.shader}</span>
-      <span class="nav-grain-toggle__track" aria-hidden="true">
-        <span class="nav-grain-toggle__thumb"></span>
-      </span>
-    </button>
-    <a href={altUrl} class="text-mono-xs opacity-60 hover:opacity-100 transition-opacity" data-lang-switch={altLang}>
-      {altLang.toUpperCase()}
-    </a>
+  <div class="mobile-menu__veil" aria-hidden="true"></div>
+  <div class="mobile-menu__glow mobile-menu__glow--bottom" aria-hidden="true"></div>
+
+  <div class="mobile-menu__inner">
+    <div class="mobile-menu__links">
+      <a href={`/${lang}/#work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.work}</a>
+      <a href={`/${lang}/#scope`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.scope}</a>
+      <a href={`/${lang}/#ways-to-work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.services}</a>
+      <a href={`/${lang}/#contact`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.contact}</a>
+    </div>
+
+    <div class="mobile-menu__utility opacity-0 translate-y-8 mobile-menu-link">
+      <button
+        type="button"
+        class="nav-grain-toggle nav-grain-toggle--mobile"
+        data-grain-toggle
+        data-label-on={t.nav.grainOn}
+        data-label-off={t.nav.grainOff}
+        aria-label={t.nav.grainOn}
+        aria-pressed="true"
+      >
+        <span class="nav-grain-toggle__label text-mono-xs">{t.nav.grain}</span>
+        <span class="nav-grain-toggle__track" aria-hidden="true">
+          <span class="nav-grain-toggle__thumb"></span>
+        </span>
+      </button>
+      <button
+        type="button"
+        class="nav-grain-toggle nav-grain-toggle--mobile"
+        data-shader-toggle
+        data-label-on={t.nav.shaderOn}
+        data-label-off={t.nav.shaderOff}
+        aria-label={t.nav.shaderOn}
+        aria-pressed="true"
+      >
+        <span class="nav-grain-toggle__label text-mono-xs">{t.nav.shader}</span>
+        <span class="nav-grain-toggle__track" aria-hidden="true">
+          <span class="nav-grain-toggle__thumb"></span>
+        </span>
+      </button>
+      <a href={altUrl} class="mobile-menu__lang text-mono-xs" data-lang-switch={altLang}>
+        {altLang.toUpperCase()}
+      </a>
+    </div>
   </div>
 </div>
 
@@ -375,85 +381,178 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     }
 
     #mobile-menu {
+      --mobile-menu-top-inset: max(0.875rem, env(safe-area-inset-top));
+      --mobile-menu-pad-x: clamp(1rem, 4vw, 1.6rem);
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
       z-index: 99;
-      align-items: stretch;
-      justify-content: flex-start;
-      padding: calc(var(--nav-top-inset) + 4.65rem) clamp(1rem, 4vw, 1.35rem) 1.25rem;
+      color: var(--color-text);
       overflow: hidden;
       background:
+        radial-gradient(circle at 18% 92%, rgba(20, 18, 15, 0.08), transparent 34%),
         linear-gradient(
-          180deg,
-          color-mix(in srgb, var(--color-bg) 88%, transparent) 0%,
-          color-mix(in srgb, var(--color-bg) 80%, transparent) 42%,
-          color-mix(in srgb, var(--color-bg) 66%, transparent) 100%
+          135deg,
+          color-mix(in srgb, var(--color-bg) 46%, transparent) 0%,
+          color-mix(in srgb, var(--color-surface) 38%, transparent) 46%,
+          color-mix(in srgb, var(--color-bg-warm) 42%, transparent) 100%
         );
-      -webkit-backdrop-filter: blur(24px) saturate(1.08);
-      backdrop-filter: blur(24px) saturate(1.08);
+      -webkit-backdrop-filter: blur(26px) saturate(1.08);
+      backdrop-filter: blur(26px) saturate(1.08);
     }
 
-    #mobile-menu > div:first-child {
-      align-items: stretch;
-      gap: 0;
-      width: 100%;
+    .mobile-menu__veil {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(244, 244, 244, 0.12) 0%, rgba(244, 244, 244, 0.03) 48%, rgba(20, 18, 15, 0.04) 100%),
+        repeating-linear-gradient(90deg, rgba(20, 18, 15, 0.032) 0 1px, transparent 1px 25vw);
+      pointer-events: none;
     }
 
-    #mobile-menu > div:last-child {
-      margin-top: 0;
-      padding: 1rem 0 0;
-      border-top: 1px solid rgba(20, 18, 15, 0.1);
+    .mobile-menu__glow {
+      position: absolute;
+      width: clamp(17rem, 52vw, 34rem);
+      aspect-ratio: 1;
+      border-radius: 999px;
+      pointer-events: none;
+      filter: blur(54px);
+      opacity: 0.48;
+      transform: translateZ(0);
     }
 
-    .mobile-menu-link {
+    .mobile-menu__glow--bottom {
+      bottom: -12rem;
+      left: -9rem;
+      background: rgba(230, 222, 210, 0.38);
+    }
+
+    .mobile-menu__inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      box-sizing: border-box;
+      height: 100dvh;
+      grid-template-rows: minmax(0, 1fr) auto;
+      padding: calc(var(--mobile-menu-top-inset) + 5.6rem) var(--mobile-menu-pad-x) max(1.2rem, env(safe-area-inset-bottom));
+    }
+
+    .mobile-menu__links {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 3.65rem;
-      padding: 0;
-      border-top: 1px solid rgba(20, 18, 15, 0.1);
-      font-family: var(--font-mono);
-      font-size: clamp(0.82rem, 3.25vw, 1rem);
-      line-height: 1;
-      letter-spacing: 0.14em;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: clamp(0.55rem, 1.8vh, 1.25rem);
+      padding-block: clamp(1.75rem, 6vh, 4.25rem) clamp(1.5rem, 4.2vh, 3.25rem);
+    }
+
+    .mobile-menu-link--primary {
+      position: relative;
+      display: block;
+      align-items: end;
+      width: 100%;
+      min-height: clamp(4rem, 12.5vw, 8.5rem);
+      border-bottom: 1px solid rgba(20, 18, 15, 0.1);
+      color: var(--color-text);
+      font-family: var(--font-display);
+      font-size: clamp(3.75rem, 11.8vw, 7rem);
+      font-weight: 300;
+      line-height: 0.82;
+      letter-spacing: -0.035em;
       text-align: left;
-      text-transform: uppercase;
+      text-wrap: balance;
+      transition:
+        color 0.32s var(--ease-out-quart),
+        opacity 0.32s var(--ease-out-quart),
+        transform 0.32s var(--ease-out-quart);
     }
 
-    .mobile-menu-link:first-child {
-      border-top: 0;
-    }
-
-    .mobile-menu-link::after {
-      width: 0.38rem;
-      height: 0.38rem;
-      flex: 0 0 auto;
-      margin-left: 1rem;
+    .mobile-menu-link--primary::after {
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: 1px;
       background: var(--color-accent);
       content: '';
-      transform: rotate(45deg);
+      opacity: 0.8;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.42s var(--ease-out-expo);
     }
 
-    #mobile-menu > .mobile-menu-link {
-      min-height: auto;
-      padding: 0;
-      border-top: 0;
+    .mobile-menu-link--primary:hover,
+    .mobile-menu-link--primary:focus-visible {
+      color: var(--color-accent);
+      transform: translateX(0.18rem);
+    }
+
+    .mobile-menu-link--primary:hover::after,
+    .mobile-menu-link--primary:focus-visible::after {
+      transform: scaleX(1);
+    }
+
+    .mobile-menu-link--primary:last-child {
+      border-bottom: 0;
+    }
+
+    .mobile-menu__utility {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+      gap: 0.75rem;
+      align-items: center;
+      border-top: 1px solid rgba(20, 18, 15, 0.14);
+      padding-top: 1rem;
+    }
+
+    .mobile-menu__lang {
+      justify-self: end;
       color: var(--color-text-muted);
+      opacity: 0.78;
+      transition:
+        color 0.24s var(--ease-out-quart),
+        opacity 0.24s var(--ease-out-quart);
     }
 
-    #mobile-menu > .mobile-menu-link::after {
-      content: none;
+    .mobile-menu__lang:hover,
+    .mobile-menu__lang:focus-visible {
+      color: var(--color-accent);
+      opacity: 1;
     }
 
     .nav-grain-toggle--mobile {
       color: var(--color-text-muted);
-      opacity: 0.72;
+      justify-content: flex-start;
+      opacity: 0.76;
     }
 
     #mobile-menu-btn {
       margin-right: -0.5rem;
+      position: relative;
+      min-width: 2.75rem;
+      border-radius: 999px;
+      background: rgba(244, 244, 244, 0);
+      -webkit-backdrop-filter: blur(0px);
+      backdrop-filter: blur(0px);
+    }
+
+    #main-nav.nav-menu-open #mobile-menu-btn {
+      color: var(--color-text);
+      background: rgba(247, 242, 233, 0.52);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .mobile-menu-link--primary {
+      font-size: clamp(3.3rem, 17.6vw, 5.25rem);
+      min-height: clamp(3.65rem, 19vw, 5.5rem);
+      letter-spacing: -0.04em;
+    }
+
+    .mobile-menu__lang {
+      justify-self: end;
     }
   }
 

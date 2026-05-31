@@ -46,6 +46,10 @@
   --dur-slower: 1.6s;
 }
 
+:root {
+  --mobile-section-gutter: 3rem;
+}
+
 /* ===== FONT FACES ===== */
 
 /* Nohemi - Sans/UI */

@@ -58,6 +58,7 @@ const totalStr = String(items.length).padStart(2, '0');
     --testimonial-card-height: clamp(26rem, 62vh, 38.125rem);
     --testimonial-diag-x: clamp(7rem, 16vw, 13rem);
     --testimonial-diag-y: clamp(5rem, 12vh, 9.5rem);
+    --testimonial-pad-inline: clamp(1.5rem, 5vw, 4.5rem);
 
     position: relative;
     color: var(--testimonial-ink);
@@ -77,7 +78,7 @@ const totalStr = String(items.length).padStart(2, '0');
     row-gap: clamp(2.25rem, 6.5vh, 7.75rem);
     align-items: center;
     overflow: clip;
-    padding: clamp(7rem, 15vh, 8.5rem) clamp(1.5rem, 5vw, 4.5rem) clamp(6.5rem, 13vh, 8rem);
+    padding: clamp(7rem, 15vh, 8.5rem) var(--testimonial-pad-inline) clamp(6.5rem, 13vh, 8rem);
   }
 
   .testimonial-diagonal__counter {
@@ -140,9 +141,13 @@ const totalStr = String(items.length).padStart(2, '0');
   }
 
   @media (max-width: 767px) {
+    .testimonial-diagonal {
+      --testimonial-pad-inline: var(--mobile-section-gutter);
+    }
+
     .testimonial-diagonal__sticky {
       row-gap: clamp(1.75rem, 5vh, 3rem);
-      padding: clamp(6.5rem, 14vh, 7.5rem) clamp(1.15rem, 5vw, 1.5rem) clamp(5.25rem, 11vh, 6.5rem);
+      padding-block: clamp(6.5rem, 14vh, 7.5rem) clamp(5.25rem, 11vh, 6.5rem);
     }
 
     .testimonial-diagonal__stage {
@@ -177,14 +182,15 @@ const totalStr = String(items.length).padStart(2, '0');
 
     .testimonial-diagonal__stage {
       display: flex;
-      width: auto;
+      width: calc(100% + var(--testimonial-pad-inline));
       height: auto;
       min-height: auto;
       gap: clamp(1rem, 3vw, 1.5rem);
+      margin-right: calc(var(--testimonial-pad-inline) * -1);
       overflow-x: auto;
       overflow-y: visible;
       overscroll-behavior-x: contain;
-      scroll-padding-inline: clamp(1.15rem, 5vw, 4.5rem);
+      scroll-padding-inline: var(--testimonial-pad-inline) 0;
       scroll-snap-type: x proximity;
       scrollbar-width: none;
       touch-action: pan-x pan-y;
