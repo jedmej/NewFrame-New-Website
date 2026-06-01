@@ -113,6 +113,10 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
   <div class="mobile-menu__glow mobile-menu__glow--bottom" aria-hidden="true"></div>
 
   <div class="mobile-menu__inner">
+    <div class="mobile-menu__shader opacity-0" aria-hidden="true">
+      <canvas class="mobile-menu__shader-canvas" data-mobile-menu-shader></canvas>
+    </div>
+
     <div class="mobile-menu__links">
       <a href={`/${lang}/#work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">
         <span class="mobile-menu-link__mask">
@@ -379,8 +383,31 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       display: grid;
       box-sizing: border-box;
       height: 100dvh;
-      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-rows: minmax(0, 1fr) auto auto;
       padding: calc(var(--mobile-menu-top-inset) + 5.6rem) var(--mobile-menu-pad-x) max(1.2rem, env(safe-area-inset-bottom));
+    }
+
+    .mobile-menu__shader {
+      display: flex;
+      width: 100vw;
+      min-height: 0;
+      align-items: flex-end;
+      justify-content: center;
+      margin-inline: calc(50% - 50vw);
+      margin-bottom: clamp(0.15rem, 1vh, 0.55rem);
+      padding-inline: clamp(0.35rem, 1.6vw, 0.75rem);
+      pointer-events: none;
+      will-change: transform, opacity, filter;
+    }
+
+    .mobile-menu__shader-canvas {
+      display: block;
+      width: 70%;
+      max-width: 70%;
+      height: auto;
+      aspect-ratio: 1;
+      max-height: min(44.8dvh, calc((100vw - clamp(0.7rem, 3.2vw, 1.4rem)) * 0.7));
+      background: transparent;
     }
 
     .mobile-menu__links {
@@ -388,7 +415,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       flex-direction: column;
       justify-content: flex-end;
       gap: clamp(0.55rem, 1.8vh, 1.25rem);
-      padding-block: clamp(1.75rem, 6vh, 4.25rem) clamp(1.5rem, 4.2vh, 3.25rem);
+      padding-block: clamp(0.75rem, 2.8vh, 2rem) clamp(1.5rem, 4.2vh, 3.25rem);
     }
 
     .mobile-menu-link--primary {
@@ -588,14 +615,71 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     #main-nav {
       opacity: 1;
     }
+
+    .mobile-menu__shader {
+      display: none;
+    }
   }
 </style>
 
 <script>
   import gsap from 'gsap';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+  import { createShader } from 'shaders/js';
+  import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(ScrambleTextPlugin);
+
+  const mobileMenuShaderPreset = {
+    components: [
+      {
+        type: 'SolidColor',
+        id: 'idmop8t2dvsdkdqrtcr',
+        props: {
+          color: '#0a0a0a',
+          visible: false,
+        },
+      },
+      {
+        type: 'Glass',
+        id: 'idmop8t2dv4iyazjw21',
+        props: {
+          aberration: 1,
+          cutout: true,
+          fresnel: 0.01,
+          fresnelSoftness: 0.14,
+          highlight: 0,
+          refraction: 1.09,
+          shapeSdfUrl: 'https://data.shaders.com/storage/v1/object/public/user-uploaded-images/user_3DLKqHT8k7i5jfwRZGrJetvEjim/w7t-kPRSeQXM_sdf.bin',
+          thickness: 0.27,
+        },
+        children: [
+          {
+            type: 'Swirl',
+            id: 'idmop8t2dvin3ihed08',
+            props: {
+              blend: 56,
+              colorA: '#ffffff',
+              colorB: '#0a0a0a',
+              colorSpace: 'oklab',
+              detail: 4.2,
+              speed: 0.1,
+            },
+          },
+          {
+            type: 'FlowField',
+            id: 'idmop8t2dv05jgxsb3c',
+            props: {
+              detail: 1,
+              evolutionSpeed: 1.5,
+              speed: 1.8,
+              strength: 0.5,
+            },
+          },
+        ],
+      },
+    ],
+  } as const;
 
   let cleanupFn: (() => void) | null = null;
 
@@ -833,11 +917,64 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const menuPrimaryLinks = Array.from(mobileMenu?.querySelectorAll<HTMLElement>('.mobile-menu-link--primary') || []);
     const menuLabels = Array.from(mobileMenu?.querySelectorAll<HTMLElement>('.mobile-menu-link__label') || []);
     const menuUtility = mobileMenu?.querySelector<HTMLElement>('.mobile-menu__utility');
+    const menuShader = mobileMenu?.querySelector<HTMLElement>('.mobile-menu__shader');
+    const menuShaderCanvas = mobileMenu?.querySelector<HTMLCanvasElement>('[data-mobile-menu-shader]');
     const isPolish = document.documentElement.lang === 'pl';
     const openMenuLabel = isPolish ? 'Otwórz menu' : 'Open menu';
     const closeMenuLabel = isPolish ? 'Zamknij menu' : 'Close menu';
+    const isMobileViewport = () => window.innerWidth < 1024;
     let menuOpen = false;
     let menuRevealTl: gsap.core.Timeline | null = null;
+    let mobileMenuShader: ShaderInstance | null = null;
+    let mobileMenuShaderInitPromise: Promise<void> | null = null;
+    let mobileMenuShaderDisposed = false;
+
+    const destroyMobileMenuShader = () => {
+      mobileMenuShaderInitPromise = null;
+      if (mobileMenuShader) {
+        mobileMenuShader.destroy();
+        mobileMenuShader = null;
+      }
+    };
+
+    const ensureMobileMenuShader = () => {
+      if (
+        mobileMenuShaderDisposed
+        || prefersReducedMotion
+        || !isMobileViewport()
+        || !menuShaderCanvas
+        || mobileMenuShader
+        || mobileMenuShaderInitPromise
+      ) {
+        return mobileMenuShaderInitPromise;
+      }
+
+      mobileMenuShaderInitPromise = (async () => {
+        try {
+          const shader = await createShader(menuShaderCanvas, mobileMenuShaderPreset, {
+            disableTelemetry: true,
+          });
+
+          if (mobileMenuShaderDisposed) {
+            shader.destroy();
+            return;
+          }
+
+          mobileMenuShader = shader;
+          if (menuOpen) {
+            shader.resume();
+          } else {
+            shader.pause();
+          }
+        } catch (error) {
+          console.warn('[nav] Failed to initialize mobile menu shader', error);
+        } finally {
+          mobileMenuShaderInitPromise = null;
+        }
+      })();
+
+      return mobileMenuShaderInitPromise;
+    };
 
     function openMenu() {
       menuOpen = true;
@@ -875,6 +1012,14 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         y: 18,
         filter: 'blur(8px)',
       });
+      gsap.set(menuShader, {
+        opacity: 0,
+        scale: 0.94,
+        filter: 'blur(10px)',
+      });
+
+      void ensureMobileMenuShader();
+      mobileMenuShader?.resume();
 
       menuRevealTl?.kill();
       menuRevealTl = gsap.timeline({
@@ -884,6 +1029,12 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       timelines.push(menuRevealTl);
 
       menuRevealTl
+        .to(menuShader, {
+          opacity: 1,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.92,
+        }, 0)
         .to([...menuLabels].reverse(), {
           yPercent: 0,
           opacity: 1,
@@ -900,6 +1051,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     }
 
     function closeMenu() {
+      mobileMenuShader?.pause();
       menuOpen = false;
       menuRevealTl?.kill();
       menuRevealTl = null;
@@ -921,6 +1073,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
           // Reset link positions for next open
           gsap.set(menuLinks!, { opacity: 0, y: 8, filter: 'none' });
           gsap.set(menuLabels, { yPercent: 118, opacity: 0, filter: 'blur(10px)' });
+          gsap.set(menuShader, { opacity: 0, scale: 0.94, filter: 'blur(10px)' });
         },
       });
 
@@ -985,11 +1138,21 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       }, { signal });
     });
 
+    const handleViewportChange = () => {
+      if (!isMobileViewport()) {
+        destroyMobileMenuShader();
+      }
+    };
+
+    window.addEventListener('resize', handleViewportChange, { signal });
+
     cleanupFn = () => {
+      mobileMenuShaderDisposed = true;
+      destroyMobileMenuShader();
       timelines.forEach((tl) => tl.kill());
       gsap.killTweensOf(nav);
       gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-cta, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line'));
-      gsap.killTweensOf(mobileMenu?.querySelectorAll('.mobile-menu-link') || []);
+      gsap.killTweensOf(mobileMenu?.querySelectorAll('.mobile-menu-link, .mobile-menu__shader') || []);
       if (mobileMenu) {
         gsap.killTweensOf(mobileMenu);
       }
