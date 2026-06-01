@@ -376,8 +376,54 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     }
 
     .nav-brand {
-      height: 2.5rem !important;
+      width: 2.75rem;
+      min-width: 2.75rem;
+      height: 2.75rem !important;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 0;
+      background: rgba(247, 242, 233, 0);
+      -webkit-backdrop-filter: blur(0);
+      backdrop-filter: blur(0);
+      transition:
+        width 0.32s var(--ease-out-expo),
+        border-color 0.28s var(--ease-out-expo),
+        background-color 0.28s var(--ease-out-expo),
+        color 0.24s var(--ease-out-quart),
+        opacity 0.24s var(--ease-out-quart);
+    }
+
+    #logo-text,
+    #logo-icon {
+      transition:
+        opacity 0.28s var(--ease-out-quart),
+        transform 0.32s var(--ease-out-expo);
+    }
+
+    #logo-text {
+      opacity: 0;
       padding-top: 0.55rem;
+      transform: translate3d(0, -100%, 0);
+      pointer-events: none;
+    }
+
+    #logo-icon {
+      top: 50% !important;
+      left: 50%;
+      height: 1rem !important;
+      translate: none;
+      opacity: 1;
+      transform: translate3d(-50%, -50%, 0);
+    }
+
+    #main-nav.nav-mobile-scrolled .nav-brand {
+      height: 2.75rem !important;
+      border-color: rgba(20, 18, 15, 0.08);
+      background: rgba(247, 242, 233, 0.34);
+      -webkit-backdrop-filter: blur(18px) saturate(1.04);
+      backdrop-filter: blur(18px) saturate(1.04);
     }
 
     #mobile-menu {
@@ -528,16 +574,36 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     #mobile-menu-btn {
       margin-right: -0.5rem;
       position: relative;
+      width: 2.75rem;
+      height: 2.75rem;
       min-width: 2.75rem;
+      min-height: 2.75rem;
+      align-items: center;
+      justify-content: center;
+      border-color: transparent;
       border-radius: 999px;
+      padding: 0;
       background: rgba(244, 244, 244, 0);
       -webkit-backdrop-filter: blur(0px);
       backdrop-filter: blur(0px);
     }
 
+    #mobile-menu-btn .menu-line {
+      margin-left: 0 !important;
+      transform-origin: center;
+    }
+
+    #main-nav.nav-mobile-scrolled #mobile-menu-btn {
+      border-color: rgba(20, 18, 15, 0.08);
+      background: rgba(247, 242, 233, 0.34);
+      -webkit-backdrop-filter: blur(18px) saturate(1.04);
+      backdrop-filter: blur(18px) saturate(1.04);
+    }
+
     #main-nav.nav-menu-open #mobile-menu-btn {
       color: var(--color-text);
-      background: rgba(247, 242, 233, 0.52);
+      border-color: rgba(20, 18, 15, 0.08);
+      background: rgba(247, 242, 233, 0.34);
       -webkit-backdrop-filter: blur(18px);
       backdrop-filter: blur(18px);
     }
@@ -644,6 +710,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const timelines: gsap.core.Timeline[] = [];
     let navToneFrame = 0;
+    let mobileNavFrame = 0;
 
     const runIntro = () => {
       const logoLink = document.getElementById('logo-link');
@@ -757,10 +824,25 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       navToneFrame = window.requestAnimationFrame(updateNavTone);
     };
 
+    const updateMobileNavState = () => {
+      mobileNavFrame = 0;
+      const shouldCompact = window.innerWidth < 1024 && window.scrollY > 8;
+      nav.classList.toggle('nav-mobile-scrolled', shouldCompact);
+    };
+
+    const scheduleMobileNavStateUpdate = () => {
+      if (mobileNavFrame) return;
+      mobileNavFrame = window.requestAnimationFrame(updateMobileNavState);
+    };
+
     updateNavTone();
+    updateMobileNavState();
     window.addEventListener('scroll', scheduleNavToneUpdate, { signal, passive: true });
+    window.addEventListener('scroll', scheduleMobileNavStateUpdate, { signal, passive: true });
     window.addEventListener('resize', scheduleNavToneUpdate, { signal, passive: true });
+    window.addEventListener('resize', scheduleMobileNavStateUpdate, { signal, passive: true });
     document.addEventListener('astro:page-load', scheduleNavToneUpdate, { signal });
+    document.addEventListener('astro:page-load', scheduleMobileNavStateUpdate, { signal });
 
     const grainStorageKey = 'newframe-film-grain';
     const grainToggles = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-grain-toggle]'));
@@ -863,7 +945,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const logoText = document.getElementById('logo-text');
     const logoIcon = document.getElementById('logo-icon');
 
-    if (logoLink && logoText && logoIcon) {
+    if (logoLink && logoText && logoIcon && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       let logoTl: gsap.core.Timeline | null = null;
 
       logoLink.addEventListener('mouseenter', () => {
@@ -1045,6 +1127,11 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         window.cancelAnimationFrame(navToneFrame);
         navToneFrame = 0;
       }
+      if (mobileNavFrame) {
+        window.cancelAnimationFrame(mobileNavFrame);
+        mobileNavFrame = 0;
+      }
+      nav.classList.remove('nav-mobile-scrolled');
       ac.abort();
     };
   }

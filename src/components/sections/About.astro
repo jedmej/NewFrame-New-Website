@@ -104,6 +104,14 @@ const t = useTranslations(lang);
   }
 
   @media (max-width: 1023px) {
+    .about-paper-section__manifesto :global(.manifesto-char-inner) {
+      will-change: transform, opacity;
+    }
+
+    .about-paper-section__manifesto {
+      text-align: left;
+    }
+
     .about-paper-section__inner {
       width: min(100% - (var(--mobile-section-gutter) * 2), 52rem);
       padding-block: clamp(5rem, 12vw, 7rem);
@@ -129,7 +137,7 @@ const t = useTranslations(lang);
 
     .about-paper-section__manifesto {
       font-size: 1.70625rem;
-      line-height: 2.275rem;
+      line-height: 1.9rem;
     }
 
   }
@@ -159,6 +167,7 @@ const t = useTranslations(lang);
     const splitInstances: SplitText[] = [];
     const animatedGlyphs: HTMLElement[] = [];
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canUseRevealBlur = window.matchMedia('(min-width: 1024px)').matches;
     const highlights = JSON.parse(textEl.dataset.highlights || '[]') as string[];
 
     // Character-by-character manifesto reveal.
@@ -210,12 +219,12 @@ const t = useTranslations(lang);
         {
           yPercent: 118,
           opacity: 0,
-          filter: 'blur(7px)',
+          filter: canUseRevealBlur ? 'blur(7px)' : 'none',
         },
         {
           yPercent: 0,
           opacity: 1,
-          filter: 'blur(0px)',
+          filter: canUseRevealBlur ? 'blur(0px)' : 'none',
           duration: 1,
           ease: 'power3.out',
           stagger: {
