@@ -1,9 +1,7 @@
 <div id="page-shader-background" class="page-shader-background" aria-hidden="true">
   <canvas id="page-scroll-shader-canvas" class="page-shader-background__canvas"></canvas>
   <div class="page-shader-background__tint"></div>
-  <div class="page-shader-background__noise"></div>
 </div>
-<div class="page-film-grain" aria-hidden="true"></div>
 
 <style>
   .page-shader-background {
@@ -38,43 +36,6 @@
     opacity: var(--page-time-tint-opacity);
     pointer-events: none;
     transition: opacity 220ms var(--ease-out-quart);
-  }
-
-  .page-shader-background__noise {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.35' numOctaves='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='72' height='72' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 72px 72px;
-    mix-blend-mode: normal;
-    opacity: 0.58;
-    pointer-events: none;
-  }
-
-  .page-film-grain {
-    position: fixed;
-    inset: 0;
-    z-index: 90;
-    background-image:
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.2' numOctaves='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='56' height='56' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 56px 56px;
-    mix-blend-mode: multiply;
-    opacity: 0.44;
-    pointer-events: none;
-    transition:
-      opacity 180ms var(--ease-out-quart),
-      visibility 180ms var(--ease-out-quart);
-  }
-
-  :global(.film-grain-disabled) .page-shader-background__noise,
-  :global(.film-grain-disabled) .page-film-grain {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  :global(.shader-background-disabled) .page-shader-background {
-    opacity: 0 !important;
-    visibility: hidden;
   }
 
   :global(.page-content--scroll-shader) {

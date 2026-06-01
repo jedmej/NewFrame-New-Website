@@ -53,9 +53,6 @@ const introHeadings = {
   .offer-process-band {
     --offer-process-bg: #F4F4F4;
     --offer-process-fade-size: clamp(9rem, 22svh, 20rem);
-    --offer-process-grain-opacity: 0.1;
-    --offer-process-grain-size-a: 53px;
-    --offer-process-grain-size-b: 79px;
     --offer-process-shader-opacity: 0.26;
     --offer-work-to-blue-progress: 0;
     --offer-work-ink: var(--color-text);
@@ -113,33 +110,6 @@ const introHeadings = {
     pointer-events: none;
   }
 
-  .offer-process-band__background::after {
-    position: absolute;
-    inset: -16%;
-    z-index: 2;
-    background-image:
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 53 53' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4.1' numOctaves='7' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.78'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='53' height='53' filter='url(%23grain)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 79 79' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.45' numOctaves='6' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.58'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='79' height='79' filter='url(%23grain)'/%3E%3C/svg%3E");
-    background-position:
-      0 0,
-      19px 31px;
-    background-size:
-      var(--offer-process-grain-size-a) var(--offer-process-grain-size-a),
-      var(--offer-process-grain-size-b) var(--offer-process-grain-size-b);
-    mix-blend-mode: soft-light;
-    opacity: var(--offer-process-grain-opacity);
-    pointer-events: none;
-    content: '';
-    transition:
-      opacity 180ms var(--ease-out-quart),
-      visibility 180ms var(--ease-out-quart);
-  }
-
-  :global(.film-grain-disabled) .offer-process-band__background::after {
-    opacity: 0;
-    visibility: hidden;
-  }
-
   .offer-process-band__shader {
     position: absolute;
     inset: 0;
@@ -149,11 +119,6 @@ const introHeadings = {
       opacity 220ms var(--ease-out-quart),
       visibility 220ms var(--ease-out-quart);
     will-change: opacity;
-  }
-
-  :global(.shader-background-disabled) .offer-process-band__shader {
-    opacity: 0 !important;
-    visibility: hidden;
   }
 
   .offer-process-band__shader > :global(*) {
@@ -365,7 +330,6 @@ const introHeadings = {
 
       band.style.setProperty('--offer-work-to-blue-progress', workProgress.toFixed(3));
       band.style.setProperty('--offer-process-bg', bg);
-      band.style.setProperty('--offer-process-grain-opacity', (0.1 + workProgress * 0.18 + testimonialsProgress * 0.1).toFixed(3));
       band.style.setProperty('--offer-process-shader-opacity', (shaderOpacity + testimonialsProgress * 0.1).toFixed(3));
       band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', Math.max(workProgress, testimonialsProgress)));
       band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', Math.max(workProgress, testimonialsProgress)));
