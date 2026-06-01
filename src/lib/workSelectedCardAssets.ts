@@ -7,7 +7,8 @@ export type WorkCardKey =
   | 'karmel'
   | 'panenka'
   | 'esthetic'
-  | 'adfidence';
+  | 'adfidence'
+  | 'amvis';
 
 type WorkCardItem = {
   key: WorkCardKey;
@@ -30,7 +31,7 @@ const projectByKey = Object.fromEntries(
     return [key, project];
   }),
 ) as Record<
-  Exclude<WorkCardKey, 'hubert' | 'karmel'>,
+  Exclude<WorkCardKey, 'hubert' | 'karmel' | 'amvis'>,
   (typeof allProjects)[number]
 >;
 
@@ -77,6 +78,13 @@ export const workSelectedCardItems: WorkCardItem[] = [
     category: projectByKey.adfidence.category,
     url: projectByKey.adfidence.url,
     displayName: 'Adfidence',
+  },
+  {
+    key: 'amvis',
+    image: '/images/work/amvis-card.png',
+    category: 'WEB',
+    url: 'https://amvis.pages.dev/',
+    displayName: 'Amvis',
   },
 ];
 

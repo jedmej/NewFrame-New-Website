@@ -15,7 +15,7 @@ export const translations = {
     nav: {
       scope: 'About',
       work: 'Work',
-      services: 'Ways to Work',
+      services: 'Offer',
       process: 'Process',
       contact: 'Contact',
       grain: 'Grain',
@@ -48,11 +48,11 @@ export const translations = {
       imageAlt: 'Portrait of Jed Mejzner',
     },
     waysToWork: {
-      label: 'WAYS TO WORK',
+      label: 'WHAT WE OFFER',
       heading: 'What we can build for you',
-      intro: 'Clear ways to work together for companies that need a stronger digital presence, from focused websites to digital systems.',
+      intro: 'Focused offers for companies that need a stronger digital presence, from sharp websites to practical digital systems.',
       pricing: 'Most projects are scoped individually. Website projects usually start from 5,000 PLN, depending on scope.',
-      rowsLayoutLabel: 'Ways to work row layout',
+      rowsLayoutLabel: 'Offer row layout',
       items: [
         {
           metaLabel: 'Websites',
@@ -142,8 +142,8 @@ export const translations = {
           roles: ['Branding', 'Web design'],
         },
         amvis: {
-          description: 'A website redesign for an accounting office, currently being prepared for launch.',
-          roles: ['In progress'],
+          description: 'A composed, reassuring website for an accounting office that turns complex financial support into a calmer first impression.',
+          roles: ['Web design', 'Development', 'Visual direction'],
         },
       },
     },
@@ -213,7 +213,7 @@ export const translations = {
     nav: {
       scope: 'Studio',
       work: 'Projekty',
-      services: 'Współpraca',
+      services: 'Oferta',
       process: 'Proces',
       contact: 'Kontakt',
       grain: 'Ziarno',
@@ -246,11 +246,11 @@ export const translations = {
       imageAlt: 'Portret Jeda Mejznera',
     },
     waysToWork: {
-      label: 'FORMY WSPÓŁPRACY',
+      label: 'CO OFERUJEMY',
       heading: 'Co możemy dla Ciebie zrobić',
-      intro: 'Konkretne formy współpracy dla firm, które chcą mocniejszej obecności online, od skupionych stron po systemy cyfrowe.',
+      intro: 'Konkretna oferta dla firm, które chcą mocniejszej obecności online, od skupionych stron po praktyczne systemy cyfrowe.',
       pricing: 'Większość projektów wyceniamy indywidualnie. Strony najczęściej startują od 5 000 PLN, zależnie od zakresu.',
-      rowsLayoutLabel: 'Formy współpracy — układ wierszy',
+      rowsLayoutLabel: 'Oferta — układ wierszy',
       items: [
         {
           metaLabel: 'Strony',
@@ -340,8 +340,8 @@ export const translations = {
           roles: ['Branding', 'Web design'],
         },
         amvis: {
-          description: 'Redesign strony biura rachunkowego przygotowywany do startu.',
-          roles: ['W toku'],
+          description: 'Spokojna, uporządkowana strona dla biura rachunkowego, która przekłada złożone wsparcie finansowe na bardziej pewne pierwsze wrażenie.',
+          roles: ['Web design', 'Development', 'Kierunek wizualny'],
         },
       },
     },

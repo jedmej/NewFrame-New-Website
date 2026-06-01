@@ -84,12 +84,10 @@ const ogImageUrl = new URL(ogImage, Astro.site);
     <!-- Hide preloader instantly if user has already seen it -->
     <script is:inline>
       try {
-        if (localStorage.getItem('newframe-film-grain') === 'off') {
+        if (localStorage.getItem('newframe-film-grain') !== 'on') {
           document.documentElement.classList.add('film-grain-disabled');
         }
-        if (localStorage.getItem('newframe-background-shader') === 'off') {
-          document.documentElement.classList.add('shader-background-disabled');
-        }
+        localStorage.removeItem('newframe-background-shader');
       } catch {}
 
       if (localStorage.getItem('preloaded')) {

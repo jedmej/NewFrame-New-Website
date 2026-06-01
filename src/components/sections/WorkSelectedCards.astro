@@ -679,7 +679,8 @@ const cardCount = workSelectedCardItems.length;
       overflow-y: visible;
       overscroll-behavior-x: contain;
       scroll-padding-inline: var(--work-cards-gutter);
-      scroll-snap-type: x proximity;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
       scrollbar-width: none;
       touch-action: pan-x pan-y;
       -ms-overflow-style: none;
@@ -696,6 +697,7 @@ const cardCount = workSelectedCardItems.length;
 
     .work-selected-cards__card {
       flex-basis: min(82vw, 23rem);
+      scroll-snap-stop: always;
       width: min(82vw, 23rem);
     }
 

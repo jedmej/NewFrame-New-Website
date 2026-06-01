@@ -81,8 +81,8 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         data-grain-toggle
         data-label-on={t.nav.grainOn}
         data-label-off={t.nav.grainOff}
-        aria-label={t.nav.grainOn}
-        aria-pressed="true"
+        aria-label={t.nav.grainOff}
+        aria-pressed="false"
       >
         <span class="nav-grain-toggle__label text-mono-xs">{t.nav.grain}</span>
         <span class="nav-grain-toggle__track" aria-hidden="true">
@@ -157,8 +157,8 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         data-grain-toggle
         data-label-on={t.nav.grainOn}
         data-label-off={t.nav.grainOff}
-        aria-label={t.nav.grainOn}
-        aria-pressed="true"
+        aria-label={t.nav.grainOff}
+        aria-pressed="false"
       >
         <span class="nav-grain-toggle__label text-mono-xs">{t.nav.grain}</span>
         <span class="nav-grain-toggle__track" aria-hidden="true">
@@ -406,8 +406,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(244, 244, 244, 0.12) 0%, rgba(244, 244, 244, 0.03) 48%, rgba(20, 18, 15, 0.04) 100%),
-        repeating-linear-gradient(90deg, rgba(20, 18, 15, 0.032) 0 1px, transparent 1px 25vw);
+        linear-gradient(180deg, rgba(244, 244, 244, 0.12) 0%, rgba(244, 244, 244, 0.03) 48%, rgba(20, 18, 15, 0.04) 100%);
       pointer-events: none;
     }
 
@@ -781,9 +780,9 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 
     const readStoredGrainPreference = () => {
       try {
-        return localStorage.getItem(grainStorageKey) !== 'off';
+        return localStorage.getItem(grainStorageKey) === 'on';
       } catch {
-        return true;
+        return false;
       }
     };
 
@@ -812,7 +811,8 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 
     const readStoredShaderPreference = () => {
       try {
-        return localStorage.getItem(shaderStorageKey) !== 'off';
+        localStorage.removeItem(shaderStorageKey);
+        return true;
       } catch {
         return true;
       }
