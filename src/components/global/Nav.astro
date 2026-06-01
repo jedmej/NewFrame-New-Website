@@ -114,10 +114,26 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 
   <div class="mobile-menu__inner">
     <div class="mobile-menu__links">
-      <a href={`/${lang}/#work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.work}</a>
-      <a href={`/${lang}/#scope`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.scope}</a>
-      <a href={`/${lang}/#ways-to-work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.services}</a>
-      <a href={`/${lang}/#contact`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">{t.nav.contact}</a>
+      <a href={`/${lang}/#work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">
+        <span class="mobile-menu-link__mask">
+          <span class="mobile-menu-link__label">{t.nav.work}</span>
+        </span>
+      </a>
+      <a href={`/${lang}/#scope`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">
+        <span class="mobile-menu-link__mask">
+          <span class="mobile-menu-link__label">{t.nav.scope}</span>
+        </span>
+      </a>
+      <a href={`/${lang}/#ways-to-work`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">
+        <span class="mobile-menu-link__mask">
+          <span class="mobile-menu-link__label">{t.nav.services}</span>
+        </span>
+      </a>
+      <a href={`/${lang}/#contact`} class="mobile-menu-link mobile-menu-link--primary opacity-0 translate-y-8">
+        <span class="mobile-menu-link__mask">
+          <span class="mobile-menu-link__label">{t.nav.contact}</span>
+        </span>
+      </a>
     </div>
 
     <div class="mobile-menu__utility opacity-0 translate-y-8 mobile-menu-link">
@@ -377,11 +393,10 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 
     .mobile-menu-link--primary {
       position: relative;
-      display: block;
+      display: flex;
       align-items: end;
       width: 100%;
       min-height: clamp(4rem, 12.5vw, 8.5rem);
-      border-bottom: 1px solid rgba(20, 18, 15, 0.1);
       color: var(--color-text);
       font-family: var(--font-display);
       font-size: clamp(3.75rem, 11.8vw, 7rem);
@@ -421,8 +436,16 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       transform: scaleX(1);
     }
 
-    .mobile-menu-link--primary:last-child {
-      border-bottom: 0;
+    .mobile-menu-link__mask {
+      display: block;
+      overflow: hidden;
+      padding-block: 0.08em 0.14em;
+      margin-block: -0.06em -0.12em;
+    }
+
+    .mobile-menu-link__label {
+      display: block;
+      will-change: transform, opacity, filter;
     }
 
     .mobile-menu__utility {
@@ -807,10 +830,14 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const mobileMenu = document.getElementById('mobile-menu');
     const menuLines = menuBtn?.querySelectorAll('.menu-line');
     const menuLinks = mobileMenu?.querySelectorAll('.mobile-menu-link');
+    const menuPrimaryLinks = Array.from(mobileMenu?.querySelectorAll<HTMLElement>('.mobile-menu-link--primary') || []);
+    const menuLabels = Array.from(mobileMenu?.querySelectorAll<HTMLElement>('.mobile-menu-link__label') || []);
+    const menuUtility = mobileMenu?.querySelector<HTMLElement>('.mobile-menu__utility');
     const isPolish = document.documentElement.lang === 'pl';
     const openMenuLabel = isPolish ? 'Otwórz menu' : 'Open menu';
     const closeMenuLabel = isPolish ? 'Zamknij menu' : 'Close menu';
     let menuOpen = false;
+    let menuRevealTl: gsap.core.Timeline | null = null;
 
     function openMenu() {
       menuOpen = true;
@@ -834,19 +861,48 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         ease: 'expo.inOut',
       });
 
-      // Stagger links in once the panel starts expanding
-      gsap.to(menuLinks!, {
+      gsap.set(menuPrimaryLinks, {
         opacity: 1,
         y: 0,
-        duration: 0.42,
-        stagger: 0.06,
-        ease: 'power2.out',
-        delay: 0.12,
       });
+      gsap.set(menuLabels, {
+        yPercent: 118,
+        opacity: 0,
+        filter: 'blur(10px)',
+      });
+      gsap.set(menuUtility, {
+        opacity: 0,
+        y: 18,
+        filter: 'blur(8px)',
+      });
+
+      menuRevealTl?.kill();
+      menuRevealTl = gsap.timeline({
+        defaults: { ease: 'expo.out' },
+        delay: 0.16,
+      });
+      timelines.push(menuRevealTl);
+
+      menuRevealTl
+        .to([...menuLabels].reverse(), {
+          yPercent: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1.12,
+          stagger: 0.14,
+        }, 0.02)
+        .to(menuUtility, {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.72,
+        }, 0.28);
     }
 
     function closeMenu() {
       menuOpen = false;
+      menuRevealTl?.kill();
+      menuRevealTl = null;
 
       // Animate lines back
       gsap.to(menuLines![0], { rotation: 0, y: 0, duration: 0.3 });
@@ -863,7 +919,8 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
           document.body.style.overflow = '';
 
           // Reset link positions for next open
-          gsap.set(menuLinks!, { opacity: 0, y: 8 });
+          gsap.set(menuLinks!, { opacity: 0, y: 8, filter: 'none' });
+          gsap.set(menuLabels, { yPercent: 118, opacity: 0, filter: 'blur(10px)' });
         },
       });
 

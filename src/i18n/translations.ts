@@ -298,7 +298,7 @@ export const translations = {
       viewProject: 'Odwiedź',
       previewProject: 'Zapowiedź',
       cards: {
-        heading: 'Projekty, które pokazują, że pierwsze wrażenie warto zaprojektować',
+        heading: 'Projekty, które pokazują, że pierwsze wrażenie ma znaczenie',
         startProject: 'Rozpocznij projekt',
         carouselLabel: 'Pozioma prezentacja wybranych projektów',
       },
@@ -366,7 +366,7 @@ export const translations = {
       prompt: 'Wyślij obecną stronę, pomysł albo problem. Odpowiemy konkretnie i zaproponujemy najlepszy następny krok.',
     },
     footer: {
-      cta: 'Zróbmy razem świetne rzeczy',
+      cta: 'Zróbmy razem coś fajnego.',
       navigation: 'Nawigacja',
       info: 'Info',
       available: 'Dostępny do projektów',

@@ -115,7 +115,6 @@ const cardCount = workSelectedCardItems.length;
                 <span class="work-selected-cards__card-mobile-meta">{category} · {padWorkCardIndex(index)}</span>
                 <h3 class="work-selected-cards__card-mobile-name">{displayName}</h3>
                 <p class="work-selected-cards__card-mobile-description">{meta.description}</p>
-                <p class="work-selected-cards__card-mobile-roles">{roles}</p>
               </div>
             </a>
           );
@@ -138,7 +137,7 @@ const cardCount = workSelectedCardItems.length;
 
 <style>
   .work-selected-cards {
-    --work-cards-progress: 0%;
+    --work-cards-progress: calc(100% / var(--work-cards-count, 1));
     --work-cards-ink: var(--offer-work-ink, var(--color-text));
     --work-cards-ink-muted: var(--offer-work-ink-muted, rgba(20, 18, 15, 0.56));
     --work-cards-ink-faint: var(--offer-work-ink-faint, rgba(20, 18, 15, 0.34));
@@ -579,8 +578,7 @@ const cardCount = workSelectedCardItems.length;
     display: none;
   }
 
-  .work-selected-cards__card-mobile-meta,
-  .work-selected-cards__card-mobile-roles {
+  .work-selected-cards__card-mobile-meta {
     font-family: var(--font-mono);
     font-size: 0.625rem;
     font-weight: 500;
@@ -637,7 +635,7 @@ const cardCount = workSelectedCardItems.length;
     height: 2px;
     border-radius: 999px;
     background: var(--work-cards-ink);
-    transition: width 0.12s linear;
+    transition: width 0.52s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   @media (max-width: 1279px), (hover: none), (pointer: coarse) {
@@ -708,7 +706,7 @@ const cardCount = workSelectedCardItems.length;
 
     .work-selected-cards__card-mobile-copy {
       display: flex;
-      min-height: 11rem;
+      min-height: 8.5rem;
       flex-direction: column;
       gap: 0.625rem;
       padding-top: 1rem;
@@ -1090,7 +1088,11 @@ const cardCount = workSelectedCardItems.length;
 
     const updateTrackState = (progress = 0) => {
       const normalizedProgress = clamp(progress);
-      section.style.setProperty('--work-cards-progress', `${(normalizedProgress * 100).toFixed(2)}%`);
+      const activeIndex = Math.min(cards.length - 1, Math.round(normalizedProgress * Math.max(cards.length - 1, 1)));
+      const visibleProgress = cards.length <= 1
+        ? 1
+        : (activeIndex + 1) / cards.length;
+      section.style.setProperty('--work-cards-progress', `${(visibleProgress * 100).toFixed(2)}%`);
     };
 
     const setHorizontalProgress = (progress: number) => {
