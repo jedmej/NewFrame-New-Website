@@ -379,62 +379,62 @@ const introHeadings = {
       updateBandSurface();
     };
 
-	    const setShaderVelocityBoost = (velocity: number) => {
-	      const velocityProgress = easeSurface(clamp(Math.abs(velocity) / 3200));
-	      shaderVelocityBoost = velocityProgress * 1.05;
-	      updateBandSurface();
-	      if (!shaderVelocityFrame) animateShaderVelocityReturn();
-	    };
-	
-	    const getElementProgress = (element: HTMLElement | null, startViewportRatio: number, endViewportRatio: number) => {
-	      if (!element) return 0;
+    const setShaderVelocityBoost = (velocity: number) => {
+      const velocityProgress = easeSurface(clamp(Math.abs(velocity) / 3200));
+      shaderVelocityBoost = velocityProgress * 1.05;
+      updateBandSurface();
+      if (!shaderVelocityFrame) animateShaderVelocityReturn();
+    };
 
-	      const rect = element.getBoundingClientRect();
-	      const top = rect.top + window.scrollY;
-	      const bottom = rect.bottom + window.scrollY;
-	      const start = top - window.innerHeight * startViewportRatio;
-	      const end = bottom - window.innerHeight * endViewportRatio;
-	      const distance = end - start;
+    const getElementProgress = (element: HTMLElement | null, startViewportRatio: number, endViewportRatio: number) => {
+      if (!element) return 0;
 
-	      if (distance <= 0) return window.scrollY >= end ? 1 : 0;
-	      return clamp((window.scrollY - start) / distance);
-	    };
+      const rect = element.getBoundingClientRect();
+      const top = rect.top + window.scrollY;
+      const bottom = rect.bottom + window.scrollY;
+      const start = top - window.innerHeight * startViewportRatio;
+      const end = bottom - window.innerHeight * endViewportRatio;
+      const distance = end - start;
 
-	    const getElementBottomProgress = (element: HTMLElement | null, startViewportRatio: number, endViewportRatio: number) => {
-	      if (!element) return 0;
+      if (distance <= 0) return window.scrollY >= end ? 1 : 0;
+      return clamp((window.scrollY - start) / distance);
+    };
 
-	      const rect = element.getBoundingClientRect();
-	      const bottom = rect.bottom + window.scrollY;
-	      const start = bottom - window.innerHeight * startViewportRatio;
-	      const end = bottom - window.innerHeight * endViewportRatio;
-	      const distance = end - start;
+    const getElementBottomProgress = (element: HTMLElement | null, startViewportRatio: number, endViewportRatio: number) => {
+      if (!element) return 0;
 
-	      if (distance <= 0) return window.scrollY >= end ? 1 : 0;
-	      return clamp((window.scrollY - start) / distance);
-	    };
+      const rect = element.getBoundingClientRect();
+      const bottom = rect.bottom + window.scrollY;
+      const start = bottom - window.innerHeight * startViewportRatio;
+      const end = bottom - window.innerHeight * endViewportRatio;
+      const distance = end - start;
 
-	    const syncSurfaceProgressFromLayout = () => {
-	      workToWaysProgress = getElementProgress(waysIntro ?? waysRowsSection, 1, 0.22);
-	      waysToTestimonialsProgress = getElementProgress(testimonialsIntro ?? testimonialsSection, 1, 0.18);
-	      testimonialsToFooterProgress = getElementBottomProgress(testimonialsSection, 0.96, 0.38);
-	      updateBandSurface();
-	    };
+      if (distance <= 0) return window.scrollY >= end ? 1 : 0;
+      return clamp((window.scrollY - start) / distance);
+    };
 
-	    syncSurfaceProgressFromLayout();
-	
-	    scrollTriggers.push(ScrollTrigger.create({
-	      trigger: band,
-	      start: 'top bottom',
-	      end: 'bottom top',
-	      invalidateOnRefresh: true,
-	      onUpdate: (self) => {
-	        if (!prefersReducedMotion) setShaderVelocityBoost(self.getVelocity());
-	        syncSurfaceProgressFromLayout();
-	      },
-	      onRefresh: () => {
-	        syncSurfaceProgressFromLayout();
-	      },
-	    }));
+    const syncSurfaceProgressFromLayout = () => {
+      workToWaysProgress = getElementProgress(waysIntro ?? waysRowsSection, 1, 0.22);
+      waysToTestimonialsProgress = getElementProgress(testimonialsIntro ?? testimonialsSection, 1, 0.18);
+      testimonialsToFooterProgress = getElementBottomProgress(testimonialsSection, 0.96, 0.38);
+      updateBandSurface();
+    };
+
+    syncSurfaceProgressFromLayout();
+
+    scrollTriggers.push(ScrollTrigger.create({
+      trigger: band,
+      start: 'top bottom',
+      end: 'bottom top',
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        if (!prefersReducedMotion) setShaderVelocityBoost(self.getVelocity());
+        syncSurfaceProgressFromLayout();
+      },
+      onRefresh: () => {
+        syncSurfaceProgressFromLayout();
+      },
+    }));
 
     if (aboutSection) {
       scrollTriggers.push(ScrollTrigger.create({
@@ -473,9 +473,9 @@ const introHeadings = {
       }));
     });
 
-	    if (waysRowsSection) {
-	      scrollTriggers.push(ScrollTrigger.create({
-	        trigger: waysRowsSection,
+    if (waysRowsSection) {
+      scrollTriggers.push(ScrollTrigger.create({
+        trigger: waysRowsSection,
         start: 'top 78%',
         end: 'bottom 22%',
         scrub: prefersReducedMotion ? false : true,
@@ -491,7 +491,7 @@ const introHeadings = {
       }));
     }
 
-	    cleanupFn = () => {
+    cleanupFn = () => {
       if (shaderVelocityFrame) window.cancelAnimationFrame(shaderVelocityFrame);
       scrollTriggers.forEach((trigger) => trigger.kill());
       gsap.killTweensOf(introTitleGlyphs);

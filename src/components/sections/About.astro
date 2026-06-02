@@ -260,7 +260,5 @@ const t = useTranslations(lang);
 
   initAbout();
 
-  document.addEventListener('astro:after-swap', () => {
-    initAbout();
-  });
+  document.addEventListener('astro:after-swap', initAbout);
 </script>

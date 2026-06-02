@@ -43,22 +43,23 @@ const t = useTranslations(lang);
 
     gsap.registerPlugin(ScrollTrigger);
 
-    let tickerCallback: ((time: number) => void) | null = null;
+    let cleanupFn: (() => void) | null = null;
 
     function initSmoothScroll() {
-      // Destroy previous instance to prevent memory leak
+      cleanupFn?.();
+      cleanupFn = null;
+
       if ((window as any).lenis) {
         (window as any).lenis.destroy();
         (window as any).lenis = null;
       }
 
-      // Remove previous ticker callback
-      if (tickerCallback) {
-        gsap.ticker.remove(tickerCallback);
-        tickerCallback = null;
-      }
+      const ac = new AbortController();
 
-      if (window.innerWidth < 1024) return;
+      if (window.innerWidth < 1024) {
+        cleanupFn = () => ac.abort();
+        return;
+      }
 
       const lenis = new Lenis({
         autoRaf: false,
@@ -70,7 +71,7 @@ const t = useTranslations(lang);
       // Bridge Lenis to GSAP ScrollTrigger
       lenis.on('scroll', ScrollTrigger.update);
 
-      tickerCallback = (time: number) => {
+      const tickerCallback = (time: number) => {
         lenis.raf(time * 1000);
       };
       gsap.ticker.add(tickerCallback);
@@ -79,6 +80,15 @@ const t = useTranslations(lang);
 
       // Store globally for nav scroll
       (window as any).lenis = lenis;
+
+      cleanupFn = () => {
+        ac.abort();
+        gsap.ticker.remove(tickerCallback);
+        lenis.destroy();
+        if ((window as any).lenis === lenis) {
+          (window as any).lenis = null;
+        }
+      };
     }
 
     initSmoothScroll();

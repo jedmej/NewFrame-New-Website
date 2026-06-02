@@ -625,10 +625,18 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 <script>
   import gsap from 'gsap';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-  import { createShader } from 'shaders/js';
   import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(ScrambleTextPlugin);
+
+  type ShaderModule = typeof import('shaders/js');
+
+  let shaderModulePromise: Promise<ShaderModule> | null = null;
+
+  const loadShaderModule = () => {
+    shaderModulePromise ??= import('shaders/js');
+    return shaderModulePromise;
+  };
 
   const mobileMenuShaderPreset = {
     components: [
@@ -951,6 +959,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 
       mobileMenuShaderInitPromise = (async () => {
         try {
+          const { createShader } = await loadShaderModule();
           const shader = await createShader(menuShaderCanvas, mobileMenuShaderPreset, {
             disableTelemetry: true,
           });

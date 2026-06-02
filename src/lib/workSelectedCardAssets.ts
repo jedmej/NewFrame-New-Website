@@ -1,5 +1,4 @@
 import type { Lang } from '../i18n/translations';
-import { projects as allProjects } from './projects';
 
 export type WorkCardKey =
   | 'uroki'
@@ -18,30 +17,13 @@ type WorkCardItem = {
   displayName: string;
 };
 
-const projectKeyByUrl = {
-  'https://urokitattoo.pl/': 'uroki',
-  'https://panenkacreatives.com/': 'panenka',
-  'https://esthetic.pl/': 'esthetic',
-  'https://adfidence.com/': 'adfidence',
-} as const satisfies Record<string, WorkCardKey>;
-
-const projectByKey = Object.fromEntries(
-  allProjects.map((project) => {
-    const key = projectKeyByUrl[project.url as keyof typeof projectKeyByUrl];
-    return [key, project];
-  }),
-) as Record<
-  Exclude<WorkCardKey, 'hubert' | 'karmel' | 'amvis'>,
-  (typeof allProjects)[number]
->;
-
 /** Card order and image paths synced with Paper artboard 4FD-0. */
 export const workSelectedCardItems: WorkCardItem[] = [
   {
     key: 'uroki',
     image: '/images/work/uroki.avif',
-    category: projectByKey.uroki.category,
-    url: projectByKey.uroki.url,
+    category: 'WEB',
+    url: 'https://urokitattoo.pl/',
     displayName: 'Uroki',
   },
   {
@@ -61,22 +43,22 @@ export const workSelectedCardItems: WorkCardItem[] = [
   {
     key: 'panenka',
     image: '/images/work/panenka.png',
-    category: projectByKey.panenka.category,
-    url: projectByKey.panenka.url,
+    category: 'MOTION',
+    url: 'https://panenkacreatives.com/',
     displayName: 'Panenka',
   },
   {
     key: 'esthetic',
     image: '/images/work/esthetic.png',
-    category: projectByKey.esthetic.category,
-    url: projectByKey.esthetic.url,
+    category: 'WEB',
+    url: 'https://esthetic.pl/',
     displayName: 'Esthetic',
   },
   {
     key: 'adfidence',
     image: '/images/work/adfidence.png',
-    category: projectByKey.adfidence.category,
-    url: projectByKey.adfidence.url,
+    category: 'BRANDING',
+    url: 'https://adfidence.com/',
     displayName: 'Adfidence',
   },
   {
@@ -92,7 +74,6 @@ export const categoryLabels = {
   WEB: 'Web',
   MOTION: 'Motion',
   BRANDING: 'Branding',
-  'IN PROGRESS': 'In progress',
 } as const satisfies Record<string, string>;
 
 export function formatWorkCardCategory(category: string) {

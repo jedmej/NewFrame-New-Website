@@ -27,109 +27,109 @@ const cardCount = workSelectedCardItems.length;
   <div class="work-selected-cards__scroll" data-work-cards-scroll>
     <div class="work-selected-cards__sticky">
       <div class="work-selected-cards__inner">
-	    <header class="work-selected-cards__header">
-	      <div class="work-selected-cards__headline-group">
-	        <h2 class="work-selected-cards__heading">{t.work.cards.heading}</h2>
-	      </div>
+        <header class="work-selected-cards__header">
+          <div class="work-selected-cards__headline-group">
+            <h2 class="work-selected-cards__heading">{t.work.cards.heading}</h2>
+          </div>
 
-      <a class="work-selected-cards__cta text-mono-xs" href={contactHref}>
-        <span>{t.work.cards.startProject}</span>
-        <span class="work-selected-cards__cta-arrow" aria-hidden="true">↗</span>
-      </a>
-    </header>
+          <a class="work-selected-cards__cta text-mono-xs" href={contactHref}>
+            <span>{t.work.cards.startProject}</span>
+            <span class="work-selected-cards__cta-arrow" aria-hidden="true">↗</span>
+          </a>
+        </header>
 
-    <div class="work-selected-cards__track-shell">
-      <div
-        class="work-selected-cards__track"
-        data-work-cards-track
-      >
-        <div
-          class="work-selected-cards__track-inner"
-          data-work-cards-track-inner
-          role="list"
-          aria-label={t.work.carouselLabel}
-        >
-        {workSelectedCardItems.map((project, index) => {
-          const href = project.url;
-          const meta = t.work.projects[project.key];
-          const displayName = project.displayName;
-          const category = formatWorkCardCategory(project.category);
-          const roles = meta.roles.join(' / ');
-          const isExternal = href.startsWith('http');
-
-          return (
-            <a
-              href={href}
-              target={isExternal ? '_blank' : undefined}
-              rel={isExternal ? 'noopener noreferrer' : undefined}
-              class="work-selected-cards__card"
-              role="listitem"
-              aria-label={`${displayName}. ${roles}. ${meta.description}`}
-              data-work-cards-item
-              data-work-card-key={project.key}
+        <div class="work-selected-cards__track-shell">
+          <div
+            class="work-selected-cards__track"
+            data-work-cards-track
+          >
+            <div
+              class="work-selected-cards__track-inner"
+              data-work-cards-track-inner
+              role="list"
+              aria-label={t.work.carouselLabel}
             >
-              <div class="work-selected-cards__card-visual">
-                <div class="work-selected-cards__card-media" aria-hidden="true">
-                  <img
-                    src={project.image}
-                    alt=""
-                    loading={index < 2 ? 'eager' : 'lazy'}
-                    decoding="async"
-                  />
-                  <canvas
-                    class="work-selected-cards__card-shader"
-                    data-work-card-shader
-                    data-work-card-shader-image={project.image}
-                  ></canvas>
-                  <div class="work-selected-cards__card-gradient"></div>
-                </div>
+              {workSelectedCardItems.map((project, index) => {
+                const href = project.url;
+                const meta = t.work.projects[project.key];
+                const displayName = project.displayName;
+                const category = formatWorkCardCategory(project.category);
+                const roles = meta.roles.join(' / ');
+                const isExternal = href.startsWith('http');
 
-                <div class="work-selected-cards__card-default" aria-hidden="true">
-                  <span class="work-selected-cards__card-index">{padWorkCardIndex(index)}</span>
-                  <div class="work-selected-cards__card-footer">
-                    <span class="work-selected-cards__card-name">{displayName}</span>
-                  </div>
-                </div>
+                return (
+                  <a
+                    href={href}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    class="work-selected-cards__card"
+                    role="listitem"
+                    aria-label={`${displayName}. ${roles}. ${meta.description}`}
+                    data-work-cards-item
+                    data-work-card-key={project.key}
+                  >
+                    <div class="work-selected-cards__card-visual">
+                      <div class="work-selected-cards__card-media" aria-hidden="true">
+                        <img
+                          src={project.image}
+                          alt=""
+                          loading={index < 2 ? 'eager' : 'lazy'}
+                          decoding="async"
+                        />
+                        <canvas
+                          class="work-selected-cards__card-shader"
+                          data-work-card-shader
+                          data-work-card-shader-image={project.image}
+                        ></canvas>
+                        <div class="work-selected-cards__card-gradient"></div>
+                      </div>
 
-                <div class="work-selected-cards__card-hover">
-                  <div class="work-selected-cards__card-hover-content">
-                    <div class="work-selected-cards__card-hover-top">
-                      <span class="work-selected-cards__card-hover-meta">
-                        {category} · {padWorkCardIndex(index)}
-                      </span>
-                      <span class="work-selected-cards__card-hover-arrow" aria-hidden="true">↗</span>
+                      <div class="work-selected-cards__card-default" aria-hidden="true">
+                        <span class="work-selected-cards__card-index">{padWorkCardIndex(index)}</span>
+                        <div class="work-selected-cards__card-footer">
+                          <span class="work-selected-cards__card-name">{displayName}</span>
+                        </div>
+                      </div>
+
+                      <div class="work-selected-cards__card-hover">
+                        <div class="work-selected-cards__card-hover-content">
+                          <div class="work-selected-cards__card-hover-top">
+                            <span class="work-selected-cards__card-hover-meta">
+                              {category} · {padWorkCardIndex(index)}
+                            </span>
+                            <span class="work-selected-cards__card-hover-arrow" aria-hidden="true">↗</span>
+                          </div>
+
+                          <div class="work-selected-cards__card-hover-body">
+                            <h3 class="work-selected-cards__card-hover-name">{displayName}</h3>
+                            <p class="work-selected-cards__card-hover-description">{meta.description}</p>
+                            <p class="work-selected-cards__card-hover-roles">{roles}</p>
+                          </div>
+
+                          <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div class="work-selected-cards__card-hover-body">
-                      <h3 class="work-selected-cards__card-hover-name">{displayName}</h3>
-                      <p class="work-selected-cards__card-hover-description">{meta.description}</p>
-                      <p class="work-selected-cards__card-hover-roles">{roles}</p>
+                    <div class="work-selected-cards__card-mobile-copy">
+                      <span class="work-selected-cards__card-mobile-meta">{category} · {padWorkCardIndex(index)}</span>
+                      <h3 class="work-selected-cards__card-mobile-name">{displayName}</h3>
+                      <p class="work-selected-cards__card-mobile-description">{meta.description}</p>
                     </div>
-
-                    <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="work-selected-cards__card-mobile-copy">
-                <span class="work-selected-cards__card-mobile-meta">{category} · {padWorkCardIndex(index)}</span>
-                <h3 class="work-selected-cards__card-mobile-name">{displayName}</h3>
-                <p class="work-selected-cards__card-mobile-description">{meta.description}</p>
-              </div>
-            </a>
-          );
-        })}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <footer class="work-selected-cards__footer">
-      <div class="work-selected-cards__progress" aria-hidden="true">
-        <span class="work-selected-cards__progress-track">
-          <span class="work-selected-cards__progress-fill" data-work-cards-progress></span>
-        </span>
-      </div>
-    </footer>
+        <footer class="work-selected-cards__footer">
+          <div class="work-selected-cards__progress" aria-hidden="true">
+            <span class="work-selected-cards__progress-track">
+              <span class="work-selected-cards__progress-fill" data-work-cards-progress></span>
+            </span>
+          </div>
+        </footer>
       </div>
     </div>
   </div>
@@ -196,11 +196,11 @@ const cardCount = workSelectedCardItems.length;
     max-width: min(61rem, 100%);
   }
 
-	  .work-selected-cards__heading {
-	    margin: 0;
-	    font-family: var(--font-display);
-	    font-size: 2.5rem;
-	    font-weight: 300;
+  .work-selected-cards__heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
     line-height: 1.02;
     letter-spacing: -0.03em;
     text-wrap: balance;
@@ -237,12 +237,12 @@ const cardCount = workSelectedCardItems.length;
     line-height: 1;
   }
 
-	  .work-selected-cards__track-shell {
-	    position: relative;
-	    width: 100%;
-	    padding-block: 0;
-	    overflow: clip;
-	  }
+  .work-selected-cards__track-shell {
+    position: relative;
+    width: 100%;
+    padding-block: 0;
+    overflow: clip;
+  }
 
   .work-selected-cards__track {
     overflow: hidden;
@@ -772,13 +772,16 @@ const cardCount = workSelectedCardItems.length;
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { createShader, createSharedDevice } from 'shaders/js';
   import type { ShaderInstance } from 'shaders/js';
 
   gsap.registerPlugin(ScrollTrigger);
 
+  type ShaderModule = typeof import('shaders/js');
+  type SharedGpuDevice = Awaited<ReturnType<ShaderModule['createSharedDevice']>>;
+
   let cleanupFn: (() => void) | null = null;
-  let sharedGpuPromise: ReturnType<typeof createSharedDevice> | null = null;
+  let shaderModulePromise: Promise<ShaderModule> | null = null;
+  let sharedGpuPromise: Promise<SharedGpuDevice> | null = null;
 
   type WorkCardShaderState = {
     card: HTMLElement;
@@ -806,8 +809,16 @@ const cardCount = workSelectedCardItems.length;
   const workCardShaderPixelateEase = 'sine.inOut';
   const workCardShaderPixelateRange = workCardShaderPixelatedScale / workCardShaderClearScale;
 
-  const getSharedGpu = () => {
-    sharedGpuPromise ??= createSharedDevice();
+  const loadShaderModule = () => {
+    shaderModulePromise ??= import('shaders/js');
+    return shaderModulePromise;
+  };
+
+  const getSharedGpu = async () => {
+    if (!sharedGpuPromise) {
+      const { createSharedDevice } = await loadShaderModule();
+      sharedGpuPromise = createSharedDevice();
+    }
     return sharedGpuPromise;
   };
 
@@ -993,7 +1004,10 @@ const cardCount = workSelectedCardItems.length;
       const initPromise = (async () => {
         try {
           const imageUrl = new URL(image, window.location.href).href;
-          const sharedGpu = await getSharedGpu();
+          const [{ createShader }, sharedGpu] = await Promise.all([
+            loadShaderModule(),
+            getSharedGpu(),
+          ]);
           if (isCleanedUp) return;
 
           const shader = await createShader(canvas, getWorkCardShaderPreset(imageUrl), {
