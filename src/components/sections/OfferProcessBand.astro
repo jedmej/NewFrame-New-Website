@@ -215,7 +215,7 @@ const introHeadings = {
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { SplitText } from 'gsap/SplitText';
-  import { mountNeuroSectionShader } from '../../scripts/neuroSectionShader';
+  import type { NeuroSectionShaderHandle } from '../../scripts/neuroSectionShader';
 
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -241,7 +241,8 @@ const introHeadings = {
     const scrollTriggers: ScrollTrigger[] = [];
     const splitInstances: SplitText[] = [];
     const introTitleGlyphs: HTMLElement[] = [];
-    let shader: ReturnType<typeof mountNeuroSectionShader> | null = null;
+    let shader: NeuroSectionShaderHandle | null = null;
+    let shaderDisposed = false;
     let workToWaysProgress = 0;
     let waysToTestimonialsProgress = 0;
     let testimonialsToFooterProgress = 0;
@@ -309,12 +310,24 @@ const introHeadings = {
     }
 
     if (!prefersReducedMotion && shaderMount) {
-      shader = mountNeuroSectionShader(shaderMount, {
-        colorMid: '#BDB4AA',
-        colorFront: '#000000B0',
-        contrast: 0.18,
-        speed: shaderBaseSpeed,
-      });
+      // Dynamic import keeps the shader runtime out of the eager bundle;
+      // the band background fades in as soon as the chunk lands.
+      void import('../../scripts/neuroSectionShader')
+        .then(({ mountNeuroSectionShader }) => {
+          if (shaderDisposed) return;
+          shader = mountNeuroSectionShader(shaderMount, {
+            colorMid: '#BDB4AA',
+            colorFront: '#000000B0',
+            contrast: 0.18,
+            speed: shaderBaseSpeed,
+          });
+          lastShaderSurfaceProgress = -1;
+          lastShaderSpeed = -1;
+          updateBandSurface();
+        })
+        .catch((error) => {
+          console.warn('[offer-band] Failed to load section shader', error);
+        });
     }
 
     const updateBandSurface = () => {
@@ -497,7 +510,9 @@ const introHeadings = {
       gsap.killTweensOf(introTitleGlyphs);
       gsap.set(introTitleGlyphs, { clearProps: 'willChange,filter,opacity,transform' });
       splitInstances.forEach((split) => split.revert());
+      shaderDisposed = true;
       shader?.destroy();
+      shader = null;
       ac.abort();
     };
   }

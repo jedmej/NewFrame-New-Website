@@ -1,6 +1,10 @@
-import { createElement } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
-import { NeuroNoise } from '@paper-design/shaders-react';
+import {
+  ShaderMount,
+  ShaderFitOptions,
+  defaultPatternSizing,
+  getShaderColorFromString,
+  neuroNoiseFragmentShader,
+} from '@paper-design/shaders';
 
 export type NeuroSectionShaderColors = {
   colorBack?: string;
@@ -31,36 +35,60 @@ const DEFAULT_OPTIONS = {
   height: '1000px',
 };
 
-export function mountNeuroSectionShader(mount: HTMLElement, options: NeuroSectionShaderOptions = {}) {
-  const root = createRoot(mount);
+function buildUniforms(state: typeof DEFAULT_OPTIONS) {
+  return {
+    u_colorFront: getShaderColorFromString(state.colorFront),
+    u_colorMid: getShaderColorFromString(state.colorMid),
+    u_colorBack: getShaderColorFromString(state.colorBack),
+    u_brightness: state.brightness,
+    u_contrast: state.contrast,
+    u_fit: ShaderFitOptions[defaultPatternSizing.fit],
+    u_scale: state.scale,
+    u_rotation: defaultPatternSizing.rotation,
+    u_offsetX: defaultPatternSizing.offsetX,
+    u_offsetY: defaultPatternSizing.offsetY,
+    u_originX: defaultPatternSizing.originX,
+    u_originY: defaultPatternSizing.originY,
+    u_worldWidth: defaultPatternSizing.worldWidth,
+    u_worldHeight: defaultPatternSizing.worldHeight,
+  };
+}
+
+export type NeuroSectionShaderHandle = {
+  update(nextOptions: Partial<NeuroSectionShaderOptions>): void;
+  destroy(): void;
+};
+
+export function mountNeuroSectionShader(
+  mount: HTMLElement,
+  options: NeuroSectionShaderOptions = {}
+): NeuroSectionShaderHandle {
   const state = { ...DEFAULT_OPTIONS, ...options };
 
-  const render = () => {
-    root.render(createElement(NeuroNoise, {
-      scale: state.scale,
-      speed: state.speed,
-      contrast: state.contrast,
-      brightness: state.brightness,
-      frame: state.frame,
-      colorBack: state.colorBack,
-      colorMid: state.colorMid,
-      colorFront: state.colorFront,
-      style: {
-        height: state.height,
-        width: state.width,
-      },
-    }));
-  };
+  const host = document.createElement('div');
+  host.style.width = state.width;
+  host.style.height = state.height;
+  mount.appendChild(host);
 
-  render();
+  const shader = new ShaderMount(
+    host,
+    neuroNoiseFragmentShader,
+    buildUniforms(state),
+    undefined,
+    state.speed,
+    state.frame
+  );
 
   return {
     update(nextOptions: Partial<NeuroSectionShaderOptions>) {
       Object.assign(state, nextOptions);
-      render();
+      shader.setUniforms(buildUniforms(state));
+      if (nextOptions.speed !== undefined) shader.setSpeed(state.speed);
+      if (nextOptions.frame !== undefined) shader.setFrame(state.frame);
     },
     destroy() {
-      root.unmount();
+      shader.dispose();
+      host.remove();
     },
   };
 }

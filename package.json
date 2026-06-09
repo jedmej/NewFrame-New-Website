@@ -11,13 +11,11 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",
-    "@paper-design/shaders-react": "^0.0.76",
+    "@paper-design/shaders": "^0.0.76",
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.17.1",
     "gsap": "^3.12.7",
     "lenis": "^1.1.21",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
     "shaders": "^2.5.113",
     "tailwindcss": "^4.0.0"
   }

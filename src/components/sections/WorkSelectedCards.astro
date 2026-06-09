@@ -936,6 +936,8 @@ const cardCount = workSelectedCardItems.length;
     let shaderResizeObserver: ResizeObserver | null = null;
     let shaderResizeFrame = 0;
     let shaderWarmFrame = 0;
+    let shaderIdleWarmHandle = 0;
+    let shaderIdleWarmIsIdleCallback = false;
 
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
@@ -1149,6 +1151,19 @@ const cardCount = workSelectedCardItems.length;
 
       scheduleNearbyShaderWarm();
       window.addEventListener('resize', scheduleNearbyShaderWarm, { signal: ac.signal });
+
+      // Fetch and compile the shader runtime during idle time so the chunk
+      // is already cached when the cards scroll into range — instead of a
+      // large download landing mid-scroll. Skipped for users on Save-Data.
+      const saveData = (navigator as any).connection?.saveData === true;
+      if (!saveData) {
+        if ('requestIdleCallback' in window) {
+          shaderIdleWarmHandle = window.requestIdleCallback(() => void loadShaderModule(), { timeout: 4000 });
+          shaderIdleWarmIsIdleCallback = true;
+        } else {
+          shaderIdleWarmHandle = window.setTimeout(() => void loadShaderModule(), 2500);
+        }
+      }
     }
 
     if (isDesktopScroll) {
@@ -1206,6 +1221,10 @@ const cardCount = workSelectedCardItems.length;
       isCleanedUp = true;
       if (shaderResizeFrame) window.cancelAnimationFrame(shaderResizeFrame);
       if (shaderWarmFrame) window.cancelAnimationFrame(shaderWarmFrame);
+      if (shaderIdleWarmHandle) {
+        if (shaderIdleWarmIsIdleCallback) window.cancelIdleCallback(shaderIdleWarmHandle);
+        else window.clearTimeout(shaderIdleWarmHandle);
+      }
       shaderObserver?.disconnect();
       shaderResizeObserver?.disconnect();
       shaderStates.forEach((state) => {

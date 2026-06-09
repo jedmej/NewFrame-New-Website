@@ -453,7 +453,7 @@ const footerLinks = [
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-  import { mountLiquidMetalWordmarkShader } from '../../scripts/liquidMetalWordmarkShader';
+  import type { LiquidMetalWordmarkHandle } from '../../scripts/liquidMetalWordmarkShader';
 
   gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
@@ -468,13 +468,42 @@ const footerLinks = [
     const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
     let splitInstance: any = null;
-    let wordmarkShader: ReturnType<typeof mountLiquidMetalWordmarkShader> | null = null;
+    let wordmarkShader: LiquidMetalWordmarkHandle | null = null;
+    let wordmarkShaderDisposed = false;
+    let wordmarkObserver: IntersectionObserver | null = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const wordmarkShaderMount = document.querySelector<HTMLElement>('[data-footer-wordmark-shader]');
 
+    // Mount the wordmark shader only once the footer approaches the viewport,
+    // so the shader runtime stays off the initial-load path.
+    const mountWordmarkShader = async () => {
+      if (wordmarkShader || wordmarkShaderDisposed || !wordmarkShaderMount) return;
+      try {
+        const { mountLiquidMetalWordmarkShader } = await import('../../scripts/liquidMetalWordmarkShader');
+        if (wordmarkShaderDisposed) return;
+        wordmarkShader = mountLiquidMetalWordmarkShader(wordmarkShaderMount);
+      } catch (error) {
+        console.warn('[footer] Failed to load wordmark shader', error);
+      }
+    };
+
     if (wordmarkShaderMount && !prefersReducedMotion) {
-      wordmarkShader = mountLiquidMetalWordmarkShader(wordmarkShaderMount);
+      if ('IntersectionObserver' in window) {
+        wordmarkObserver = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+              wordmarkObserver?.disconnect();
+              wordmarkObserver = null;
+              void mountWordmarkShader();
+            }
+          },
+          { rootMargin: '150% 0%' }
+        );
+        wordmarkObserver.observe(wordmarkShaderMount);
+      } else {
+        void mountWordmarkShader();
+      }
     }
 
     // SplitText word animation on giant CTA
@@ -607,7 +636,11 @@ const footerLinks = [
 
     cleanupFn = () => {
       ac.abort();
+      wordmarkShaderDisposed = true;
+      wordmarkObserver?.disconnect();
+      wordmarkObserver = null;
       wordmarkShader?.destroy();
+      wordmarkShader = null;
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
       gsap.killTweensOf(footerRevealItems);

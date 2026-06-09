@@ -4,7 +4,6 @@ import Nav from '../components/global/Nav.astro';
 import Footer from '../components/global/Footer.astro';
 import Preloader from '../components/global/Preloader.astro';
 import CustomCursor from '../components/global/CustomCursor.astro';
-import PageShaderBackground from '../components/global/PageShaderBackground.astro';
 import ViewportProgressiveBlur from '../components/global/ViewportProgressiveBlur.astro';
 import type { Lang } from '../i18n/translations';
 import { useTranslations } from '../i18n/translations';
@@ -13,11 +12,10 @@ interface Props {
   title?: string;
   description?: string;
   lang: Lang;
-  showScrollShader?: boolean;
   showFooter?: boolean;
 }
 
-const { title, description, lang, showScrollShader = false, showFooter = true } = Astro.props;
+const { title, description, lang, showFooter = true } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -26,9 +24,8 @@ const t = useTranslations(lang);
   <Preloader />
   <CustomCursor />
   <Nav lang={lang} />
-  {showScrollShader && <PageShaderBackground />}
 
-  <main id="main-content" class:list={{ 'page-content--scroll-shader': showScrollShader }}>
+  <main id="main-content">
     <slot />
   </main>
 

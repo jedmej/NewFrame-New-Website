@@ -1092,6 +1092,15 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       mobileMenu!.setAttribute('aria-hidden', 'true');
     }
 
+    // Warm the shader module on first touch intent so the glass effect is
+    // ready by the time the menu finishes opening.
+    const warmMenuShaderModule = () => {
+      if (prefersReducedMotion || !isMobileViewport() || !menuShaderCanvas) return;
+      void loadShaderModule();
+    };
+    menuBtn?.addEventListener('pointerdown', warmMenuShaderModule, { signal, passive: true });
+    menuBtn?.addEventListener('focus', warmMenuShaderModule, { signal });
+
     menuBtn?.addEventListener('click', () => {
       if (menuOpen) {
         closeMenu();
