@@ -112,7 +112,6 @@ const cardCount = workSelectedCardItems.length;
                     </div>
 
                     <div class="work-selected-cards__card-mobile-copy">
-                      <span class="work-selected-cards__card-mobile-meta">{category} · {padWorkCardIndex(index)}</span>
                       <h3 class="work-selected-cards__card-mobile-name">{displayName}</h3>
                       <p class="work-selected-cards__card-mobile-description">{meta.description}</p>
                     </div>
@@ -584,16 +583,6 @@ const cardCount = workSelectedCardItems.length;
     display: none;
   }
 
-  .work-selected-cards__card-mobile-meta {
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    line-height: 1.45;
-    text-transform: uppercase;
-    color: var(--work-cards-ink-faint);
-  }
-
   .work-selected-cards__card-mobile-name {
     margin: 0;
     font-family: var(--font-display);
@@ -706,7 +695,8 @@ const cardCount = workSelectedCardItems.length;
     }
 
     .work-selected-cards__card-hover,
-    .work-selected-cards__card-shader {
+    .work-selected-cards__card-shader,
+    .work-selected-cards__card-footer {
       display: none;
     }
 

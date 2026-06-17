@@ -7,7 +7,8 @@ export type WorkCardKey =
   | 'panenka'
   | 'esthetic'
   | 'adfidence'
-  | 'amvis';
+  | 'amvis'
+  | 'atelierluma';
 
 type WorkCardItem = {
   key: WorkCardKey;
@@ -67,6 +68,13 @@ export const workSelectedCardItems: WorkCardItem[] = [
     category: 'WEB',
     url: 'https://amvis.pages.dev/',
     displayName: 'Amvis',
+  },
+  {
+    key: 'atelierluma',
+    image: '/images/work/atelierluma.avif',
+    category: 'WEB',
+    url: 'https://interior-studio-exploration.pages.dev',
+    displayName: 'Atelier Luma',
   },
 ];
 
