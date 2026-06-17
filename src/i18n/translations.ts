@@ -86,6 +86,10 @@ export const translations = {
           description: 'A composed, reassuring website for an accounting office that turns complex financial support into a calmer first impression.',
           roles: ['Web design', 'Development', 'Visual direction'],
         },
+        atelierluma: {
+          description: 'An immersive website for an interior design studio, built around atmosphere, materiality and a refined first impression.',
+          roles: ['Web design', 'Development', 'Visual direction'],
+        },
       },
     },
     testimonials: {
@@ -213,6 +217,10 @@ export const translations = {
         },
         amvis: {
           description: 'Spokojna, uporządkowana strona dla biura rachunkowego, która przekłada złożone wsparcie finansowe na bardziej pewne pierwsze wrażenie.',
+          roles: ['Web design', 'Development', 'Kierunek wizualny'],
+        },
+        atelierluma: {
+          description: 'Wciągająca strona dla studia projektowania wnętrz, zbudowana wokół nastroju, materii i dopracowanego pierwszego wrażenia.',
           roles: ['Web design', 'Development', 'Kierunek wizualny'],
         },
       },
