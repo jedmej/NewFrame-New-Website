@@ -17,6 +17,14 @@ interface Props {
 
 const { title, description, lang, showFooter = true } = Astro.props;
 const t = useTranslations(lang);
+
+// Dev-only DialKit typography tuner. The dynamic import is guarded by
+// import.meta.env.DEV (statically false in prod), so React/DialKit are
+// dead-code-eliminated from production builds.
+let DialKitDev: typeof import('../components/dev/DialKitDev.astro').default | null = null;
+if (import.meta.env.DEV) {
+  DialKitDev = (await import('../components/dev/DialKitDev.astro')).default;
+}
 ---
 
 <Base title={title} description={description} lang={lang}>
@@ -31,6 +39,7 @@ const t = useTranslations(lang);
 
   {showFooter && <Footer lang={lang} />}
   <ViewportProgressiveBlur />
+  {DialKitDev && <DialKitDev />}
 
   <!-- Initialize Lenis smooth scroll -->
   <script>

@@ -33,7 +33,7 @@ const rows = t.waysToWork.items;
 
           <ul class="ways-paper-rows__items">
             {row.includes.map((entry) => (
-              <li>{entry}</li>
+              <li data-ways-paper-item>{entry}</li>
             ))}
           </ul>
         </article>
@@ -127,6 +127,7 @@ const rows = t.waysToWork.items;
     line-height: 1.067;
     letter-spacing: -0.02em;
     text-wrap: balance;
+    will-change: transform;
   }
 
   @media (max-width: 1023px) {
@@ -182,6 +183,10 @@ const rows = t.waysToWork.items;
     .ways-paper-rows__row {
       transition: none;
     }
+
+    .ways-paper-rows__items li {
+      will-change: auto;
+    }
   }
 </style>
 
@@ -205,7 +210,38 @@ const rows = t.waysToWork.items;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const desktopQuery = window.matchMedia('(min-width: 641px)');
     const rows = Array.from(section.querySelectorAll<HTMLElement>('.ways-paper-rows__row'));
+    const animatedItems: HTMLElement[] = [];
     let activeRowIndex = -1;
+
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    const getStartOffset = (index: number) => 28 + index * 6;
+
+    const updateItemMotion = () => {
+      const stickyLine = window.innerHeight * 0.4;
+      const spread = window.innerHeight * 0.52;
+
+      rows.forEach((row) => {
+        const items = Array.from(row.querySelectorAll<HTMLElement>('[data-ways-paper-item]'));
+
+        items.forEach((item, index) => {
+          const rect = item.getBoundingClientRect();
+          const centerY = rect.top + rect.height * 0.5;
+          const distance = (centerY - stickyLine) / spread;
+          const phase = index * 0.055;
+          const progress = clamp(1.02 - distance * 0.92 - phase);
+          const eased = gsap.parseEase('power1.inOut')(progress);
+          const startX = getStartOffset(index);
+
+          gsap.set(item, { x: gsap.utils.interpolate(startX, 0, eased) });
+        });
+      });
+    };
+
+    const tickMotion = () => {
+      const rect = section.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+      updateItemMotion();
+    };
 
     const setActiveRow = (index: number) => {
       if (index === activeRowIndex) return;
@@ -215,10 +251,8 @@ const rows = t.waysToWork.items;
       });
     };
 
-    const getStickyLine = () => window.innerHeight * 0.4;
-
     const syncActiveRow = () => {
-      const stickyLine = getStickyLine();
+      const stickyLine = window.innerHeight * 0.4;
       const owningRow = rows.findIndex((row) => {
         const rect = row.getBoundingClientRect();
         return rect.top <= stickyLine && rect.bottom > stickyLine;
@@ -246,7 +280,14 @@ const rows = t.waysToWork.items;
       return;
     }
 
+    rows.forEach((row) => {
+      const items = Array.from(row.querySelectorAll<HTMLElement>('[data-ways-paper-item]'));
+      animatedItems.push(...items);
+    });
+
+    updateItemMotion();
     syncActiveRow();
+    gsap.ticker.add(tickMotion);
 
     scrollTriggers.push(ScrollTrigger.create({
       trigger: section,
@@ -254,11 +295,20 @@ const rows = t.waysToWork.items;
       end: 'bottom top',
       invalidateOnRefresh: true,
       onUpdate: syncActiveRow,
-      onRefresh: syncActiveRow,
+      onRefresh: () => {
+        syncActiveRow();
+        updateItemMotion();
+      },
     }));
 
+    window.addEventListener('resize', updateItemMotion, { signal: ac.signal });
+    desktopQuery.addEventListener('change', initWaysPaperRows, { signal: ac.signal });
+    requestAnimationFrame(() => ScrollTrigger.refresh());
+
     cleanupFn = () => {
+      gsap.ticker.remove(tickMotion);
       scrollTriggers.forEach((trigger) => trigger.kill());
+      gsap.set(animatedItems, { clearProps: 'transform,willChange' });
       ac.abort();
     };
   }
