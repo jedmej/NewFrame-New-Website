@@ -18,5 +18,14 @@
     "lenis": "^1.1.21",
     "shaders": "^2.5.113",
     "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "dialkit": "^1.2.0",
+    "motion": "^12.40.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   }
 }

@@ -1,0 +1,11 @@
+---
+/**
+ * Dev-only wrapper that mounts the DialKit typography tuner as a React island.
+ * Imported dynamically (and only under import.meta.env.DEV) from Page.astro, so
+ * this module — and React/DialKit with it — is dead-code-eliminated from
+ * production builds.
+ */
+import DialKitPanel from './DialKitPanel.tsx';
+---
+
+<DialKitPanel client:only="react" />

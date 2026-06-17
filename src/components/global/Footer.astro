@@ -32,20 +32,8 @@ const footerLinks = [
   <div class="footer-surface">
     <div class="footer-inner">
       <div class="footer-grid">
-        <div class="footer-cta-cell">
+        <div class="footer-headline-row">
           <h2 id="footer-cta" class="footer-cta">{t.footer.cta}</h2>
-          <p class="footer-contact-prompt">{t.contact.prompt}</p>
-        </div>
-
-        <div class="footer-contact-stack footer-email-cell">
-          <a
-            href={`mailto:${email}?subject=${encodeURIComponent(emailSubject)}`}
-            class="footer-contact-link group"
-            data-cursor="CLICK"
-            aria-label={`Email ${email}`}
-          >
-            <span class="footer-email footer-email-address">hello@newframe.studio</span>
-          </a>
 
           <div class="footer-meta-card" aria-label="Newframe studio meta">
             {footerMeta.map((item, index) => (
@@ -54,6 +42,19 @@ const footerLinks = [
               </span>
             ))}
           </div>
+        </div>
+
+        <div class="footer-contact-block">
+          <p class="footer-contact-prompt">{t.contact.prompt}</p>
+
+          <a
+            href={`mailto:${email}?subject=${encodeURIComponent(emailSubject)}`}
+            class="footer-contact-link group"
+            data-cursor="CLICK"
+            aria-label={`Email ${email}`}
+          >
+            <span class="footer-email footer-email-address">hello@newframe.studio</span>
+          </a>
         </div>
 
         <nav class="footer-nav-cell" aria-label={t.footer.navigation}>
@@ -73,8 +74,6 @@ const footerLinks = [
         <p>&copy; {year} New Frame Studio · {t.footer.rights}</p>
       </div>
     </div>
-
-    <div class="footer-wordmark-shader" data-footer-wordmark-shader aria-hidden="true"></div>
   </div>
 </footer>
 
@@ -91,7 +90,6 @@ const footerLinks = [
   .footer-surface {
     position: relative;
     box-sizing: border-box;
-    min-height: 100svh;
     overflow: hidden;
     background: transparent;
   }
@@ -101,53 +99,39 @@ const footerLinks = [
     box-sizing: border-box;
     z-index: 2;
     display: grid;
-    min-height: 100svh;
-    align-content: center;
     gap: clamp(1.25rem, 1.25vw, 1.5rem);
     width: min(100%, 1760px);
     margin: 0 auto;
-    padding: clamp(5.5rem, 6.8svh, 5.5rem) clamp(1.25rem, 4.17vw, 5rem) clamp(8.5rem, 10.5svh, 8.5rem);
+    padding: 0 clamp(1.25rem, 4.17vw, 5rem) clamp(4.5rem, 7svh, 6.5rem);
   }
 
   .footer-grid {
-    display: grid;
-    min-height: clamp(31rem, 47.7svh, 38.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 3.2vw, 3.25rem);
     background: transparent;
   }
 
-  @media (min-width: 1024px) {
-    .footer-grid {
-      grid-template-columns: minmax(0, 1fr) minmax(26rem, 36.5rem);
-    }
-  }
-
-  .footer-cta-cell,
-  .footer-email-cell,
-  .footer-nav-cell {
-    min-width: 0;
-  }
-
-  .footer-cta-cell {
-    display: flex;
-    min-height: clamp(28rem, 47.7svh, 38.75rem);
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(2.5rem, 4.17vw, 5rem);
-    padding-right: 0;
+  .footer-headline-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 2.5vw, 2.5rem);
   }
 
   @media (min-width: 1024px) {
-    .footer-cta-cell {
-      grid-row: 1;
+    .footer-headline-row {
+      grid-template-columns: minmax(0, 1fr) auto;
     }
   }
 
   .footer-cta {
-    max-width: 6.8em;
+    max-width: none;
+    margin: 0;
     color: var(--color-dark-text);
     font-family: var(--font-serif);
     font-size: clamp(4.375rem, 6.1vw, 7.3rem);
-    font-weight: 300;
+    font-weight: 200;
     line-height: 0.86;
     letter-spacing: 0;
     text-wrap: balance;
@@ -159,56 +143,21 @@ const footerLinks = [
     will-change: transform, opacity;
   }
 
-  .footer-contact-prompt {
-    max-width: 37.5rem;
-    margin-top: clamp(2rem, 3vw, 2.625rem);
-    font-family: var(--font-mono);
-    font-size: clamp(1.02rem, 0.94vw, 1.125rem);
-    line-height: 1.5;
-    letter-spacing: 0.02em;
-    color: var(--footer-cream-muted);
-    text-wrap: pretty;
-  }
-
-  .footer-contact-stack {
-    position: relative;
+  .footer-meta-card {
     display: grid;
-    min-height: clamp(28rem, 47.7svh, 38.75rem);
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    color: var(--color-dark-text);
+    gap: clamp(0.4rem, 0.6vw, 0.6rem);
+    align-content: start;
+    color: inherit;
   }
 
   @media (min-width: 1024px) {
-    .footer-contact-stack {
-      grid-row: 1;
+    .footer-meta-card {
+      justify-items: end;
+      text-align: right;
     }
   }
 
-  .footer-contact-link,
-  .footer-meta-card {
-    position: relative;
-    display: grid;
-    min-width: 0;
-    align-content: center;
-    justify-items: end;
-    gap: clamp(1rem, 0.94vw, 1.125rem);
-    padding: clamp(2rem, 2.5vw, 3rem);
-    color: inherit;
-    text-align: right;
-  }
-
-  .footer-contact-link {
-    text-decoration: none;
-    transition:
-      color 0.45s var(--ease-out-expo);
-  }
-
-  .footer-meta-card {
-    border-top: 0;
-  }
-
   .footer-meta-line {
-    width: 100%;
     color: var(--footer-cream-muted);
     font-family: var(--font-mono);
     font-size: clamp(0.86rem, 0.78vw, 0.94rem);
@@ -221,8 +170,29 @@ const footerLinks = [
     color: var(--color-dark-text);
   }
 
-  .footer-contact-link:last-child {
-    border-bottom: 0;
+  .footer-contact-block {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 3.2vw, 3.25rem);
+  }
+
+  .footer-contact-prompt {
+    max-width: 37.5rem;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(1.02rem, 0.94vw, 1.125rem);
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: var(--footer-cream-muted);
+    text-wrap: pretty;
+  }
+
+  .footer-contact-link {
+    display: block;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.45s var(--ease-out-expo);
   }
 
   .footer-contact-link:hover,
@@ -231,27 +201,21 @@ const footerLinks = [
   }
 
   .footer-email {
+    display: block;
     max-width: 100%;
     font-family: var(--font-serif);
-    font-size: clamp(2.5rem, 2.6vw, 3.125rem);
+    font-size: clamp(2.1rem, 4.2vw, 4.375rem);
     font-weight: 200;
     font-style: normal;
-    line-height: 0.95;
+    line-height: 0.9;
     letter-spacing: 0;
     white-space: nowrap;
   }
 
   .footer-nav-cell {
-    grid-column: 1 / -1;
+    min-width: 0;
     padding: 0;
     border-top: 1px solid var(--footer-line);
-  }
-
-  @media (min-width: 1024px) {
-    .footer-nav-cell {
-      grid-row: 2;
-      border-bottom: 0;
-    }
   }
 
   .footer-link-grid {
@@ -331,30 +295,20 @@ const footerLinks = [
     text-align: center;
   }
 
-  .footer-wordmark-shader {
-    position: absolute;
-    z-index: 1;
-    bottom: clamp(-3rem, -2.5vw, -1.4rem);
-    left: 2.53vw;
-    width: 94.95vw;
-    height: clamp(8.5rem, 14.9vw, 17.875rem);
-    filter: saturate(0.82) brightness(0.58) contrast(0.98);
-    opacity: 0.84;
-    pointer-events: none;
-  }
-
   @media (max-width: 767px) {
     .footer-inner {
-      padding: 4.5rem 2rem 7.5rem;
+      padding: 4.5rem 2rem 4.5rem;
     }
 
     .footer-grid {
       min-height: 0;
+      gap: 2.5rem;
     }
 
-    .footer-cta-cell {
-      min-height: 18.5rem;
-      padding: 0 0 2.25rem;
+    .footer-headline-row {
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 1.75rem;
     }
 
     .footer-cta {
@@ -363,25 +317,8 @@ const footerLinks = [
       line-height: 0.9;
     }
 
-    .footer-contact-prompt {
-      margin-top: 1.25rem;
-      font-size: 1.08rem;
-      line-height: 1.5;
-    }
-
-    .footer-contact-stack {
-      min-height: 0;
-      grid-template-rows: none;
-      border-top: 1px solid var(--footer-line);
-    }
-
-    .footer-contact-link,
     .footer-meta-card {
-      min-height: 9.5rem;
-      justify-items: start;
-      gap: 0.75rem;
-      padding: 1.5rem 0;
-      text-align: left;
+      gap: 0.5rem;
     }
 
     .footer-meta-line {
@@ -390,14 +327,21 @@ const footerLinks = [
       letter-spacing: 0.1em;
     }
 
-    .footer-email {
-      font-size: clamp(1.35rem, 7.4vw, 2.2rem);
-      white-space: nowrap;
-      overflow-wrap: normal;
+    .footer-contact-block {
+      gap: 1.25rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--footer-line);
     }
 
+    .footer-contact-prompt {
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+
+    .footer-email,
     .footer-email-address {
-      font-size: clamp(1.2rem, 6.5vw, 2.05rem);
+      font-size: clamp(1.5rem, 7.4vw, 2.2rem);
+      white-space: nowrap;
       overflow-wrap: normal;
       word-break: normal;
     }
@@ -438,13 +382,6 @@ const footerLinks = [
     .footer-bottom p {
       text-wrap: balance;
     }
-
-    .footer-wordmark-shader {
-      bottom: 1.25rem;
-      left: 0.75rem;
-      width: calc(100% - 1.5rem);
-      height: clamp(4.5rem, 12.5vw, 5rem);
-    }
   }
 </style>
 
@@ -453,7 +390,6 @@ const footerLinks = [
   import { SplitText } from 'gsap/SplitText';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-  import type { LiquidMetalWordmarkHandle } from '../../scripts/liquidMetalWordmarkShader';
 
   gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin);
 
@@ -468,43 +404,8 @@ const footerLinks = [
     const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
     let splitInstance: any = null;
-    let wordmarkShader: LiquidMetalWordmarkHandle | null = null;
-    let wordmarkShaderDisposed = false;
-    let wordmarkObserver: IntersectionObserver | null = null;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const wordmarkShaderMount = document.querySelector<HTMLElement>('[data-footer-wordmark-shader]');
-
-    // Mount the wordmark shader only once the footer approaches the viewport,
-    // so the shader runtime stays off the initial-load path.
-    const mountWordmarkShader = async () => {
-      if (wordmarkShader || wordmarkShaderDisposed || !wordmarkShaderMount) return;
-      try {
-        const { mountLiquidMetalWordmarkShader } = await import('../../scripts/liquidMetalWordmarkShader');
-        if (wordmarkShaderDisposed) return;
-        wordmarkShader = mountLiquidMetalWordmarkShader(wordmarkShaderMount);
-      } catch (error) {
-        console.warn('[footer] Failed to load wordmark shader', error);
-      }
-    };
-
-    if (wordmarkShaderMount && !prefersReducedMotion) {
-      if ('IntersectionObserver' in window) {
-        wordmarkObserver = new IntersectionObserver(
-          (entries) => {
-            if (entries.some((entry) => entry.isIntersecting)) {
-              wordmarkObserver?.disconnect();
-              wordmarkObserver = null;
-              void mountWordmarkShader();
-            }
-          },
-          { rootMargin: '150% 0%' }
-        );
-        wordmarkObserver.observe(wordmarkShaderMount);
-      } else {
-        void mountWordmarkShader();
-      }
-    }
 
     // SplitText word animation on giant CTA
     const ctaEl = document.getElementById('footer-cta');
@@ -565,7 +466,7 @@ const footerLinks = [
       });
 
       const footerTl = gsap.timeline({
-        defaults: { ease: 'expo.out' },
+        defaults: { ease: 'power3.out' },
         scrollTrigger: {
           trigger: document.getElementById('contact'),
           start: 'top 66%',
@@ -578,16 +479,16 @@ const footerLinks = [
       timelines.push(footerTl);
       if (footerTl.scrollTrigger) scrollTriggers.push(footerTl.scrollTrigger);
 
+      if (footerMetaCard) {
+        footerTl.to(footerMetaCard, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.6 }, 0.08);
+      }
+
       if (footerPrompt) {
-        footerTl.to(footerPrompt, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.82 }, 0.14);
+        footerTl.to(footerPrompt, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.55 }, 0.17);
       }
 
       if (footerContactLink) {
-        footerTl.to(footerContactLink, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9 }, 0.28);
-      }
-
-      if (footerMetaCard) {
-        footerTl.to(footerMetaCard, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9 }, 0.42);
+        footerTl.to(footerContactLink, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.6 }, 0.25);
       }
 
       if (footerNavItems.length > 0) {
@@ -595,9 +496,9 @@ const footerLinks = [
           y: 0,
           opacity: 1,
           filter: 'blur(0px)',
-          duration: 0.78,
-          stagger: 0.055,
-        }, 0.58);
+          duration: 0.5,
+          stagger: 0.038,
+        }, 0.34);
       }
 
       if (footerBottomItems.length > 0) {
@@ -605,9 +506,9 @@ const footerLinks = [
           y: 0,
           opacity: 1,
           filter: 'blur(0px)',
-          duration: 0.72,
-          stagger: 0.06,
-        }, 0.92);
+          duration: 0.5,
+          stagger: 0.05,
+        }, 0.5);
       }
     }
 
@@ -636,11 +537,6 @@ const footerLinks = [
 
     cleanupFn = () => {
       ac.abort();
-      wordmarkShaderDisposed = true;
-      wordmarkObserver?.disconnect();
-      wordmarkObserver = null;
-      wordmarkShader?.destroy();
-      wordmarkShader = null;
       timelines.forEach((tl) => tl.kill());
       scrollTriggers.forEach((st) => st.kill());
       gsap.killTweensOf(footerRevealItems);

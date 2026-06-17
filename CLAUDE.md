@@ -9,11 +9,12 @@ Newframe is Jed Mejzner's portfolio/agency website for a web design studio. Sing
 - **Animation:** GSAP 3 (ScrollTrigger, SplitText, ScrambleTextPlugin)
 - **Smooth scroll:** Lenis (desktop only, >=1024px)
 - **WebGL effects:** two shader systems, both lazy-loaded:
-  - `shaders` npm package — dynamically imported via `import('shaders/js')` in `Nav.astro` (mobile menu glass overlay) and `WorkSelectedCards.astro`
-  - `@paper-design/shaders` — vanilla `ShaderMount` (NO React; React was removed from the project), wrapped in `src/scripts/neuroSectionShader.ts` (neuro-noise background, used by `OfferProcessBand`) and `src/scripts/liquidMetalWordmarkShader.ts` (footer wordmark, used by `Footer`)
+  - `shaders` npm package — dynamically imported via `import('shaders/js')` in `WorkSelectedCards.astro`
+  - `@paper-design/shaders` — vanilla `ShaderMount` (uses vanilla mount, not React), wrapped in `src/scripts/neuroSectionShader.ts` (neuro-noise background, used by `OfferProcessBand`)
 - **Fonts:** Nohemi only — self-hosted woff2, weights 200–700 (`public/fonts/nohemi/`)
 - **TypeScript:** Strict mode (`astro/tsconfigs/strict`)
-- **NOT in this project:** Three.js, Unicorn Studio, React, Google Fonts — all removed; do not reintroduce them
+- **Dev-only tooling (NOT shipped to production):** React + `@astrojs/react` + `dialkit` + `motion` power the DialKit typography tuner (`src/components/dev/DialKitPanel.tsx`). The React integration is registered only when `NODE_ENV !== 'production'` (see `astro.config.mjs`), and the island is dynamically imported only under `import.meta.env.DEV` (see `Page.astro`), so no React/DialKit code is in the production build (verified: `dist/` contains zero React). Production runtime stays React-free — do NOT use React for any user-facing/shipped component.
+- **NOT in this project:** Three.js, Unicorn Studio, Google Fonts — all removed; do not reintroduce them
 
 ## Commands
 ```bash
@@ -27,8 +28,10 @@ npm run preview  # Preview production build
 src/
 ├── components/
 │   ├── global/        # Nav, Footer, CustomCursor, Preloader, ViewportProgressiveBlur
-│   └── sections/      # Hero, About, WorkSelectedCards, WaysToWorkPaperRows,
-│                      # Testimonials, OfferProcessBand
+│   ├── sections/      # Hero, About, WorkSelectedCards, WaysToWorkPaperRows,
+│   │                  # Testimonials, OfferProcessBand
+│   └── dev/           # DEV-ONLY (excluded from prod): DialKitPanel.tsx (React
+│                      # DialKit typography tuner) + DialKitDev.astro island wrapper
 ├── i18n/
 │   └── translations.ts  # All EN/PL strings, getLangFromUrl(), useTranslations()
 ├── layouts/
@@ -42,8 +45,7 @@ src/
 │   ├── en/            # index.astro, privacy.astro
 │   └── pl/            # index.astro, privacy.astro
 ├── scripts/
-│   ├── neuroSectionShader.ts        # @paper-design/shaders neuro-noise wrapper
-│   └── liquidMetalWordmarkShader.ts # @paper-design/shaders liquid metal wrapper
+│   └── neuroSectionShader.ts        # @paper-design/shaders neuro-noise wrapper
 └── styles/
     └── global.css     # Tailwind v4 import, @theme tokens, font-faces, utilities
 public/
@@ -89,8 +91,8 @@ This prevents memory leaks during Astro view transitions.
 
 ### Shaders
 - Both shader systems are lazy-loaded via dynamic `import()` — never import them statically at module top level in component scripts
-- `shaders/js` module is cached in a module-level promise (`shaderModulePromise ??= import('shaders/js')`) and warmed on interaction intent (e.g. first touch) — keep this pattern
-- `@paper-design/shaders` wrappers in `src/scripts/` return a handle with a dispose method; mount lazily (IntersectionObserver) and dispose in the cleanup function
+- `shaders/js` module is cached in a module-level promise (`shaderModulePromise ??= import('shaders/js')`) and warmed before interaction where needed — keep this pattern
+- `@paper-design/shaders` wrappers in `src/scripts/` return a handle with a dispose method; mount lazily and dispose in the cleanup function
 - Respect `prefers-reduced-motion` — skip mounting shaders when set
 - The CSP in `public/_headers` allowlists `https://data.shaders.com` (shader assets) — keep in sync if shader sources change
 
