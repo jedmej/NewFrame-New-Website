@@ -60,35 +60,30 @@ export const translations = {
       projects: {
         hubert: {
           description: 'A focused personal website built around presence, clarity and a sharp first impression.',
-          roles: ['Web design', 'Development'],
         },
         uroki: {
           description: 'A visual website for a tattoo studio with a strong identity and client experience.',
-          roles: ['Creative direction', 'Web design', 'Development'],
         },
         panenka: {
           description: 'A website for a creative studio that brings personality, motion and visual confidence to the front.',
-          roles: ['Web design', 'Development', 'Interaction'],
         },
         esthetic: {
           description: 'A calm, elegant website for a dental and aesthetic practice.',
-          roles: ['Web design', 'Development', 'Visual direction'],
         },
         adfidence: {
           description: 'A sharper digital presence for a performance and marketing-focused business.',
-          roles: ['Web design', 'Development', 'Interface system'],
         },
         karmel: {
           description: 'A branding-led web presence built around warmth, clarity and a confident first impression.',
-          roles: ['Branding', 'Web design'],
         },
         amvis: {
           description: 'A composed, reassuring website for an accounting office that turns complex financial support into a calmer first impression.',
-          roles: ['Web design', 'Development', 'Visual direction'],
         },
         atelierluma: {
           description: 'An immersive website for an interior design studio, built around atmosphere, materiality and a refined first impression.',
-          roles: ['Web design', 'Development', 'Visual direction'],
+        },
+        visionspeech: {
+          description: 'A product website for a privacy-first dictation app on Apple Vision Pro, built around clarity, restraint and a confident first impression.',
         },
       },
     },
@@ -193,35 +188,30 @@ export const translations = {
       projects: {
         hubert: {
           description: 'Strona osobista zbudowana wokół obecności, prostoty i mocnego pierwszego wrażenia.',
-          roles: ['Web design', 'Development'],
         },
         uroki: {
           description: 'Wizualna strona dla studia tatuażu z mocnym charakterem i dopracowaną ścieżką klienta.',
-          roles: ['Kierunek kreatywny', 'Web design', 'Development'],
         },
         panenka: {
           description: 'Strona dla studia kreatywnego, która od razu pokazuje charakter, ruch i pewność wizualną.',
-          roles: ['Web design', 'Development', 'Interakcje'],
         },
         esthetic: {
           description: 'Spokojna, elegancka strona dla praktyki dentalnej i estetycznej.',
-          roles: ['Web design', 'Development', 'Kierunek wizualny'],
         },
         adfidence: {
           description: 'Nowocześniejsza strona dla firmy skupionej na performance i marketingu.',
-          roles: ['Web design', 'Development', 'System interfejsu'],
         },
         karmel: {
           description: 'Obecność online oparta na brandingu, cieple i mocnym pierwszym wrażeniu.',
-          roles: ['Branding', 'Web design'],
         },
         amvis: {
           description: 'Spokojna, uporządkowana strona dla biura rachunkowego, która przekłada złożone wsparcie finansowe na bardziej pewne pierwsze wrażenie.',
-          roles: ['Web design', 'Development', 'Kierunek wizualny'],
         },
         atelierluma: {
           description: 'Wciągająca strona dla studia projektowania wnętrz, zbudowana wokół nastroju, materii i dopracowanego pierwszego wrażenia.',
-          roles: ['Web design', 'Development', 'Kierunek wizualny'],
+        },
+        visionspeech: {
+          description: 'Strona produktowa dla aplikacji do dyktowania na Apple Vision Pro, stawiającej na prywatność, zbudowana wokół jasności, powściągliwości i pewnego pierwszego wrażenia.',
         },
       },
     },

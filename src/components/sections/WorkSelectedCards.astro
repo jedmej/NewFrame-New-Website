@@ -2,7 +2,6 @@
 import type { Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/translations';
 import {
-  formatWorkCardCategory,
   getWorkCardContactHref,
   padWorkCardIndex,
   workSelectedCardItems,
@@ -53,8 +52,6 @@ const cardCount = workSelectedCardItems.length;
                 const href = project.url;
                 const meta = t.work.projects[project.key];
                 const displayName = project.displayName;
-                const category = formatWorkCardCategory(project.category);
-                const roles = meta.roles.join(' / ');
                 const isExternal = href.startsWith('http');
 
                 return (
@@ -64,7 +61,7 @@ const cardCount = workSelectedCardItems.length;
                     rel={isExternal ? 'noopener noreferrer' : undefined}
                     class="work-selected-cards__card"
                     role="listitem"
-                    aria-label={`${displayName}. ${roles}. ${meta.description}`}
+                    aria-label={`${displayName}. ${meta.description}`}
                     data-work-cards-item
                     data-work-card-key={project.key}
                   >
@@ -92,10 +89,11 @@ const cardCount = workSelectedCardItems.length;
                       </div>
 
                       <div class="work-selected-cards__card-hover">
+                        <div class="work-selected-cards__card-hover-glow" aria-hidden="true"></div>
                         <div class="work-selected-cards__card-hover-content">
                           <div class="work-selected-cards__card-hover-top">
                             <span class="work-selected-cards__card-hover-meta">
-                              {category} · {padWorkCardIndex(index)}
+                              {padWorkCardIndex(index)}
                             </span>
                             <span class="work-selected-cards__card-hover-arrow" aria-hidden="true">↗</span>
                           </div>
@@ -103,10 +101,11 @@ const cardCount = workSelectedCardItems.length;
                           <div class="work-selected-cards__card-hover-body">
                             <h3 class="work-selected-cards__card-hover-name">{displayName}</h3>
                             <p class="work-selected-cards__card-hover-description">{meta.description}</p>
-                            <p class="work-selected-cards__card-hover-roles">{roles}</p>
                           </div>
 
-                          <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
+                          <div class="work-selected-cards__card-hover-footer">
+                            <span class="work-selected-cards__card-hover-cta text-mono-xs">{t.work.viewProject}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -148,6 +147,7 @@ const cardCount = workSelectedCardItems.length;
     --work-cards-glass: rgba(239, 235, 226, 0.62);
     --work-cards-hover-enter: 0.62s cubic-bezier(0.16, 1, 0.3, 1);
     --work-cards-hover-exit: 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    --work-cards-hover-rise: 0.34s cubic-bezier(0.16, 1, 0.3, 1);
 
     position: relative;
     overflow: clip;
@@ -396,8 +396,6 @@ const cardCount = workSelectedCardItems.length;
   .work-selected-cards__card-hover-top,
   .work-selected-cards__card-hover-name,
   .work-selected-cards__card-hover-description,
-  .work-selected-cards__card-hover-roles,
-  .work-selected-cards__card-hover-cta,
   .work-selected-cards__card-hover-arrow {
     opacity: 0;
     transform: translate3d(0, 14px, 0);
@@ -423,20 +421,49 @@ const cardCount = workSelectedCardItems.length;
     transition-delay: 0.04s;
   }
 
-  .work-selected-cards__card-hover-roles {
-    transition-delay: 0.02s;
+  .work-selected-cards__card-hover-glow {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 0;
+    height: 44%;
+    pointer-events: none;
+    transform: translate3d(0, 1.75rem, 0);
+    transition: transform var(--work-cards-hover-exit);
+    background:
+      radial-gradient(
+        ellipse 128% 90% at 50% 108%,
+        rgba(255, 228, 198, 0.2) 0%,
+        rgba(255, 196, 148, 0.09) 36%,
+        rgba(255, 170, 120, 0.03) 58%,
+        transparent 74%
+      ),
+      linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.03) 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.45) 44%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.45) 44%, #000 100%);
+  }
+
+  .work-selected-cards__card-hover-footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 4.75rem;
+    margin-inline: -1.5rem;
+    margin-bottom: -1.5rem;
+    padding: 1.75rem 1.5rem 1.375rem;
+    transform: translate3d(0, 1.75rem, 0);
+    transition: transform var(--work-cards-hover-exit);
   }
 
   .work-selected-cards__card-hover-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 3rem;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 0;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    transition-delay: 0s;
+    color: rgba(255, 255, 255, 0.88);
+    letter-spacing: 0.12em;
+    text-shadow: 0 1px 12px rgba(255, 214, 168, 0.16);
   }
 
   .work-selected-cards__card-hover-meta {
@@ -481,16 +508,6 @@ const cardCount = workSelectedCardItems.length;
     line-height: 1.55;
     color: rgba(255, 255, 255, 0.78);
     text-wrap: pretty;
-  }
-
-  .work-selected-cards__card-hover-roles {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    letter-spacing: 0.08em;
-    line-height: 1.4;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.54);
   }
 
   @media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
@@ -541,24 +558,13 @@ const cardCount = workSelectedCardItems.length;
       transition-delay: 0.18s;
     }
 
-    .work-selected-cards__card:hover .work-selected-cards__card-hover-roles,
-    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-roles {
-      opacity: 1;
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-glow,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-glow,
+    .work-selected-cards__card:hover .work-selected-cards__card-hover-footer,
+    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-footer {
       transform: translate3d(0, 0, 0);
-      transition:
-        opacity var(--work-cards-hover-enter),
-        transform var(--work-cards-hover-enter);
-      transition-delay: 0.24s;
-    }
-
-    .work-selected-cards__card:hover .work-selected-cards__card-hover-cta,
-    .work-selected-cards__card:focus-visible .work-selected-cards__card-hover-cta {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-      transition:
-        opacity var(--work-cards-hover-enter),
-        transform var(--work-cards-hover-enter);
-      transition-delay: 0.32s;
+      transition: transform var(--work-cards-hover-rise);
+      transition-delay: 0s;
     }
 
     .work-selected-cards__card:hover .work-selected-cards__card-hover-arrow,
@@ -748,8 +754,8 @@ const cardCount = workSelectedCardItems.length;
     .work-selected-cards__card-hover-top,
     .work-selected-cards__card-hover-name,
     .work-selected-cards__card-hover-description,
-    .work-selected-cards__card-hover-roles,
-    .work-selected-cards__card-hover-cta,
+    .work-selected-cards__card-hover-glow,
+    .work-selected-cards__card-hover-footer,
     .work-selected-cards__card-hover-arrow,
     .work-selected-cards__progress-fill {
       transition: none;
