@@ -8,12 +8,12 @@ export type WorkCardKey =
   | 'esthetic'
   | 'adfidence'
   | 'amvis'
-  | 'atelierluma';
+  | 'atelierluma'
+  | 'visionspeech';
 
 type WorkCardItem = {
   key: WorkCardKey;
   image: string;
-  category: string;
   url: string;
   displayName: string;
 };
@@ -23,70 +23,58 @@ export const workSelectedCardItems: WorkCardItem[] = [
   {
     key: 'uroki',
     image: '/images/work/uroki.avif',
-    category: 'WEB',
     url: 'https://urokitattoo.pl/',
     displayName: 'Uroki',
   },
   {
     key: 'hubert',
     image: '/images/work/hubert.avif',
-    category: 'WEB',
     url: 'https://hubertkesik.com/',
     displayName: 'Hubert',
   },
   {
     key: 'karmel',
     image: '/images/work/karmel.avif',
-    category: 'BRANDING',
     url: 'https://karmel-czekolada-portfolio.pages.dev/',
     displayName: 'Karmel',
   },
   {
     key: 'panenka',
     image: '/images/work/panenka.avif',
-    category: 'MOTION',
     url: 'https://panenkacreatives.com/',
     displayName: 'Panenka',
   },
   {
     key: 'esthetic',
     image: '/images/work/esthetic.avif',
-    category: 'WEB',
     url: 'https://esthetic.pl/',
     displayName: 'Esthetic',
   },
   {
     key: 'adfidence',
     image: '/images/work/adfidence.avif',
-    category: 'BRANDING',
     url: 'https://adfidence.com/',
     displayName: 'Adfidence',
   },
   {
     key: 'amvis',
     image: '/images/work/amvis-card.avif',
-    category: 'WEB',
     url: 'https://amvis.pages.dev/',
     displayName: 'Amvis',
   },
   {
     key: 'atelierluma',
     image: '/images/work/atelierluma.avif',
-    category: 'WEB',
     url: 'https://interior-studio-exploration.pages.dev',
     displayName: 'Atelier Luma',
   },
+  {
+    key: 'visionspeech',
+    image: '/images/work/visionspeech.avif',
+    url: 'https://www.visionspeech.app/',
+    displayName: 'VisionSpeech',
+  },
 ];
-
-export const categoryLabels = {
-  WEB: 'Web',
-  MOTION: 'Motion',
-  BRANDING: 'Branding',
-} as const satisfies Record<string, string>;
-
-export function formatWorkCardCategory(category: string) {
-  return categoryLabels[category as keyof typeof categoryLabels] ?? category;
-}
 
 export function padWorkCardIndex(index: number) {
   return String(index + 1).padStart(2, '0');
