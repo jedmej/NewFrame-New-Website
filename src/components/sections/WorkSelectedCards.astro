@@ -942,6 +942,11 @@ const cardCount = workSelectedCardItems.length;
     let shaderIdleWarmIsIdleCallback = false;
 
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    const readTuningNumber = (name: string, fallback: number) => {
+      const raw = getComputedStyle(section).getPropertyValue(name).trim();
+      const value = Number.parseFloat(raw);
+      return Number.isFinite(value) ? value : fallback;
+    };
 
     const getMaxScroll = () => {
       if (!track || !trackInner) return 0;
@@ -1127,6 +1132,68 @@ const cardCount = workSelectedCardItems.length;
       updateTrackState(progress);
     };
 
+    const setupCardEntrance = () => {
+      if (prefersReducedMotion || !cards.length) return;
+
+      const triggerTarget = section.querySelector<HTMLElement>('.work-selected-cards__track-shell') ?? track ?? section;
+      const cardSurfaces = cards
+        .map((card) => card.querySelector<HTMLElement>('.work-selected-cards__card-visual'))
+        .filter((surface): surface is HTMLElement => !!surface);
+      if (!cardSurfaces.length) return;
+
+      const entranceOffset = readTuningNumber('--work-cards-entrance-x', 546);
+      const entranceOpacity = clamp(readTuningNumber('--work-cards-entrance-opacity', 1));
+      const entranceDuration = readTuningNumber('--work-cards-entrance-duration', 1.46);
+      const entranceStagger = readTuningNumber('--work-cards-entrance-stagger', 0.085);
+      const entranceScrub = readTuningNumber('--work-cards-entrance-scrub', 1);
+      const entranceStart = readTuningNumber('--work-cards-entrance-start', 99);
+      const entranceEnd = readTuningNumber('--work-cards-entrance-end', 7);
+
+      cardSurfaces.forEach((surface, index) => {
+        const cardDepth = cardSurfaces.length <= 1
+          ? 0
+          : index / (cardSurfaces.length - 1);
+        const parallaxDepth = 0.12 + cardDepth * 0.88;
+        gsap.set(surface, {
+          x: entranceOffset * parallaxDepth,
+          opacity: entranceOpacity,
+          willChange: 'transform, opacity',
+        });
+      });
+
+      gsap.set(cardSurfaces, {
+        opacity: entranceOpacity,
+      });
+
+      const entranceTl = gsap.timeline({
+        paused: true,
+        defaults: { ease: 'power3.out' },
+        onComplete: () => {
+          gsap.set(cardSurfaces, { clearProps: 'willChange' });
+        },
+      });
+
+      entranceTl.to(cardSurfaces, {
+        x: 0,
+        opacity: 1,
+        duration: entranceDuration,
+        stagger: entranceStagger,
+      }, 0);
+
+      const entranceTrigger = ScrollTrigger.create({
+        trigger: triggerTarget,
+        start: () => `top ${entranceStart}%`,
+        end: () => `top ${entranceEnd}%`,
+        scrub: entranceScrub,
+        animation: entranceTl,
+        invalidateOnRefresh: true,
+      });
+
+      scrollTriggers.push(entranceTrigger);
+    };
+
+    setupCardEntrance();
+
     if (!prefersReducedMotion && isDesktopScroll && shaderCanvases.length) {
       if ('ResizeObserver' in window) {
         shaderResizeObserver = new ResizeObserver(scheduleShaderResize);
@@ -1186,6 +1253,7 @@ const cardCount = workSelectedCardItems.length;
     }
 
     desktopScrollQuery.addEventListener('change', initWorkSelectedCards, { signal: ac.signal });
+    window.addEventListener('work-cards-tuning-change', initWorkSelectedCards, { signal: ac.signal });
 
     if (prefersReducedMotion || !isDesktopScroll) {
       section.classList.remove('is-scroll-driven');
@@ -1245,6 +1313,10 @@ const cardCount = workSelectedCardItems.length;
       scrollTriggers.forEach((trigger) => trigger.kill());
       section.classList.remove('is-scroll-driven');
       trackInner?.style.removeProperty('transform');
+      cards.forEach((card) => {
+        const surface = card.querySelector<HTMLElement>('.work-selected-cards__card-visual');
+        gsap.set(surface, { clearProps: 'transform,opacity,willChange' });
+      });
       clearImageParallax();
       ac.abort();
     };

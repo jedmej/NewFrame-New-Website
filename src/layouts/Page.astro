@@ -18,7 +18,7 @@ interface Props {
 const { title, description, lang, showFooter = true } = Astro.props;
 const t = useTranslations(lang);
 
-// Dev-only DialKit typography tuner. The dynamic import is guarded by
+// Dev-only DialKit selected work motion tuner. The dynamic import is guarded by
 // import.meta.env.DEV (statically false in prod), so React/DialKit are
 // dead-code-eliminated from production builds.
 let DialKitDev: typeof import('../components/dev/DialKitDev.astro').default | null = null;

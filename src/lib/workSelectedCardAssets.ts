@@ -51,6 +51,12 @@ export const workSelectedCardItems: WorkCardItem[] = [
     displayName: 'Esthetic',
   },
   {
+    key: 'visionspeech',
+    image: '/images/work/visionspeech.avif',
+    url: 'https://visionspeech.app/',
+    displayName: 'VisionSpeech',
+  },
+  {
     key: 'adfidence',
     image: '/images/work/adfidence.avif',
     url: 'https://adfidence.com/',
@@ -67,12 +73,6 @@ export const workSelectedCardItems: WorkCardItem[] = [
     image: '/images/work/atelierluma.avif',
     url: 'https://interior-studio-exploration.pages.dev',
     displayName: 'Atelier Luma',
-  },
-  {
-    key: 'visionspeech',
-    image: '/images/work/visionspeech.avif',
-    url: 'https://www.visionspeech.app/',
-    displayName: 'VisionSpeech',
   },
 ];
 
