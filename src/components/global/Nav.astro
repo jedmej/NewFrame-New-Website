@@ -523,6 +523,12 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
   }
 
   @media (min-width: 1024px) {
+    .nav-brand {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
     .nav-shell {
       grid-template-columns: minmax(12rem, 1fr) auto minmax(12rem, 1fr);
       column-gap: clamp(1.25rem, 2vw, 2.25rem);
@@ -594,8 +600,9 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
 <script>
   import gsap from 'gsap';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  gsap.registerPlugin(ScrambleTextPlugin);
+  gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger);
 
   let cleanupFn: (() => void) | null = null;
 
@@ -610,14 +617,72 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     const { signal } = ac;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const timelines: gsap.core.Timeline[] = [];
+    const scrollTriggers: ScrollTrigger[] = [];
     let navToneFrame = 0;
     let mobileNavFrame = 0;
 
+    const setupDesktopNavLinkTravel = () => {
+      const linksGroup = nav.querySelector<HTMLElement>('.nav-section--links');
+      const navLinks = Array.from(nav.querySelectorAll<HTMLElement>('.nav-section--links .nav-link'));
+      const hero = document.getElementById('hero');
+
+      if (!linksGroup || navLinks.length === 0 || !hero || prefersReducedMotion || window.innerWidth < 1024) {
+        gsap.set(navLinks, { clearProps: 'transform,willChange' });
+        return;
+      }
+
+      gsap.set(navLinks, { willChange: 'transform' });
+
+      const getStartX = () => {
+        const firstLinkRect = navLinks[0].getBoundingClientRect();
+        const heroStatement = document.querySelector<HTMLElement>('.hero-clean__statement-wrap');
+        const heroStatementLeft = heroStatement?.getBoundingClientRect().left;
+        const startLeft = Math.max(32, heroStatementLeft ?? window.innerWidth * 0.03);
+        return startLeft - firstLinkRect.left;
+      };
+
+      gsap.set(navLinks, { x: getStartX });
+
+      const linksTl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
+      timelines.push(linksTl);
+
+      const linkTravelDurations = [1, 0.88, 0.76, 0.64];
+      const linkTravelStarts = [0.12, 0.08, 0.04, 0];
+
+      navLinks.forEach((link, index) => {
+        linksTl.to(link,
+          {
+            x: 0,
+            duration: linkTravelDurations[index] ?? 0.72,
+            ease: 'power3.out',
+          },
+          linkTravelStarts[index] ?? 0
+        );
+      });
+
+      const linksTrigger = ScrollTrigger.create({
+        trigger: hero,
+        start: 'top top',
+        end: () => `+=${Math.max(220, window.innerHeight * 0.42)}`,
+        scrub: 0.65,
+        animation: linksTl,
+        invalidateOnRefresh: true,
+      });
+      scrollTriggers.push(linksTrigger);
+    };
+
     const runIntro = () => {
       const logoLink = document.getElementById('logo-link');
-      const navLinks = Array.from(nav.querySelectorAll('.nav-section--links .nav-link'));
+      const navLinks = window.innerWidth < 1024
+        ? Array.from(nav.querySelectorAll('.nav-section--links .nav-link'))
+        : [];
       const actionItems = Array.from(nav.querySelectorAll('.nav-section--actions > .nav-link, .nav-section--actions > .nav-cta, #mobile-menu-btn'));
-      const revealItems = [logoLink, ...navLinks, ...actionItems].filter((item): item is Element => item instanceof Element);
+      const shouldRevealLogo = window.innerWidth < 1024 || window.scrollY > 8;
+      const revealItems = [
+        shouldRevealLogo ? logoLink : null,
+        ...navLinks,
+        ...actionItems,
+      ].filter((item): item is Element => item instanceof Element);
 
       if (prefersReducedMotion || revealItems.length === 0) {
         gsap.set(nav, { opacity: 1, clearProps: 'transform,filter' });
@@ -653,6 +718,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       }, 0.12);
     };
 
+    setupDesktopNavLinkTravel();
     runIntro();
 
     const parseCssColor = (value: string) => {
@@ -698,17 +764,26 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
         : Math.max(34, window.innerHeight * 0.05);
       const band = document.querySelector<HTMLElement>('[data-offer-process-band]');
       const hero = document.getElementById('hero');
+      const heroWordmark = document.querySelector<HTMLElement>('[data-hero-wordmark]');
+      const applyNavTone = (isDark: boolean) => {
+        nav.classList.toggle('nav-on-dark', isDark);
+        if (!heroWordmark) return;
+        const rootStyle = getComputedStyle(document.documentElement);
+        const darkInk = rootStyle.getPropertyValue('--color-dark-text').trim() || '#f3eadf';
+        const lightInk = rootStyle.getPropertyValue('--color-text').trim() || '#14120f';
+        heroWordmark.style.color = isDark ? darkInk : lightInk;
+      };
       const heroRect = hero?.getBoundingClientRect();
       const isOverHero = !!heroRect && heroRect.top <= navSampleY && heroRect.bottom >= navSampleY;
       const isOverDarkHero = isOverHero && hero?.dataset.navTone === 'dark';
 
       if (!band) {
-        nav.classList.toggle('nav-on-dark', isOverDarkHero);
+        applyNavTone(isOverDarkHero);
         return;
       }
 
       if (isOverHero) {
-        nav.classList.toggle('nav-on-dark', isOverDarkHero);
+        applyNavTone(isOverDarkHero);
         return;
       }
 
@@ -717,7 +792,7 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
       const bg = parseCssColor(getComputedStyle(band).getPropertyValue('--offer-process-bg'));
       const isDarkBand = !!bg && getLuminance(bg) < 0.36;
 
-      nav.classList.toggle('nav-on-dark', isOverBand && isDarkBand);
+      applyNavTone(isOverBand && isDarkBand);
     };
 
     const scheduleNavToneUpdate = () => {
@@ -986,10 +1061,13 @@ const navAriaLabel = lang === 'pl' ? 'Główna nawigacja' : 'Primary navigation'
     });
 
     cleanupFn = () => {
+      scrollTriggers.forEach((st) => st.kill());
       timelines.forEach((tl) => tl.kill());
       gsap.killTweensOf(nav);
-      gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-cta, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line'));
+      gsap.killTweensOf(nav.querySelectorAll('.nav-link, .nav-cta, .nav-section--links, #logo-link, #mobile-menu-btn, .nav-cta-arrow, .menu-line'));
       gsap.killTweensOf(mobileMenu?.querySelectorAll('.mobile-menu-link') || []);
+      gsap.set(nav.querySelectorAll('.nav-section--links .nav-link'), { clearProps: 'transform,willChange' });
+      document.querySelector<HTMLElement>('[data-hero-wordmark]')?.style.removeProperty('color');
       if (mobileMenu) {
         gsap.killTweensOf(mobileMenu);
       }

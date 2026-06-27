@@ -11,6 +11,12 @@ const t = useTranslations(lang);
 ---
 
 <section id="hero" class="hero-clean" data-lang={lang} data-nav-tone="light" aria-label={t.hero.title}>
+  <a class="hero-clean__center-wordmark" href={`/${lang}/`} data-hero-wordmark aria-label="NewFrame">
+    <span class="hero-clean__center-logo-text" aria-hidden="true">
+      NewFrame<sup>®</sup>
+    </span>
+  </a>
+
   <div class="hero-clean__content">
     <p class="hero-clean__credit">{t.hero.credit}</p>
 
@@ -28,9 +34,44 @@ const t = useTranslations(lang);
     display: flex;
     min-height: 100svh;
     overflow: visible;
-    isolation: isolate;
     background: transparent;
     color: var(--color-text);
+  }
+
+  .hero-clean__center-wordmark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 121;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text);
+    transition: color 0.24s var(--ease-out-quart);
+    text-decoration: none;
+    transform: translate3d(-50%, -50%, 0);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .hero-clean__center-logo-text {
+    display: block;
+    color: currentColor;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .hero-clean__center-logo-text sup {
+    margin-left: 0.125rem;
+    font-size: 0.5em;
+    line-height: 0;
+    opacity: 0.4;
+    vertical-align: super;
   }
 
   .hero-clean__content {
@@ -93,6 +134,12 @@ const t = useTranslations(lang);
   }
 
   @media (max-width: 1023px) {
+    .hero-clean__center-wordmark {
+      position: absolute;
+      z-index: 3;
+      pointer-events: none;
+    }
+
     .hero-clean__content {
       padding-top: calc(max(0.875rem, env(safe-area-inset-top)) + 6rem);
     }
@@ -164,16 +211,25 @@ const t = useTranslations(lang);
     const hero = document.getElementById('hero');
     const title = document.getElementById('hero-title');
     const credit = hero?.querySelector('.hero-clean__credit');
+    const wordmark = hero?.querySelector<HTMLElement>('[data-hero-wordmark]');
+    const wordmarkText = wordmark?.querySelector<HTMLElement>('.hero-clean__center-logo-text');
     const ac = new AbortController();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const splitInstances: SplitText[] = [];
     const scrollTriggers: ScrollTrigger[] = [];
     const timelines: gsap.core.Timeline[] = [];
+    const wordmarkPlaceholder = document.createComment('hero-wordmark-position');
+    const wordmarkOriginalParent = wordmark?.parentNode ?? null;
 
     if (!hero || !title || prefersReducedMotion) {
-      gsap.set([title, credit].filter(Boolean), { clearProps: 'all' });
+      gsap.set([title, credit, wordmark, wordmarkText].filter(Boolean), { clearProps: 'all' });
       cleanupFn = () => ac.abort();
       return;
+    }
+
+    if (wordmark && wordmarkOriginalParent && wordmark.parentElement !== document.body) {
+      wordmarkOriginalParent.insertBefore(wordmarkPlaceholder, wordmark);
+      document.body.appendChild(wordmark);
     }
 
     const split = new SplitText(title, {
@@ -202,7 +258,6 @@ const t = useTranslations(lang);
     gsap.set(credit, {
       y: 14,
       opacity: 0,
-      filter: 'blur(6px)',
     });
     gsap.set(lineMasks, {
       y: 0,
@@ -212,11 +267,27 @@ const t = useTranslations(lang);
       transformOrigin: 'left center',
     });
 
+    if (wordmark) {
+      gsap.set(wordmark, {
+        xPercent: -50,
+        yPercent: -50,
+        x: 0,
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+      });
+    }
+
+    if (wordmarkText) {
+      gsap.set(wordmarkText, { fontSize: '1.75rem' });
+    }
+
     const tl = gsap.timeline({
       defaults: { ease: 'expo.out' },
       onComplete: () => {
         gsap.set(lineMasks, { overflow: 'visible' });
         gsap.set(lineInners, { clearProps: 'willChange' });
+        gsap.set(credit, { clearProps: 'willChange,filter' });
       },
     });
     timelines.push(tl);
@@ -231,7 +302,6 @@ const t = useTranslations(lang);
       .to(credit, {
         y: 0,
         opacity: 1,
-        filter: 'blur(0px)',
         duration: 0.9,
       }, 0.42);
 
@@ -255,7 +325,6 @@ const t = useTranslations(lang);
       .to(credit, {
         y: () => -window.innerHeight * 0.06,
         opacity: 0,
-        filter: 'blur(8px)',
         duration: 0.52,
       }, 0)
       .to('.hero-clean__statement-wrap', {
@@ -273,10 +342,55 @@ const t = useTranslations(lang);
     });
     scrollTriggers.push(exitTrigger);
 
+    if (wordmark && window.innerWidth >= 1024) {
+      const wordmarkTl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
+      timelines.push(wordmarkTl);
+
+      wordmarkTl.to(wordmark, {
+        x: () => {
+          const navBrand = document.getElementById('logo-link');
+          const navRect = navBrand?.getBoundingClientRect();
+          if (!navRect) return 0;
+          return navRect.left + navRect.width / 2 - window.innerWidth / 2;
+        },
+        y: () => {
+          const navBrand = document.getElementById('logo-link');
+          const navRect = navBrand?.getBoundingClientRect();
+          if (!navRect) return 0;
+          return navRect.top + navRect.height / 2 - window.innerHeight / 2;
+        },
+        duration: 1,
+      }, 0);
+
+      if (wordmarkText) {
+        wordmarkTl.to(wordmarkText, {
+          fontSize: '0.875rem',
+          duration: 1,
+        }, 0);
+      }
+
+      const wordmarkTrigger = ScrollTrigger.create({
+        trigger: hero,
+        start: 'top top',
+        end: () => `+=${Math.max(220, window.innerHeight * 0.42)}`,
+        scrub: 0.65,
+        animation: wordmarkTl,
+        invalidateOnRefresh: true,
+      });
+      scrollTriggers.push(wordmarkTrigger);
+    }
+
     cleanupFn = () => {
       scrollTriggers.forEach((st) => st.kill());
       timelines.forEach((timeline) => timeline.kill());
-      gsap.killTweensOf([credit, ...lineMasks, ...lineInners].filter(Boolean));
+      gsap.killTweensOf([credit, wordmark, wordmarkText, ...lineMasks, ...lineInners].filter(Boolean));
+      gsap.set(credit, { clearProps: 'willChange,filter,transform,opacity' });
+      gsap.set(wordmark, { clearProps: 'all' });
+      gsap.set(wordmarkText, { clearProps: 'fontSize' });
+      if (wordmark && wordmarkPlaceholder.parentNode) {
+        wordmarkPlaceholder.parentNode.insertBefore(wordmark, wordmarkPlaceholder);
+        wordmarkPlaceholder.remove();
+      }
       splitInstances.forEach((splitInstance) => splitInstance.revert());
       ac.abort();
     };

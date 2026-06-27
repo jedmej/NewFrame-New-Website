@@ -84,6 +84,7 @@ export const translations = {
         },
         visionspeech: {
           description: 'A product website for a privacy-first dictation app on Apple Vision Pro, built around clarity, restraint and a confident first impression.',
+          roles: ['Product website', 'Web design', 'Development'],
         },
       },
     },
@@ -212,6 +213,7 @@ export const translations = {
         },
         visionspeech: {
           description: 'Strona produktowa dla aplikacji do dyktowania na Apple Vision Pro, stawiającej na prywatność, zbudowana wokół jasności, powściągliwości i pewnego pierwszego wrażenia.',
+          roles: ['Strona produktowa', 'Web design', 'Development'],
         },
       },
     },
