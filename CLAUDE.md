@@ -26,6 +26,8 @@ npm run preview  # Preview production build
 ## Project Structure
 ```
 src/
+├── assets/
+│   └── work/          # Work card source .avif images (served via astro:assets <Image>)
 ├── components/
 │   ├── global/        # Nav, Footer, CustomCursor, Preloader, ViewportProgressiveBlur
 │   ├── sections/      # Hero, About, WorkSelectedCards, WaysToWorkPaperRows,
@@ -50,8 +52,8 @@ src/
     └── global.css     # Tailwind v4 import, @theme tokens, font-faces, utilities
 public/
 ├── _headers           # Cloudflare security (CSP) + cache headers
+├── _redirects         # Cloudflare redirect: / → /en/ (301)
 ├── fonts/nohemi/      # Nohemi woff2 (ExtraLight→Bold, 200–700)
-├── images/            # Work card .avif images, footer wordmark SVG
 └── favicon.svg, og-image.jpg, robots.txt
 ```
 
@@ -101,8 +103,8 @@ This prevents memory leaks during Astro view transitions.
 - Self-hosted Nohemi with `<link rel="preload">` for Light/SemiBold/Bold in `Base.astro`; no external font requests
 - Shader modules loaded on demand (dynamic import + intersection/intent triggers), never in the critical path
 - Preloader shows once per session (localStorage flag `preloaded`)
-- Long-lived cache headers for `/_astro/*`, fonts, and images in `public/_headers`
-- Work images served as `.avif`
+- Long-lived cache headers for `/_astro/*` and fonts in `public/_headers`
+- Work images live in `src/assets/work/` and go through `astro:assets` `<Image>` (responsive srcset, AVIF output, intrinsic width/height); a custom `modulePreloadHints` integration in `astro.config.mjs` injects `<link rel="modulepreload">` for shared JS chunks at build time
 
 ## Design & Creative Direction
 

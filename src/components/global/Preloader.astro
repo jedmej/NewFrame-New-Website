@@ -86,6 +86,10 @@ const shouldAutoStart = /^\/(en|pl)(\/|$)/.test(Astro.url.pathname);
     const startFallbackExit = () => {
       if (preloader.dataset.fallbackExitStarted === 'true') return;
       preloader.dataset.fallbackExitStarted = 'true';
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        finish();
+        return;
+      }
       document.body.style.overflow = 'hidden';
       preloader.classList.add('preloader--fallback-exit');
       window.setTimeout(() => {
@@ -146,6 +150,11 @@ const shouldAutoStart = /^\/(en|pl)(\/|$)/.test(Astro.url.pathname);
     const bottomHalf = document.getElementById('preloader-bottom');
 
     if (!preloader || !content || !percentEl || !bracketTL || !bracketBR || !lineEl || !topHalf || !bottomHalf) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finishPreloader(preloader);
+      return;
+    }
 
     // The preloader is critical path UI. If the GSAP timeline is interrupted
     // by Astro lifecycle events or HMR, this fallback still releases the page.
@@ -234,6 +243,11 @@ const shouldAutoStart = /^\/(en|pl)(\/|$)/.test(Astro.url.pathname);
     const bracketBR = document.getElementById('preloader-bracket-br');
 
     if (!preloader || !content || !bracketTL || !bracketBR) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      runExitAnimation();
+      return;
+    }
 
     // Hide lang picker, show counter
     if (langPicker) langPicker.style.display = 'none';

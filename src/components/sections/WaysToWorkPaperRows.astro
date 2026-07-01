@@ -215,31 +215,51 @@ const rows = t.waysToWork.items;
 
     const clamp = (value: number) => Math.max(0, Math.min(1, value));
     const getStartOffset = (index: number) => 28 + index * 6;
+    const easeItem = gsap.parseEase('power1.inOut');
+
+    // Items only ever animate on x, so their vertical geometry is stable
+    // between layout changes — measure once and read scrollY per tick
+    // instead of calling getBoundingClientRect on every element every frame.
+    type Metric = { el: HTMLElement; docTop: number; height: number };
+    let sectionMetric: Metric = { el: section, docTop: 0, height: 0 };
+    let rowMetrics: Metric[] = [];
+    let itemMetrics: Metric[][] = [];
+
+    const measureLayout = () => {
+      const scrollY = window.scrollY;
+      const measure = (el: HTMLElement): Metric => {
+        const rect = el.getBoundingClientRect();
+        return { el, docTop: rect.top + scrollY, height: rect.height };
+      };
+      sectionMetric = measure(section);
+      rowMetrics = rows.map(measure);
+      itemMetrics = rows.map((row) =>
+        Array.from(row.querySelectorAll<HTMLElement>('[data-ways-paper-item]')).map(measure),
+      );
+    };
 
     const updateItemMotion = () => {
       const stickyLine = window.innerHeight * 0.4;
       const spread = window.innerHeight * 0.52;
+      const scrollY = window.scrollY;
 
-      rows.forEach((row) => {
-        const items = Array.from(row.querySelectorAll<HTMLElement>('[data-ways-paper-item]'));
-
+      itemMetrics.forEach((items) => {
         items.forEach((item, index) => {
-          const rect = item.getBoundingClientRect();
-          const centerY = rect.top + rect.height * 0.5;
+          const centerY = item.docTop - scrollY + item.height * 0.5;
           const distance = (centerY - stickyLine) / spread;
           const phase = index * 0.055;
           const progress = clamp(1.02 - distance * 0.92 - phase);
-          const eased = gsap.parseEase('power1.inOut')(progress);
+          const eased = easeItem(progress);
           const startX = getStartOffset(index);
 
-          gsap.set(item, { x: gsap.utils.interpolate(startX, 0, eased) });
+          gsap.set(item.el, { x: gsap.utils.interpolate(startX, 0, eased) });
         });
       });
     };
 
     const tickMotion = () => {
-      const rect = section.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+      const sectionTop = sectionMetric.docTop - window.scrollY;
+      if (sectionTop + sectionMetric.height < 0 || sectionTop > window.innerHeight) return;
       updateItemMotion();
     };
 
@@ -253,9 +273,10 @@ const rows = t.waysToWork.items;
 
     const syncActiveRow = () => {
       const stickyLine = window.innerHeight * 0.4;
-      const owningRow = rows.findIndex((row) => {
-        const rect = row.getBoundingClientRect();
-        return rect.top <= stickyLine && rect.bottom > stickyLine;
+      const scrollY = window.scrollY;
+      const owningRow = rowMetrics.findIndex((row) => {
+        const top = row.docTop - scrollY;
+        return top <= stickyLine && top + row.height > stickyLine;
       });
 
       if (owningRow >= 0) {
@@ -263,9 +284,9 @@ const rows = t.waysToWork.items;
         return;
       }
 
-      const nearestRow = rows.reduce((nearest, row, index) => {
-        const rect = row.getBoundingClientRect();
-        const distance = Math.min(Math.abs(rect.top - stickyLine), Math.abs(rect.bottom - stickyLine));
+      const nearestRow = rowMetrics.reduce((nearest, row, index) => {
+        const top = row.docTop - scrollY;
+        const distance = Math.min(Math.abs(top - stickyLine), Math.abs(top + row.height - stickyLine));
         return distance < nearest.distance ? { index, distance } : nearest;
       }, { index: 0, distance: Number.POSITIVE_INFINITY });
 
@@ -285,6 +306,7 @@ const rows = t.waysToWork.items;
       animatedItems.push(...items);
     });
 
+    measureLayout();
     updateItemMotion();
     syncActiveRow();
     gsap.ticker.add(tickMotion);
@@ -296,12 +318,17 @@ const rows = t.waysToWork.items;
       invalidateOnRefresh: true,
       onUpdate: syncActiveRow,
       onRefresh: () => {
+        measureLayout();
         syncActiveRow();
         updateItemMotion();
       },
     }));
 
-    window.addEventListener('resize', updateItemMotion, { signal: ac.signal });
+    const handleResize = () => {
+      measureLayout();
+      updateItemMotion();
+    };
+    window.addEventListener('resize', handleResize, { signal: ac.signal });
     desktopQuery.addEventListener('change', initWaysPaperRows, { signal: ac.signal });
     requestAnimationFrame(() => ScrollTrigger.refresh());
 

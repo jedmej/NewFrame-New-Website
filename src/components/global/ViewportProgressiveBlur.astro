@@ -1,4 +1,4 @@
-<div class="viewport-progressive-blur" aria-hidden="true">
+<div class="viewport-progressive-blur" data-viewport-progressive-blur aria-hidden="true">
   <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--soft"></div>
   <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--medium"></div>
   <div class="viewport-progressive-blur__layer viewport-progressive-blur__layer--strong"></div>
@@ -71,3 +71,48 @@
     }
   }
 </style>
+
+<script>
+  let cleanupFn: (() => void) | null = null;
+
+  function init() {
+    cleanupFn?.();
+    cleanupFn = null;
+
+    const blur = document.querySelector<HTMLElement>('[data-viewport-progressive-blur]');
+    if (!blur) return;
+
+    const ac = new AbortController();
+
+    // Slide the blur band below the viewport over the final stretch of
+    // scroll so the footer reads sharp at the very bottom of the page.
+    // Transform (not opacity) on purpose: Chromium drops backdrop-filter
+    // snapshots when an ancestor hits opacity 0 and does not reliably
+    // restore them when it becomes visible again.
+    const fadeDistance = 320;
+    let lastShift = -1;
+
+    const update = () => {
+      const doc = document.scrollingElement ?? document.documentElement;
+      const maxScroll = doc.scrollHeight - window.innerHeight;
+      const remaining = maxScroll - window.scrollY;
+      const progress = Math.max(0, Math.min(1, remaining / fadeDistance));
+      const shift = Math.round((1 - progress) * 1000) / 10;
+      if (shift === lastShift) return;
+      lastShift = shift;
+      blur.style.transform = `translate3d(0, ${shift}%, 0)`;
+    };
+
+    update();
+    window.addEventListener('scroll', update, { signal: ac.signal, passive: true });
+    window.addEventListener('resize', update, { signal: ac.signal });
+
+    cleanupFn = () => {
+      ac.abort();
+      blur.style.transform = '';
+    };
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>

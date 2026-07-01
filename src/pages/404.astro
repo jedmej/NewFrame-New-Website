@@ -60,8 +60,11 @@ import { translations } from '../i18n/translations';
       cleanupFn = null;
       const ac = new AbortController();
 
-      // Detect language
-      let lang = localStorage.getItem('preferred-lang');
+      // Detect language: requested path wins, then stored preference, then browser
+      let lang = window.location.pathname.match(/^\/(en|pl)(\/|$)/)?.[1] ?? null;
+      if (lang !== 'en' && lang !== 'pl') {
+        lang = localStorage.getItem('preferred-lang');
+      }
       if (lang !== 'en' && lang !== 'pl') {
         const browserLang = navigator.language?.substring(0, 2);
         lang = browserLang === 'pl' ? 'pl' : 'en';
