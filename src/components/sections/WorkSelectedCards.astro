@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import type { Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/translations';
 import {
@@ -67,8 +68,11 @@ const cardCount = workSelectedCardItems.length;
                   >
                     <div class="work-selected-cards__card-visual">
                       <div class="work-selected-cards__card-media" aria-hidden="true">
-                        <img
+                        <Image
                           src={project.image}
+                          format="avif"
+                          widths={[420, 640, 800, Math.min(1024, project.image.width)]}
+                          sizes="(min-width: 1280px) 25rem, min(82vw, 23rem)"
                           alt=""
                           loading={index < 2 ? 'eager' : 'lazy'}
                           decoding="async"
@@ -76,7 +80,7 @@ const cardCount = workSelectedCardItems.length;
                         <canvas
                           class="work-selected-cards__card-shader"
                           data-work-card-shader
-                          data-work-card-shader-image={project.image}
+                          data-work-card-shader-image={project.image.src}
                         ></canvas>
                         <div class="work-selected-cards__card-gradient"></div>
                       </div>

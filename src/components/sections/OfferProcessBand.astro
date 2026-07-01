@@ -250,6 +250,7 @@ const introHeadings = {
     let waysHoldProgress = 0;
     let lastShaderSurfaceProgress = -1;
     let lastShaderSpeed = -1;
+    let lastSurfaceKey = '';
     let shaderVelocityBoost = 0;
     let shaderVelocityFrame = 0;
     const introPulses = new Map<HTMLElement, number>();
@@ -333,27 +334,32 @@ const introHeadings = {
     const updateBandSurface = () => {
       const workProgress = easeSurface(clamp(workToWaysProgress));
       const testimonialsProgress = easeSurface(clamp(waysToTestimonialsProgress));
-      const blueBg = gsap.utils.interpolate('#F4F4F4', '#1a1b64', workProgress);
-      const testimonialBg = gsap.utils.interpolate(blueBg, '#C43E3D', testimonialsProgress);
-      const bg = gsap.utils.interpolate(testimonialBg, '#14120F', easeSurface(clamp(testimonialsToFooterProgress)));
-      const shaderOpacity = 0.38 + workProgress * 0.62;
-      const workShaderMid = gsap.utils.interpolate('#BDB4AA', '#FFFDFB', workProgress);
-      const workShaderFront = gsap.utils.interpolate('#000000B0', 'rgba(255, 255, 255, 0.5)', workProgress);
-      const shaderContrast = gsap.utils.interpolate(0.18, 1, workProgress);
+      const footerProgress = easeSurface(clamp(testimonialsToFooterProgress));
+      const inkProgress = Math.max(workProgress, testimonialsProgress);
 
-      band.style.setProperty('--offer-work-to-blue-progress', workProgress.toFixed(3));
-      band.style.setProperty('--offer-process-bg', bg);
-      band.style.setProperty('--offer-process-shader-opacity', (shaderOpacity + testimonialsProgress * 0.1).toFixed(3));
-      band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', Math.max(workProgress, testimonialsProgress)));
-      band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', Math.max(workProgress, testimonialsProgress)));
-      band.style.setProperty('--offer-work-ink-soft', gsap.utils.interpolate('rgba(20, 18, 15, 0.42)', 'rgba(243, 234, 223, 0.42)', Math.max(workProgress, testimonialsProgress)));
-      band.style.setProperty('--offer-work-ink-faint', gsap.utils.interpolate('rgba(20, 18, 15, 0.26)', 'rgba(243, 234, 223, 0.26)', Math.max(workProgress, testimonialsProgress)));
-      band.style.setProperty('--offer-work-panel', gsap.utils.interpolate('rgba(20, 18, 15, 0.06)', 'rgba(243, 234, 223, 0.08)', Math.max(workProgress, testimonialsProgress)));
-      band.style.setProperty('--offer-work-panel-line', gsap.utils.interpolate('rgba(20, 18, 15, 0.1)', 'rgba(255, 255, 255, 0.14)', Math.max(workProgress, testimonialsProgress)));
+      // Outside the transition zones these progress values are clamped flat,
+      // so most ticks produce identical output — skip the CSS writes entirely.
+      const surfaceKey = `${workProgress.toFixed(3)}|${testimonialsProgress.toFixed(3)}|${footerProgress.toFixed(3)}`;
+      if (surfaceKey !== lastSurfaceKey) {
+        lastSurfaceKey = surfaceKey;
+        const blueBg = gsap.utils.interpolate('#F4F4F4', '#1a1b64', workProgress);
+        const testimonialBg = gsap.utils.interpolate(blueBg, '#C43E3D', testimonialsProgress);
+        const bg = gsap.utils.interpolate(testimonialBg, '#14120F', footerProgress);
+        const shaderOpacity = 0.38 + workProgress * 0.62;
+
+        band.style.setProperty('--offer-work-to-blue-progress', workProgress.toFixed(3));
+        band.style.setProperty('--offer-process-bg', bg);
+        band.style.setProperty('--offer-process-shader-opacity', (shaderOpacity + testimonialsProgress * 0.1).toFixed(3));
+        band.style.setProperty('--offer-work-ink', gsap.utils.interpolate('#14120f', '#f3eadf', inkProgress));
+        band.style.setProperty('--offer-work-ink-muted', gsap.utils.interpolate('rgba(20, 18, 15, 0.58)', 'rgba(243, 234, 223, 0.62)', inkProgress));
+        band.style.setProperty('--offer-work-ink-soft', gsap.utils.interpolate('rgba(20, 18, 15, 0.42)', 'rgba(243, 234, 223, 0.42)', inkProgress));
+        band.style.setProperty('--offer-work-ink-faint', gsap.utils.interpolate('rgba(20, 18, 15, 0.26)', 'rgba(243, 234, 223, 0.26)', inkProgress));
+        band.style.setProperty('--offer-work-panel', gsap.utils.interpolate('rgba(20, 18, 15, 0.06)', 'rgba(243, 234, 223, 0.08)', inkProgress));
+        band.style.setProperty('--offer-work-panel-line', gsap.utils.interpolate('rgba(20, 18, 15, 0.1)', 'rgba(255, 255, 255, 0.14)', inkProgress));
+      }
 
       if (!shader) return;
 
-      const footerProgress = easeSurface(clamp(testimonialsToFooterProgress));
       const shaderSurfaceProgress = Math.max(workProgress, testimonialsProgress, footerProgress);
       const shaderPulseRaw = Math.max(
         transitionPulse(workToWaysProgress),
@@ -371,6 +377,9 @@ const introHeadings = {
 
       lastShaderSurfaceProgress = shaderSurfaceProgress;
       lastShaderSpeed = shaderSpeed;
+      const workShaderMid = gsap.utils.interpolate('#BDB4AA', '#FFFDFB', workProgress);
+      const workShaderFront = gsap.utils.interpolate('#000000B0', 'rgba(255, 255, 255, 0.5)', workProgress);
+      const shaderContrast = gsap.utils.interpolate(0.18, 1, workProgress);
       shader.update({
         colorMid: gsap.utils.interpolate(gsap.utils.interpolate(workShaderMid, '#FFD6CC', testimonialsProgress), '#8F8477', footerProgress),
         colorFront: gsap.utils.interpolate(gsap.utils.interpolate(workShaderFront, 'rgba(255, 255, 255, 0.72)', testimonialsProgress), 'rgba(243, 234, 223, 0.34)', footerProgress),

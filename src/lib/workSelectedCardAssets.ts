@@ -1,4 +1,15 @@
+import type { ImageMetadata } from 'astro';
 import type { Lang } from '../i18n/translations';
+
+import adfidence from '../assets/work/adfidence.avif';
+import amvis from '../assets/work/amvis-card.avif';
+import atelierluma from '../assets/work/atelierluma.avif';
+import esthetic from '../assets/work/esthetic.avif';
+import hubert from '../assets/work/hubert.avif';
+import karmel from '../assets/work/karmel.avif';
+import panenka from '../assets/work/panenka.avif';
+import uroki from '../assets/work/uroki.avif';
+import visionspeech from '../assets/work/visionspeech.avif';
 
 export type WorkCardKey =
   | 'uroki'
@@ -13,7 +24,7 @@ export type WorkCardKey =
 
 type WorkCardItem = {
   key: WorkCardKey;
-  image: string;
+  image: ImageMetadata;
   url: string;
   displayName: string;
 };
@@ -22,55 +33,55 @@ type WorkCardItem = {
 export const workSelectedCardItems: WorkCardItem[] = [
   {
     key: 'uroki',
-    image: '/images/work/uroki.avif',
+    image: uroki,
     url: 'https://urokitattoo.pl/',
     displayName: 'Uroki',
   },
   {
     key: 'hubert',
-    image: '/images/work/hubert.avif',
+    image: hubert,
     url: 'https://hubertkesik.com/',
     displayName: 'Hubert',
   },
   {
     key: 'karmel',
-    image: '/images/work/karmel.avif',
+    image: karmel,
     url: 'https://karmel-czekolada-portfolio.pages.dev/',
     displayName: 'Karmel',
   },
   {
     key: 'panenka',
-    image: '/images/work/panenka.avif',
+    image: panenka,
     url: 'https://panenkacreatives.com/',
     displayName: 'Panenka',
   },
   {
     key: 'esthetic',
-    image: '/images/work/esthetic.avif',
+    image: esthetic,
     url: 'https://esthetic.pl/',
     displayName: 'Esthetic',
   },
   {
     key: 'visionspeech',
-    image: '/images/work/visionspeech.avif',
+    image: visionspeech,
     url: 'https://visionspeech.app/',
     displayName: 'VisionSpeech',
   },
   {
     key: 'adfidence',
-    image: '/images/work/adfidence.avif',
+    image: adfidence,
     url: 'https://adfidence.com/',
     displayName: 'Adfidence',
   },
   {
     key: 'amvis',
-    image: '/images/work/amvis-card.avif',
+    image: amvis,
     url: 'https://amvis.pages.dev/',
     displayName: 'Amvis',
   },
   {
     key: 'atelierluma',
-    image: '/images/work/atelierluma.avif',
+    image: atelierluma,
     url: 'https://interior-studio-exploration.pages.dev',
     displayName: 'Atelier Luma',
   },
